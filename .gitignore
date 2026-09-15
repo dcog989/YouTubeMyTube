@@ -1,6 +1,6 @@
-.docs/
-node_modules/
-dist/
-assets/icons/
 *.log
+.docs/
 .DS_Store
+assets/icons/
+dist/
+node_modules/
