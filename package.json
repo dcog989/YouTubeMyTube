@@ -1,0 +1,24 @@
+{
+  "name": "youtube-blocker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Robust, performant YouTube content blocker",
+  "scripts": {
+    "icons": "node scripts/gen-icons.mjs",
+    "build": "node esbuild.config.mjs all",
+    "build:chrome": "node esbuild.config.mjs chrome",
+    "build:firefox": "node esbuild.config.mjs firefox",
+    "watch": "node esbuild.config.mjs all --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "@types/firefox-webext-browser": "^120.0.4",
+    "@types/node": "^22.10.2",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

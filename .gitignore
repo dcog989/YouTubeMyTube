@@ -1,0 +1,6 @@
+.docs/
+node_modules/
+dist/
+assets/icons/
+*.log
+.DS_Store

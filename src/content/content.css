@@ -1,0 +1,36 @@
+.ytb-hidden {
+  display: none !important;
+}
+
+html.ytb-hide-home ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html.ytb-hide-home ytd-browse[page-subtype="home"] ytd-feed-filter-chip-bar-renderer {
+  display: none !important;
+}
+
+html.ytb-hide-shorts-shelf ytd-reel-shelf-renderer,
+html.ytb-hide-shorts-shelf ytm-reel-shelf-renderer,
+html.ytb-hide-shorts-shelf ytd-rich-shelf-renderer[is-shorts],
+html.ytb-hide-shorts-shelf ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+html.ytb-hide-shorts-shelf ytd-guide-entry-renderer a[title="Shorts"] {
+  display: none !important;
+}
+
+html.ytb-hide-comments #comments,
+html.ytb-hide-comments ytd-comments#comments,
+html.ytb-hide-comments ytd-item-section-renderer#comments-section,
+html.ytb-hide-comments ytm-comments {
+  display: none !important;
+}
+
+html.ytb-hide-live-chat #chat,
+html.ytb-hide-live-chat ytd-live-chat-frame,
+html.ytb-hide-live-chat ytm-live-chat {
+  display: none !important;
+}
+
+html.ytb-hide-related #secondary,
+html.ytb-hide-related ytd-watch-next-secondary-results-renderer,
+html.ytb-hide-related #related,
+html.ytb-hide-related ytm-item-section-renderer#related {
+  display: none !important;
+}

@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Blocker",
+  "version": "__VERSION__",
+  "description": "Block videos, channels, users, Shorts and comments on YouTube.",
+  "permissions": ["storage", "declarativeNetRequest"],
+  "host_permissions": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_title": "YouTube Blocker",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icons/16.png",
+      "48": "assets/icons/48.png",
+      "128": "assets/icons/128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked.html", "assets/icons/*.png"],
+      "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"]
+    }
+  ],
+  "icons": {
+    "16": "assets/icons/16.png",
+    "48": "assets/icons/48.png",
+    "128": "assets/icons/128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "youtube-blocker@local",
+      "strict_min_version": "115.0"
+    }
+  }
+}
