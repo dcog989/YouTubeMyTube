@@ -19,12 +19,13 @@
 
 ### Workflow
 
-- Install: `npm install` (or `bun install`)
+- Install: `npm install` (or `bun install`); runs `prepare` → installs lefthook git hooks.
 - Dev: `npm run watch`
 - Test: `npm test`
 - Typecheck: `npm run typecheck`
 - Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`)
-- Lint/Format: not configured.
+- Lint/Format: `npm run check` (Biome; `npm run check:fix` to write). Config: `biome.json`.
+- Commit messages: Conventional Commits, enforced by lefthook + cocogitto (`cog.toml`). Cocogitto is a system binary, not an npm dependency.
 
 ### Common Patterns
 

@@ -8,9 +8,15 @@
     "build": "node esbuild.config.mjs all",
     "build:chrome": "node esbuild.config.mjs chrome",
     "build:firefox": "node esbuild.config.mjs firefox",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
     "clean": "rm -rf dist node_modules bun.lock",
-    "format": "bunx biome format --write .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "hooks:install": "lefthook install",
     "icons": "node scripts/gen-icons.mjs",
+    "lint": "biome lint .",
+    "prepare": "lefthook install",
     "release": "cog bump --auto",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
@@ -19,10 +25,12 @@
     "watch": "node esbuild.config.mjs all --watch"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.13",
     "@types/chrome": "^0.0.287",
     "@types/firefox-webext-browser": "^120.0.5",
     "@types/node": "^22.20.3",
     "esbuild": "^0.24.2",
+    "lefthook": "2.1.14",
     "typescript": "^5.9.3",
     "vitest": "^2.1.9"
   }

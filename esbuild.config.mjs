@@ -1,7 +1,7 @@
-import { build, context } from 'esbuild';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { build, context } from 'esbuild';
 import { generateIcons } from './scripts/gen-icons.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));

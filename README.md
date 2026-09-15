@@ -34,9 +34,13 @@ npm run build
 npm run watch             # rebuild on change (both browsers)
 npm test                  # Vitest unit tests
 npm run typecheck         # tsc --noEmit
+npm run check             # Biome lint + format check
+npm run check:fix         # Biome lint + format, writing fixes
 npm run build:chrome
 npm run build:firefox
 ```
+
+`npm install` runs `prepare`, which installs the [lefthook](https://lefthook.dev) git hooks. The `pre-commit` hook runs Biome against staged files and the `commit-msg` hook enforces [Conventional Commits](https://www.conventionalcommits.org) via [cocogitto](https://docs.cocogitto.io) (`cog`). Cocogitto is a system binary, not an npm dependency; install it separately (e.g. `pacman -S cocogitto`, `cargo install cocogitto`, or your package manager).
 
 ## Architecture
 
