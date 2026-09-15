@@ -16,7 +16,7 @@ const UNSUPPORTED_OPTIONS: ReadonlyArray<readonly [string, string]> = [
 export interface BlockTubeImport {
   rules: Pick<
     FilterRules,
-    'videoIds' | 'channelIds' | 'channelNames' | 'titles' | 'commentAuthors' | 'commentContents'
+    'videoIds' | 'channelIds' | 'channelNames' | 'titles' | 'commentContents'
   >;
   areas: Partial<AreaFlags>;
   blockMessage: string | null;
@@ -79,14 +79,11 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
   const filterData = filters as Record<string, unknown>;
   const optionData = options as Record<string, unknown>;
 
-  const channelNames = sanitizeList(filterData.channelName);
   const rules: BlockTubeImport['rules'] = {
     videoIds: sanitizeList(filterData.videoId),
     channelIds: sanitizeList(filterData.channelId),
-    channelNames,
+    channelNames: sanitizeList(filterData.channelName),
     titles: sanitizeList(filterData.title),
-    // BlockTube matches channel-name filters against comment authors as well.
-    commentAuthors: [...channelNames],
     commentContents: sanitizeList(filterData.comment),
   };
 

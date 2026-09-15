@@ -40,7 +40,6 @@ describe('parseBlockTubeBackup', () => {
     expect(result.data.rules.channelNames).toEqual(['drama']);
     expect(result.data.rules.titles).toEqual(['spoiler']);
     expect(result.data.rules.commentContents).toEqual(['free crypto']);
-    expect(result.data.rules.commentAuthors).toEqual(['drama']);
     expect(result.data.skipped).toEqual([]);
   });
 
@@ -108,7 +107,7 @@ describe('mergeBlockTubeImport', () => {
     if (!parsed.ok) throw new Error('expected parse success');
 
     const { state: merged, added } = mergeBlockTubeImport(state, parsed.data);
-    expect(added).toBe(6);
+    expect(added).toBe(5);
     expect(merged.rules.videoIds).toEqual(['vid1', 'vid2']);
     expect(state.rules.videoIds).toEqual(['vid1']);
   });

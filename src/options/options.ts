@@ -93,6 +93,10 @@ const editors = new Map<keyof FilterRules, HTMLTextAreaElement>();
 const counters = new Map<keyof FilterRules, HTMLElement>();
 const areaInputs = new Map<AreaKey, HTMLInputElement>();
 
+const TEXTAREA_MIN_HEIGHT = 160;
+const TEXTAREA_BOTTOM_GAP = 32;
+
+let activeFilter: keyof FilterRules | null = null;
 let saved: BlockerState = defaultState();
 let draft: BlockerState = defaultState();
 
@@ -134,6 +138,25 @@ function updateCount(key: keyof FilterRules): void {
   if (target) target.textContent = count === 1 ? '1 rule' : `${count} rules`;
 }
 
+function autoGrowTextarea(textarea: HTMLTextAreaElement): void {
+  const style = window.getComputedStyle(textarea);
+  const border =
+    Number.parseFloat(style.borderTopWidth) + Number.parseFloat(style.borderBottomWidth);
+  textarea.style.height = 'auto';
+  const contentHeight = textarea.scrollHeight + border;
+  const top = textarea.getBoundingClientRect().top;
+  const available = Math.max(TEXTAREA_MIN_HEIGHT, window.innerHeight - top - TEXTAREA_BOTTOM_GAP);
+  textarea.style.height = `${Math.min(contentHeight, available)}px`;
+  textarea.style.overflowY = contentHeight > available ? 'auto' : 'hidden';
+}
+
+function growActiveEditor(): void {
+  if (!activeFilter) return;
+  const textarea = editors.get(activeFilter);
+  if (!textarea || textarea.offsetParent === null) return;
+  autoGrowTextarea(textarea);
+}
+
 function selectPanel(name: string): void {
   document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
     button.classList.toggle('is-active', button.dataset.panel === name);
@@ -141,6 +164,7 @@ function selectPanel(name: string): void {
   document.querySelectorAll<HTMLElement>('.panel').forEach((panel) => {
     panel.classList.toggle('is-active', panel.id === `panel-${name}`);
   });
+  if (name === 'filters') growActiveEditor();
 }
 
 function selectFilter(key: keyof FilterRules): void {
@@ -150,6 +174,8 @@ function selectFilter(key: keyof FilterRules): void {
   document.querySelectorAll<HTMLElement>('.editor-item').forEach((item) => {
     item.classList.toggle('is-active', item.dataset.filter === key);
   });
+  activeFilter = key;
+  growActiveEditor();
 }
 
 function buildFilters(): void {
@@ -168,6 +194,7 @@ function buildFilters(): void {
     const wrapper = document.createElement('div');
     wrapper.className = `editor-item${index === 0 ? ' is-active' : ''}`;
     wrapper.dataset.filter = config.key;
+    if (index === 0) activeFilter = config.key;
 
     const head = document.createElement('div');
     head.className = 'editor-head';
@@ -192,6 +219,7 @@ function buildFilters(): void {
       draft.rules[config.key] = linesToArray(textarea.value);
       updateCount(config.key);
       markDirty();
+      autoGrowTextarea(textarea);
     });
 
     wrapper.append(head, help, textarea);
@@ -250,6 +278,8 @@ function populate(): void {
   for (const [key, input] of areaInputs) {
     input.checked = draft.areas[key];
   }
+
+  growActiveEditor();
 }
 
 function showResult(blocked: boolean | null, message: string): void {
@@ -430,6 +460,8 @@ function wireStatic(): void {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (draft.settings.theme === 'system') applyTheme('system');
   });
+
+  window.addEventListener('resize', growActiveEditor);
 }
 
 async function init(): Promise<void> {

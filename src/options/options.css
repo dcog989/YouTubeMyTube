@@ -335,8 +335,9 @@ textarea:focus {
 }
 
 textarea {
-  min-height: 320px;
-  resize: vertical;
+  min-height: 160px;
+  resize: none;
+  overflow-y: auto;
   font-family: var(--mono);
   font-size: 13px;
   line-height: 1.55;
