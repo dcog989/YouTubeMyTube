@@ -58,11 +58,10 @@ body {
 }
 
 .app-header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 20px;
+  padding: 12px 0;
   background: var(--panel);
   border-bottom: 1px solid var(--border);
   position: sticky;
@@ -74,6 +73,8 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+  padding-left: 12px;
   font-weight: 700;
   font-size: 15px;
 }
@@ -81,7 +82,9 @@ body {
 .header-actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
+  padding-right: 28px;
 }
 
 .dirty {
@@ -134,7 +137,6 @@ body {
 
 .content {
   padding: 24px 28px 64px;
-  max-width: 900px;
 }
 
 .panel {
@@ -391,5 +393,17 @@ textarea {
   }
   .content {
     padding: 16px;
+  }
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+  }
+  .brand {
+    padding-left: 0;
+  }
+  .header-actions {
+    justify-content: flex-start;
+    padding-right: 0;
   }
 }
