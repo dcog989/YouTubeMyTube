@@ -13,7 +13,7 @@ Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarative
 - Optional content-area blocking (home feed, Trending, Explore, Subscriptions, comments, live chat, related videos).
 - Direct navigation to blocked content redirects to a block page.
 - Popup with a quick "block this video/channel" action.
-- Import/export settings; additively import BlockTube backups (unsupported fields are reported, not dropped silently).
+- Import/export settings; BlockTube backups are auto-detected on import and merged additively (unsupported fields are reported, not dropped silently).
 - Light/dark/system theme.
 
 ## Install

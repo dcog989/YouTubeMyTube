@@ -22,7 +22,6 @@
             <option value="light">Light</option>
             <option value="dark">Dark</option>
           </select>
-          <button type="button" id="save" class="btn btn-primary" disabled>Save</button>
         </div>
       </div>
     </header>
@@ -37,8 +36,11 @@
       </nav>
 
       <main class="content">
+        <div class="panel-head">
+          <h2 id="panel-title">General</h2>
+          <button type="button" id="save" class="btn btn-primary" disabled>Save</button>
+        </div>
         <section class="panel is-active" id="panel-general">
-          <h2>General</h2>
           <div class="card">
             <div class="row row-between">
               <div>
@@ -59,7 +61,6 @@
         </section>
 
         <section class="panel" id="panel-filters">
-          <h2>Filters</h2>
           <div class="filters-layout">
             <nav class="filter-nav" id="filter-nav" aria-label="Filter types"></nav>
             <div class="filter-editors" id="filter-editors"></div>
@@ -67,7 +68,6 @@
         </section>
 
         <section class="panel" id="panel-areas">
-          <h2>Content areas</h2>
           <p class="panel-sub">
             Hide entire sections of YouTube. Page blocks redirect to the home page.
           </p>
@@ -75,7 +75,6 @@
         </section>
 
         <section class="panel" id="panel-tester">
-          <h2>Tester</h2>
           <p class="panel-sub">Check a rule against a URL or a piece of text before saving.</p>
           <div class="card">
             <label class="row-title" for="test-url">URL</label>
@@ -101,19 +100,17 @@
         </section>
 
         <section class="panel" id="panel-data">
-          <h2>Import / Export</h2>
           <div class="card">
             <div class="data-actions">
               <button type="button" id="export" class="btn">Export settings</button>
               <button type="button" id="import" class="btn">Import settings</button>
-              <button type="button" id="import-blocktube" class="btn">Import BlockTube backup</button>
               <button type="button" id="reset" class="btn btn-danger">Reset all</button>
               <input id="import-file" type="file" accept="application/json" hidden />
-              <input id="import-blocktube-file" type="file" accept="application/json,.json" hidden />
             </div>
             <div class="row-sub">
-              Settings are stored locally in your browser. BlockTube backups are merged into your
-              existing filters.
+              Settings are stored locally in your browser. Import accepts YouTube Blocker settings
+              or a BlockTube backup — the format is detected automatically, and BlockTube entries
+              are merged into your existing filters.
             </div>
           </div>
           <div id="import-status" class="test-result" hidden></div>

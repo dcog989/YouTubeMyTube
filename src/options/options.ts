@@ -164,6 +164,8 @@ function selectPanel(name: string): void {
   document.querySelectorAll<HTMLElement>('.panel').forEach((panel) => {
     panel.classList.toggle('is-active', panel.id === `panel-${name}`);
   });
+  const navButton = document.querySelector<HTMLButtonElement>(`.nav-item[data-panel="${name}"]`);
+  if (navButton) byId('panel-title').textContent = navButton.textContent ?? '';
   if (name === 'filters') growActiveEditor();
 }
 
@@ -343,30 +345,13 @@ function exportSettings(): void {
   URL.revokeObjectURL(url);
 }
 
+function isBlockerState(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const record = value as Record<string, unknown>;
+  return 'rules' in record || 'areas' in record || 'settings' in record;
+}
+
 function importSettings(file: File): void {
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const parsed = JSON.parse(String(reader.result));
-      draft = normalizeState(parsed);
-      populate();
-      markDirty();
-    } catch {
-      alert('This is not a valid YouTube Blocker settings file.');
-    }
-  };
-  reader.readAsText(file);
-}
-
-function showImportStatus(message: string, ok: boolean): void {
-  const status = byId('import-status');
-  status.hidden = false;
-  status.textContent = message;
-  status.classList.toggle('is-allowed', ok);
-  status.classList.toggle('is-blocked', !ok);
-}
-
-function importBlockTube(file: File): void {
   const reader = new FileReader();
   reader.onload = () => {
     let parsed: unknown;
@@ -377,24 +362,39 @@ function importBlockTube(file: File): void {
       return;
     }
 
-    const result = parseBlockTubeBackup(parsed);
-    if (!result.ok) {
-      showImportStatus(result.error, false);
+    const blocktube = parseBlockTubeBackup(parsed);
+    if (blocktube.ok) {
+      const { state: merged, added } = mergeBlockTubeImport(draft, blocktube.data);
+      draft = merged;
+      populate();
+      markDirty();
+      const filters = `${added} new filter${added === 1 ? '' : 's'}`;
+      const skipped = blocktube.data.skipped.length
+        ? ` Skipped: ${blocktube.data.skipped.join(', ')}.`
+        : '';
+      showImportStatus(`Imported ${filters} from a BlockTube backup.${skipped}`, true);
       return;
     }
 
-    const { state: merged, added } = mergeBlockTubeImport(draft, result.data);
-    draft = merged;
-    populate();
-    markDirty();
+    if (isBlockerState(parsed)) {
+      draft = normalizeState(parsed);
+      populate();
+      markDirty();
+      showImportStatus('Imported YouTube Blocker settings.', true);
+      return;
+    }
 
-    const filters = `${added} new filter${added === 1 ? '' : 's'}`;
-    const skipped = result.data.skipped.length
-      ? ` Skipped: ${result.data.skipped.join(', ')}.`
-      : '';
-    showImportStatus(`Imported ${filters} from BlockTube.${skipped}`, true);
+    showImportStatus('That file is not a YouTube Blocker or BlockTube backup.', false);
   };
   reader.readAsText(file);
+}
+
+function showImportStatus(message: string, ok: boolean): void {
+  const status = byId('import-status');
+  status.hidden = false;
+  status.textContent = message;
+  status.classList.toggle('is-allowed', ok);
+  status.classList.toggle('is-blocked', !ok);
 }
 
 function wireStatic(): void {
@@ -440,14 +440,6 @@ function wireStatic(): void {
     const file = importFile.files?.[0];
     if (file) importSettings(file);
     importFile.value = '';
-  });
-
-  const blocktubeFile = byId<HTMLInputElement>('import-blocktube-file');
-  byId('import-blocktube').addEventListener('click', () => blocktubeFile.click());
-  blocktubeFile.addEventListener('change', () => {
-    const file = blocktubeFile.files?.[0];
-    if (file) importBlockTube(file);
-    blocktubeFile.value = '';
   });
 
   byId('reset').addEventListener('click', () => {
