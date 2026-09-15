@@ -395,6 +395,7 @@ textarea {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  margin-bottom: 12px;
 }
 
 @media (max-width: 760px) {

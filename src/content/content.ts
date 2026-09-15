@@ -76,6 +76,7 @@ let state: BlockerState | null = null;
 let compiled: CompiledRules | null = null;
 let processed = new WeakSet<Element>();
 let lastHref = '';
+let checkedVideoId = '';
 let scheduled = false;
 const pending = new Set<Element>();
 
@@ -160,7 +161,9 @@ function currentContext(): Entity {
       const parsed = parseYouTubeUrl(anchor.getAttribute('href') ?? '');
       if (parsed.channelId) entity.channelId = parsed.channelId;
       if (parsed.handle) entity.handle = parsed.handle;
-      if (entity.channelId || entity.handle) break;
+      const name = textOf(anchor);
+      if (name) entity.channelName = name;
+      if (entity.channelId || entity.handle || entity.channelName) break;
     }
   }
 
@@ -203,6 +206,7 @@ function flushPending(): void {
   const nodes = Array.from(pending);
   pending.clear();
   for (const node of nodes) processSubtree(node);
+  checkWatchChannel();
 }
 
 function schedule(root: Element): void {
@@ -220,6 +224,7 @@ function rescan(): void {
   if (compiled && hasCommentRules(compiled)) {
     document.querySelectorAll(COMMENT_SELECTOR).forEach(processNode);
   }
+  checkWatchChannel();
 }
 
 function applyAreas(): void {
@@ -232,6 +237,7 @@ function applyAreas(): void {
 function applyState(next: BlockerState): void {
   state = next;
   compiled = compileRules(next.rules);
+  checkedVideoId = '';
   applyAreas();
   rescan();
 }
@@ -254,6 +260,20 @@ function checkNavigation(): void {
   lastHref = href;
   const parsed = parseYouTubeUrl(href);
   const result = matchDirectNavigation(parsed, window.location.pathname, compiled, state.areas);
+  if (result.blocked && result.reason) redirectFor(result.reason);
+}
+
+function checkWatchChannel(): void {
+  if (!state || !compiled || !state.settings.enabled) return;
+  if (window.top !== window) return;
+  if (window.location.pathname !== '/watch') return;
+
+  const context = currentContext();
+  if (!context.videoId || context.videoId === checkedVideoId) return;
+  if (!context.channelId && !context.handle && !context.channelName) return;
+  checkedVideoId = context.videoId;
+
+  const result = matchEntity(context, compiled);
   if (result.blocked && result.reason) redirectFor(result.reason);
 }
 
