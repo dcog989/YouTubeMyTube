@@ -19,7 +19,7 @@ chrome.runtime.onStartup.addListener(() => {
 });
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName !== 'local' || !changes['state']) return;
+  if (areaName !== 'local' || !changes.state) return;
   void syncDynamicRules();
 });
 

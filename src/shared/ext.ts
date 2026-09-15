@@ -30,12 +30,10 @@ export function openOptionsPage(): void {
   chrome.runtime.openOptionsPage();
 }
 
-export function onLocalStorageChanged(
-  listener: (newValue: unknown) => void,
-): void {
+export function onLocalStorageChanged(listener: (newValue: unknown) => void): void {
   chrome.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== 'local') return;
-    const change = changes['state'];
+    const change = changes.state;
     if (!change) return;
     listener(change.newValue);
   });

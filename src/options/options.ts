@@ -1,6 +1,11 @@
-import { compileRules, matchDirectNavigation, matchEntity, parseYouTubeUrl } from '../shared/matcher';
-import { defaultState, normalizeState } from '../shared/storage';
+import {
+  compileRules,
+  matchDirectNavigation,
+  matchEntity,
+  parseYouTubeUrl,
+} from '../shared/matcher';
 import { loadState, saveState } from '../shared/state';
+import { defaultState, normalizeState } from '../shared/storage';
 import type { AreaKey, BlockerState, Entity, FilterRules } from '../shared/types';
 
 interface FilterListConfig {
@@ -68,7 +73,11 @@ const AREAS: AreaConfig[] = [
   { key: 'subscriptionsPage', title: 'Subscriptions page', sub: 'Redirect /feed/subscriptions.' },
   { key: 'shortsPage', title: 'Shorts pages', sub: 'Redirect /shorts and direct Short links.' },
   { key: 'shortsShelf', title: 'Shorts shelves', sub: 'Hide Shorts carousels across the site.' },
-  { key: 'commentsSection', title: 'Comments section', sub: 'Hide the comments area on watch pages.' },
+  {
+    key: 'commentsSection',
+    title: 'Comments section',
+    sub: 'Hide the comments area on watch pages.',
+  },
   { key: 'liveChat', title: 'Live chat', sub: 'Hide the live chat frame.' },
   { key: 'relatedVideos', title: 'Related videos', sub: 'Hide the watch-page sidebar.' },
 ];
@@ -324,7 +333,8 @@ function wireStatic(): void {
   });
 
   byId<HTMLSelectElement>('theme').addEventListener('change', (event) => {
-    draft.settings.theme = (event.target as HTMLSelectElement).value as BlockerState['settings']['theme'];
+    draft.settings.theme = (event.target as HTMLSelectElement)
+      .value as BlockerState['settings']['theme'];
     applyTheme(draft.settings.theme);
     markDirty();
   });

@@ -1,7 +1,7 @@
-import type { BlockerState } from './types';
 import { STATE_KEY } from './constants';
 import { getStored, setStored } from './ext';
 import { defaultState, normalizeState } from './storage';
+import type { BlockerState } from './types';
 
 export async function loadState(): Promise<BlockerState> {
   const stored = await getStored<unknown>(STATE_KEY);

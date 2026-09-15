@@ -118,7 +118,10 @@ export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
     return { blocked: true, reason: `channel id ${entity.channelId}` };
   }
   if (entity.handle && rules.handles.has(normalizeHandle(entity.handle))) {
-    return { blocked: true, reason: `channel handle ${HANDLE_PREFIX}${normalizeHandle(entity.handle)}` };
+    return {
+      blocked: true,
+      reason: `channel handle ${HANDLE_PREFIX}${normalizeHandle(entity.handle)}`,
+    };
   }
   if (entity.channelName && matchesAny(rules.channelNames, entity.channelName)) {
     return { blocked: true, reason: `channel name "${entity.channelName}"` };

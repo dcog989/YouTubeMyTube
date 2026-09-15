@@ -7,8 +7,8 @@ import {
   matchEntity,
   parseYouTubeUrl,
 } from '../shared/matcher';
-import { normalizeState } from '../shared/storage';
 import { loadState } from '../shared/state';
+import { normalizeState } from '../shared/storage';
 import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 
 const ITEM_SELECTORS = [
@@ -50,11 +50,7 @@ const TITLE_SELECTORS = [
   'h3 a',
 ];
 
-const CHANNEL_TEXT_SELECTORS = [
-  'ytd-channel-name a',
-  '#channel-name a',
-  'ytm-channel-name a',
-];
+const CHANNEL_TEXT_SELECTORS = ['ytd-channel-name a', '#channel-name a', 'ytm-channel-name a'];
 
 const CARD_SELECTOR = ITEM_SELECTORS.join(',');
 const COMMENT_SELECTOR = COMMENT_SELECTORS.join(',');
@@ -127,8 +123,7 @@ function commentEntity(thread: Element): Entity {
   if (parsed?.channelId) entity.channelId = parsed.channelId;
   if (parsed?.handle) entity.handle = parsed.handle;
 
-  const authorText =
-    textOf(thread.querySelector('#author-text')) || textOf(authorAnchor);
+  const authorText = textOf(thread.querySelector('#author-text')) || textOf(authorAnchor);
   if (authorText) entity.commentAuthor = authorText;
 
   const content =
@@ -191,7 +186,7 @@ function schedule(root: Element): void {
 function rescan(): void {
   clearHidden();
   processed = new WeakSet<Element>();
-  if (!state || !state.settings.enabled) return;
+  if (!state?.settings.enabled) return;
   document.querySelectorAll(CARD_SELECTOR).forEach(processNode);
   if (compiled && hasCommentRules(compiled)) {
     document.querySelectorAll(COMMENT_SELECTOR).forEach(processNode);

@@ -46,9 +46,9 @@ describe('buildDnrRules', () => {
   it('never emits a home-page redirect rule (would loop)', () => {
     const state = defaultState();
     state.areas.homePage = true;
-    expect(buildDnrRules(state).some((rule) => rule.action.redirect?.url === 'https://www.youtube.com/')).toBe(
-      false,
-    );
+    expect(
+      buildDnrRules(state).some((rule) => rule.action.redirect?.url === 'https://www.youtube.com/'),
+    ).toBe(false);
   });
 
   it('builds a combined video regex including shorts and watch paths', () => {

@@ -1,7 +1,7 @@
 import { openOptionsPage, queryActiveTab } from '../shared/ext';
 import { parseYouTubeUrl } from '../shared/matcher';
-import { ruleCount } from '../shared/storage';
 import { loadState, saveState } from '../shared/state';
+import { ruleCount } from '../shared/storage';
 import type { BlockerState } from '../shared/types';
 
 function byId<T extends HTMLElement>(id: string): T {

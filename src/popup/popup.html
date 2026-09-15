@@ -15,7 +15,7 @@
 
       <div class="row row-between">
         <span class="row-title">Blocking</span>
-        <label class="switch">
+        <label class="switch" for="enabled" aria-label="Blocking">
           <input type="checkbox" id="enabled" />
           <span class="slider"></span>
         </label>
@@ -24,14 +24,14 @@
       <div class="context" id="context" hidden>
         <div class="row-sub" id="context-label">On this page</div>
         <div class="context-actions">
-          <button id="block-video" class="btn btn-primary" hidden>Block this video</button>
-          <button id="block-channel" class="btn btn-primary" hidden>Block this channel</button>
+          <button type="button" id="block-video" class="btn btn-primary" hidden>Block this video</button>
+          <button type="button" id="block-channel" class="btn btn-primary" hidden>Block this channel</button>
         </div>
       </div>
 
       <div class="counts" id="counts"></div>
 
-      <button id="options" class="btn btn-block">Settings</button>
+      <button type="button" id="options" class="btn btn-block">Settings</button>
     </div>
     <script type="module" src="popup.js"></script>
   </body>

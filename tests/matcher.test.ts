@@ -115,6 +115,8 @@ describe('matchDirectNavigation', () => {
   it('does not block disabled areas', () => {
     const rules = compileRules(defaultRules());
     const parsed = parseYouTubeUrl('https://www.youtube.com/feed/trending');
-    expect(matchDirectNavigation(parsed, '/feed/trending', rules, defaultAreas()).blocked).toBe(false);
+    expect(matchDirectNavigation(parsed, '/feed/trending', rules, defaultAreas()).blocked).toBe(
+      false,
+    );
   });
 });

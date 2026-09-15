@@ -20,17 +20,17 @@
           <option value="light">Light</option>
           <option value="dark">Dark</option>
         </select>
-        <button id="save" class="btn btn-primary" disabled>Save</button>
+        <button type="button" id="save" class="btn btn-primary" disabled>Save</button>
       </div>
     </header>
 
     <div class="layout">
       <nav class="sidebar" aria-label="Settings sections">
-        <button class="nav-item is-active" data-panel="general">General</button>
-        <button class="nav-item" data-panel="filters">Filters</button>
-        <button class="nav-item" data-panel="areas">Content areas</button>
-        <button class="nav-item" data-panel="tester">Tester</button>
-        <button class="nav-item" data-panel="data">Import / Export</button>
+        <button type="button" class="nav-item is-active" data-panel="general">General</button>
+        <button type="button" class="nav-item" data-panel="filters">Filters</button>
+        <button type="button" class="nav-item" data-panel="areas">Content areas</button>
+        <button type="button" class="nav-item" data-panel="tester">Tester</button>
+        <button type="button" class="nav-item" data-panel="data">Import / Export</button>
       </nav>
 
       <main class="content">
@@ -42,7 +42,7 @@
                 <div class="row-title">Enable blocking</div>
                 <div class="row-sub">Turn all filtering on or off.</div>
               </div>
-              <label class="switch">
+              <label class="switch" for="enabled" aria-label="Enable blocking">
                 <input type="checkbox" id="enabled" />
                 <span class="slider"></span>
               </label>
@@ -78,7 +78,7 @@
             <label class="row-title" for="test-url">URL</label>
             <div class="test-row">
               <input id="test-url" class="input" type="text" placeholder="https://www.youtube.com/watch?v=..." />
-              <button id="test-url-btn" class="btn">Test URL</button>
+              <button type="button" id="test-url-btn" class="btn">Test URL</button>
             </div>
           </div>
           <div class="card">
@@ -91,7 +91,7 @@
                 <option value="commentContent">Comment content</option>
               </select>
               <input id="test-text" class="input" type="text" placeholder="Some text" />
-              <button id="test-text-btn" class="btn">Test text</button>
+              <button type="button" id="test-text-btn" class="btn">Test text</button>
             </div>
           </div>
           <div id="test-result" class="test-result" hidden></div>
@@ -101,9 +101,9 @@
           <h2>Import / Export</h2>
           <div class="card">
             <div class="data-actions">
-              <button id="export" class="btn">Export settings</button>
-              <button id="import" class="btn">Import settings</button>
-              <button id="reset" class="btn btn-danger">Reset all</button>
+              <button type="button" id="export" class="btn">Export settings</button>
+              <button type="button" id="import" class="btn">Import settings</button>
+              <button type="button" id="reset" class="btn btn-danger">Reset all</button>
               <input id="import-file" type="file" accept="application/json" hidden />
             </div>
             <div class="row-sub">Settings are stored locally in your browser.</div>
