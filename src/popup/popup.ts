@@ -1,8 +1,9 @@
-import { openOptionsPage, queryActiveTab } from '../shared/ext';
+import { CONTEXT_REQUEST } from '../shared/constants';
+import { openOptionsPage, queryActiveTab, sendTabMessage } from '../shared/ext';
 import { parseYouTubeUrl } from '../shared/matcher';
 import { loadState, saveState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
-import type { BlockerState } from '../shared/types';
+import type { BlockerState, Entity } from '../shared/types';
 
 function byId<T extends HTMLElement>(id: string): T {
   const element = document.getElementById(id);
@@ -63,16 +64,23 @@ async function detectActiveTab(): Promise<void> {
   if (!tab?.url) return;
 
   const parsed = parseYouTubeUrl(tab.url);
+  if (parsed.videoId) activeVideoId = parsed.videoId;
+  if (parsed.channelId) activeChannelId = parsed.channelId;
+  if (parsed.handle) activeHandle = parsed.handle.toLowerCase();
+
+  if (tab.id !== undefined && parsed.videoId) {
+    const context = await sendTabMessage<Entity>(tab.id, { type: CONTEXT_REQUEST });
+    if (context?.channelId && !activeChannelId) activeChannelId = context.channelId;
+    if (context?.handle && !activeHandle) activeHandle = context.handle.toLowerCase();
+  }
+
   const label = byId('context-label');
-  if (parsed.videoId) {
-    activeVideoId = parsed.videoId;
-    label.textContent = `Video ${parsed.videoId}`;
-  } else if (parsed.channelId) {
-    activeChannelId = parsed.channelId;
-    label.textContent = `Channel ${parsed.channelId}`;
-  } else if (parsed.handle) {
-    activeHandle = parsed.handle.toLowerCase();
-    label.textContent = `Channel @${parsed.handle}`;
+  if (activeVideoId) {
+    label.textContent = `Video ${activeVideoId}`;
+  } else if (activeChannelId) {
+    label.textContent = `Channel ${activeChannelId}`;
+  } else if (activeHandle) {
+    label.textContent = `Channel @${activeHandle}`;
   }
 
   renderContext();

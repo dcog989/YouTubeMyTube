@@ -7,14 +7,12 @@
   --panel: #1f2229;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f4f5f7;
-    --text: #1a1a1f;
-    --muted: #5f6470;
-    --border: #e0e2e7;
-    --panel: #ffffff;
-  }
+:root[data-theme="light"] {
+  --bg: #f4f5f7;
+  --text: #1a1a1f;
+  --muted: #5f6470;
+  --border: #e0e2e7;
+  --panel: #ffffff;
 }
 
 * {

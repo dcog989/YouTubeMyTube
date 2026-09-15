@@ -26,6 +26,18 @@ export function queryActiveTab(): Promise<chrome.tabs.Tab | undefined> {
   });
 }
 
+export function sendTabMessage<T>(tabId: number, message: unknown): Promise<T | undefined> {
+  return new Promise((resolve) => {
+    chrome.tabs.sendMessage(tabId, message, { frameId: 0 }, (response) => {
+      if (chrome.runtime.lastError) {
+        resolve(undefined);
+        return;
+      }
+      resolve(response as T | undefined);
+    });
+  });
+}
+
 export function openOptionsPage(): void {
   chrome.runtime.openOptionsPage();
 }

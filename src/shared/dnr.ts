@@ -44,8 +44,20 @@ function channelIdPattern(channelId: string): string {
   return `${HOST}/channel/${escapeRegExp(channelId)}(?:[/?#]|$)`;
 }
 
+function caseInsensitiveLiteral(value: string): string {
+  return escapeRegExp(value).replace(/[a-z]/gi, (letter) => {
+    const lower = letter.toLowerCase();
+    const upper = letter.toUpperCase();
+    return lower === upper ? letter : `[${lower}${upper}]`;
+  });
+}
+
 function handlePattern(handle: string): string {
-  return `${HOST}/@${escapeRegExp(normalizeHandle(handle))}(?:[/?#]|$)`;
+  return `${HOST}/${caseInsensitiveLiteral(`@${normalizeHandle(handle)}`)}(?:[/?#]|$)`;
+}
+
+function blockedPage(reason: string): chrome.declarativeNetRequest.Redirect {
+  return { extensionPath: `/blocked.html?reason=${reason}` };
 }
 
 export function buildDnrRules(state: BlockerState): chrome.declarativeNetRequest.Rule[] {
@@ -67,24 +79,26 @@ export function buildDnrRules(state: BlockerState): chrome.declarativeNetRequest
     }
   }
 
-  const blockedPage: chrome.declarativeNetRequest.Redirect = { extensionPath: '/blocked.html' };
+  const blockedPageUrl = blockedPage('video');
+  const blockedChannelUrl = blockedPage('channel');
+  const blockedHandleUrl = blockedPage('handle');
 
   for (const videoId of state.rules.videoIds) {
     const value = videoId.trim();
     if (!value || value.startsWith('//')) continue;
-    push(videoIdPattern(value), blockedPage);
+    push(videoIdPattern(value), blockedPageUrl);
   }
 
   for (const channelId of state.rules.channelIds) {
     const value = channelId.trim();
     if (!value || value.startsWith('//')) continue;
-    push(channelIdPattern(value), blockedPage);
+    push(channelIdPattern(value), blockedChannelUrl);
   }
 
   for (const handle of state.rules.handles) {
     const value = normalizeHandle(handle);
     if (!value || value.startsWith('//')) continue;
-    push(handlePattern(value), blockedPage);
+    push(handlePattern(value), blockedHandleUrl);
   }
 
   return rules;

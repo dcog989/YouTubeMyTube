@@ -96,6 +96,11 @@ describe('areaForPath', () => {
     expect(areaForPath('/feed/trending/')).toBe('trendingPage');
     expect(areaForPath('/watch')).toBeNull();
   });
+
+  it('treats individual Shorts as the Shorts area', () => {
+    expect(areaForPath('/shorts/abcdefghijk')).toBe('shortsPage');
+    expect(areaForPath('/shorts/abcdefghijk/')).toBe('shortsPage');
+  });
 });
 
 describe('matchDirectNavigation', () => {

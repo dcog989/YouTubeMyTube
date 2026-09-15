@@ -32,9 +32,29 @@ describe('buildDnrRules', () => {
     expect(rules.every((rule) => rule.action.type === 'redirect')).toBe(true);
   });
 
-  it('redirects entity rules to the extension blocked page', () => {
+  it('redirects entity rules to the extension blocked page with a reason', () => {
     const rules = buildDnrRules(stateWith({ videoIds: ['abc'] }));
-    expect(rules[0]?.action.redirect?.extensionPath).toBe('/blocked.html');
+    expect(rules[0]?.action.redirect?.extensionPath).toBe('/blocked.html?reason=video');
+  });
+
+  it('uses a distinct reason per entity type', () => {
+    const rules = buildDnrRules(
+      stateWith({ videoIds: ['abc'], channelIds: ['UC123'], handles: ['SomeChannel'] }),
+    );
+    const reasons = rules.map((rule) => rule.action.redirect?.extensionPath);
+    expect(reasons).toEqual([
+      '/blocked.html?reason=video',
+      '/blocked.html?reason=channel',
+      '/blocked.html?reason=handle',
+    ]);
+  });
+
+  it('matches handles case-insensitively', () => {
+    const rules = buildDnrRules(stateWith({ handles: ['SomeChannel'] }));
+    const filter = rules[0]?.condition.regexFilter ?? '';
+    expect(new RegExp(filter).test('https://www.youtube.com/@somechannel')).toBe(true);
+    expect(new RegExp(filter).test('https://www.youtube.com/@SOMECHANNEL')).toBe(true);
+    expect(new RegExp(filter).test('https://www.youtube.com/@another')).toBe(false);
   });
 
   it('redirects area rules to the YouTube home page', () => {

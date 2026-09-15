@@ -204,9 +204,8 @@ export function areaForPath(pathname: string): AreaKey | null {
       return 'explorePage';
     case '/feed/subscriptions':
       return 'subscriptionsPage';
-    case '/shorts':
-      return 'shortsPage';
     default:
+      if (normalized === '/shorts' || normalized.startsWith('/shorts/')) return 'shortsPage';
       return null;
   }
 }

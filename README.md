@@ -13,7 +13,7 @@ Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarative
 - Optional content-area blocking (home feed, Trending, Explore, Subscriptions, comments, live chat, related videos).
 - Direct navigation to blocked content redirects to a block page.
 - Popup with a quick "block this video/channel" action.
-- Import/export settings; import from blocktube.
+- Import/export settings; additively import BlockTube backups (unsupported fields are reported, not dropped silently).
 - Light/dark/system theme.
 
 ## Install
@@ -60,6 +60,7 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 - DOM filtering can briefly render content before it is hidden; the network layer covers direct navigation instead.
 - The `declarativeNetRequest` rule count is capped (`MAX_DNR_RULES`); the DOM layer remains authoritative beyond that.
 - Comment filtering requires comments to be rendered.
+- BlockTube imports map filter lists, the Trending/Shorts toggles and the block message. BlockTube-only features (duration filters, advanced JavaScript blocking, autoplay/mix/movie options) are not imported and are listed in the import report.
 
 ## License
 

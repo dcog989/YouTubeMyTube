@@ -1,4 +1,4 @@
-import { STATE_KEY, STATE_VERSION } from './constants';
+import { STATE_VERSION } from './constants';
 import type { AreaFlags, BlockerState, FilterRules, Settings } from './types';
 
 export function defaultRules(): FilterRules {
@@ -109,8 +109,4 @@ export function ruleCount(state: BlockerState): number {
     rules.commentAuthors.length +
     rules.commentContents.length
   );
-}
-
-export function stateKey(): string {
-  return STATE_KEY;
 }

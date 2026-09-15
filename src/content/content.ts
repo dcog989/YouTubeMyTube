@@ -1,4 +1,4 @@
-import { BLOCKED_PAGE, YOUTUBE_HOME } from '../shared/constants';
+import { BLOCKED_PAGE, CONTEXT_REQUEST, YOUTUBE_HOME } from '../shared/constants';
 import { getRuntimeUrl, onLocalStorageChanged } from '../shared/ext';
 import {
   compileRules,
@@ -51,6 +51,14 @@ const TITLE_SELECTORS = [
 ];
 
 const CHANNEL_TEXT_SELECTORS = ['ytd-channel-name a', '#channel-name a', 'ytm-channel-name a'];
+
+const OWNER_SELECTORS = [
+  '#owner ytd-channel-name a',
+  'ytd-video-owner-renderer a[href]',
+  '#owner a[href]',
+  'ytm-slim-owner-renderer a[href]',
+  'ytm-video-owner-renderer a[href]',
+];
 
 const CARD_SELECTOR = ITEM_SELECTORS.join(',');
 const COMMENT_SELECTOR = COMMENT_SELECTORS.join(',');
@@ -136,6 +144,27 @@ function commentEntity(thread: Element): Entity {
 
 function hide(element: Element): void {
   element.classList.add(HIDDEN_CLASS);
+}
+
+function currentContext(): Entity {
+  const entity: Entity = {};
+  const page = parseYouTubeUrl(window.location.href);
+  if (page.videoId) entity.videoId = page.videoId;
+  if (page.channelId) entity.channelId = page.channelId;
+  if (page.handle) entity.handle = page.handle;
+
+  if (!entity.channelId && !entity.handle) {
+    for (const selector of OWNER_SELECTORS) {
+      const anchor = document.querySelector<HTMLAnchorElement>(selector);
+      if (!anchor) continue;
+      const parsed = parseYouTubeUrl(anchor.getAttribute('href') ?? '');
+      if (parsed.channelId) entity.channelId = parsed.channelId;
+      if (parsed.handle) entity.handle = parsed.handle;
+      if (entity.channelId || entity.handle) break;
+    }
+  }
+
+  return entity;
 }
 
 function clearHidden(): void {
@@ -239,10 +268,19 @@ function observe(): void {
   observer.observe(document.documentElement, { childList: true, subtree: true });
 }
 
+function listenForContextRequests(): void {
+  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (!message || typeof message !== 'object') return;
+    if ((message as { type?: unknown }).type !== CONTEXT_REQUEST) return;
+    sendResponse(currentContext());
+  });
+}
+
 async function init(): Promise<void> {
   applyState(await loadState());
   onLocalStorageChanged((value) => applyState(normalizeState(value)));
   observe();
+  listenForContextRequests();
   checkNavigation();
   window.addEventListener('yt-navigate-finish', () => {
     checkNavigation();

@@ -11,6 +11,7 @@
 - `src/shared/matcher.ts` — URL parsing and rule matching (pure, unit-tested).
 - `src/shared/dnr.ts` — generates declarativeNetRequest rules from state.
 - `src/shared/storage.ts` — rule model, defaults, normalization.
+- `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
 - `src/content/content.ts` — MutationObserver + CSS filtering engine.
 - `src/background/service-worker.ts` — keeps DNR rules in sync with storage.
 - `src/options/options.ts` — settings UI controller.

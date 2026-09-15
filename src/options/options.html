@@ -103,11 +103,17 @@
             <div class="data-actions">
               <button type="button" id="export" class="btn">Export settings</button>
               <button type="button" id="import" class="btn">Import settings</button>
+              <button type="button" id="import-blocktube" class="btn">Import BlockTube backup</button>
               <button type="button" id="reset" class="btn btn-danger">Reset all</button>
               <input id="import-file" type="file" accept="application/json" hidden />
+              <input id="import-blocktube-file" type="file" accept="application/json,.json" hidden />
             </div>
-            <div class="row-sub">Settings are stored locally in your browser.</div>
+            <div class="row-sub">
+              Settings are stored locally in your browser. BlockTube backups are merged into your
+              existing filters.
+            </div>
           </div>
+          <div id="import-status" class="test-result" hidden></div>
         </section>
       </main>
     </div>

@@ -1,3 +1,4 @@
+import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
 import {
   compileRules,
   matchDirectNavigation,
@@ -327,6 +328,45 @@ function importSettings(file: File): void {
   reader.readAsText(file);
 }
 
+function showImportStatus(message: string, ok: boolean): void {
+  const status = byId('import-status');
+  status.hidden = false;
+  status.textContent = message;
+  status.classList.toggle('is-allowed', ok);
+  status.classList.toggle('is-blocked', !ok);
+}
+
+function importBlockTube(file: File): void {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(String(reader.result));
+    } catch {
+      showImportStatus('That file is not valid JSON.', false);
+      return;
+    }
+
+    const result = parseBlockTubeBackup(parsed);
+    if (!result.ok) {
+      showImportStatus(result.error, false);
+      return;
+    }
+
+    const { state: merged, added } = mergeBlockTubeImport(draft, result.data);
+    draft = merged;
+    populate();
+    markDirty();
+
+    const filters = `${added} new filter${added === 1 ? '' : 's'}`;
+    const skipped = result.data.skipped.length
+      ? ` Skipped: ${result.data.skipped.join(', ')}.`
+      : '';
+    showImportStatus(`Imported ${filters} from BlockTube.${skipped}`, true);
+  };
+  reader.readAsText(file);
+}
+
 function wireStatic(): void {
   document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
     button.addEventListener('click', () => selectPanel(button.dataset.panel ?? 'general'));
@@ -370,6 +410,14 @@ function wireStatic(): void {
     const file = importFile.files?.[0];
     if (file) importSettings(file);
     importFile.value = '';
+  });
+
+  const blocktubeFile = byId<HTMLInputElement>('import-blocktube-file');
+  byId('import-blocktube').addEventListener('click', () => blocktubeFile.click());
+  blocktubeFile.addEventListener('change', () => {
+    const file = blocktubeFile.files?.[0];
+    if (file) importBlockTube(file);
+    blocktubeFile.value = '';
   });
 
   byId('reset').addEventListener('click', () => {

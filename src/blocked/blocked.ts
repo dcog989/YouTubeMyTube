@@ -1,13 +1,18 @@
 import { openOptionsPage } from '../shared/ext';
 import { loadState } from '../shared/state';
+import type { BlockerState } from '../shared/types';
 
 const REASON_LABELS: Record<string, string> = {
   video: 'This video is blocked.',
   channel: 'This channel is blocked.',
-  shorts: 'This Short is blocked.',
-  handle: 'This channel is blocked.',
   area: 'This page is blocked.',
 };
+
+function applyTheme(preference: BlockerState['settings']['theme']): void {
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const resolved = preference === 'system' ? (prefersDark ? 'dark' : 'light') : preference;
+  document.documentElement.dataset.theme = resolved;
+}
 
 function reasonFromQuery(): string {
   const params = new URLSearchParams(window.location.search);
@@ -23,6 +28,8 @@ async function render(): Promise<void> {
   const reason = reasonFromQuery();
   const label = primaryLabel(reason);
   const state = await loadState();
+
+  applyTheme(state.settings.theme);
 
   const title = document.getElementById('blocked-title');
   if (title) {
