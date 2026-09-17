@@ -1,5 +1,6 @@
 import { AREA_DEFINITIONS } from '../shared/areas';
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
+import { FILTER_DEFINITIONS } from '../shared/filters';
 import {
   compileRules,
   matchDirectNavigation,
@@ -11,58 +12,6 @@ import { defaultState, normalizeState } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
 import type { AreaKey, BlockerState, Entity, FilterRules } from '../shared/types';
 import { byId } from '../shared/ui';
-
-interface FilterListConfig {
-  key: keyof FilterRules;
-  title: string;
-  help: string;
-  placeholder: string;
-}
-
-const FILTER_LISTS: FilterListConfig[] = [
-  {
-    key: 'videoIds',
-    title: 'Video IDs',
-    help: 'Exact 11-character IDs, one per line. Blocks direct access and hides matching cards.',
-    placeholder: 'dQw4w9WgXcQ',
-  },
-  {
-    key: 'titles',
-    title: 'Video titles',
-    help: 'Keywords or /regex/flags patterns, one per line. Matched against card titles.',
-    placeholder: 'clickbait\n/\\bspoilers?\\b/i',
-  },
-  {
-    key: 'channelIds',
-    title: 'Channel IDs',
-    help: 'Exact channel IDs starting with UC, one per line.',
-    placeholder: 'UCxxxxxxxxxxxxxxxxxxxxxx',
-  },
-  {
-    key: 'handles',
-    title: 'Channel handles',
-    help: 'Handle names without the @, one per line.',
-    placeholder: 'somechannel',
-  },
-  {
-    key: 'channelNames',
-    title: 'Channel names',
-    help: 'Keywords or /regex/flags patterns, one per line. Matched against channel text.',
-    placeholder: 'Example Channel\n/\\bdrama\\b/i',
-  },
-  {
-    key: 'commentAuthors',
-    title: 'Comment authors',
-    help: 'Keywords, channel IDs, handles, or /regex/flags patterns for comment authors.',
-    placeholder: 'spammer',
-  },
-  {
-    key: 'commentContents',
-    title: 'Comment content',
-    help: 'Keywords or /regex/flags patterns, one per line. Matched against comment text.',
-    placeholder: '/free\\s+crypto/i',
-  },
-];
 
 const editors = new Map<keyof FilterRules, HTMLTextAreaElement>();
 const counters = new Map<keyof FilterRules, HTMLElement>();
@@ -157,7 +106,7 @@ function buildFilters(): void {
   const nav = byId('filter-nav');
   const host = byId('filter-editors');
 
-  FILTER_LISTS.forEach((config, index) => {
+  FILTER_DEFINITIONS.forEach((config, index) => {
     const navButton = document.createElement('button');
     navButton.type = 'button';
     navButton.className = `filter-nav-item${index === 0 ? ' is-active' : ''}`;
@@ -244,7 +193,7 @@ function populate(): void {
   byId<HTMLInputElement>('enabled').checked = draft.settings.enabled;
   byId<HTMLInputElement>('block-message').value = draft.settings.blockMessage;
 
-  for (const config of FILTER_LISTS) {
+  for (const config of FILTER_DEFINITIONS) {
     const editor = editors.get(config.key);
     if (editor) editor.value = arrayToLines(draft.rules[config.key]);
     updateCount(config.key);

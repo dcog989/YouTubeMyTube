@@ -1,18 +1,9 @@
+import { FILTER_DEFINITIONS } from './filters';
 import type { AreaFlags, BlockerState, FilterRules, Settings } from './types';
-
-export const FILTER_KEYS = [
-  'videoIds',
-  'channelIds',
-  'handles',
-  'channelNames',
-  'titles',
-  'commentAuthors',
-  'commentContents',
-] as const satisfies readonly (keyof FilterRules)[];
 
 export function defaultRules(): FilterRules {
   const rules = {} as FilterRules;
-  for (const key of FILTER_KEYS) rules[key] = [];
+  for (const { key } of FILTER_DEFINITIONS) rules[key] = [];
   return rules;
 }
 
@@ -56,7 +47,7 @@ function mergeRules(value: unknown): FilterRules {
   if (!value || typeof value !== 'object') return base;
   const record = value as Record<string, unknown>;
   const rules = {} as FilterRules;
-  for (const key of FILTER_KEYS) rules[key] = pickStringArray(record[key], base[key]);
+  for (const { key } of FILTER_DEFINITIONS) rules[key] = pickStringArray(record[key], base[key]);
   return rules;
 }
 
@@ -94,5 +85,5 @@ export function normalizeState(value: unknown): BlockerState {
 }
 
 export function ruleCount(state: BlockerState): number {
-  return FILTER_KEYS.reduce((sum, key) => sum + state.rules[key].length, 0);
+  return FILTER_DEFINITIONS.reduce((sum, { key }) => sum + state.rules[key].length, 0);
 }

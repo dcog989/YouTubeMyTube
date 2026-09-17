@@ -1,5 +1,6 @@
 import { AREA_DEFINITIONS, REDIRECT_AREAS } from './areas';
 import { YOUTUBE_HOSTS } from './constants';
+import { FILTER_DEFINITIONS } from './filters';
 import { formatReason } from './reason';
 import type {
   AreaFlags,
@@ -94,15 +95,17 @@ function toHandleSet(entries: string[]): Set<string> {
 }
 
 export function compileRules(rules: FilterRules): CompiledRules {
-  return {
-    videoIds: toIdSet(rules.videoIds),
-    channelIds: toIdSet(rules.channelIds),
-    handles: toHandleSet(rules.handles),
-    channelNames: compilePatterns(rules.channelNames),
-    titles: compilePatterns(rules.titles),
-    commentAuthors: compilePatterns(rules.commentAuthors),
-    commentContents: compilePatterns(rules.commentContents),
-  };
+  const compiled = {} as Record<keyof FilterRules, Set<string> | CompiledPattern[]>;
+  for (const def of FILTER_DEFINITIONS) {
+    const entries = rules[def.key];
+    compiled[def.key] =
+      def.match === 'pattern'
+        ? compilePatterns(entries)
+        : def.match === 'handle'
+          ? toHandleSet(entries)
+          : toIdSet(entries);
+  }
+  return compiled as CompiledRules;
 }
 
 export function hasCommentRules(rules: CompiledRules): boolean {
@@ -116,29 +119,20 @@ export function isRulePresent(rules: FilterRules, key: keyof FilterRules, value:
 }
 
 export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
-  if (entity.videoId && rules.videoIds.has(entity.videoId)) {
-    return { blocked: true, reason: formatReason('video', entity.videoId) };
-  }
-  if (entity.channelId && rules.channelIds.has(entity.channelId)) {
-    return { blocked: true, reason: formatReason('channel', entity.channelId) };
-  }
-  if (entity.handle && rules.handles.has(normalizeHandle(entity.handle))) {
-    return {
-      blocked: true,
-      reason: formatReason('handle', normalizeHandle(entity.handle)),
-    };
-  }
-  if (entity.channelName && matchesAny(rules.channelNames, entity.channelName)) {
-    return { blocked: true, reason: formatReason('channelName', entity.channelName) };
-  }
-  if (entity.title && matchesAny(rules.titles, entity.title)) {
-    return { blocked: true, reason: formatReason('title', entity.title) };
-  }
-  if (entity.commentAuthor && matchesAny(rules.commentAuthors, entity.commentAuthor)) {
-    return { blocked: true, reason: formatReason('commentAuthor', entity.commentAuthor) };
-  }
-  if (entity.commentContent && matchesAny(rules.commentContents, entity.commentContent)) {
-    return { blocked: true, reason: formatReason('commentContent') };
+  const compiled = rules as Record<keyof FilterRules, Set<string> | CompiledPattern[]>;
+  for (const def of FILTER_DEFINITIONS) {
+    const raw = entity[def.entityField];
+    if (!raw) continue;
+    if (def.match === 'pattern') {
+      if (matchesAny(compiled[def.key] as CompiledPattern[], raw)) {
+        return { blocked: true, reason: formatReason(def.reason, raw) };
+      }
+      continue;
+    }
+    const value = def.match === 'handle' ? normalizeHandle(raw) : raw;
+    if ((compiled[def.key] as Set<string>).has(value)) {
+      return { blocked: true, reason: formatReason(def.reason, value) };
+    }
   }
   return { blocked: false };
 }

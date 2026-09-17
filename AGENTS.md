@@ -30,8 +30,8 @@
 
 ### Common Patterns
 
-- Add a filter type: extend `FilterRules` in `src/shared/types.ts`, add a default in `src/shared/storage.ts`, add matcher logic in `src/shared/matcher.ts`, then declare it in `FILTER_LISTS` in `src/options/options.ts`.
-- Add a content area: extend `AreaFlags`, wire an `AREA_CLASSES` entry in `src/content/content.ts` and a selector in `src/content/content.css`; use `NAVIGABLE_AREAS` for redirect-style areas.
+- Add a filter type: extend `FilterRules` in `src/shared/types.ts` and add one entry to `FILTER_META` in `src/shared/filters.ts` (match kind, entity field, reason kind, UI copy). Defaults, matching, and the options UI derive from it.
+- Add a content area: extend `AreaFlags` and add an entry to `AREA_DEFINITIONS` in `src/shared/areas.ts`; wire an `AREA_CLASSES` entry in `src/content/areas.ts` and a selector in `src/content/content.css`.
 - Add a browser: add `manifests/<browser>.json` and add the name to `SUPPORTED` in `esbuild.config.mjs`.
 - State access: load via `loadState()` / persist via `saveState()` in `src/shared/state.ts`; never write `chrome.storage` directly.
 
