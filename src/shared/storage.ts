@@ -1,16 +1,20 @@
 import { STATE_VERSION } from './constants';
 import type { AreaFlags, BlockerState, FilterRules, Settings } from './types';
 
+export const FILTER_KEYS = [
+  'videoIds',
+  'channelIds',
+  'handles',
+  'channelNames',
+  'titles',
+  'commentAuthors',
+  'commentContents',
+] as const satisfies readonly (keyof FilterRules)[];
+
 export function defaultRules(): FilterRules {
-  return {
-    videoIds: [],
-    channelIds: [],
-    handles: [],
-    channelNames: [],
-    titles: [],
-    commentAuthors: [],
-    commentContents: [],
-  };
+  const rules = {} as FilterRules;
+  for (const key of FILTER_KEYS) rules[key] = [];
+  return rules;
 }
 
 export function defaultAreas(): AreaFlags {
@@ -53,15 +57,9 @@ function mergeRules(value: unknown): FilterRules {
   const base = defaultRules();
   if (!value || typeof value !== 'object') return base;
   const record = value as Record<string, unknown>;
-  return {
-    videoIds: pickStringArray(record.videoIds, base.videoIds),
-    channelIds: pickStringArray(record.channelIds, base.channelIds),
-    handles: pickStringArray(record.handles, base.handles),
-    channelNames: pickStringArray(record.channelNames, base.channelNames),
-    titles: pickStringArray(record.titles, base.titles),
-    commentAuthors: pickStringArray(record.commentAuthors, base.commentAuthors),
-    commentContents: pickStringArray(record.commentContents, base.commentContents),
-  };
+  const rules = {} as FilterRules;
+  for (const key of FILTER_KEYS) rules[key] = pickStringArray(record[key], base[key]);
+  return rules;
 }
 
 function mergeAreas(value: unknown): AreaFlags {
@@ -99,14 +97,5 @@ export function normalizeState(value: unknown): BlockerState {
 }
 
 export function ruleCount(state: BlockerState): number {
-  const { rules } = state;
-  return (
-    rules.videoIds.length +
-    rules.channelIds.length +
-    rules.handles.length +
-    rules.channelNames.length +
-    rules.titles.length +
-    rules.commentAuthors.length +
-    rules.commentContents.length
-  );
+  return FILTER_KEYS.reduce((sum, key) => sum + state.rules[key].length, 0);
 }
