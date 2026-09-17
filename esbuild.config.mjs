@@ -10,7 +10,7 @@ import {
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build, context } from 'esbuild';
-import { generateIcons } from './scripts/gen-icons.mjs';
+import { generateIcons, ICON_SIZES } from './scripts/gen-icons.mjs';
 import { validateManifests } from './scripts/manifest-check.mjs';
 import { createZip } from './scripts/zip.mjs';
 
@@ -118,7 +118,10 @@ function esbuildOptions(browser, name) {
 async function main() {
   validateManifests(ROOT, SUPPORTED);
 
-  if (!existsSync(resolve(ROOT, 'assets/icons/128.png'))) {
+  const iconsReady = ICON_SIZES.every((size) =>
+    existsSync(resolve(ROOT, 'assets/icons', `${size}.png`)),
+  );
+  if (!iconsReady) {
     generateIcons();
   }
 

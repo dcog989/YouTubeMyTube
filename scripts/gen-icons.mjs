@@ -5,7 +5,7 @@ import { deflateSync } from 'node:zlib';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = resolve(ROOT, 'assets/icons');
-const SIZES = [16, 48, 128];
+export const ICON_SIZES = [16, 48, 128];
 const SUPERSAMPLE = 4;
 
 const CRC_TABLE = (() => {
@@ -132,10 +132,10 @@ function renderIcon(size) {
 
 export function generateIcons() {
   mkdirSync(OUT_DIR, { recursive: true });
-  for (const size of SIZES) {
+  for (const size of ICON_SIZES) {
     writeFileSync(resolve(OUT_DIR, `${size}.png`), renderIcon(size));
   }
-  return SIZES.map((size) => resolve(OUT_DIR, `${size}.png`));
+  return ICON_SIZES.map((size) => resolve(OUT_DIR, `${size}.png`));
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
