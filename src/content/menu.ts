@@ -116,11 +116,6 @@ function createItem(action: MenuAction, style: MenuItemStyle): HTMLElement {
   label.textContent = action.label;
 
   item.append(createIcon(), label);
-  item.addEventListener('click', (event) => {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    activateItem(item);
-  });
   item.addEventListener('mouseenter', () => {
     item.style.backgroundColor = 'var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.2))';
   });
