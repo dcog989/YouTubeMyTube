@@ -21,7 +21,6 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "update": "bun update --latest",
-    "version": "cog bump --version",
     "watch": "node esbuild.config.mjs all --watch"
   },
   "devDependencies": {

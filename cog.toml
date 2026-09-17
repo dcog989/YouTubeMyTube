@@ -9,7 +9,9 @@ branch_whitelist = ["main"]
 pre = "alpha.*"
 skip_ci = "[skip ci]"
 skip_untracked = false
-pre_bump_hooks = []
+# `package.json` is the build's only version source (the manifests use a `__VERSION__`
+# placeholder), so bump it with cog's target version before the version commit is created.
+pre_bump_hooks = ["node scripts/sync-version.mjs {{version}}"]
 post_bump_hooks = []
 pre_package_bump_hooks = []
 post_package_bump_hooks = []

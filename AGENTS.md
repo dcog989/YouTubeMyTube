@@ -32,6 +32,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - `esbuild.config.mjs` — build/packaging for both browsers.
 - `scripts/manifest-check.mjs` — validates the shared fields of the Chrome/Firefox manifests (`validateManifests`).
 - `scripts/zip.mjs` — dependency-free ZIP writer for the store archives (`createZip`).
+- `scripts/sync-version.mjs` — writes cog's target version into `package.json` (the build's version source).
 - `scripts/gen-icons.mjs` — generates the PNG icons from a vector description.
 - `tests/` — Vitest suites for the pure logic.
 
@@ -42,6 +43,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - Test: `npm test`
 - Typecheck: `npm run typecheck`
 - Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`); validates manifest drift and writes store zips to `dist/`.
+- Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit.
 - Lint/Format: `npm run check` (Biome; `npm run check:fix` to write). Config: `biome.json`.
 - Commit messages: Conventional Commits, enforced by lefthook + cocogitto (`cog.toml`). Cocogitto is a system binary, not an npm dependency.
 
