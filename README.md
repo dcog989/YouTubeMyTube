@@ -13,6 +13,7 @@ Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarative
 - Optional content-area blocking (home feed, Trending, Explore, Subscriptions, comments, live chat, related videos).
 - Direct navigation to blocked content redirects to a block page.
 - Popup with a quick "block this video/channel" action.
+- "Block video" / "Block channel" entries injected into YouTube's own `...` menus on video cards and the watch-page action bar.
 - Import/export settings; BlockTube backups are auto-detected on import and merged additively (unsupported fields are reported, not dropped silently).
 - Light/dark/system theme.
 
@@ -21,8 +22,8 @@ Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarative
 Build and load unpacked:
 
 ```sh
-npm install
-npm run build
+bun install
+bun run build
 ```
 
 - Chrome: `chrome://extensions` → Developer mode → Load unpacked → `dist/chrome`.
@@ -31,16 +32,16 @@ npm run build
 ## Development
 
 ```sh
-npm run watch             # rebuild on change (both browsers)
-npm test                  # Vitest unit tests
-npm run typecheck         # tsc --noEmit
-npm run check             # Biome lint + format check
-npm run check:fix         # Biome lint + format, writing fixes
-npm run build:chrome
-npm run build:firefox
+bun run watch             # rebuild on change (both browsers)
+bun test                  # Vitest unit tests
+bun run typecheck         # tsc --noEmit
+bun run check             # Biome lint + format check
+bun run check:fix         # Biome lint + format, writing fixes
+bun run build:chrome
+bun run build:firefox
 ```
 
-`npm install` runs `prepare`, which installs the [lefthook](https://lefthook.dev) git hooks. The `pre-commit` hook runs Biome against staged files and the `commit-msg` hook enforces [Conventional Commits](https://www.conventionalcommits.org) via [cocogitto](https://docs.cocogitto.io) (`cog`). Cocogitto is a system binary, not an npm dependency; install it separately (e.g. `pacman -S cocogitto`, `cargo install cocogitto`, or your package manager).
+`bun install` runs `prepare`, which installs the [lefthook](https://lefthook.dev) git hooks. The `pre-commit` hook runs Biome against staged files and the `commit-msg` hook enforces [Conventional Commits](https://www.conventionalcommits.org) via [cocogitto](https://docs.cocogitto.io) (`cog`). Cocogitto is a system binary, not an bun dependency; install it separately (e.g. `pacman -S cocogitto`, `cargo install cocogitto`, or your package manager).
 
 ## Architecture
 
@@ -60,6 +61,7 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 - DOM filtering can briefly render content before it is hidden; the network layer covers direct navigation instead.
 - The `declarativeNetRequest` rule count is capped (`MAX_DNR_RULES`); the DOM layer remains authoritative beyond that.
 - Comment filtering requires comments to be rendered.
+- In-menu blocking is desktop-only and relies on YouTube's menu DOM; it may be affected by YouTube layout changes.
 - BlockTube imports map filter lists, the Trending/Shorts toggles and the block message. BlockTube-only features (duration filters, advanced JavaScript blocking, autoplay/mix/movie options) are not imported and are listed in the import report.
 
 ## License
