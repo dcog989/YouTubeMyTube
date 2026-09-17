@@ -7,6 +7,7 @@ import {
 } from '../shared/matcher';
 import { loadState, saveState } from '../shared/state';
 import { defaultState, normalizeState } from '../shared/storage';
+import { applyTheme } from '../shared/theme';
 import type { AreaKey, BlockerState, Entity, FilterRules } from '../shared/types';
 
 interface FilterListConfig {
@@ -119,12 +120,6 @@ function activeRuleCount(items: string[]): number {
 function setDirty(value: boolean): void {
   byId('dirty').hidden = !value;
   byId<HTMLButtonElement>('save').disabled = !value;
-}
-
-function applyTheme(preference: BlockerState['settings']['theme']): void {
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const resolved = preference === 'system' ? (prefersDark ? 'dark' : 'light') : preference;
-  document.documentElement.dataset.theme = resolved;
 }
 
 function updateCount(key: keyof FilterRules): void {

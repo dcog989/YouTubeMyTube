@@ -1,7 +1,7 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { openOptionsPage, requestSync } from '../shared/ext';
 import { loadState, saveState } from '../shared/state';
-import type { BlockerState } from '../shared/types';
+import { applyTheme } from '../shared/theme';
 import {
   entityUrlForReason,
   reasonDetail,
@@ -11,12 +11,6 @@ import {
 } from '../shared/unblock';
 
 const FALLBACK_MESSAGE = 'This content is blocked.';
-
-function applyTheme(preference: BlockerState['settings']['theme']): void {
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const resolved = preference === 'system' ? (prefersDark ? 'dark' : 'light') : preference;
-  document.documentElement.dataset.theme = resolved;
-}
 
 function reasonFromQuery(): string {
   const params = new URLSearchParams(window.location.search);

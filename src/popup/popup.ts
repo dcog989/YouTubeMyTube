@@ -3,6 +3,7 @@ import { openOptionsPage, queryActiveTab, sendTabMessage } from '../shared/ext';
 import { isRulePresent, parseYouTubeUrl } from '../shared/matcher';
 import { loadState, saveState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
+import { applyTheme } from '../shared/theme';
 import type { BlockerState, Entity } from '../shared/types';
 
 function byId<T extends HTMLElement>(id: string): T {
@@ -15,13 +16,6 @@ let state: BlockerState;
 let activeVideoId: string | null = null;
 let activeChannelId: string | null = null;
 let activeHandle: string | null = null;
-
-function applyTheme(): void {
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const preference = state.settings.theme;
-  const resolved = preference === 'system' ? (prefersDark ? 'dark' : 'light') : preference;
-  document.documentElement.dataset.theme = resolved;
-}
 
 function renderCounts(): void {
   const { rules } = state;
@@ -121,7 +115,7 @@ function registerHandlers(): void {
 
 async function init(): Promise<void> {
   state = await loadState();
-  applyTheme();
+  applyTheme(state.settings.theme);
   byId<HTMLInputElement>('enabled').checked = state.settings.enabled;
   renderCounts();
   registerHandlers();
