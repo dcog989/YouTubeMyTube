@@ -30,6 +30,7 @@ function redirectRule(
     },
     condition: {
       regexFilter,
+      isUrlFilterCaseSensitive: true,
       resourceTypes: ['main_frame' as chrome.declarativeNetRequest.ResourceType],
     },
   };
