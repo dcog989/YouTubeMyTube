@@ -20,6 +20,7 @@
     "release": "cog bump --auto",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch",
     "update": "bun update --latest",
     "watch": "node esbuild.config.mjs all --watch"
   },

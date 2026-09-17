@@ -41,7 +41,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - Install: `npm install` (or `bun install`); runs `prepare` → installs lefthook git hooks.
 - Dev: `npm run watch` (rebuilds bundles and re-copies HTML/CSS/manifests on change).
 - Test: `npm test`
-- Typecheck: `npm run typecheck`
+- Typecheck: `npm run typecheck` (or `npm run typecheck:watch` alongside `npm run watch`).
 - Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`); validates manifest drift and writes store zips to `dist/`.
 - Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit.
 - Lint/Format: `npm run check` (Biome, HTML included; `npm run check:fix` to write). Config: `biome.json`.
