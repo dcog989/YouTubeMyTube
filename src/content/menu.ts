@@ -95,6 +95,12 @@ function setCardHidden(card: HTMLElement, hidden: boolean): void {
   else card.style.removeProperty('display');
 }
 
+function pruneHiddenCards(): void {
+  for (const card of hiddenCards) {
+    if (!card.isConnected) hiddenCards.delete(card);
+  }
+}
+
 function closestAcrossShadow(element: Element, selector: string): Element | null {
   let current: Element | null = element;
   while (current) {
@@ -449,6 +455,7 @@ function attachMenuShadows(owner: Element): void {
 
 function flush(): void {
   scheduled = false;
+  pruneHiddenCards();
   const nodes = Array.from(pending);
   pending.clear();
 
