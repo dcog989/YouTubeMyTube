@@ -18,6 +18,14 @@ export function normalizeHandle(value: string): string {
   return value.trim().replace(/^@/, '').toLowerCase();
 }
 
+function safeDecode(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
 function matchesAny(patterns: CompiledPattern[], value: string): boolean {
   return patterns.some((pattern) => pattern.test(value));
 }
@@ -176,7 +184,7 @@ export function parseYouTubeUrl(href: string): ParsedUrl {
   if (match?.[1]) return { kind: 'channel', channelId: match[1] };
 
   match = /^\/@([^/?#]+)/.exec(path);
-  if (match?.[1]) return { kind: 'handle', handle: decodeURIComponent(match[1]) };
+  if (match?.[1]) return { kind: 'handle', handle: safeDecode(match[1]) };
 
   if (path === '/playlist') return { kind: 'playlist', ...(playlistId ? { playlistId } : {}) };
   if (path === '/results') return { kind: 'search' };
