@@ -129,7 +129,8 @@ function isSupportedPage(parsed: ParsedUrl, path: string): boolean {
     parsed.kind === 'handle' ||
     parsed.kind === 'video' ||
     parsed.kind === 'shorts' ||
-    parsed.kind === 'live'
+    parsed.kind === 'live' ||
+    parsed.kind === 'embed'
   );
 }
 
