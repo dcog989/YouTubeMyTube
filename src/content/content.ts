@@ -7,6 +7,7 @@ import {
   matchEntity,
   parseYouTubeUrl,
 } from '../shared/matcher';
+import { parseReason } from '../shared/reason';
 import { loadState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState, CompiledRules, ParsedUrl } from '../shared/types';
@@ -132,7 +133,7 @@ function applyState(next: BlockerState): void {
 }
 
 function redirectFor(reason: string): void {
-  if (reason.startsWith('area ')) {
+  if (parseReason(reason)?.kind === 'area') {
     window.location.replace(YOUTUBE_HOME);
     return;
   }
@@ -167,7 +168,7 @@ function evaluateBlocking(): void {
   const parsed = parseYouTubeUrl(window.location.href);
 
   const nav = matchDirectNavigation(parsed, path, compiled, state.areas);
-  if (nav.blocked && nav.reason?.startsWith('area ')) {
+  if (nav.blocked && nav.reason && parseReason(nav.reason)?.kind === 'area') {
     redirectFor(nav.reason);
     return;
   }

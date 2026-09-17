@@ -6,6 +6,7 @@ import {
   normalizeHandle,
   parseYouTubeUrl,
 } from '../shared/matcher';
+import { formatReason } from '../shared/reason';
 import { loadState, saveState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState, Entity, FilterRules } from '../shared/types';
@@ -478,7 +479,7 @@ async function applyAction(action: MenuAction, owner: Element | undefined): Prom
       setCardHidden(card, true);
       hiddenCards.add(card);
     } else if (isCurrentVideo) {
-      setPlayerBlank(true, `video id ${action.value}`);
+      setPlayerBlank(true, formatReason('video', action.value));
     }
   } else {
     if (card) {

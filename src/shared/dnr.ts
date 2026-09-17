@@ -1,5 +1,6 @@
 import { MAX_DNR_RULES, YOUTUBE_HOME } from './constants';
 import { escapeRegExp, normalizeHandle } from './matcher';
+import { formatReason } from './reason';
 import type { AreaFlags, BlockerState } from './types';
 
 const HOST = String.raw`https?://(?:www|m)\.youtube\.com`;
@@ -83,19 +84,19 @@ export function buildDnrRules(state: BlockerState): chrome.declarativeNetRequest
   for (const videoId of state.rules.videoIds) {
     const value = videoId.trim();
     if (!value || value.startsWith('//')) continue;
-    push(videoIdPattern(value), blockedPage(`video id ${value}`));
+    push(videoIdPattern(value), blockedPage(formatReason('video', value)));
   }
 
   for (const channelId of state.rules.channelIds) {
     const value = channelId.trim();
     if (!value || value.startsWith('//')) continue;
-    push(channelIdPattern(value), blockedPage(`channel id ${value}`));
+    push(channelIdPattern(value), blockedPage(formatReason('channel', value)));
   }
 
   for (const handle of state.rules.handles) {
     const value = normalizeHandle(handle);
     if (!value || value.startsWith('//')) continue;
-    push(handlePattern(value), blockedPage(`channel handle @${value}`));
+    push(handlePattern(value), blockedPage(formatReason('handle', value)));
   }
 
   return rules;

@@ -1,4 +1,5 @@
-import { HANDLE_PREFIX, YOUTUBE_HOSTS } from './constants';
+import { YOUTUBE_HOSTS } from './constants';
+import { formatReason } from './reason';
 import type {
   AreaFlags,
   AreaKey,
@@ -127,28 +128,28 @@ export function isRulePresent(rules: FilterRules, key: keyof FilterRules, value:
 
 export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
   if (entity.videoId && rules.videoIds.has(entity.videoId)) {
-    return { blocked: true, reason: `video id ${entity.videoId}` };
+    return { blocked: true, reason: formatReason('video', entity.videoId) };
   }
   if (entity.channelId && rules.channelIds.has(entity.channelId)) {
-    return { blocked: true, reason: `channel id ${entity.channelId}` };
+    return { blocked: true, reason: formatReason('channel', entity.channelId) };
   }
   if (entity.handle && rules.handles.has(normalizeHandle(entity.handle))) {
     return {
       blocked: true,
-      reason: `channel handle ${HANDLE_PREFIX}${normalizeHandle(entity.handle)}`,
+      reason: formatReason('handle', normalizeHandle(entity.handle)),
     };
   }
   if (entity.channelName && matchesAny(rules.channelNames, entity.channelName)) {
-    return { blocked: true, reason: `channel name "${entity.channelName}"` };
+    return { blocked: true, reason: formatReason('channelName', entity.channelName) };
   }
   if (entity.title && matchesAny(rules.titles, entity.title)) {
-    return { blocked: true, reason: `title "${entity.title}"` };
+    return { blocked: true, reason: formatReason('title', entity.title) };
   }
   if (entity.commentAuthor && matchesAny(rules.commentAuthors, entity.commentAuthor)) {
-    return { blocked: true, reason: `comment author "${entity.commentAuthor}"` };
+    return { blocked: true, reason: formatReason('commentAuthor', entity.commentAuthor) };
   }
   if (entity.commentContent && matchesAny(rules.commentContents, entity.commentContent)) {
-    return { blocked: true, reason: 'comment content' };
+    return { blocked: true, reason: formatReason('commentContent') };
   }
   return { blocked: false };
 }
@@ -232,17 +233,17 @@ export function matchDirectNavigation(
   areas: AreaFlags,
 ): MatchResult {
   if (parsed.videoId && rules.videoIds.has(parsed.videoId)) {
-    return { blocked: true, reason: `video id ${parsed.videoId}` };
+    return { blocked: true, reason: formatReason('video', parsed.videoId) };
   }
   if (parsed.channelId && rules.channelIds.has(parsed.channelId)) {
-    return { blocked: true, reason: `channel id ${parsed.channelId}` };
+    return { blocked: true, reason: formatReason('channel', parsed.channelId) };
   }
   if (parsed.handle && rules.handles.has(normalizeHandle(parsed.handle))) {
-    return { blocked: true, reason: `channel handle ${HANDLE_PREFIX}${parsed.handle}` };
+    return { blocked: true, reason: formatReason('handle', parsed.handle) };
   }
   const area = areaForPath(pathname);
   if (area && NAVIGABLE_AREAS.has(area) && areas[area]) {
-    return { blocked: true, reason: `area ${area}` };
+    return { blocked: true, reason: formatReason('area', area) };
   }
   return { blocked: false };
 }
