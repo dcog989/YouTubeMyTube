@@ -11,7 +11,7 @@ export function closestAcrossShadow(element: Element, selector: string): Element
 
 export function forEachShadowRoot(
   root: ParentNode,
-  visit: (shadow: ShadowRoot) => boolean | void,
+  visit: (shadow: ShadowRoot) => boolean | undefined,
 ): void {
   const iterate = (node: ParentNode): boolean => {
     const elements =
