@@ -27,7 +27,6 @@ export interface Settings {
 }
 
 export interface BlockerState {
-  version: number;
   rules: FilterRules;
   areas: AreaFlags;
   settings: Settings;

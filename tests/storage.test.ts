@@ -1,11 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { STATE_VERSION } from '../src/shared/constants';
 import { defaultState, normalizeState, ruleCount } from '../src/shared/storage';
 
 describe('defaultState', () => {
   it('starts empty, disabled areas and enabled blocking', () => {
     const state = defaultState();
-    expect(state.version).toBe(STATE_VERSION);
     expect(ruleCount(state)).toBe(0);
     expect(Object.values(state.areas).every((value) => value === false)).toBe(true);
     expect(state.settings.enabled).toBe(true);
@@ -45,10 +43,6 @@ describe('normalizeState', () => {
       defaultState().settings.blockMessage,
     );
     expect(normalizeState({ settings: { blockMessage: '' } }).settings.blockMessage).toBe('');
-  });
-
-  it('always stamps the current state version', () => {
-    expect(normalizeState({ version: 0 }).version).toBe(STATE_VERSION);
   });
 });
 

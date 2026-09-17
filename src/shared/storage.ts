@@ -1,4 +1,3 @@
-import { STATE_VERSION } from './constants';
 import type { AreaFlags, BlockerState, FilterRules, Settings } from './types';
 
 export const FILTER_KEYS = [
@@ -41,7 +40,6 @@ export function defaultSettings(): Settings {
 
 export function defaultState(): BlockerState {
   return {
-    version: STATE_VERSION,
     rules: defaultRules(),
     areas: defaultAreas(),
     settings: defaultSettings(),
@@ -89,7 +87,6 @@ export function normalizeState(value: unknown): BlockerState {
   if (!value || typeof value !== 'object') return defaultState();
   const record = value as Record<string, unknown>;
   return {
-    version: STATE_VERSION,
     rules: mergeRules(record.rules),
     areas: mergeAreas(record.areas),
     settings: mergeSettings(record.settings),
