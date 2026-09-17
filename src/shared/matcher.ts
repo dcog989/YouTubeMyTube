@@ -94,7 +94,7 @@ function toHandleSet(entries: string[]): Set<string> {
 }
 
 export function compileRules(rules: FilterRules): CompiledRules {
-  const compiled: CompiledRules = {
+  return {
     videoIds: toIdSet(rules.videoIds),
     channelIds: toIdSet(rules.channelIds),
     handles: toHandleSet(rules.handles),
@@ -102,19 +102,7 @@ export function compileRules(rules: FilterRules): CompiledRules {
     titles: compilePatterns(rules.titles),
     commentAuthors: compilePatterns(rules.commentAuthors),
     commentContents: compilePatterns(rules.commentContents),
-    isEmpty: false,
   };
-
-  compiled.isEmpty =
-    compiled.videoIds.size === 0 &&
-    compiled.channelIds.size === 0 &&
-    compiled.handles.size === 0 &&
-    compiled.channelNames.length === 0 &&
-    compiled.titles.length === 0 &&
-    compiled.commentAuthors.length === 0 &&
-    compiled.commentContents.length === 0;
-
-  return compiled;
 }
 
 export function hasCommentRules(rules: CompiledRules): boolean {

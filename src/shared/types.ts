@@ -81,7 +81,6 @@ export interface CompiledRules {
   titles: CompiledPattern[];
   commentAuthors: CompiledPattern[];
   commentContents: CompiledPattern[];
-  isEmpty: boolean;
 }
 
 export type AreaKey = keyof AreaFlags;

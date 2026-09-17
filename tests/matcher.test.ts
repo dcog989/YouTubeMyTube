@@ -68,7 +68,6 @@ describe('matchEntity', () => {
   it('drops malformed regex patterns', () => {
     const rules = compileRules({ ...defaultRules(), titles: ['/[unclosed/'] });
     expect(rules.titles).toHaveLength(0);
-    expect(rules.isEmpty).toBe(true);
   });
 
   it('matches comment authors and content', () => {
@@ -80,11 +79,6 @@ describe('matchEntity', () => {
     expect(matchEntity({ commentAuthor: 'Spammer99' }, rules).blocked).toBe(true);
     expect(matchEntity({ commentContent: 'Get FREE CRYPTO now' }, rules).blocked).toBe(true);
     expect(matchEntity({ commentContent: 'Nice video' }, rules).blocked).toBe(false);
-  });
-
-  it('reports emptiness when no rules exist', () => {
-    expect(compileRules(defaultRules()).isEmpty).toBe(true);
-    expect(compileRules({ ...defaultRules(), videoIds: ['a'] }).isEmpty).toBe(false);
   });
 });
 
