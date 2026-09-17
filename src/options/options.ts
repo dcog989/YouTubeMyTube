@@ -97,8 +97,8 @@ const TEXTAREA_MIN_HEIGHT = 160;
 const TEXTAREA_BOTTOM_GAP = 32;
 
 let activeFilter: keyof FilterRules | null = null;
-let saved: BlockerState = defaultState();
 let draft: BlockerState = defaultState();
+let growScheduled = false;
 
 function linesToArray(text: string): string[] {
   return text
@@ -116,14 +116,9 @@ function activeRuleCount(items: string[]): number {
   return items.filter((item) => item && !item.startsWith('//')).length;
 }
 
-function isDirty(): boolean {
-  return JSON.stringify(draft) !== JSON.stringify(saved);
-}
-
-function markDirty(): void {
-  const dirty = isDirty();
-  byId('dirty').hidden = !dirty;
-  byId<HTMLButtonElement>('save').disabled = !dirty;
+function setDirty(value: boolean): void {
+  byId('dirty').hidden = !value;
+  byId<HTMLButtonElement>('save').disabled = !value;
 }
 
 function applyTheme(preference: BlockerState['settings']['theme']): void {
@@ -155,6 +150,15 @@ function growActiveEditor(): void {
   const textarea = editors.get(activeFilter);
   if (!textarea || textarea.offsetParent === null) return;
   autoGrowTextarea(textarea);
+}
+
+function scheduleGrow(): void {
+  if (growScheduled) return;
+  growScheduled = true;
+  requestAnimationFrame(() => {
+    growScheduled = false;
+    growActiveEditor();
+  });
 }
 
 function selectPanel(name: string): void {
@@ -220,8 +224,8 @@ function buildFilters(): void {
     textarea.addEventListener('input', () => {
       draft.rules[config.key] = linesToArray(textarea.value);
       updateCount(config.key);
-      markDirty();
-      autoGrowTextarea(textarea);
+      setDirty(true);
+      scheduleGrow();
     });
 
     wrapper.append(head, help, textarea);
@@ -254,7 +258,7 @@ function buildAreas(): void {
     input.id = `area-${config.key}`;
     input.addEventListener('change', () => {
       draft.areas[config.key] = input.checked;
-      markDirty();
+      setDirty(true);
     });
     const slider = document.createElement('span');
     slider.className = 'slider';
@@ -367,7 +371,7 @@ function importSettings(file: File): void {
       const { state: merged, added } = mergeBlockTubeImport(draft, blocktube.data);
       draft = merged;
       populate();
-      markDirty();
+      setDirty(true);
       const filters = `${added} new filter${added === 1 ? '' : 's'}`;
       const skipped = blocktube.data.skipped.length
         ? ` Skipped: ${blocktube.data.skipped.join(', ')}.`
@@ -379,7 +383,7 @@ function importSettings(file: File): void {
     if (isBlockerState(parsed)) {
       draft = normalizeState(parsed);
       populate();
-      markDirty();
+      setDirty(true);
       showImportStatus('Imported YouTube Blocker settings.', true);
       return;
     }
@@ -406,26 +410,25 @@ function wireStatic(): void {
     draft.settings.theme = (event.target as HTMLSelectElement)
       .value as BlockerState['settings']['theme'];
     applyTheme(draft.settings.theme);
-    markDirty();
+    setDirty(true);
   });
 
   byId<HTMLInputElement>('enabled').addEventListener('change', (event) => {
     draft.settings.enabled = (event.target as HTMLInputElement).checked;
-    markDirty();
+    setDirty(true);
   });
 
   byId<HTMLInputElement>('block-message').addEventListener('input', (event) => {
     draft.settings.blockMessage = (event.target as HTMLInputElement).value;
-    markDirty();
+    setDirty(true);
   });
 
   byId('save').addEventListener('click', () => {
     void (async () => {
       draft = normalizeState(draft);
       await saveState(draft);
-      saved = structuredClone(draft);
       populate();
-      markDirty();
+      setDirty(false);
     })();
   });
 
@@ -446,25 +449,24 @@ function wireStatic(): void {
     if (!confirm('Reset all settings and filters?')) return;
     draft = defaultState();
     populate();
-    markDirty();
+    setDirty(true);
   });
 
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (draft.settings.theme === 'system') applyTheme('system');
   });
 
-  window.addEventListener('resize', growActiveEditor);
+  window.addEventListener('resize', scheduleGrow);
 }
 
 async function init(): Promise<void> {
-  saved = await loadState();
-  draft = structuredClone(saved);
+  draft = await loadState();
   buildFilters();
   buildAreas();
   wireStatic();
   applyTheme(draft.settings.theme);
   populate();
-  markDirty();
+  setDirty(false);
   selectPanel('general');
 }
 
