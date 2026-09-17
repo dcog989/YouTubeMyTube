@@ -6,6 +6,15 @@
 - Description: MV3 WebExtension that blocks YouTube videos, channels, users, Shorts and comments. DOM/CSS-first with declarativeNetRequest for direct navigation; no vendored YouTube internals or MAIN-world monkey-patching.
 - Tech: TypeScript, esbuild, Vitest, Chrome/Firefox Manifest V3.
 
+### Architecture
+
+Two layers, no page injection:
+
+1. `declarativeNetRequest` rules (generated from state) redirect direct navigation to blocked videos, channels, handles and area pages. The background service worker reconciles them on every state change.
+2. A content script (isolated world) applies CSS classes and a `MutationObserver` to hide matching cards, channels and comments, and handles SPA navigation that DNR cannot see.
+
+Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the filter registry in `src/shared/filters.ts`; both are pure and unit-tested. The rule model, area definitions, reason wire format and DNR generation are in `src/shared/`. Content-script concerns are split under `src/content/` (wiring, filtering, areas, evaluation, menu).
+
 ### Key Files
 
 - `src/shared/matcher.ts` — URL parsing and rule matching (pure, unit-tested).
@@ -39,6 +48,19 @@
 - Add a content area: extend `AreaFlags` and add an entry to `AREA_DEFINITIONS` in `src/shared/areas.ts`; wire an `AREA_CLASSES` entry in `src/content/areas.ts` and a selector in `src/content/content.css`.
 - Add a browser: add `manifests/<browser>.json` and add the name to `SUPPORTED` in `esbuild.config.mjs`.
 - State access: load via `loadState()` / persist via `saveState()` in `src/shared/state.ts`; never write `chrome.storage` directly.
+
+### Filter Syntax
+
+One entry per line. Keywords match case-insensitively as substrings; `/pattern/flags` entries are treated as regular expressions. Lines starting with `//` are ignored. Global/sticky (`g`/`y`) flags are stripped before compiling.
+
+### Known Limitations
+
+- DOM filtering can briefly render content before it is hidden; the network layer covers direct navigation instead.
+- Cold direct navigation to blocked content redirects to the block page (`declarativeNetRequest`); the in-page full-screen channel overlay and player blanking apply to in-page/SPA navigation.
+- The `declarativeNetRequest` rule count is capped (`MAX_DNR_RULES`); the DOM layer remains authoritative beyond that.
+- Comment filtering requires comments to be rendered.
+- In-menu blocking is desktop-only and relies on YouTube's menu DOM; it may be affected by YouTube layout changes.
+- BlockTube imports map filter lists, the Trending/Shorts toggles and the block message. BlockTube-only features (duration filters, advanced JavaScript blocking, autoplay/mix/movie options) are not imported and are listed in the import report.
 
 ### File System Access
 

@@ -45,28 +45,6 @@ bun run build:firefox
 
 `bun install` runs `prepare`, which installs the [lefthook](https://lefthook.dev) git hooks. The `pre-commit` hook runs Biome against staged files and the `commit-msg` hook enforces [Conventional Commits](https://www.conventionalcommits.org) via [cocogitto](https://docs.cocogitto.io) (`cog`). Cocogitto is a system binary, not an bun dependency; install it separately (e.g. `pacman -S cocogitto`, `cargo install cocogitto`, or your package manager).
 
-## Architecture
-
-Two layers, no page injection:
-
-1. `declarativeNetRequest` rules (generated from settings) redirect direct navigation to blocked videos, channels, handles and area pages. These are reconciled by the background service worker whenever state changes.
-2. A content script (isolated world) applies CSS classes and a `MutationObserver` to hide matching cards, channels and comments. It also handles SPA navigation, which DNR cannot see.
-
-Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the filter registry in `src/shared/filters.ts`; both are pure and unit-tested. The rule model, area definitions and DNR generation are in `src/shared/`.
-
-### Filter syntax
-
-One entry per line. Keywords match case-insensitively as substrings; `/pattern/flags` entries are treated as regular expressions. Lines starting with `//` are ignored.
-
-## Limitations
-
-- DOM filtering can briefly render content before it is hidden; the network layer covers direct navigation instead.
-- Cold direct navigation to blocked content still redirects to the block page (`declarativeNetRequest`); the in-page full-screen channel overlay and player blanking apply to in-page/SPA navigation.
-- The `declarativeNetRequest` rule count is capped (`MAX_DNR_RULES`); the DOM layer remains authoritative beyond that.
-- Comment filtering requires comments to be rendered.
-- In-menu blocking is desktop-only and relies on YouTube's menu DOM; it may be affected by YouTube layout changes.
-- BlockTube imports map filter lists, the Trending/Shorts toggles and the block message. BlockTube-only features (duration filters, advanced JavaScript blocking, autoplay/mix/movie options) are not imported and are listed in the import report.
-
 ## License
 
 [GNU GPL-3.0](LICENSE).
