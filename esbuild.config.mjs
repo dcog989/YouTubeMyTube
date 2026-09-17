@@ -3,6 +3,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build, context } from 'esbuild';
 import { generateIcons } from './scripts/gen-icons.mjs';
+import { validateManifests } from './scripts/manifest-check.mjs';
+import { createZip } from './scripts/zip.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
@@ -74,6 +76,8 @@ function esbuildOptions(browser, name) {
 }
 
 async function main() {
+  validateManifests(ROOT, SUPPORTED);
+
   if (!existsSync(resolve(ROOT, 'assets/icons/128.png'))) {
     generateIcons();
   }
@@ -90,7 +94,10 @@ async function main() {
       console.log(`Watching ${browser} → ${distDir(browser)}`);
     } else {
       await Promise.all(names.map((name) => build(esbuildOptions(browser, name))));
+      const archive = resolve(ROOT, 'dist', `${pkg.name}-${browser}.zip`);
+      const { entries } = createZip(distDir(browser), archive);
       console.log(`Built ${browser} v${VERSION} → ${distDir(browser)}`);
+      console.log(`Packaged ${entries} files → ${archive}`);
     }
   }
 }

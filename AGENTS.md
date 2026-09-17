@@ -30,6 +30,9 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - `src/background/service-worker.ts` — keeps DNR rules in sync with storage.
 - `src/options/options.ts` — settings UI controller.
 - `esbuild.config.mjs` — build/packaging for both browsers.
+- `scripts/manifest-check.mjs` — validates the shared fields of the Chrome/Firefox manifests (`validateManifests`).
+- `scripts/zip.mjs` — dependency-free ZIP writer for the store archives (`createZip`).
+- `scripts/gen-icons.mjs` — generates the PNG icons from a vector description.
 - `tests/` — Vitest suites for the pure logic.
 
 ### Workflow
@@ -38,7 +41,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - Dev: `npm run watch`
 - Test: `npm test`
 - Typecheck: `npm run typecheck`
-- Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`)
+- Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`); validates manifest drift and writes store zips to `dist/`.
 - Lint/Format: `npm run check` (Biome; `npm run check:fix` to write). Config: `biome.json`.
 - Commit messages: Conventional Commits, enforced by lefthook + cocogitto (`cog.toml`). Cocogitto is a system binary, not an npm dependency.
 
