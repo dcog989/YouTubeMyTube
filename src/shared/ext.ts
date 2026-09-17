@@ -1,4 +1,4 @@
-import { SYNC_REQUEST } from './constants';
+import { STATE_KEY, SYNC_REQUEST } from './constants';
 
 type StorageItems = Record<string, unknown>;
 
@@ -53,7 +53,7 @@ export function requestSync(): Promise<void> {
 export function onLocalStorageChanged(listener: (newValue: unknown) => void): void {
   chrome.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== 'local') return;
-    const change = changes.state;
+    const change = changes[STATE_KEY];
     if (!change) return;
     listener(change.newValue);
   });

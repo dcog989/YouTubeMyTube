@@ -1,4 +1,4 @@
-import { SYNC_REQUEST } from '../shared/constants';
+import { STATE_KEY, SYNC_REQUEST } from '../shared/constants';
 import { buildDnrRules } from '../shared/dnr';
 import { getDynamicRules, updateDynamicRules } from '../shared/ext';
 import { ensureState, loadState } from '../shared/state';
@@ -20,7 +20,7 @@ chrome.runtime.onStartup.addListener(() => {
 });
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName !== 'local' || !changes.state) return;
+  if (areaName !== 'local' || !changes[STATE_KEY]) return;
   void syncDynamicRules();
 });
 
