@@ -2,6 +2,35 @@
   display: none !important;
 }
 
+.ytb-menu-item {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 16px;
+  color: var(--yt-spec-text-primary, inherit);
+  font-family: "Roboto", "Arial", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ytb-menu-item:hover,
+.ytb-menu-item:focus-visible {
+  background-color: var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.2));
+}
+
+.ytb-menu-item-icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin-right: 16px;
+  object-fit: contain;
+}
+
 html.ytb-hide-home ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
 html.ytb-hide-home ytd-browse[page-subtype="home"] ytd-feed-filter-chip-bar-renderer {
   display: none !important;

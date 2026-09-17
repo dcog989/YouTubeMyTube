@@ -9,59 +9,16 @@ import {
 } from '../shared/matcher';
 import { loadState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
-import type { BlockerState, CompiledRules, Entity } from '../shared/types';
+import type { BlockerState, CompiledRules } from '../shared/types';
+import {
+  CARD_SELECTOR,
+  COMMENT_SELECTOR,
+  cardEntity,
+  commentEntity,
+  currentContext,
+} from './entity';
+import { initMenuInjection } from './menu';
 
-const ITEM_SELECTORS = [
-  'ytd-rich-item-renderer',
-  'ytd-video-renderer',
-  'ytd-grid-video-renderer',
-  'ytd-compact-video-renderer',
-  'ytd-playlist-video-renderer',
-  'ytd-playlist-renderer',
-  'ytd-radio-renderer',
-  'ytd-reel-item-renderer',
-  'ytd-reel-video-renderer',
-  'ytd-channel-renderer',
-  'ytd-grid-channel-renderer',
-  'ytd-compact-channel-renderer',
-  'ytd-movie-renderer',
-  'ytd-compact-movie-renderer',
-  'yt-lockup-view-model',
-  'ytm-video-with-context-renderer',
-  'ytm-compact-video-renderer',
-  'ytm-video-renderer',
-  'ytm-reel-item-renderer',
-  'ytm-channel-renderer',
-  'ytm-compact-channel-renderer',
-];
-
-const COMMENT_SELECTORS = [
-  'ytd-comment-thread-renderer',
-  'ytd-comment-renderer',
-  'ytm-comment-thread-renderer',
-  'ytm-comment-renderer',
-];
-
-const TITLE_SELECTORS = [
-  '#video-title',
-  '#video-title-link',
-  'a#video-title',
-  '.yt-lockup-metadata-view-model__title',
-  'h3 a',
-];
-
-const CHANNEL_TEXT_SELECTORS = ['ytd-channel-name a', '#channel-name a', 'ytm-channel-name a'];
-
-const OWNER_SELECTORS = [
-  '#owner ytd-channel-name a',
-  'ytd-video-owner-renderer a[href]',
-  '#owner a[href]',
-  'ytm-slim-owner-renderer a[href]',
-  'ytm-video-owner-renderer a[href]',
-];
-
-const CARD_SELECTOR = ITEM_SELECTORS.join(',');
-const COMMENT_SELECTOR = COMMENT_SELECTORS.join(',');
 const HIDDEN_CLASS = 'ytb-hidden';
 
 const AREA_CLASSES: ReadonlyArray<readonly [string, keyof BlockerState['areas']]> = [
@@ -80,94 +37,8 @@ let checkedVideoId = '';
 let scheduled = false;
 const pending = new Set<Element>();
 
-function textOf(element: Element | null): string {
-  return (element?.textContent ?? '').replace(/\s+/g, ' ').trim();
-}
-
-function firstText(element: Element, selectors: string[]): string {
-  for (const selector of selectors) {
-    const found = element.querySelector(selector);
-    const value = textOf(found);
-    if (value) return value;
-  }
-  return '';
-}
-
-function titleOf(card: Element): string {
-  const titled = card.querySelector('a[title]');
-  const attr = titled?.getAttribute('title')?.trim();
-  if (attr) return attr;
-  const bySelector = firstText(card, TITLE_SELECTORS);
-  if (bySelector) return bySelector;
-  return textOf(card).slice(0, 300);
-}
-
-function cardEntity(card: Element): Entity {
-  const entity: Entity = {};
-  const anchors = card.querySelectorAll<HTMLAnchorElement>('a[href]');
-
-  for (const anchor of anchors) {
-    const parsed = parseYouTubeUrl(anchor.getAttribute('href') ?? '');
-    if (parsed.videoId && !entity.videoId) entity.videoId = parsed.videoId;
-    if (parsed.channelId && !entity.channelId) entity.channelId = parsed.channelId;
-    if (parsed.handle && !entity.handle) entity.handle = parsed.handle;
-  }
-
-  entity.title = titleOf(card);
-  const channelName = firstText(card, CHANNEL_TEXT_SELECTORS);
-  if (channelName) entity.channelName = channelName;
-
-  return entity;
-}
-
-function commentEntity(thread: Element): Entity {
-  const authorAnchor = thread.querySelector<HTMLAnchorElement>(
-    'a[href*="/channel/"], a[href^="/@"], a[href*="/@"]',
-  );
-  const parsed = authorAnchor
-    ? parseYouTubeUrl(authorAnchor.getAttribute('href') ?? '')
-    : undefined;
-
-  const entity: Entity = {};
-  if (parsed?.channelId) entity.channelId = parsed.channelId;
-  if (parsed?.handle) entity.handle = parsed.handle;
-
-  const authorText = textOf(thread.querySelector('#author-text')) || textOf(authorAnchor);
-  if (authorText) entity.commentAuthor = authorText;
-
-  const content =
-    textOf(thread.querySelector('#content-text')) ||
-    textOf(thread.querySelector('yt-attributed-string'));
-  if (content) entity.commentContent = content;
-
-  return entity;
-}
-
 function hide(element: Element): void {
   element.classList.add(HIDDEN_CLASS);
-}
-
-function currentContext(): Entity {
-  const entity: Entity = {};
-  const page = parseYouTubeUrl(window.location.href);
-  if (page.videoId) entity.videoId = page.videoId;
-  if (page.channelId) entity.channelId = page.channelId;
-  if (page.handle) entity.handle = page.handle;
-
-  if (!entity.channelId && !entity.handle) {
-    for (const selector of OWNER_SELECTORS) {
-      const anchor = document.querySelector<HTMLAnchorElement>(selector);
-      if (!anchor) continue;
-      const parsed = parseYouTubeUrl(anchor.getAttribute('href') ?? '');
-      if (parsed.channelId) entity.channelId = parsed.channelId;
-      if (parsed.handle) entity.handle = parsed.handle;
-      const name = textOf(anchor);
-      if (name) entity.channelName = name;
-      if (entity.channelId || entity.handle || entity.channelName) break;
-    }
-  }
-
-  return entity;
 }
 
 function clearHidden(): void {
@@ -301,6 +172,7 @@ async function init(): Promise<void> {
   onLocalStorageChanged((value) => applyState(normalizeState(value)));
   observe();
   listenForContextRequests();
+  initMenuInjection();
   checkNavigation();
   window.addEventListener('yt-navigate-finish', () => {
     checkNavigation();
