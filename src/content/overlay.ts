@@ -29,6 +29,7 @@ export interface ChannelOverlayInfo {
 let overlay: HTMLElement | null = null;
 let blankCover: HTMLElement | null = null;
 let blankObserver: ResizeObserver | null = null;
+let playerBox: HTMLElement | null = null;
 let currentKey = '';
 
 function deepQuery(selector: string): HTMLElement | null {
@@ -63,9 +64,16 @@ function findPlayerBox(): HTMLElement | null {
   return fallback;
 }
 
+function resolvePlayerBox(): HTMLElement | null {
+  if (playerBox?.isConnected) return playerBox;
+  const found = findPlayerBox();
+  playerBox = found && found.getBoundingClientRect().width > 0 ? found : null;
+  return found;
+}
+
 function placeCover(): void {
   if (!blankCover) return;
-  const box = findPlayerBox();
+  const box = resolvePlayerBox();
   if (!box) return;
   const rect = box.getBoundingClientRect();
   if (rect.width === 0 || rect.height === 0) return;
@@ -77,8 +85,8 @@ function placeCover(): void {
 
 function retryPlace(attempts: number): void {
   if (!blankCover) return;
-  placeCover();
-  const box = findPlayerBox();
+  const box = resolvePlayerBox();
+  if (box) placeCover();
   if (box && box.getBoundingClientRect().width > 0) return;
   if (attempts <= 0) return;
   requestAnimationFrame(() => retryPlace(attempts - 1));
@@ -87,7 +95,7 @@ function retryPlace(attempts: number): void {
 function watchCoverBox(): void {
   blankObserver?.disconnect();
   blankObserver = null;
-  const box = findPlayerBox();
+  const box = resolvePlayerBox();
   if (!box || typeof ResizeObserver === 'undefined') return;
   blankObserver = new ResizeObserver(() => placeCover());
   blankObserver.observe(box);
@@ -99,6 +107,7 @@ function removeBlankCover(): void {
   window.removeEventListener('scroll', placeCover, true);
   blankObserver?.disconnect();
   blankObserver = null;
+  playerBox = null;
   blankCover?.remove();
   blankCover = null;
 }
