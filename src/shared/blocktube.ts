@@ -21,7 +21,6 @@ export interface BlockTubeImport {
   areas: Partial<AreaFlags>;
   blockMessage: string | null;
   skipped: string[];
-  total: number;
 }
 
 export type BlockTubeParseResult =
@@ -117,11 +116,9 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
       ? optionData.block_message.trim()
       : null;
 
-  const total = Object.values(rules).reduce((sum, list) => sum + list.length, 0);
-
   return {
     ok: true,
-    data: { rules, areas, blockMessage, skipped: [...skipped], total },
+    data: { rules, areas, blockMessage, skipped: [...skipped] },
   };
 }
 
