@@ -52,7 +52,7 @@ Two layers, no page injection:
 1. `declarativeNetRequest` rules (generated from settings) redirect direct navigation to blocked videos, channels, handles and area pages. These are reconciled by the background service worker whenever state changes.
 2. A content script (isolated world) applies CSS classes and a `MutationObserver` to hide matching cards, channels and comments. It also handles SPA navigation, which DNR cannot see.
 
-Rule matching and URL parsing live in `src/shared/matcher.ts` and are pure and unit-tested. The rule model and DNR generation are in `src/shared/`.
+Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the filter registry in `src/shared/filters.ts`; both are pure and unit-tested. The rule model, area definitions and DNR generation are in `src/shared/`.
 
 ### Filter syntax
 
