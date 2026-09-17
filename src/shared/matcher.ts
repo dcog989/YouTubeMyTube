@@ -65,7 +65,7 @@ export function compilePatterns(entries: string[]): CompiledPattern[] {
     if (!parsed) continue;
     try {
       const regex = new RegExp(parsed.source, parsed.flags);
-      compiled.push({ raw, test: (value: string) => regex.test(value) });
+      compiled.push({ test: (value: string) => regex.test(value) });
     } catch {
       // Skip patterns that fail to compile.
     }

@@ -70,7 +70,6 @@ export interface ParsedUrl {
 }
 
 export interface CompiledPattern {
-  readonly raw: string;
   test(value: string): boolean;
 }
 
