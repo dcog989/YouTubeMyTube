@@ -5,12 +5,7 @@ import { loadState, saveState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
 import type { BlockerState, Entity } from '../shared/types';
-
-function byId<T extends HTMLElement>(id: string): T {
-  const element = document.getElementById(id);
-  if (!element) throw new Error(`Missing element #${id}`);
-  return element as T;
-}
+import { byId } from '../shared/ui';
 
 let state: BlockerState;
 let activeVideoId: string | null = null;

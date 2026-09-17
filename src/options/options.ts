@@ -10,6 +10,7 @@ import { loadState, saveState } from '../shared/state';
 import { defaultState, normalizeState } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
 import type { AreaKey, BlockerState, Entity, FilterRules } from '../shared/types';
+import { byId } from '../shared/ui';
 
 interface FilterListConfig {
   key: keyof FilterRules;
@@ -62,12 +63,6 @@ const FILTER_LISTS: FilterListConfig[] = [
     placeholder: '/free\\s+crypto/i',
   },
 ];
-
-function byId<T extends HTMLElement>(id: string): T {
-  const element = document.getElementById(id);
-  if (!element) throw new Error(`Missing element #${id}`);
-  return element as T;
-}
 
 const editors = new Map<keyof FilterRules, HTMLTextAreaElement>();
 const counters = new Map<keyof FilterRules, HTMLElement>();
