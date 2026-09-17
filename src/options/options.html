@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Blocker — Settings</title>
-    <link rel="icon" type="image/png" href="assets/icons/48.png" />
-    <link rel="stylesheet" href="options.css" />
+    <link rel="icon" type="image/png" href="assets/icons/48.png">
+    <link rel="stylesheet" href="options.css">
   </head>
   <body>
     <header class="app-header">
       <div class="header-inner">
         <div class="brand">
-          <img src="assets/icons/48.png" alt="" width="28" height="28" />
+          <img src="assets/icons/48.png" alt="" width="28" height="28">
           <span class="brand-name">YouTube Blocker</span>
         </div>
         <div class="header-actions">
@@ -48,13 +48,13 @@
                 <div class="row-sub">Turn all filtering on or off.</div>
               </div>
               <label class="switch" for="enabled" aria-label="Enable blocking">
-                <input type="checkbox" id="enabled" />
+                <input type="checkbox" id="enabled">
                 <span class="slider"></span>
               </label>
             </div>
             <div class="row">
               <label class="row-title" for="block-message">Blocked page message</label>
-              <input id="block-message" class="input" type="text" autocomplete="off" />
+              <input id="block-message" class="input" type="text" autocomplete="off">
               <div class="row-sub">Shown when a blocked video or channel is opened directly.</div>
             </div>
           </div>
@@ -79,7 +79,12 @@
           <div class="card">
             <label class="row-title" for="test-url">URL</label>
             <div class="test-row">
-              <input id="test-url" class="input" type="text" placeholder="https://www.youtube.com/watch?v=..." />
+              <input
+                id="test-url"
+                class="input"
+                type="text"
+                placeholder="https://www.youtube.com/watch?v=..."
+              >
               <button type="button" id="test-url-btn" class="btn">Test URL</button>
             </div>
           </div>
@@ -92,7 +97,7 @@
                 <option value="commentAuthor">Comment author</option>
                 <option value="commentContent">Comment content</option>
               </select>
-              <input id="test-text" class="input" type="text" placeholder="Some text" />
+              <input id="test-text" class="input" type="text" placeholder="Some text">
               <button type="button" id="test-text-btn" class="btn">Test text</button>
             </div>
           </div>
@@ -105,7 +110,7 @@
               <button type="button" id="export" class="btn">Export settings</button>
               <button type="button" id="import" class="btn">Import settings</button>
               <button type="button" id="reset" class="btn btn-danger">Reset all</button>
-              <input id="import-file" type="file" accept="application/json" hidden />
+              <input id="import-file" type="file" accept="application/json" hidden>
             </div>
             <div class="row-sub">
               Settings are stored locally in your browser. Import accepts YouTube Blocker settings

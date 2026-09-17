@@ -21,6 +21,12 @@
       "trailingCommas": "all"
     }
   },
+  "html": {
+    "experimentalFullSupportEnabled": true,
+    "formatter": {
+      "enabled": true
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {

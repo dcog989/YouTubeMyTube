@@ -44,7 +44,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - Typecheck: `npm run typecheck`
 - Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`); validates manifest drift and writes store zips to `dist/`.
 - Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit.
-- Lint/Format: `npm run check` (Biome; `npm run check:fix` to write). Config: `biome.json`.
+- Lint/Format: `npm run check` (Biome, HTML included; `npm run check:fix` to write). Config: `biome.json`.
 - Commit messages: Conventional Commits, enforced by lefthook + cocogitto (`cog.toml`). Cocogitto is a system binary, not an npm dependency.
 
 ### Common Patterns

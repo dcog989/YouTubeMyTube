@@ -1,22 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Blocker</title>
-    <link rel="stylesheet" href="popup.css" />
+    <link rel="stylesheet" href="popup.css">
   </head>
   <body>
     <div class="popup">
       <header class="popup-header">
-        <img src="assets/icons/48.png" alt="" width="22" height="22" />
+        <img src="assets/icons/48.png" alt="" width="22" height="22">
         <span>YouTube Blocker</span>
       </header>
 
       <div class="row row-between">
         <span class="row-title">Blocking</span>
         <label class="switch" for="enabled" aria-label="Blocking">
-          <input type="checkbox" id="enabled" />
+          <input type="checkbox" id="enabled">
           <span class="slider"></span>
         </label>
       </div>
@@ -24,8 +24,12 @@
       <div class="context" id="context" hidden>
         <div class="row-sub" id="context-label">On this page</div>
         <div class="context-actions">
-          <button type="button" id="block-video" class="btn btn-primary" hidden>Block this video</button>
-          <button type="button" id="block-channel" class="btn btn-primary" hidden>Block this channel</button>
+          <button type="button" id="block-video" class="btn btn-primary" hidden>
+            Block this video
+          </button>
+          <button type="button" id="block-channel" class="btn btn-primary" hidden>
+            Block this channel
+          </button>
         </div>
       </div>
 

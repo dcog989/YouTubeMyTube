@@ -74,16 +74,16 @@ export function computeItemStyle(container: MenuContainer): MenuItemStyle {
   let label: Element | null = null;
   let labelSize = 0;
 
-  container.querySelectorAll(MENU_ITEM_SELECTOR).forEach((item) => {
+  for (const item of container.querySelectorAll(MENU_ITEM_SELECTOR)) {
     box ??= item;
     const candidate = findLabelElement(item);
-    if (!candidate) return;
+    if (!candidate) continue;
     const size = Number.parseFloat(window.getComputedStyle(candidate).fontSize) || 0;
     if (size > labelSize) {
       labelSize = size;
       label = candidate;
     }
-  });
+  }
 
   if (box) {
     const boxElement = box.querySelector('tp-yt-paper-item, a') ?? box;
