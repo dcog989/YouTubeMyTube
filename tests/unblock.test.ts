@@ -9,7 +9,7 @@ import {
 } from '../src/shared/unblock';
 
 describe('ruleRefForReason', () => {
-  it('maps exact video, channel and handle reasons', () => {
+  it('maps exact video, channel, handle and channel-name reasons', () => {
     expect(ruleRefForReason('video id dQw4w9WgXcQ')).toEqual({
       key: 'videoIds',
       value: 'dQw4w9WgXcQ',
@@ -19,11 +19,14 @@ describe('ruleRefForReason', () => {
       key: 'handles',
       value: 'somechannel',
     });
+    expect(ruleRefForReason('channel name "drama"')).toEqual({
+      key: 'channelNames',
+      value: 'drama',
+    });
   });
 
   it('returns null for keyword and malformed reasons', () => {
     expect(ruleRefForReason('title "clickbait"')).toBeNull();
-    expect(ruleRefForReason('channel name "drama"')).toBeNull();
     expect(ruleRefForReason('area shortsPage')).toBeNull();
     expect(ruleRefForReason('channel handle @')).toBeNull();
   });

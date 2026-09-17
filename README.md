@@ -35,7 +35,7 @@ bun run build
 
 ```sh
 bun run watch             # rebuild JS + copy HTML/CSS/manifests on change (both browsers)
-bun test                  # Vitest unit tests
+bun run test              # Vitest unit tests
 bun run test:coverage     # Vitest with coverage report
 bun run test:e2e          # Playwright extension smoke test (needs dist/chrome)
 bun run typecheck         # tsc --noEmit
@@ -60,7 +60,7 @@ Set `SOURCE_DATE_EPOCH` for byte-reproducible archives, e.g. `SOURCE_DATE_EPOCH=
 
 ## Continuous integration
 
-`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests: frozen install, `check`, `typecheck`, unit tests, build, `web-ext lint`, `bun audit`, and artifact upload, followed by a Playwright smoke test that loads `dist/chrome` in Chromium and asserts the background service worker starts.
+`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests: frozen install, `check`, `typecheck`, unit tests with coverage thresholds, build, `web-ext lint`, `bun audit`, and artifact upload, followed by a Playwright smoke test that loads `dist/chrome` in Chromium and asserts the background service worker starts.
 
 ## Release and publishing
 

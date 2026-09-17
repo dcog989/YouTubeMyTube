@@ -2,6 +2,11 @@ import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
 import { deflateRawSync } from 'node:zlib';
 
+/**
+ * @typedef {{ time: number, day: number }} DosStamp
+ * @typedef {{ path: string, name: string }} ZipEntry
+ */
+
 const LOCAL_HEADER_SIZE = 30;
 const CENTRAL_RECORD_SIZE = 46;
 const END_RECORD_SIZE = 22;
@@ -25,14 +30,23 @@ const CRC_TABLE = (() => {
   return table;
 })();
 
+/**
+ * @param {Buffer} buffer
+ * @returns {number}
+ */
 function crc32(buffer) {
   let crc = 0xffffffff;
   for (let i = 0; i < buffer.length; i += 1) {
-    crc = CRC_TABLE[(crc ^ buffer[i]) & 0xff] ^ (crc >>> 8);
+    crc = (CRC_TABLE[(crc ^ (buffer[i] ?? 0)) & 0xff] ?? 0) ^ (crc >>> 8);
   }
   return (crc ^ 0xffffffff) >>> 0;
 }
 
+/**
+ * @param {string} dir
+ * @param {string} [base]
+ * @returns {ZipEntry[]}
+ */
 function collectFiles(dir, base = dir) {
   const files = [];
   for (const name of readdirSync(dir).sort()) {
@@ -46,18 +60,33 @@ function collectFiles(dir, base = dir) {
   return files;
 }
 
+/**
+ * @param {Date} date
+ * @returns {DosStamp}
+ */
 function dosTimestamp(date) {
   const time = (date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1);
   const day = ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
   return { time, day };
 }
 
+/**
+ * @returns {Date}
+ */
 function archiveDate() {
   const epoch = Number.parseInt(process.env.SOURCE_DATE_EPOCH ?? '', 10);
   const date = Number.isFinite(epoch) ? new Date(epoch * 1000) : new Date();
   return date.getFullYear() < MIN_ZIP_YEAR ? new Date(MIN_ZIP_YEAR, 0, 1) : date;
 }
 
+/**
+ * @param {DosStamp} stamp
+ * @param {number} checksum
+ * @param {number} compressed
+ * @param {number} uncompressed
+ * @param {number} nameLength
+ * @returns {Buffer}
+ */
 function localHeader(stamp, checksum, compressed, uncompressed, nameLength) {
   const header = Buffer.alloc(LOCAL_HEADER_SIZE);
   header.writeUInt32LE(LOCAL_SIGNATURE, 0);
@@ -74,6 +103,15 @@ function localHeader(stamp, checksum, compressed, uncompressed, nameLength) {
   return header;
 }
 
+/**
+ * @param {DosStamp} stamp
+ * @param {number} checksum
+ * @param {number} compressed
+ * @param {number} uncompressed
+ * @param {number} nameLength
+ * @param {number} offset
+ * @returns {Buffer}
+ */
 function centralRecord(stamp, checksum, compressed, uncompressed, nameLength, offset) {
   const record = Buffer.alloc(CENTRAL_RECORD_SIZE);
   record.writeUInt32LE(CENTRAL_SIGNATURE, 0);
@@ -96,6 +134,11 @@ function centralRecord(stamp, checksum, compressed, uncompressed, nameLength, of
   return record;
 }
 
+/**
+ * @param {string} sourceDir
+ * @param {string} outFile
+ * @returns {{ entries: number, bytes: number }}
+ */
 export function createZip(sourceDir, outFile) {
   const stamp = dosTimestamp(archiveDate());
   const files = collectFiles(sourceDir);

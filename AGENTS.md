@@ -36,7 +36,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - `scripts/gen-icons.mjs` — generates the PNG icons from a vector description.
 - `tests/` — Vitest suites for the pure logic (`vitest.config.ts` limits the run to this directory).
 - `e2e/extension.spec.ts` — Playwright smoke test that loads `dist/chrome` and asserts the background service worker starts (`playwright.config.ts`).
-- `.github/workflows/ci.yml` — CI: install, check, typecheck, unit tests, build, `web-ext lint`, `bun audit`, artifacts, e2e.
+- `.github/workflows/ci.yml` — CI: install, check, typecheck, unit tests with coverage thresholds, build, `web-ext lint`, `bun audit`, artifacts, e2e.
 - `.github/workflows/release.yml` — tag-triggered AMO/Chrome Web Store publish and GitHub Release.
 - `renovate.json` — dependency update config.
 
@@ -44,8 +44,8 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 
 - Install: `npm install` (or `bun install`); runs `prepare` → installs lefthook git hooks.
 - Dev: `npm run watch` (rebuilds bundles and re-copies HTML/CSS/manifests on change).
-- Test: `npm test` (or `npm run test:coverage`); e2e: `npm run test:e2e` after `npm run build:chrome` and `bunx playwright install chromium`.
-- Typecheck: `npm run typecheck` (or `npm run typecheck:watch` alongside `npm run watch`).
+- Test: `npm test` (or `npm run test:coverage`, whose thresholds CI enforces); e2e: `npm run test:e2e` after `npm run build:chrome` and `bunx playwright install chromium`.
+- Typecheck: `npm run typecheck` (or `npm run typecheck:watch` alongside `npm run watch`); `checkJs` covers the `.mjs` build scripts too.
 - Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`); validates manifest drift and writes store zips to `dist/`. Set `SOURCE_DATE_EPOCH` for reproducible archives.
 - Lint: `npm run check` (Biome, HTML included; `npm run check:fix` to write). Config: `biome.json`. Firefox validation: `npm run lint:webext` (`web-ext lint`).
 - Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit. Pushing the tag publishes via `release.yml` (secrets listed in `README.md`).

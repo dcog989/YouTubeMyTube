@@ -2,6 +2,12 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 
+/**
+ * @typedef {Record<string, unknown> & {
+ *   content_scripts?: Array<Record<string, unknown>>;
+ * }} Manifest
+ */
+
 const SHARED_KEYS = [
   'manifest_version',
   'name',
@@ -17,16 +23,36 @@ const SHARED_KEYS = [
 
 const CONTENT_SCRIPT_KEYS = ['matches', 'js', 'css', 'run_at', 'all_frames'];
 
+/**
+ * @param {string} root
+ * @param {string} browser
+ * @returns {Manifest}
+ */
 function readManifest(root, browser) {
   return JSON.parse(readFileSync(resolve(root, 'manifests', `${browser}.json`), 'utf8'));
 }
 
+/**
+ * @param {string} label
+ * @param {string} referenceName
+ * @param {unknown} reference
+ * @param {string} otherName
+ * @param {unknown} other
+ * @returns {string}
+ */
 function mismatch(label, referenceName, reference, otherName, other) {
   const referenceValue = JSON.stringify(reference);
   const otherValue = JSON.stringify(other);
   return `${label}: ${referenceName}=${referenceValue} ${otherName}=${otherValue}`;
 }
 
+/**
+ * @param {Manifest} reference
+ * @param {string} referenceName
+ * @param {Manifest} other
+ * @param {string} otherName
+ * @returns {string[]}
+ */
 function compare(reference, referenceName, other, otherName) {
   const problems = [];
   for (const key of SHARED_KEYS) {
@@ -53,6 +79,10 @@ function compare(reference, referenceName, other, otherName) {
   return problems;
 }
 
+/**
+ * @param {string} root
+ * @param {string[]} browsers
+ */
 export function validateManifests(root, browsers) {
   const [referenceName, ...others] = browsers;
   if (!referenceName) return;

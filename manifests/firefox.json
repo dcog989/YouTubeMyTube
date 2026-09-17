@@ -44,7 +44,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "youtube-blocker@local",
-      "strict_min_version": "115.0"
+      "strict_min_version": "140.0"
     }
   }
 }

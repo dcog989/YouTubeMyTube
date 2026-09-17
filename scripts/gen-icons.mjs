@@ -20,14 +20,23 @@ const CRC_TABLE = (() => {
   return table;
 })();
 
+/**
+ * @param {Buffer} buffer
+ * @returns {number}
+ */
 function crc32(buffer) {
   let crc = 0xffffffff;
   for (let i = 0; i < buffer.length; i += 1) {
-    crc = CRC_TABLE[(crc ^ buffer[i]) & 0xff] ^ (crc >>> 8);
+    crc = (CRC_TABLE[(crc ^ (buffer[i] ?? 0)) & 0xff] ?? 0) ^ (crc >>> 8);
   }
   return (crc ^ 0xffffffff) >>> 0;
 }
 
+/**
+ * @param {string} type
+ * @param {Buffer} data
+ * @returns {Buffer}
+ */
 function chunk(type, data) {
   const length = Buffer.alloc(4);
   length.writeUInt32BE(data.length, 0);
@@ -37,6 +46,12 @@ function chunk(type, data) {
   return Buffer.concat([length, typeBuffer, data, crc]);
 }
 
+/**
+ * @param {number} width
+ * @param {number} height
+ * @param {Buffer} rgba
+ * @returns {Buffer}
+ */
 function encodePng(width, height, rgba) {
   const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
   const ihdr = Buffer.alloc(13);
@@ -61,6 +76,15 @@ function encodePng(width, height, rgba) {
   ]);
 }
 
+/**
+ * @param {number} px
+ * @param {number} py
+ * @param {number} ax
+ * @param {number} ay
+ * @param {number} bx
+ * @param {number} by
+ * @returns {number}
+ */
 function distanceToSegment(px, py, ax, ay, bx, by) {
   const dx = bx - ax;
   const dy = by - ay;
@@ -72,6 +96,10 @@ function distanceToSegment(px, py, ax, ay, bx, by) {
   return Math.hypot(px - cx, py - cy);
 }
 
+/**
+ * @param {number} size
+ * @returns {Buffer}
+ */
 function renderIcon(size) {
   const hi = size * SUPERSAMPLE;
   const hiBuf = new Uint8ClampedArray(hi * hi * 4);
@@ -113,10 +141,10 @@ function renderIcon(size) {
       for (let sy = 0; sy < SUPERSAMPLE; sy += 1) {
         for (let sx = 0; sx < SUPERSAMPLE; sx += 1) {
           const offset = ((y * SUPERSAMPLE + sy) * hi + (x * SUPERSAMPLE + sx)) * 4;
-          r += hiBuf[offset];
-          g += hiBuf[offset + 1];
-          b += hiBuf[offset + 2];
-          a += hiBuf[offset + 3];
+          r += hiBuf[offset] ?? 0;
+          g += hiBuf[offset + 1] ?? 0;
+          b += hiBuf[offset + 2] ?? 0;
+          a += hiBuf[offset + 3] ?? 0;
         }
       }
       const outOffset = (y * size + x) * 4;
@@ -130,6 +158,9 @@ function renderIcon(size) {
   return encodePng(size, size, out);
 }
 
+/**
+ * @returns {string[]}
+ */
 export function generateIcons() {
   mkdirSync(OUT_DIR, { recursive: true });
   for (const size of ICON_SIZES) {

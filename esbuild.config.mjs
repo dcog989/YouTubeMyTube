@@ -15,10 +15,12 @@ import { validateManifests } from './scripts/manifest-check.mjs';
 import { createZip } from './scripts/zip.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
+/** @type {{ name: string, version: string }} */
 const pkg = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
 const VERSION = pkg.version;
 const WATCH_DEBOUNCE_MS = 50;
 
+/** @type {Record<string, string>} */
 const ENTRIES = {
   background: 'src/background/service-worker.ts',
   content: 'src/content/content.ts',
@@ -27,6 +29,7 @@ const ENTRIES = {
   blocked: 'src/blocked/blocked.ts',
 };
 
+/** @type {Array<[string, string]>} */
 const STATIC_ASSETS = [
   ['src/content/content.css', 'content.css'],
   ['src/popup/popup.html', 'popup.html'],
@@ -48,10 +51,18 @@ if (browsers.length === 0) {
   process.exit(1);
 }
 
+/**
+ * @param {string} browser
+ * @returns {string}
+ */
 function distDir(browser) {
   return resolve(ROOT, 'dist', browser);
 }
 
+/**
+ * @param {string} browser
+ * @returns {string}
+ */
 function resolveManifest(browser) {
   return readFileSync(resolve(ROOT, 'manifests', `${browser}.json`), 'utf8').replaceAll(
     '__VERSION__',
@@ -59,6 +70,9 @@ function resolveManifest(browser) {
   );
 }
 
+/**
+ * @param {string} browser
+ */
 function copyStaticAssets(browser) {
   const outDir = distDir(browser);
   for (const [source, target] of STATIC_ASSETS) {
@@ -69,6 +83,9 @@ function copyStaticAssets(browser) {
   writeFileSync(resolve(outDir, 'manifest.json'), resolveManifest(browser));
 }
 
+/**
+ * @param {string} browser
+ */
 function prepareAssets(browser) {
   const outDir = distDir(browser);
   rmSync(outDir, { recursive: true, force: true });
@@ -76,6 +93,9 @@ function prepareAssets(browser) {
   copyStaticAssets(browser);
 }
 
+/**
+ * @param {string[]} targets
+ */
 function watchStaticAssets(targets) {
   const sources = [
     ...STATIC_ASSETS.map(([source]) => resolve(ROOT, source)),
@@ -84,7 +104,11 @@ function watchStaticAssets(targets) {
   const directories = new Set(sources.map((source) => dirname(source)));
   directories.add(resolve(ROOT, 'assets/icons'));
 
+  /** @type {ReturnType<typeof setTimeout> | null} */
   let pending = null;
+  /**
+   * @param {string} directory
+   */
   const resync = (directory) => {
     if (pending) clearTimeout(pending);
     pending = setTimeout(() => {
@@ -101,14 +125,21 @@ function watchStaticAssets(targets) {
   }
 }
 
+/**
+ * @param {string} browser
+ * @param {string} name
+ * @returns {import('esbuild').BuildOptions}
+ */
 function esbuildOptions(browser, name) {
+  const entry = ENTRIES[name];
+  if (!entry) throw new Error(`Unknown entry "${name}"`);
   return {
-    entryPoints: [resolve(ROOT, ENTRIES[name])],
+    entryPoints: [resolve(ROOT, entry)],
     outfile: resolve(distDir(browser), `${name}.js`),
     bundle: true,
     format: 'iife',
     platform: 'browser',
-    target: ['chrome110', 'firefox115'],
+    target: ['chrome140', 'firefox140'],
     sourcemap: watch ? 'inline' : false,
     minify: !watch,
     logLevel: 'info',
