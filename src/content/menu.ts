@@ -1,5 +1,11 @@
 import { getRuntimeUrl, onLocalStorageChanged } from '../shared/ext';
-import { compileRules, matchEntity, normalizeHandle, parseYouTubeUrl } from '../shared/matcher';
+import {
+  compileRules,
+  isRulePresent,
+  matchEntity,
+  normalizeHandle,
+  parseYouTubeUrl,
+} from '../shared/matcher';
 import { loadState, saveState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState, Entity, FilterRules } from '../shared/types';
@@ -130,12 +136,6 @@ function moveToEnd(host: MenuContainer, items: Element[]): void {
   const atEnd = host.lastElementChild === last && items.every((item) => item.parentNode === host);
   if (atEnd) return;
   for (const item of items) host.appendChild(item);
-}
-
-function isRulePresent(rules: FilterRules, key: keyof FilterRules, value: string): boolean {
-  const list = rules[key];
-  if (key === 'handles') return list.some((entry) => normalizeHandle(entry) === value);
-  return list.includes(value);
 }
 
 function pushAction(

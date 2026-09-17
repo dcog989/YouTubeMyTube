@@ -1,6 +1,6 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
 import { openOptionsPage, queryActiveTab, sendTabMessage } from '../shared/ext';
-import { parseYouTubeUrl } from '../shared/matcher';
+import { isRulePresent, parseYouTubeUrl } from '../shared/matcher';
 import { loadState, saveState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
 import type { BlockerState, Entity } from '../shared/types';
@@ -56,7 +56,7 @@ function renderContext(): void {
   videoButton.disabled = activeVideoId !== null && state.rules.videoIds.includes(activeVideoId);
   channelButton.disabled =
     (activeChannelId !== null && state.rules.channelIds.includes(activeChannelId)) ||
-    (activeHandle !== null && state.rules.handles.includes(activeHandle));
+    (activeHandle !== null && isRulePresent(state.rules, 'handles', activeHandle));
 }
 
 async function detectActiveTab(): Promise<void> {
@@ -103,7 +103,7 @@ function registerHandlers(): void {
   byId('block-channel').addEventListener('click', () => {
     if (activeChannelId && !state.rules.channelIds.includes(activeChannelId)) {
       state.rules.channelIds.push(activeChannelId);
-    } else if (activeHandle && !state.rules.handles.includes(activeHandle)) {
+    } else if (activeHandle && !isRulePresent(state.rules, 'handles', activeHandle)) {
       state.rules.handles.push(activeHandle);
     } else {
       return;

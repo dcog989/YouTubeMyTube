@@ -119,6 +119,12 @@ export function hasCommentRules(rules: CompiledRules): boolean {
   return rules.commentAuthors.length > 0 || rules.commentContents.length > 0;
 }
 
+export function isRulePresent(rules: FilterRules, key: keyof FilterRules, value: string): boolean {
+  const list = rules[key];
+  if (key === 'handles') return list.some((entry) => normalizeHandle(entry) === value);
+  return list.includes(value);
+}
+
 export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
   if (entity.videoId && rules.videoIds.has(entity.videoId)) {
     return { blocked: true, reason: `video id ${entity.videoId}` };
