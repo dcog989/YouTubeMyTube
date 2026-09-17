@@ -29,10 +29,14 @@ const AREA_CLASSES: ReadonlyArray<readonly [string, keyof BlockerState['areas']]
   ['ytb-hide-related', 'relatedVideos'],
 ];
 
+const EVALUATE_THROTTLE_MS = 150;
+
 let state: BlockerState | null = null;
 let compiled: CompiledRules | null = null;
 let processed = new WeakSet<Element>();
 let scheduled = false;
+let lastEvaluate = 0;
+let evaluatePending = false;
 const pending = new Set<Element>();
 
 function hide(element: Element): void {
@@ -75,7 +79,7 @@ function flushPending(): void {
   const nodes = Array.from(pending);
   pending.clear();
   for (const node of nodes) processSubtree(node);
-  evaluateBlocking();
+  scheduleEvaluate();
 }
 
 function schedule(root: Element): void {
@@ -83,6 +87,22 @@ function schedule(root: Element): void {
   if (scheduled) return;
   scheduled = true;
   queueMicrotask(flushPending);
+}
+
+function scheduleEvaluate(): void {
+  if (evaluatePending) return;
+  const elapsed = performance.now() - lastEvaluate;
+  if (elapsed >= EVALUATE_THROTTLE_MS) {
+    lastEvaluate = performance.now();
+    evaluateBlocking();
+    return;
+  }
+  evaluatePending = true;
+  setTimeout(() => {
+    evaluatePending = false;
+    lastEvaluate = performance.now();
+    evaluateBlocking();
+  }, EVALUATE_THROTTLE_MS - elapsed);
 }
 
 function rescan(): void {
@@ -94,7 +114,7 @@ function rescan(): void {
       document.querySelectorAll(COMMENT_SELECTOR).forEach(processNode);
     }
   }
-  evaluateBlocking();
+  scheduleEvaluate();
 }
 
 function applyAreas(): void {
