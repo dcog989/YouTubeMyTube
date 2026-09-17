@@ -1,3 +1,4 @@
+import { AREA_DEFINITIONS, REDIRECT_AREAS } from './areas';
 import { YOUTUBE_HOSTS } from './constants';
 import { formatReason } from './reason';
 import type {
@@ -202,28 +203,13 @@ export function parseYouTubeUrl(href: string): ParsedUrl {
   return { kind: 'other' };
 }
 
-const NAVIGABLE_AREAS: ReadonlySet<AreaKey> = new Set<AreaKey>([
-  'trendingPage',
-  'explorePage',
-  'subscriptionsPage',
-  'shortsPage',
-]);
-
 export function areaForPath(pathname: string): AreaKey | null {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
-  switch (normalized) {
-    case '/':
-      return 'homePage';
-    case '/feed/trending':
-      return 'trendingPage';
-    case '/feed/explore':
-      return 'explorePage';
-    case '/feed/subscriptions':
-      return 'subscriptionsPage';
-    default:
-      if (normalized === '/shorts' || normalized.startsWith('/shorts/')) return 'shortsPage';
-      return null;
+  for (const area of AREA_DEFINITIONS) {
+    if (!area.path) continue;
+    if (normalized === area.path || normalized.startsWith(`${area.path}/`)) return area.key;
   }
+  return null;
 }
 
 export function matchDirectNavigation(
@@ -242,7 +228,7 @@ export function matchDirectNavigation(
     return { blocked: true, reason: formatReason('handle', parsed.handle) };
   }
   const area = areaForPath(pathname);
-  if (area && NAVIGABLE_AREAS.has(area) && areas[area]) {
+  if (area && REDIRECT_AREAS.has(area) && areas[area]) {
     return { blocked: true, reason: formatReason('area', area) };
   }
   return { blocked: false };

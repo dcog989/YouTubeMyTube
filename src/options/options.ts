@@ -1,3 +1,4 @@
+import { AREA_DEFINITIONS } from '../shared/areas';
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
 import {
   compileRules,
@@ -15,12 +16,6 @@ interface FilterListConfig {
   title: string;
   help: string;
   placeholder: string;
-}
-
-interface AreaConfig {
-  key: AreaKey;
-  title: string;
-  sub: string;
 }
 
 const FILTER_LISTS: FilterListConfig[] = [
@@ -66,22 +61,6 @@ const FILTER_LISTS: FilterListConfig[] = [
     help: 'Keywords or /regex/flags patterns, one per line. Matched against comment text.',
     placeholder: '/free\\s+crypto/i',
   },
-];
-
-const AREAS: AreaConfig[] = [
-  { key: 'homePage', title: 'Home page', sub: 'Redirect the YouTube home feed.' },
-  { key: 'trendingPage', title: 'Trending page', sub: 'Redirect /feed/trending.' },
-  { key: 'explorePage', title: 'Explore page', sub: 'Redirect /feed/explore.' },
-  { key: 'subscriptionsPage', title: 'Subscriptions page', sub: 'Redirect /feed/subscriptions.' },
-  { key: 'shortsPage', title: 'Shorts pages', sub: 'Redirect /shorts and direct Short links.' },
-  { key: 'shortsShelf', title: 'Shorts shelves', sub: 'Hide Shorts carousels across the site.' },
-  {
-    key: 'commentsSection',
-    title: 'Comments section',
-    sub: 'Hide the comments area on watch pages.',
-  },
-  { key: 'liveChat', title: 'Live chat', sub: 'Hide the live chat frame.' },
-  { key: 'relatedVideos', title: 'Related videos', sub: 'Hide the watch-page sidebar.' },
 ];
 
 function byId<T extends HTMLElement>(id: string): T {
@@ -233,7 +212,7 @@ function buildFilters(): void {
 
 function buildAreas(): void {
   const host = byId('areas');
-  for (const config of AREAS) {
+  for (const config of AREA_DEFINITIONS) {
     const row = document.createElement('div');
     row.className = 'row row-between';
 

@@ -1,21 +1,10 @@
+import { AREA_DEFINITIONS } from './areas';
 import { MAX_DNR_RULES, YOUTUBE_HOME } from './constants';
 import { escapeRegExp, normalizeHandle } from './matcher';
 import { formatReason } from './reason';
-import type { AreaFlags, BlockerState } from './types';
+import type { BlockerState } from './types';
 
 const HOST = String.raw`https?://(?:www|m)\.youtube\.com`;
-
-const AREA_PATTERNS: Record<keyof AreaFlags, string | null> = {
-  homePage: null,
-  trendingPage: `${HOST}/feed/trending(?:[/?#]|$)`,
-  explorePage: `${HOST}/feed/explore(?:[/?#]|$)`,
-  subscriptionsPage: `${HOST}/feed/subscriptions(?:[/?#]|$)`,
-  shortsPage: `${HOST}/shorts(?:[/?#]|$)`,
-  shortsShelf: null,
-  commentsSection: null,
-  liveChat: null,
-  relatedVideos: null,
-};
 
 function redirectRule(
   id: number,
@@ -74,10 +63,9 @@ export function buildDnrRules(state: BlockerState): chrome.declarativeNetRequest
     nextId += 1;
   };
 
-  for (const key of Object.keys(AREA_PATTERNS) as (keyof AreaFlags)[]) {
-    const pattern = AREA_PATTERNS[key];
-    if (pattern && state.areas[key]) {
-      push(pattern, { url: YOUTUBE_HOME });
+  for (const area of AREA_DEFINITIONS) {
+    if (area.redirect && area.path && state.areas[area.key]) {
+      push(`${HOST}${area.path}(?:[/?#]|$)`, { url: YOUTUBE_HOME });
     }
   }
 
