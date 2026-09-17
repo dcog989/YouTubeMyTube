@@ -39,7 +39,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 ### Workflow
 
 - Install: `npm install` (or `bun install`); runs `prepare` → installs lefthook git hooks.
-- Dev: `npm run watch`
+- Dev: `npm run watch` (rebuilds bundles and re-copies HTML/CSS/manifests on change).
 - Test: `npm test`
 - Typecheck: `npm run typecheck`
 - Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`); validates manifest drift and writes store zips to `dist/`.

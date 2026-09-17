@@ -34,7 +34,7 @@ bun run build
 ## Development
 
 ```sh
-bun run watch             # rebuild on change (both browsers)
+bun run watch             # rebuild JS + copy HTML/CSS/manifests on change (both browsers)
 bun test                  # Vitest unit tests
 bun run typecheck         # tsc --noEmit
 bun run check             # Biome lint + format check

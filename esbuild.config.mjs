@@ -1,5 +1,13 @@
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import {
+  cpSync,
+  existsSync,
+  watch as fsWatch,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
+import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build, context } from 'esbuild';
 import { generateIcons } from './scripts/gen-icons.mjs';
@@ -9,6 +17,7 @@ import { createZip } from './scripts/zip.mjs';
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
 const VERSION = pkg.version;
+const WATCH_DEBOUNCE_MS = 50;
 
 const ENTRIES = {
   background: 'src/background/service-worker.ts',
@@ -43,22 +52,53 @@ function distDir(browser) {
   return resolve(ROOT, 'dist', browser);
 }
 
-function prepareAssets(browser) {
-  const outDir = distDir(browser);
-  rmSync(outDir, { recursive: true, force: true });
-  mkdirSync(outDir, { recursive: true });
+function resolveManifest(browser) {
+  return readFileSync(resolve(ROOT, 'manifests', `${browser}.json`), 'utf8').replaceAll(
+    '__VERSION__',
+    VERSION,
+  );
+}
 
+function copyStaticAssets(browser) {
+  const outDir = distDir(browser);
   for (const [source, target] of STATIC_ASSETS) {
     cpSync(resolve(ROOT, source), resolve(outDir, target));
   }
 
   cpSync(resolve(ROOT, 'assets/icons'), resolve(outDir, 'assets/icons'), { recursive: true });
+  writeFileSync(resolve(outDir, 'manifest.json'), resolveManifest(browser));
+}
 
-  const manifest = readFileSync(resolve(ROOT, 'manifests', `${browser}.json`), 'utf8').replaceAll(
-    '__VERSION__',
-    VERSION,
-  );
-  writeFileSync(resolve(outDir, 'manifest.json'), manifest);
+function prepareAssets(browser) {
+  const outDir = distDir(browser);
+  rmSync(outDir, { recursive: true, force: true });
+  mkdirSync(outDir, { recursive: true });
+  copyStaticAssets(browser);
+}
+
+function watchStaticAssets(targets) {
+  const sources = [
+    ...STATIC_ASSETS.map(([source]) => resolve(ROOT, source)),
+    ...targets.map((browser) => resolve(ROOT, 'manifests', `${browser}.json`)),
+  ];
+  const directories = new Set(sources.map((source) => dirname(source)));
+  directories.add(resolve(ROOT, 'assets/icons'));
+
+  let pending = null;
+  const resync = (directory) => {
+    if (pending) clearTimeout(pending);
+    pending = setTimeout(() => {
+      pending = null;
+      for (const browser of targets) {
+        copyStaticAssets(browser);
+      }
+      console.log(`Copied static assets after change in ${relative(ROOT, directory)}`);
+    }, WATCH_DEBOUNCE_MS);
+  };
+
+  for (const directory of directories) {
+    fsWatch(directory, () => resync(directory));
+  }
 }
 
 function esbuildOptions(browser, name) {
@@ -84,15 +124,21 @@ async function main() {
 
   for (const browser of browsers) {
     prepareAssets(browser);
-    const names = Object.keys(ENTRIES);
+  }
 
-    if (watch) {
-      const contexts = await Promise.all(
-        names.map((name) => context(esbuildOptions(browser, name))),
-      );
-      await Promise.all(contexts.map((ctx) => ctx.watch()));
+  const names = Object.keys(ENTRIES);
+
+  if (watch) {
+    const contexts = await Promise.all(
+      browsers.flatMap((browser) => names.map((name) => context(esbuildOptions(browser, name)))),
+    );
+    await Promise.all(contexts.map((ctx) => ctx.watch()));
+    watchStaticAssets(browsers);
+    for (const browser of browsers) {
       console.log(`Watching ${browser} → ${distDir(browser)}`);
-    } else {
+    }
+  } else {
+    for (const browser of browsers) {
       await Promise.all(names.map((name) => build(esbuildOptions(browser, name))));
       const archive = resolve(ROOT, 'dist', `${pkg.name}-${browser}.zip`);
       const { entries } = createZip(distDir(browser), archive);
