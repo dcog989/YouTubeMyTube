@@ -34,7 +34,8 @@ export function parsePattern(raw: string): ParsedPattern | null {
   const regexForm = /^\/(.*)\/([a-z]*)$/i.exec(trimmed);
   if (regexForm) {
     const source = regexForm[1] ?? '';
-    const flags = regexForm[2] && regexForm[2].length > 0 ? regexForm[2] : 'i';
+    // `g`/`y` are stateful with reused `test()` calls; drop them.
+    const flags = (regexForm[2] ?? '').replace(/[gy]/gi, '') || 'i';
     try {
       // Validate eagerly; invalid patterns are dropped.
       new RegExp(source, flags);
