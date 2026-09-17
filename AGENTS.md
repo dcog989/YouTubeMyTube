@@ -9,10 +9,15 @@
 ### Key Files
 
 - `src/shared/matcher.ts` — URL parsing and rule matching (pure, unit-tested).
+- `src/shared/filters.ts` — filter-type registry; drives compilation, matching and the options UI.
+- `src/shared/areas.ts` — content-area definitions and path mapping.
+- `src/shared/reason.ts` — block-reason wire format (format/parse).
 - `src/shared/dnr.ts` — generates declarativeNetRequest rules from state.
 - `src/shared/storage.ts` — rule model, defaults, normalization.
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
-- `src/content/content.ts` — MutationObserver + CSS filtering engine.
+- `src/content/content.ts` — content-script wiring (state lifecycle, observer, messaging).
+- `src/content/filter.ts` — card/comment DOM filtering engine.
+- `src/content/menu.ts` + `src/content/menu/` — in-page menu injection.
 - `src/background/service-worker.ts` — keeps DNR rules in sync with storage.
 - `src/options/options.ts` — settings UI controller.
 - `esbuild.config.mjs` — build/packaging for both browsers.
