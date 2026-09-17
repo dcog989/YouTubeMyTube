@@ -1,3 +1,5 @@
+import { SYNC_REQUEST } from './constants';
+
 type StorageItems = Record<string, unknown>;
 
 export function getStored<T>(key: string): Promise<T | undefined> {
@@ -40,6 +42,12 @@ export function sendTabMessage<T>(tabId: number, message: unknown): Promise<T | 
 
 export function openOptionsPage(): void {
   chrome.runtime.openOptionsPage();
+}
+
+export function requestSync(): Promise<void> {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: SYNC_REQUEST }, () => resolve());
+  });
 }
 
 export function onLocalStorageChanged(listener: (newValue: unknown) => void): void {

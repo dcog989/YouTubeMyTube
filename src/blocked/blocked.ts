@@ -1,12 +1,16 @@
-import { openOptionsPage } from '../shared/ext';
-import { loadState } from '../shared/state';
+import { YOUTUBE_HOME } from '../shared/constants';
+import { openOptionsPage, requestSync } from '../shared/ext';
+import { loadState, saveState } from '../shared/state';
 import type { BlockerState } from '../shared/types';
+import {
+  entityUrlForReason,
+  reasonDetail,
+  reasonLabel,
+  removeRule,
+  ruleRefForReason,
+} from '../shared/unblock';
 
-const REASON_LABELS: Record<string, string> = {
-  video: 'This video is blocked.',
-  channel: 'This channel is blocked.',
-  area: 'This page is blocked.',
-};
+const FALLBACK_MESSAGE = 'This content is blocked.';
 
 function applyTheme(preference: BlockerState['settings']['theme']): void {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -19,35 +23,50 @@ function reasonFromQuery(): string {
   return params.get('reason') ?? '';
 }
 
-function primaryLabel(reason: string): string | null {
-  const key = reason.split(' ')[0] ?? '';
-  return REASON_LABELS[key] ?? null;
-}
-
 async function render(): Promise<void> {
   const reason = reasonFromQuery();
-  const label = primaryLabel(reason);
   const state = await loadState();
 
   applyTheme(state.settings.theme);
 
   const title = document.getElementById('blocked-title');
   if (title) {
-    title.textContent = label ?? (state.settings.blockMessage || 'This content is blocked.');
+    title.textContent = reason
+      ? reasonLabel(reason, state.settings.blockMessage || FALLBACK_MESSAGE)
+      : state.settings.blockMessage || FALLBACK_MESSAGE;
   }
 
   const detail = document.getElementById('blocked-detail');
-  if (detail && reason) detail.textContent = reason;
+  if (detail && reason) detail.textContent = reasonDetail(reason);
 
   const backButton = document.getElementById('blocked-back');
   backButton?.addEventListener('click', () => {
     if (window.history.length > 1) window.history.back();
-    else window.location.replace('https://www.youtube.com/');
+    else window.location.replace(YOUTUBE_HOME);
   });
 
   document.getElementById('blocked-home')?.addEventListener('click', () => {
-    window.location.replace('https://www.youtube.com/');
+    window.location.replace(YOUTUBE_HOME);
   });
+
+  const removeButton = document.getElementById('blocked-remove');
+  const ref = reason ? ruleRefForReason(reason) : null;
+  if (removeButton) {
+    if (ref) {
+      removeButton.addEventListener('click', () => {
+        void (async () => {
+          const current = await loadState();
+          if (removeRule(current.rules, ref)) {
+            await saveState(current);
+            await requestSync();
+          }
+          window.location.replace(entityUrlForReason(reason) ?? YOUTUBE_HOME);
+        })();
+      });
+    } else {
+      removeButton.hidden = true;
+    }
+  }
 
   document.getElementById('blocked-options')?.addEventListener('click', () => {
     openOptionsPage();

@@ -1,0 +1,252 @@
+import { YOUTUBE_HOME } from '../shared/constants';
+import { getRuntimeUrl } from '../shared/ext';
+import { loadState, saveState } from '../shared/state';
+import { reasonDetail, removeRule, ruleRefForReason } from '../shared/unblock';
+
+const OVERLAY_CLASS = 'ytb-block-overlay';
+const VIDEO_BLANK_CLASS = 'ytb-blank-player';
+const LOGO_PATH = 'assets/icons/128.png';
+
+const PLAYER_BOX_SELECTORS = [
+  '#movie_player',
+  '.html5-video-player',
+  'video',
+  '#player-container-inner',
+  '#shorts-player',
+  'ytd-shorts ytd-player',
+  'ytd-reel-video-renderer[is-active] #player',
+  '#shorts-container',
+  '#player',
+  'ytd-player',
+];
+
+export interface ChannelOverlayInfo {
+  reason: string;
+  name?: string;
+  id?: string;
+}
+
+let overlay: HTMLElement | null = null;
+let blankCover: HTMLElement | null = null;
+let blankObserver: ResizeObserver | null = null;
+let currentKey = '';
+
+function deepQuery(selector: string): HTMLElement | null {
+  const direct = document.querySelector<HTMLElement>(selector);
+  if (direct) return direct;
+
+  const stack: ShadowRoot[] = [];
+  for (const element of document.querySelectorAll('*')) {
+    if (element.shadowRoot) stack.push(element.shadowRoot);
+  }
+  while (stack.length > 0) {
+    const root = stack.pop();
+    if (!root) continue;
+    const found = root.querySelector<HTMLElement>(selector);
+    if (found) return found;
+    for (const element of root.querySelectorAll('*')) {
+      if (element.shadowRoot) stack.push(element.shadowRoot);
+    }
+  }
+  return null;
+}
+
+function findPlayerBox(): HTMLElement | null {
+  let fallback: HTMLElement | null = null;
+  for (const selector of PLAYER_BOX_SELECTORS) {
+    const found = deepQuery(selector);
+    if (!found) continue;
+    const rect = found.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) return found;
+    fallback ??= found;
+  }
+  return fallback;
+}
+
+function placeCover(): void {
+  if (!blankCover) return;
+  const box = findPlayerBox();
+  if (!box) return;
+  const rect = box.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return;
+  blankCover.style.left = `${rect.left}px`;
+  blankCover.style.top = `${rect.top}px`;
+  blankCover.style.width = `${rect.width}px`;
+  blankCover.style.height = `${rect.height}px`;
+}
+
+function retryPlace(attempts: number): void {
+  if (!blankCover) return;
+  placeCover();
+  const box = findPlayerBox();
+  if (box && box.getBoundingClientRect().width > 0) return;
+  if (attempts <= 0) return;
+  requestAnimationFrame(() => retryPlace(attempts - 1));
+}
+
+function watchCoverBox(): void {
+  blankObserver?.disconnect();
+  blankObserver = null;
+  const box = findPlayerBox();
+  if (!box || typeof ResizeObserver === 'undefined') return;
+  blankObserver = new ResizeObserver(() => placeCover());
+  blankObserver.observe(box);
+}
+
+function removeBlankCover(): void {
+  document.removeEventListener('play', pauseVideo, true);
+  window.removeEventListener('resize', placeCover, true);
+  window.removeEventListener('scroll', placeCover, true);
+  blankObserver?.disconnect();
+  blankObserver = null;
+  blankCover?.remove();
+  blankCover = null;
+}
+
+function pauseVideo(event: Event): void {
+  const target = event.target;
+  if (target instanceof HTMLVideoElement) target.pause();
+}
+
+function pauseAll(): void {
+  document.querySelectorAll('video').forEach((video) => {
+    video.pause();
+  });
+}
+
+export function setPlayerBlank(blanked: boolean, reason?: string): void {
+  document.documentElement.classList.toggle(VIDEO_BLANK_CLASS, blanked);
+
+  if (!blanked) {
+    removeBlankCover();
+    return;
+  }
+
+  document.addEventListener('play', pauseVideo, true);
+  pauseAll();
+
+  if (!document.body) return;
+
+  if (!blankCover) {
+    blankCover = document.createElement('div');
+    blankCover.className = 'ytb-blank-cover';
+    document.body.appendChild(blankCover);
+    window.addEventListener('resize', placeCover, true);
+    window.addEventListener('scroll', placeCover, true);
+    retryPlace(10);
+  }
+
+  if (reason) renderBlankContent(blankCover, reason);
+  watchCoverBox();
+  placeCover();
+}
+
+export function clearChannelOverlay(): void {
+  overlay?.remove();
+  overlay = null;
+  currentKey = '';
+}
+
+export function clearFeedback(): void {
+  clearChannelOverlay();
+  setPlayerBlank(false);
+}
+
+function channelLabel(info: ChannelOverlayInfo): string {
+  const name = info.name?.trim() ?? '';
+  const id = info.id?.trim() ?? '';
+  if (name && id) return `${name} (${id})`;
+  return name || id;
+}
+
+function buildLogo(className: string): HTMLImageElement {
+  const logo = document.createElement('img');
+  logo.className = className;
+  logo.src = getRuntimeUrl(LOGO_PATH);
+  logo.alt = '';
+  return logo;
+}
+
+function buildActions(reason: string): HTMLElement {
+  const actions = document.createElement('div');
+  actions.className = 'ytb-block-actions';
+
+  const ref = ruleRefForReason(reason);
+
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.className = 'ytb-block-btn ytb-block-btn-primary ytb-block-remove';
+  remove.textContent = 'Remove from blocklist';
+  remove.hidden = ref === null;
+  remove.addEventListener('click', () => {
+    void (async () => {
+      if (!ref) return;
+      const current = await loadState();
+      if (removeRule(current.rules, ref)) await saveState(current);
+      clearFeedback();
+    })();
+  });
+
+  const home = document.createElement('button');
+  home.type = 'button';
+  home.className = 'ytb-block-btn ytb-block-home';
+  home.textContent = 'YouTube home';
+  home.addEventListener('click', () => {
+    window.location.href = YOUTUBE_HOME;
+  });
+
+  actions.append(remove, home);
+  return actions;
+}
+
+function buildOverlay(info: ChannelOverlayInfo): HTMLElement {
+  const root = document.createElement('div');
+  root.className = OVERLAY_CLASS;
+  root.setAttribute('data-ytb-reason', info.reason);
+
+  const title = document.createElement('h2');
+  title.className = 'ytb-block-title';
+  title.textContent = 'Blocked by YouTube Blocker';
+
+  const channel = document.createElement('p');
+  channel.className = 'ytb-block-channel';
+  channel.textContent = channelLabel(info);
+
+  const detail = document.createElement('p');
+  detail.className = 'ytb-block-detail';
+  detail.textContent = reasonDetail(info.reason);
+
+  root.append(buildLogo('ytb-block-logo'), title);
+  if (channel.textContent) root.append(channel);
+  root.append(detail, buildActions(info.reason));
+  return root;
+}
+
+function renderBlankContent(cover: HTMLElement, reason: string): void {
+  if (cover.dataset.reason === reason) return;
+  cover.dataset.reason = reason;
+
+  const title = document.createElement('h2');
+  title.className = 'ytb-blank-title';
+  title.textContent = 'Blocked by YouTube Blocker';
+
+  const detail = document.createElement('p');
+  detail.className = 'ytb-blank-detail';
+  detail.textContent = reasonDetail(reason);
+
+  cover.replaceChildren(buildLogo('ytb-blank-logo'), title, detail, buildActions(reason));
+}
+
+export function showChannelOverlay(info: ChannelOverlayInfo): void {
+  const host = document.body;
+  if (!host) return;
+
+  const key = `${info.reason}|${info.name ?? ''}|${info.id ?? ''}`;
+  if (overlay && currentKey === key && overlay.isConnected) return;
+  clearChannelOverlay();
+
+  const root = buildOverlay(info);
+  host.appendChild(root);
+  overlay = root;
+  currentKey = key;
+}

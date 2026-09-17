@@ -9,17 +9,17 @@ import {
 } from '../shared/matcher';
 import { loadState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
-import type { BlockerState, CompiledRules } from '../shared/types';
+import type { BlockerState, CompiledRules, ParsedUrl } from '../shared/types';
 import {
   CARD_SELECTOR,
   COMMENT_SELECTOR,
   cardEntity,
   commentEntity,
   currentContext,
+  HIDDEN_CLASS,
 } from './entity';
 import { initMenuInjection } from './menu';
-
-const HIDDEN_CLASS = 'ytb-hidden';
+import { clearChannelOverlay, clearFeedback, setPlayerBlank, showChannelOverlay } from './overlay';
 
 const AREA_CLASSES: ReadonlyArray<readonly [string, keyof BlockerState['areas']]> = [
   ['ytb-hide-home', 'homePage'],
@@ -32,8 +32,6 @@ const AREA_CLASSES: ReadonlyArray<readonly [string, keyof BlockerState['areas']]
 let state: BlockerState | null = null;
 let compiled: CompiledRules | null = null;
 let processed = new WeakSet<Element>();
-let lastHref = '';
-let checkedVideoId = '';
 let scheduled = false;
 const pending = new Set<Element>();
 
@@ -77,7 +75,7 @@ function flushPending(): void {
   const nodes = Array.from(pending);
   pending.clear();
   for (const node of nodes) processSubtree(node);
-  checkWatchChannel();
+  evaluateBlocking();
 }
 
 function schedule(root: Element): void {
@@ -90,12 +88,13 @@ function schedule(root: Element): void {
 function rescan(): void {
   clearHidden();
   processed = new WeakSet<Element>();
-  if (!state?.settings.enabled) return;
-  document.querySelectorAll(CARD_SELECTOR).forEach(processNode);
-  if (compiled && hasCommentRules(compiled)) {
-    document.querySelectorAll(COMMENT_SELECTOR).forEach(processNode);
+  if (state?.settings.enabled) {
+    document.querySelectorAll(CARD_SELECTOR).forEach(processNode);
+    if (compiled && hasCommentRules(compiled)) {
+      document.querySelectorAll(COMMENT_SELECTOR).forEach(processNode);
+    }
   }
-  checkWatchChannel();
+  evaluateBlocking();
 }
 
 function applyAreas(): void {
@@ -108,7 +107,6 @@ function applyAreas(): void {
 function applyState(next: BlockerState): void {
   state = next;
   compiled = compileRules(next.rules);
-  checkedVideoId = '';
   applyAreas();
   rescan();
 }
@@ -123,29 +121,65 @@ function redirectFor(reason: string): void {
   window.location.replace(url.toString());
 }
 
-function checkNavigation(): void {
-  if (!state || !compiled || !state.settings.enabled) return;
-  if (window.top !== window) return;
-  const href = window.location.href;
-  if (href === lastHref) return;
-  lastHref = href;
-  const parsed = parseYouTubeUrl(href);
-  const result = matchDirectNavigation(parsed, window.location.pathname, compiled, state.areas);
-  if (result.blocked && result.reason) redirectFor(result.reason);
+function isSupportedPage(parsed: ParsedUrl, path: string): boolean {
+  if (path === '/watch') return true;
+  if (path.startsWith('/shorts/')) return true;
+  return (
+    parsed.kind === 'channel' ||
+    parsed.kind === 'handle' ||
+    parsed.kind === 'video' ||
+    parsed.kind === 'shorts' ||
+    parsed.kind === 'live'
+  );
 }
 
-function checkWatchChannel(): void {
-  if (!state || !compiled || !state.settings.enabled) return;
+function evaluateBlocking(): void {
+  if (!state || !compiled) return;
   if (window.top !== window) return;
-  if (window.location.pathname !== '/watch') return;
 
-  const context = currentContext();
-  if (!context.videoId || context.videoId === checkedVideoId) return;
-  if (!context.channelId && !context.handle && !context.channelName) return;
-  checkedVideoId = context.videoId;
+  if (!state.settings.enabled) {
+    clearFeedback();
+    return;
+  }
 
-  const result = matchEntity(context, compiled);
-  if (result.blocked && result.reason) redirectFor(result.reason);
+  const path = window.location.pathname;
+  const parsed = parseYouTubeUrl(window.location.href);
+
+  const nav = matchDirectNavigation(parsed, path, compiled, state.areas);
+  if (nav.blocked && nav.reason?.startsWith('area ')) {
+    redirectFor(nav.reason);
+    return;
+  }
+
+  if (!isSupportedPage(parsed, path)) {
+    clearFeedback();
+    return;
+  }
+
+  const entity = currentContext();
+
+  const channel = matchEntity(
+    { channelId: entity.channelId, handle: entity.handle, channelName: entity.channelName },
+    compiled,
+  );
+  if (channel.blocked && channel.reason) {
+    setPlayerBlank(false);
+    showChannelOverlay({
+      reason: channel.reason,
+      name: entity.channelName,
+      id: entity.channelId ?? (entity.handle ? `@${entity.handle}` : undefined),
+    });
+    return;
+  }
+
+  const video = matchEntity({ videoId: entity.videoId }, compiled);
+  if (video.blocked && video.reason) {
+    clearChannelOverlay();
+    setPlayerBlank(true, video.reason);
+    return;
+  }
+
+  clearFeedback();
 }
 
 function observe(): void {
@@ -173,13 +207,10 @@ async function init(): Promise<void> {
   observe();
   listenForContextRequests();
   initMenuInjection();
-  checkNavigation();
   window.addEventListener('yt-navigate-finish', () => {
-    checkNavigation();
     rescan();
   });
   window.addEventListener('popstate', () => {
-    checkNavigation();
     rescan();
   });
 }

@@ -12,8 +12,10 @@ Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarative
 - Block Shorts, including shelves and direct links.
 - Optional content-area blocking (home feed, Trending, Explore, Subscriptions, comments, live chat, related videos).
 - Direct navigation to blocked content redirects to a block page.
+- Blocked channels show a full-screen overlay when you visit the channel or watch one of its videos, showing the channel name/ID, a YouTube home link and a "Remove from blocklist" button.
+- Blocked videos just blank the player (or hide the card), leaving the page usable.
 - Popup with a quick "block this video/channel" action.
-- "Block video" / "Block channel" entries injected into YouTube's own `...` menus on video cards and the watch-page action bar.
+- "Block video" / "Block channel" entries injected into YouTube's own `...` menus on video cards and the watch-page action bar; these become "Unblock ..." when the item is already blocked.
 - Import/export settings; BlockTube backups are auto-detected on import and merged additively (unsupported fields are reported, not dropped silently).
 - Light/dark/system theme.
 
@@ -59,6 +61,7 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 ## Limitations
 
 - DOM filtering can briefly render content before it is hidden; the network layer covers direct navigation instead.
+- Cold direct navigation to blocked content still redirects to the block page (`declarativeNetRequest`); the in-page full-screen channel overlay and player blanking apply to in-page/SPA navigation.
 - The `declarativeNetRequest` rule count is capped (`MAX_DNR_RULES`); the DOM layer remains authoritative beyond that.
 - Comment filtering requires comments to be rendered.
 - In-menu blocking is desktop-only and relies on YouTube's menu DOM; it may be affected by YouTube layout changes.

@@ -30,6 +30,12 @@ const FILTER_LISTS: FilterListConfig[] = [
     placeholder: 'dQw4w9WgXcQ',
   },
   {
+    key: 'titles',
+    title: 'Video titles',
+    help: 'Keywords or /regex/flags patterns, one per line. Matched against card titles.',
+    placeholder: 'clickbait\n/\\bspoilers?\\b/i',
+  },
+  {
     key: 'channelIds',
     title: 'Channel IDs',
     help: 'Exact channel IDs starting with UC, one per line.',
@@ -46,12 +52,6 @@ const FILTER_LISTS: FilterListConfig[] = [
     title: 'Channel names',
     help: 'Keywords or /regex/flags patterns, one per line. Matched against channel text.',
     placeholder: 'Example Channel\n/\\bdrama\\b/i',
-  },
-  {
-    key: 'titles',
-    title: 'Video titles',
-    help: 'Keywords or /regex/flags patterns, one per line. Matched against card titles.',
-    placeholder: 'clickbait\n/\\bspoilers?\\b/i',
   },
   {
     key: 'commentAuthors',

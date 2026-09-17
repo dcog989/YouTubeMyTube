@@ -34,18 +34,22 @@ describe('buildDnrRules', () => {
 
   it('redirects entity rules to the extension blocked page with a reason', () => {
     const rules = buildDnrRules(stateWith({ videoIds: ['abc'] }));
-    expect(rules[0]?.action.redirect?.extensionPath).toBe('/blocked.html?reason=video');
+    expect(decodeURIComponent(rules[0]?.action.redirect?.extensionPath ?? '')).toBe(
+      '/blocked.html?reason=video id abc',
+    );
   });
 
   it('uses a distinct reason per entity type', () => {
     const rules = buildDnrRules(
       stateWith({ videoIds: ['abc'], channelIds: ['UC123'], handles: ['SomeChannel'] }),
     );
-    const reasons = rules.map((rule) => rule.action.redirect?.extensionPath);
+    const reasons = rules.map((rule) =>
+      decodeURIComponent(rule.action.redirect?.extensionPath ?? ''),
+    );
     expect(reasons).toEqual([
-      '/blocked.html?reason=video',
-      '/blocked.html?reason=channel',
-      '/blocked.html?reason=handle',
+      '/blocked.html?reason=video id abc',
+      '/blocked.html?reason=channel id UC123',
+      '/blocked.html?reason=channel handle @somechannel',
     ]);
   });
 

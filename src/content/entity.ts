@@ -42,28 +42,99 @@ const TITLE_SELECTORS = [
 
 const CHANNEL_TEXT_SELECTORS = ['ytd-channel-name a', '#channel-name a', 'ytm-channel-name a'];
 
-const OWNER_SELECTORS = [
-  '#owner ytd-channel-name a',
-  'ytd-video-owner-renderer a[href]',
-  '#owner a[href]',
-  'ytm-slim-owner-renderer a[href]',
-  'ytm-video-owner-renderer a[href]',
+const OWNER_SCOPES = [
+  '#owner',
+  'ytd-watch-metadata #owner',
+  'ytd-video-owner-renderer',
+  '#upload-info',
+  'ytm-slim-owner-renderer',
+  'ytm-video-owner-renderer',
+];
+
+const CHANNEL_LINK_SELECTORS = [
+  'ytd-channel-name a[href]',
+  '#channel-name a[href]',
+  '#avatar-link[href]',
+  'a[href^="/@"]',
+  'a[href^="/channel/"]',
+  'link[itemprop="url"][href]',
+  'link[href^="/@"]',
+  'link[href^="/channel/"]',
+  'a[href]',
+  'link[href]',
+];
+
+const CHANNEL_PAGE_NAME_SELECTORS = [
+  '#channel-name #text',
+  '#channel-name yt-formatted-string',
+  'ytd-channel-name #text',
+  'ytd-channel-name yt-formatted-string',
+  'yt-channel-name',
 ];
 
 export const CARD_SELECTOR = ITEM_SELECTORS.join(',');
 export const COMMENT_SELECTOR = COMMENT_SELECTORS.join(',');
+export const HIDDEN_CLASS = 'ytb-hidden';
 
 function textOf(element: Element | null): string {
   return (element?.textContent ?? '').replace(/\s+/g, ' ').trim();
 }
 
-function firstText(element: Element, selectors: string[]): string {
+function firstText(element: ParentNode, selectors: string[]): string {
   for (const selector of selectors) {
     const found = element.querySelector(selector);
     const value = textOf(found);
     if (value) return value;
   }
   return '';
+}
+
+const METADATA_TEXT_SELECTORS = [
+  '.yt-content-metadata-view-model__metadata-text',
+  '.ytContentMetadataViewModelMetadataText',
+  '.ytAttributedStringHost',
+  '.yt-core-attributed-string',
+];
+
+const NON_CHANNEL_METADATA = /\bviews?\b|\bago\b|^[\d.,]+(?:\s*[KMB])?$/i;
+const CHANNEL_AVATAR_LABEL = /^Go to channel\s+/i;
+
+function metadataCandidates(root: ParentNode): Element[] {
+  const direct = Array.from(root.querySelectorAll(METADATA_TEXT_SELECTORS.join(',')));
+  if (direct.length > 0) return direct;
+
+  const found: Element[] = [];
+  const stack: ShadowRoot[] = [];
+  for (const element of root.querySelectorAll('*')) {
+    if (element.shadowRoot) stack.push(element.shadowRoot);
+  }
+  while (stack.length > 0) {
+    const shadow = stack.pop();
+    if (!shadow) continue;
+    shadow.querySelectorAll(METADATA_TEXT_SELECTORS.join(',')).forEach((element) => {
+      found.push(element);
+    });
+    for (const element of shadow.querySelectorAll('*')) {
+      if (element.shadowRoot) stack.push(element.shadowRoot);
+    }
+  }
+  return found;
+}
+
+function lockupChannelName(card: Element): string {
+  const model = card.querySelector('yt-content-metadata-view-model');
+  if (!model) return '';
+  for (const candidate of metadataCandidates(model)) {
+    const value = textOf(candidate);
+    if (value && !NON_CHANNEL_METADATA.test(value)) return value;
+  }
+  return '';
+}
+
+function channelAvatarLabel(card: Element): string {
+  const avatar = card.querySelector('[aria-label^="Go to channel "]');
+  const label = avatar?.getAttribute('aria-label') ?? '';
+  return label.replace(CHANNEL_AVATAR_LABEL, '').trim();
 }
 
 function titleOf(card: Element): string {
@@ -75,19 +146,46 @@ function titleOf(card: Element): string {
   return textOf(card).slice(0, 300);
 }
 
-export function cardEntity(card: Element): Entity {
-  const entity: Entity = {};
-  const anchors = card.querySelectorAll<HTMLAnchorElement>('a[href]');
+function shadowAnchors(root: Element): HTMLAnchorElement[] {
+  const anchors: HTMLAnchorElement[] = [];
+  const stack: ShadowRoot[] = [];
+  if (root.shadowRoot) stack.push(root.shadowRoot);
+  for (const element of root.querySelectorAll('*')) {
+    if (element.shadowRoot) stack.push(element.shadowRoot);
+  }
+  while (stack.length > 0) {
+    const shadow = stack.pop();
+    if (!shadow) continue;
+    shadow.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((anchor) => {
+      anchors.push(anchor);
+    });
+    for (const element of shadow.querySelectorAll('*')) {
+      if (element.shadowRoot) stack.push(element.shadowRoot);
+    }
+  }
+  return anchors;
+}
 
-  for (const anchor of anchors) {
+function applyAnchors(entity: Entity, anchors: ArrayLike<HTMLAnchorElement>): void {
+  for (const anchor of Array.from(anchors)) {
     const parsed = parseYouTubeUrl(anchor.getAttribute('href') ?? '');
     if (parsed.videoId && !entity.videoId) entity.videoId = parsed.videoId;
     if (parsed.channelId && !entity.channelId) entity.channelId = parsed.channelId;
     if (parsed.handle && !entity.handle) entity.handle = parsed.handle;
   }
+}
+
+export function cardEntity(card: Element): Entity {
+  const entity: Entity = {};
+  applyAnchors(entity, card.querySelectorAll<HTMLAnchorElement>('a[href]'));
+
+  if (!entity.videoId || (!entity.channelId && !entity.handle)) {
+    applyAnchors(entity, shadowAnchors(card));
+  }
 
   entity.title = titleOf(card);
-  const channelName = firstText(card, CHANNEL_TEXT_SELECTORS);
+  const fallbackName = channelAvatarLabel(card) || lockupChannelName(card);
+  const channelName = firstText(card, CHANNEL_TEXT_SELECTORS) || fallbackName;
   if (channelName) entity.channelName = channelName;
 
   return entity;
@@ -116,6 +214,17 @@ export function commentEntity(thread: Element): Entity {
   return entity;
 }
 
+function channelLinkIn(root: ParentNode): { channelId?: string; handle?: string } | null {
+  for (const selector of CHANNEL_LINK_SELECTORS) {
+    for (const link of root.querySelectorAll(selector)) {
+      const parsed = parseYouTubeUrl(link.getAttribute('href') ?? '');
+      if (parsed.channelId) return { channelId: parsed.channelId };
+      if (parsed.handle) return { handle: parsed.handle };
+    }
+  }
+  return null;
+}
+
 export function currentContext(): Entity {
   const entity: Entity = {};
   const page = parseYouTubeUrl(window.location.href);
@@ -124,15 +233,36 @@ export function currentContext(): Entity {
   if (page.handle) entity.handle = page.handle;
 
   if (!entity.channelId && !entity.handle) {
-    for (const selector of OWNER_SELECTORS) {
-      const anchor = document.querySelector<HTMLAnchorElement>(selector);
-      if (!anchor) continue;
-      const parsed = parseYouTubeUrl(anchor.getAttribute('href') ?? '');
-      if (parsed.channelId) entity.channelId = parsed.channelId;
-      if (parsed.handle) entity.handle = parsed.handle;
-      const name = textOf(anchor);
-      if (name) entity.channelName = name;
-      if (entity.channelId || entity.handle || entity.channelName) break;
+    for (const scopeSelector of OWNER_SCOPES) {
+      const scope = document.querySelector(scopeSelector);
+      if (!scope) continue;
+      const link = channelLinkIn(scope);
+      if (!link) continue;
+      if (link.channelId) entity.channelId = link.channelId;
+      if (link.handle) entity.handle = link.handle;
+      break;
+    }
+  }
+
+  if (!entity.channelId && !entity.handle) {
+    for (const selector of ['ytd-watch-metadata', 'ytd-video-primary-info-renderer']) {
+      const scope = document.querySelector(selector);
+      if (!scope) continue;
+      const link = channelLinkIn(scope);
+      if (!link) continue;
+      if (link.channelId) entity.channelId = link.channelId;
+      if (link.handle) entity.handle = link.handle;
+      break;
+    }
+  }
+
+  if (!entity.channelName) {
+    for (const selector of CHANNEL_PAGE_NAME_SELECTORS) {
+      const name = textOf(document.querySelector(selector));
+      if (name) {
+        entity.channelName = name;
+        break;
+      }
     }
   }
 

@@ -15,3 +15,4 @@ export const YOUTUBE_HOME = 'https://www.youtube.com/';
 export const MAX_DNR_RULES = 5000;
 
 export const CONTEXT_REQUEST = 'ytb:context';
+export const SYNC_REQUEST = 'ytb:sync';

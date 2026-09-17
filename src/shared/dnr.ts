@@ -57,7 +57,7 @@ function handlePattern(handle: string): string {
 }
 
 function blockedPage(reason: string): chrome.declarativeNetRequest.Redirect {
-  return { extensionPath: `/blocked.html?reason=${reason}` };
+  return { extensionPath: `/blocked.html?reason=${encodeURIComponent(reason)}` };
 }
 
 export function buildDnrRules(state: BlockerState): chrome.declarativeNetRequest.Rule[] {
@@ -79,26 +79,22 @@ export function buildDnrRules(state: BlockerState): chrome.declarativeNetRequest
     }
   }
 
-  const blockedPageUrl = blockedPage('video');
-  const blockedChannelUrl = blockedPage('channel');
-  const blockedHandleUrl = blockedPage('handle');
-
   for (const videoId of state.rules.videoIds) {
     const value = videoId.trim();
     if (!value || value.startsWith('//')) continue;
-    push(videoIdPattern(value), blockedPageUrl);
+    push(videoIdPattern(value), blockedPage(`video id ${value}`));
   }
 
   for (const channelId of state.rules.channelIds) {
     const value = channelId.trim();
     if (!value || value.startsWith('//')) continue;
-    push(channelIdPattern(value), blockedChannelUrl);
+    push(channelIdPattern(value), blockedPage(`channel id ${value}`));
   }
 
   for (const handle of state.rules.handles) {
     const value = normalizeHandle(handle);
     if (!value || value.startsWith('//')) continue;
-    push(handlePattern(value), blockedHandleUrl);
+    push(handlePattern(value), blockedPage(`channel handle @${value}`));
   }
 
   return rules;

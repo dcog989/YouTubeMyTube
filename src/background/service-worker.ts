@@ -1,3 +1,4 @@
+import { SYNC_REQUEST } from '../shared/constants';
 import { buildDnrRules } from '../shared/dnr';
 import { getDynamicRules, updateDynamicRules } from '../shared/ext';
 import { ensureState, loadState } from '../shared/state';
@@ -21,6 +22,13 @@ chrome.runtime.onStartup.addListener(() => {
 chrome.storage.onChanged.addListener((changes, areaName) => {
   if (areaName !== 'local' || !changes.state) return;
   void syncDynamicRules();
+});
+
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (!message || typeof message !== 'object') return;
+  if ((message as { type?: unknown }).type !== SYNC_REQUEST) return;
+  void syncDynamicRules().then(() => sendResponse({ ok: true }));
+  return true;
 });
 
 void ensureState().then(syncDynamicRules);
