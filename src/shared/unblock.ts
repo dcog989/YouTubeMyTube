@@ -37,7 +37,10 @@ export function ruleRefForReason(reason: string): RuleRef | null {
 
 export function removeRule(rules: FilterRules, ref: RuleRef): boolean {
   const list = rules[ref.key];
-  const index = list.indexOf(ref.value);
+  const index =
+    ref.key === 'handles'
+      ? list.findIndex((entry) => normalizeHandle(entry) === ref.value)
+      : list.indexOf(ref.value);
   if (index === -1) return false;
   list.splice(index, 1);
   return true;
