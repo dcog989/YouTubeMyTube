@@ -99,11 +99,20 @@ const METADATA_TEXT_SELECTORS = [
 const NON_CHANNEL_METADATA = /\bviews?\b|\bago\b|^[\d.,]+(?:\s*[KMB])?$/i;
 const CHANNEL_AVATAR_LABEL = /^Go to channel\s+/i;
 
-function metadataCandidates(root: ParentNode): Element[] {
-  const direct = Array.from(root.querySelectorAll(METADATA_TEXT_SELECTORS.join(',')));
-  if (direct.length > 0) return direct;
+const METADATA_SELECTOR = METADATA_TEXT_SELECTORS.join(',');
 
-  const found: Element[] = [];
+function firstChannelText(candidates: ArrayLike<Element>): string {
+  for (const candidate of Array.from(candidates)) {
+    const value = textOf(candidate);
+    if (value && !NON_CHANNEL_METADATA.test(value)) return value;
+  }
+  return '';
+}
+
+function metadataValue(root: ParentNode): string {
+  const direct = root.querySelectorAll(METADATA_SELECTOR);
+  if (direct.length > 0) return firstChannelText(direct);
+
   const stack: ShadowRoot[] = [];
   for (const element of root.querySelectorAll('*')) {
     if (element.shadowRoot) stack.push(element.shadowRoot);
@@ -111,24 +120,18 @@ function metadataCandidates(root: ParentNode): Element[] {
   while (stack.length > 0) {
     const shadow = stack.pop();
     if (!shadow) continue;
-    shadow.querySelectorAll(METADATA_TEXT_SELECTORS.join(',')).forEach((element) => {
-      found.push(element);
-    });
+    const value = firstChannelText(shadow.querySelectorAll(METADATA_SELECTOR));
+    if (value) return value;
     for (const element of shadow.querySelectorAll('*')) {
       if (element.shadowRoot) stack.push(element.shadowRoot);
     }
   }
-  return found;
+  return '';
 }
 
 function lockupChannelName(card: Element): string {
   const model = card.querySelector('yt-content-metadata-view-model');
-  if (!model) return '';
-  for (const candidate of metadataCandidates(model)) {
-    const value = textOf(candidate);
-    if (value && !NON_CHANNEL_METADATA.test(value)) return value;
-  }
-  return '';
+  return model ? metadataValue(model) : '';
 }
 
 function channelAvatarLabel(card: Element): string {
@@ -146,8 +149,22 @@ function titleOf(card: Element): string {
   return textOf(card).slice(0, 300);
 }
 
-function shadowAnchors(root: Element): HTMLAnchorElement[] {
-  const anchors: HTMLAnchorElement[] = [];
+function applyAnchor(entity: Entity, anchor: HTMLAnchorElement): void {
+  const parsed = parseYouTubeUrl(anchor.getAttribute('href') ?? '');
+  if (parsed.videoId && !entity.videoId) entity.videoId = parsed.videoId;
+  if (parsed.channelId && !entity.channelId) entity.channelId = parsed.channelId;
+  if (parsed.handle && !entity.handle) entity.handle = parsed.handle;
+}
+
+function applyAnchors(entity: Entity, anchors: ArrayLike<HTMLAnchorElement>): void {
+  for (const anchor of Array.from(anchors)) applyAnchor(entity, anchor);
+}
+
+function hasIdentity(entity: Entity): boolean {
+  return Boolean(entity.videoId) && Boolean(entity.channelId || entity.handle);
+}
+
+function applyShadowAnchors(entity: Entity, root: Element): void {
   const stack: ShadowRoot[] = [];
   if (root.shadowRoot) stack.push(root.shadowRoot);
   for (const element of root.querySelectorAll('*')) {
@@ -157,21 +174,12 @@ function shadowAnchors(root: Element): HTMLAnchorElement[] {
     const shadow = stack.pop();
     if (!shadow) continue;
     shadow.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((anchor) => {
-      anchors.push(anchor);
+      applyAnchor(entity, anchor);
     });
+    if (hasIdentity(entity)) return;
     for (const element of shadow.querySelectorAll('*')) {
       if (element.shadowRoot) stack.push(element.shadowRoot);
     }
-  }
-  return anchors;
-}
-
-function applyAnchors(entity: Entity, anchors: ArrayLike<HTMLAnchorElement>): void {
-  for (const anchor of Array.from(anchors)) {
-    const parsed = parseYouTubeUrl(anchor.getAttribute('href') ?? '');
-    if (parsed.videoId && !entity.videoId) entity.videoId = parsed.videoId;
-    if (parsed.channelId && !entity.channelId) entity.channelId = parsed.channelId;
-    if (parsed.handle && !entity.handle) entity.handle = parsed.handle;
   }
 }
 
@@ -179,9 +187,7 @@ export function cardEntity(card: Element): Entity {
   const entity: Entity = {};
   applyAnchors(entity, card.querySelectorAll<HTMLAnchorElement>('a[href]'));
 
-  if (!entity.videoId || (!entity.channelId && !entity.handle)) {
-    applyAnchors(entity, shadowAnchors(card));
-  }
+  if (!hasIdentity(entity)) applyShadowAnchors(entity, card);
 
   entity.title = titleOf(card);
   const fallbackName = channelAvatarLabel(card) || lockupChannelName(card);
