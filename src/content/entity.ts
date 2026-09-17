@@ -1,5 +1,6 @@
 import { parseYouTubeUrl } from '../shared/matcher';
 import type { Entity } from '../shared/types';
+import { forEachShadowRoot } from './dom';
 
 export const ITEM_SELECTORS = [
   'ytd-rich-item-renderer',
@@ -113,20 +114,12 @@ function metadataValue(root: ParentNode): string {
   const direct = root.querySelectorAll(METADATA_SELECTOR);
   if (direct.length > 0) return firstChannelText(direct);
 
-  const stack: ShadowRoot[] = [];
-  for (const element of root.querySelectorAll('*')) {
-    if (element.shadowRoot) stack.push(element.shadowRoot);
-  }
-  while (stack.length > 0) {
-    const shadow = stack.pop();
-    if (!shadow) continue;
-    const value = firstChannelText(shadow.querySelectorAll(METADATA_SELECTOR));
-    if (value) return value;
-    for (const element of shadow.querySelectorAll('*')) {
-      if (element.shadowRoot) stack.push(element.shadowRoot);
-    }
-  }
-  return '';
+  let found = '';
+  forEachShadowRoot(root, (shadow) => {
+    found = firstChannelText(shadow.querySelectorAll(METADATA_SELECTOR));
+    return found === '';
+  });
+  return found;
 }
 
 function lockupChannelName(card: Element): string {
@@ -165,22 +158,12 @@ function hasIdentity(entity: Entity): boolean {
 }
 
 function applyShadowAnchors(entity: Entity, root: Element): void {
-  const stack: ShadowRoot[] = [];
-  if (root.shadowRoot) stack.push(root.shadowRoot);
-  for (const element of root.querySelectorAll('*')) {
-    if (element.shadowRoot) stack.push(element.shadowRoot);
-  }
-  while (stack.length > 0) {
-    const shadow = stack.pop();
-    if (!shadow) continue;
+  forEachShadowRoot(root, (shadow) => {
     shadow.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((anchor) => {
       applyAnchor(entity, anchor);
     });
-    if (hasIdentity(entity)) return;
-    for (const element of shadow.querySelectorAll('*')) {
-      if (element.shadowRoot) stack.push(element.shadowRoot);
-    }
-  }
+    return !hasIdentity(entity);
+  });
 }
 
 export function cardEntity(card: Element): Entity {

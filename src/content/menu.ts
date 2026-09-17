@@ -9,6 +9,7 @@ import {
 import { loadState, saveState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState, Entity, FilterRules } from '../shared/types';
+import { closestAcrossShadow } from './dom';
 import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, currentContext } from './entity';
 import { setPlayerBlank } from './overlay';
 
@@ -99,17 +100,6 @@ function pruneHiddenCards(): void {
   for (const card of hiddenCards) {
     if (!card.isConnected) hiddenCards.delete(card);
   }
-}
-
-function closestAcrossShadow(element: Element, selector: string): Element | null {
-  let current: Element | null = element;
-  while (current) {
-    const match = current.closest(selector);
-    if (match) return match;
-    const root = current.getRootNode();
-    current = root instanceof ShadowRoot ? root.host : null;
-  }
-  return null;
 }
 
 function parentContainer(item: Element): MenuContainer | null {

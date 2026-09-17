@@ -2,6 +2,7 @@ import { YOUTUBE_HOME } from '../shared/constants';
 import { getRuntimeUrl } from '../shared/ext';
 import { loadState, saveState } from '../shared/state';
 import { reasonDetail, removeRule, ruleRefForReason } from '../shared/unblock';
+import { deepQuery } from './dom';
 
 const OVERLAY_CLASS = 'ytb-block-overlay';
 const VIDEO_BLANK_CLASS = 'ytb-blank-player';
@@ -31,26 +32,6 @@ let blankCover: HTMLElement | null = null;
 let blankObserver: ResizeObserver | null = null;
 let playerBox: HTMLElement | null = null;
 let currentKey = '';
-
-function deepQuery(selector: string): HTMLElement | null {
-  const direct = document.querySelector<HTMLElement>(selector);
-  if (direct) return direct;
-
-  const stack: ShadowRoot[] = [];
-  for (const element of document.querySelectorAll('*')) {
-    if (element.shadowRoot) stack.push(element.shadowRoot);
-  }
-  while (stack.length > 0) {
-    const root = stack.pop();
-    if (!root) continue;
-    const found = root.querySelector<HTMLElement>(selector);
-    if (found) return found;
-    for (const element of root.querySelectorAll('*')) {
-      if (element.shadowRoot) stack.push(element.shadowRoot);
-    }
-  }
-  return null;
-}
 
 function findPlayerBox(): HTMLElement | null {
   let fallback: HTMLElement | null = null;
