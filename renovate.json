@@ -1,0 +1,24 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Group the TypeScript toolchain and type packages",
+      "groupName": "typescript toolchain",
+      "matchPackageNames": [
+        "typescript",
+        "@types/node",
+        "@types/chrome",
+        "@types/firefox-webext-browser"
+      ]
+    },
+    {
+      "description": "Group the test toolchain",
+      "groupName": "test toolchain",
+      "matchPackageNames": ["vitest", "@vitest/coverage-v8", "@playwright/test"]
+    }
+  ]
+}

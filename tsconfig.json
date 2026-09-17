@@ -16,5 +16,13 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": ["src", "tests", "scripts", "esbuild.config.mjs"]
+  "include": [
+    "src",
+    "tests",
+    "e2e",
+    "scripts",
+    "esbuild.config.mjs",
+    "playwright.config.ts",
+    "vitest.config.ts"
+  ]
 }

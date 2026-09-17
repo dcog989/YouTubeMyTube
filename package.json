@@ -16,9 +16,12 @@
     "hooks:install": "lefthook install",
     "icons": "node scripts/gen-icons.mjs",
     "lint": "biome lint .",
+    "lint:webext": "web-ext lint --source-dir dist/firefox",
     "prepare": "lefthook install",
     "release": "cog bump --auto",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
     "update": "bun update --latest",
@@ -26,12 +29,15 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
+    "@playwright/test": "^1.63.0",
     "@types/chrome": "^0.3.0",
     "@types/firefox-webext-browser": "^143.0.0",
     "@types/node": "^26.6.1",
+    "@vitest/coverage-v8": "^5.0.1",
     "esbuild": "^0.28.2",
     "lefthook": "2.1.14",
     "typescript": "^7.0.2",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.1",
+    "web-ext": "^10.6.0"
   }
 }

@@ -11,6 +11,7 @@ const DEFLATE = 8;
 const LOCAL_SIGNATURE = 0x04034b50;
 const CENTRAL_SIGNATURE = 0x02014b50;
 const END_SIGNATURE = 0x06054b50;
+const MIN_ZIP_YEAR = 1980;
 
 const CRC_TABLE = (() => {
   const table = new Uint32Array(256);
@@ -49,6 +50,12 @@ function dosTimestamp(date) {
   const time = (date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1);
   const day = ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
   return { time, day };
+}
+
+function archiveDate() {
+  const epoch = Number.parseInt(process.env.SOURCE_DATE_EPOCH ?? '', 10);
+  const date = Number.isFinite(epoch) ? new Date(epoch * 1000) : new Date();
+  return date.getFullYear() < MIN_ZIP_YEAR ? new Date(MIN_ZIP_YEAR, 0, 1) : date;
 }
 
 function localHeader(stamp, checksum, compressed, uncompressed, nameLength) {
@@ -90,7 +97,7 @@ function centralRecord(stamp, checksum, compressed, uncompressed, nameLength, of
 }
 
 export function createZip(sourceDir, outFile) {
-  const stamp = dosTimestamp(new Date());
+  const stamp = dosTimestamp(archiveDate());
   const files = collectFiles(sourceDir);
   const localParts = [];
   const centralParts = [];

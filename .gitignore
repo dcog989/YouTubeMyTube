@@ -2,5 +2,9 @@
 .docs/
 .DS_Store
 assets/icons/
+coverage/
 dist/
 node_modules/
+playwright-report/
+test-results/
+web-ext-artifacts/
