@@ -1,4 +1,4 @@
-# YouTube Blocker
+# YouTubeMyTube
 
 Browser extension for Chrome and Firefox. Blocks videos, channels, users, Shorts and comments on YouTube.
 
@@ -54,7 +54,7 @@ bun run release           # cog bump --auto: tag + changelog, syncs package.json
 
 ## Package
 
-`bun run build` also writes store-ready archives to `dist/youtube-blocker-chrome.zip` and `dist/youtube-blocker-firefox.zip`. The build fails if the shared fields in `manifests/chrome.json` and `manifests/firefox.json` drift.
+`bun run build` also writes store-ready archives to `dist/YouTubeMyTube-chrome.zip` and `dist/YouTubeMyTube-firefox.zip`. The build fails if the shared fields in `manifests/chrome.json` and `manifests/firefox.json` drift.
 
 Set `SOURCE_DATE_EPOCH` for byte-reproducible archives, e.g. `SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) bun run build`.
 

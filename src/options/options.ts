@@ -262,7 +262,7 @@ function exportSettings(): void {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
-  anchor.download = 'youtube-blocker-settings.json';
+  anchor.download = 'YouTubeMyTube-settings.json';
   anchor.click();
   URL.revokeObjectURL(url);
 }
@@ -302,11 +302,11 @@ function importSettings(file: File): void {
       draft = normalizeState(parsed);
       populate();
       setDirty(true);
-      showImportStatus('Imported YouTube Blocker settings.', true);
+      showImportStatus('Imported YouTubeMyTube settings.', true);
       return;
     }
 
-    showImportStatus('That file is not a YouTube Blocker or BlockTube backup.', false);
+    showImportStatus('That file is not a YouTubeMyTube or BlockTube backup.', false);
   };
   reader.readAsText(file);
 }

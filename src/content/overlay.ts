@@ -196,7 +196,7 @@ function buildOverlay(info: ChannelOverlayInfo): HTMLElement {
 
   const title = document.createElement('h2');
   title.className = 'ytb-block-title';
-  title.textContent = 'Blocked by YouTube Blocker';
+  title.textContent = 'Blocked by YouTubeMyTube';
 
   const channel = document.createElement('p');
   channel.className = 'ytb-block-channel';
@@ -218,7 +218,7 @@ function renderBlankContent(cover: HTMLElement, reason: string): void {
 
   const title = document.createElement('h2');
   title.className = 'ytb-blank-title';
-  title.textContent = 'Blocked by YouTube Blocker';
+  title.textContent = 'Blocked by YouTubeMyTube';
 
   const detail = document.createElement('p');
   detail.className = 'ytb-blank-detail';

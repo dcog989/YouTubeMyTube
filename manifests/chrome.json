@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Blocker",
+  "name": "YouTubeMyTube",
   "version": "__VERSION__",
   "description": "Block videos, channels, users, Shorts and comments on YouTube.",
   "minimum_chrome_version": "140",
@@ -19,7 +19,7 @@
     }
   ],
   "action": {
-    "default_title": "YouTube Blocker",
+    "default_title": "YouTubeMyTube",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "assets/icons/16.png",

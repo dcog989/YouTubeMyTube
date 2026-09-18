@@ -26,7 +26,7 @@ export function defaultSettings(): Settings {
   return {
     enabled: true,
     theme: 'system',
-    blockMessage: 'This content is blocked by YouTube Blocker.',
+    blockMessage: 'This content is blocked by YouTubeMyTube.',
   };
 }
 

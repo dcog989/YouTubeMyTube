@@ -2,7 +2,7 @@
 
 ## Project Specifics
 
-- Name: YouTube Blocker
+- Name: YouTubeMyTube
 - Description: MV3 WebExtension that blocks YouTube videos, channels, users, Shorts and comments. DOM/CSS-first with declarativeNetRequest for direct navigation; no vendored YouTube internals or MAIN-world monkey-patching.
 - Tech: TypeScript, esbuild, Vitest, Chrome/Firefox Manifest V3.
 

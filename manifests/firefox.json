@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Blocker",
+  "name": "YouTubeMyTube",
   "version": "__VERSION__",
   "description": "Block videos, channels, users, Shorts and comments on YouTube.",
   "permissions": ["storage", "declarativeNetRequest"],
@@ -18,7 +18,7 @@
     }
   ],
   "action": {
-    "default_title": "YouTube Blocker",
+    "default_title": "YouTubeMyTube",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "assets/icons/16.png",
@@ -43,7 +43,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "youtube-blocker@local",
+      "id": "YouTubeMyTube@local",
       "strict_min_version": "142.0",
       "data_collection_permissions": {
         "required": ["none"]
