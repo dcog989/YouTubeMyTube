@@ -2,6 +2,24 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.5 - 2026-09-18
+#### Bug Fixes
+- (**evaluate**) stop double-matching video/channel/handle rules on navigation - (daec921) - dcog989
+#### Performance Improvements
+- (**content**) avoid intermediate arrays in shadow-root walkers - (0465911) - dcog989
+#### Build system
+- (**manifest**) require Firefox 142 for data collection permissions support - (0562623) - dcog989
+- (**manifest**) declare no data collection for Firefox - (2f5ca10) - dcog989
+- (**scripts**) fold typecheck and web-ext lint into the check script - (b279062) - dcog989
+#### Continuous Integration
+- (**deps**) add Dependabot config and drop unused Renovate config - (d00974a) - dcog989
+#### Refactoring
+- (**content**) split card visibility and shadow observation out of menu - (576e205) - dcog989
+- (**content**) share a single MutationObserver hub across filter and menu - (873251b) - dcog989
+- (**content**) remove dead channelName guard in currentContext - (904295b) - dcog989
+
+- - -
+
 ## 0.2.4 - 2026-09-18
 #### Continuous Integration
 - (**release**) disable Chrome Web Store publishing until credentials exist - (305b297) - dcog989
