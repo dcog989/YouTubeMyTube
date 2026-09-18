@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.0 - 2026-09-17
+#### Continuous Integration
+- add verify/e2e pipeline and tag-triggered store publishing - (be6a900) - dcog989
+#### Miscellaneous Chores
+- (**test**) enforce coverage thresholds and type-check build scripts - (eeeba23) - dcog989
+
+- - -
+
 ## 0.1.0 - 2026-09-17
 #### Features
 - (**content**) full-screen channel overlay, video blanking, and split block behavior - (1cb8942) - dcog989
