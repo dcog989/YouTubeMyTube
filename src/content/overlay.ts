@@ -132,6 +132,7 @@ export function setPlayerBlank(blanked: boolean, reason?: string): void {
 }
 
 export function clearChannelOverlay(): void {
+  document.removeEventListener('play', pauseVideo, true);
   overlay?.remove();
   overlay = null;
   currentKey = '';
@@ -234,6 +235,9 @@ export function showChannelOverlay(info: ChannelOverlayInfo): void {
   const key = `${info.reason}|${info.name ?? ''}|${info.id ?? ''}`;
   if (overlay && currentKey === key && overlay.isConnected) return;
   clearChannelOverlay();
+
+  document.addEventListener('play', pauseVideo, true);
+  pauseAll();
 
   const root = buildOverlay(info);
   host.appendChild(root);

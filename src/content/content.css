@@ -53,10 +53,15 @@ html.ytb-blank-player video {
   gap: 12px;
   box-sizing: border-box;
   padding: 24px;
-  background-color: var(--yt-spec-base-background, Canvas);
-  color: var(--yt-spec-text-primary, CanvasText);
+  background-color: #fff;
+  color: #0f0f0f;
   font-family: "Roboto", "Arial", sans-serif;
   text-align: center;
+}
+
+html[dark] .ytb-block-overlay {
+  background-color: #0f0f0f;
+  color: #f1f1f1;
 }
 
 .ytb-block-logo {
@@ -81,7 +86,8 @@ html.ytb-blank-player video {
 
 .ytb-block-detail {
   margin: 0;
-  color: var(--yt-spec-text-secondary, inherit);
+  color: inherit;
+  opacity: 0.7;
   font-size: 14px;
   line-height: 20px;
 }
