@@ -33,23 +33,24 @@ jobs:
       #     AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
       #     AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
 
-      - name: Upload to Chrome Web Store
-        run: bunx chrome-webstore-upload-cli@4 upload --source dist/youtube-blocker-chrome.zip
-        env:
-          EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
-          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
-          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
-
-      - name: Publish on Chrome Web Store
-        run: bunx chrome-webstore-upload-cli@4 publish
-        env:
-          EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
-          PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
-          CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+      # Disabled: no Chrome Web Store credentials. Re-enable when secrets are added.
+      # - name: Upload to Chrome Web Store
+      #   run: bunx chrome-webstore-upload-cli@4 upload --source dist/youtube-blocker-chrome.zip
+      #   env:
+      #     EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+      #     PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+      #     CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+      #     CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+      #     REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
+      #
+      # - name: Publish on Chrome Web Store
+      #   run: bunx chrome-webstore-upload-cli@4 publish
+      #   env:
+      #     EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+      #     PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+      #     CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+      #     CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+      #     REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
 
       - uses: softprops/action-gh-release@v2
         with:
