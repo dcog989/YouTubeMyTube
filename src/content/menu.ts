@@ -1,11 +1,12 @@
 import { onLocalStorageChanged } from '../shared/ext';
-import { compileRules, matchEntity, normalizeHandle, parseYouTubeUrl } from '../shared/matcher';
+import { normalizeHandle, parseYouTubeUrl } from '../shared/matcher';
 import { formatReason } from '../shared/reason';
 import { loadState, saveState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState, Entity } from '../shared/types';
 import { closestAcrossShadow } from './dom';
 import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, currentContext } from './entity';
+import { hideCard, pruneHiddenCards, refreshHiddenCards, showCard } from './hidden-cards';
 import { actionsFor, type MenuAction } from './menu/actions';
 import {
   containerStart,
@@ -23,8 +24,8 @@ import {
   MOBILE_HOST,
   NON_MENU_SELECTOR,
 } from './menu/selectors';
+import { attachShadows, observeRoot, scanExisting } from './menu/shadow';
 import { applyItemStyle, computeItemStyle, createIcon, type MenuItemStyle } from './menu/style';
-import { onAddedElements } from './observer';
 import { setPlayerBlank } from './overlay';
 
 let state: BlockerState | null = null;
@@ -33,19 +34,6 @@ let scheduled = false;
 const pending = new Set<Element>();
 const itemActions = new WeakMap<Element, MenuAction>();
 const itemOwner = new WeakMap<Element, Element>();
-const hiddenCards = new Set<HTMLElement>();
-const observedRoots = new WeakSet<Node>();
-
-function setCardHidden(card: HTMLElement, hidden: boolean): void {
-  if (hidden) card.style.setProperty('display', 'none', 'important');
-  else card.style.removeProperty('display');
-}
-
-function pruneHiddenCards(): void {
-  for (const card of hiddenCards) {
-    if (!card.isConnected) hiddenCards.delete(card);
-  }
-}
 
 function pendingActions(entity: Entity): MenuAction[] {
   if (!state) return [];
@@ -172,40 +160,6 @@ function schedule(element: Element): void {
   queueMicrotask(flush);
 }
 
-function scanExisting(root: ParentNode): void {
-  root.querySelectorAll(MENU_ITEM_SELECTOR).forEach((item) => {
-    schedule(item);
-  });
-}
-
-function observeRoot(root: Document | ShadowRoot | Element): void {
-  if (observedRoots.has(root)) return;
-  observedRoots.add(root);
-  onAddedElements(root, (nodes) => {
-    for (const node of nodes) schedule(node);
-  });
-}
-
-function observeShadowTree(root: ParentNode): void {
-  for (const element of root.querySelectorAll('*')) {
-    const shadow = element.shadowRoot;
-    if (!shadow || observedRoots.has(shadow)) continue;
-    observeRoot(shadow);
-    scanExisting(shadow);
-    observeShadowTree(shadow);
-  }
-}
-
-function attachMenuShadows(owner: Element): void {
-  const root = owner.getRootNode();
-  if (root instanceof ShadowRoot && !observedRoots.has(root)) {
-    observeRoot(root);
-    scanExisting(root);
-  }
-  observeShadowTree(owner);
-  scanExisting(owner);
-}
-
 function flush(): void {
   scheduled = false;
   pruneHiddenCards();
@@ -238,15 +192,13 @@ async function applyAction(action: MenuAction, owner: Element | undefined): Prom
 
   if (action.mode === 'block') {
     if (card) {
-      setCardHidden(card, true);
-      hiddenCards.add(card);
+      hideCard(card);
     } else if (isCurrentVideo) {
       setPlayerBlank(true, formatReason('video', action.value));
     }
   } else {
     if (card) {
-      setCardHidden(card, false);
-      hiddenCards.delete(card);
+      showCard(card);
     } else if (isCurrentVideo) {
       setPlayerBlank(false);
     }
@@ -278,23 +230,6 @@ async function applyAction(action: MenuAction, owner: Element | undefined): Prom
   closeMenu();
 }
 
-function refreshHiddenCards(): void {
-  if (!state) return;
-  const compiled = compileRules(state.rules);
-  for (const card of hiddenCards) {
-    if (!card.isConnected) {
-      hiddenCards.delete(card);
-      continue;
-    }
-    if (matchEntity(cardEntity(card), compiled).blocked) {
-      setCardHidden(card, true);
-    } else {
-      setCardHidden(card, false);
-      hiddenCards.delete(card);
-    }
-  }
-}
-
 function eventTarget(event: Event): Element | null {
   return event.composedPath().find((node): node is Element => node instanceof Element) ?? null;
 }
@@ -315,12 +250,12 @@ function trackMenuTrigger(event: MouseEvent): void {
   if (!owner) return;
   lastMenuTarget = owner;
 
-  attachMenuShadows(owner);
+  attachShadows(owner, MENU_ITEM_SELECTOR, schedule);
   queueMicrotask(() => {
-    if (lastMenuTarget === owner) attachMenuShadows(owner);
+    if (lastMenuTarget === owner) attachShadows(owner, MENU_ITEM_SELECTOR, schedule);
   });
   setTimeout(() => {
-    if (lastMenuTarget === owner) attachMenuShadows(owner);
+    if (lastMenuTarget === owner) attachShadows(owner, MENU_ITEM_SELECTOR, schedule);
   }, 100);
 }
 
@@ -343,13 +278,13 @@ export function initMenuInjection(): void {
     state = await loadState();
     onLocalStorageChanged((value) => {
       state = normalizeState(value);
-      refreshHiddenCards();
+      refreshHiddenCards(state);
     });
   })();
 
   window.addEventListener('click', trackMenuTrigger, true);
   window.addEventListener('click', handleInjectedClick, true);
   window.addEventListener('pointerdown', trackMenuTrigger, true);
-  observeRoot(document.documentElement);
-  scanExisting(document);
+  observeRoot(document.documentElement, schedule);
+  scanExisting(document, MENU_ITEM_SELECTOR, schedule);
 }
