@@ -36,23 +36,25 @@ function findLabelElement(root: Element | ShadowRoot): Element | null {
   let best: Element | null = null;
   let bestScore = -1;
 
-  const visit = (node: Element | ShadowRoot): void => {
-    const elements = [...(node instanceof Element ? [node] : []), ...node.querySelectorAll('*')];
-    for (const element of elements) {
-      if (hasDirectText(element)) {
-        const size = Number.parseFloat(window.getComputedStyle(element).fontSize) || 0;
-        if (size >= MIN_LABEL_SIZE && size <= MAX_LABEL_SIZE) {
-          const bonus = element.matches(LABEL_SELECTOR) ? LABEL_SELECTOR_BONUS : 0;
-          const score = bonus + size;
-          if (score > bestScore) {
-            bestScore = score;
-            best = element;
-          }
+  function visitElement(element: Element): void {
+    if (hasDirectText(element)) {
+      const size = Number.parseFloat(window.getComputedStyle(element).fontSize) || 0;
+      if (size >= MIN_LABEL_SIZE && size <= MAX_LABEL_SIZE) {
+        const bonus = element.matches(LABEL_SELECTOR) ? LABEL_SELECTOR_BONUS : 0;
+        const score = bonus + size;
+        if (score > bestScore) {
+          bestScore = score;
+          best = element;
         }
       }
-      if (element.shadowRoot) visit(element.shadowRoot);
     }
-  };
+    if (element.shadowRoot) visit(element.shadowRoot);
+  }
+
+  function visit(node: Element | ShadowRoot): void {
+    if (node instanceof Element) visitElement(node);
+    for (const element of node.querySelectorAll('*')) visitElement(element);
+  }
 
   visit(root);
   return best;

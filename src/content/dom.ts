@@ -13,17 +13,21 @@ export function forEachShadowRoot(
   root: ParentNode,
   visit: (shadow: ShadowRoot) => boolean | undefined,
 ): void {
-  const iterate = (node: ParentNode): boolean => {
-    const elements =
-      node instanceof Element ? [node, ...node.querySelectorAll('*')] : node.querySelectorAll('*');
-    for (const element of elements) {
-      const shadow = element.shadowRoot;
-      if (!shadow) continue;
-      if (visit(shadow) === false) return false;
-      if (!iterate(shadow)) return false;
+  function visitElement(element: Element): boolean {
+    const shadow = element.shadowRoot;
+    if (!shadow) return true;
+    if (visit(shadow) === false) return false;
+    return iterate(shadow);
+  }
+
+  function iterate(node: ParentNode): boolean {
+    if (node instanceof Element && !visitElement(node)) return false;
+    for (const element of node.querySelectorAll('*')) {
+      if (!visitElement(element)) return false;
     }
     return true;
-  };
+  }
+
   iterate(root);
 }
 
