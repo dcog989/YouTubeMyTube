@@ -38,7 +38,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - `e2e/extension.spec.ts` — Playwright smoke test that loads `dist/chrome` and asserts the background service worker starts (`playwright.config.ts`).
 - `.github/workflows/ci.yml` — CI: install, check, typecheck, unit tests with coverage thresholds, build, `web-ext lint`, `bun audit`, artifacts, e2e.
 - `.github/workflows/release.yml` — tag-triggered AMO/Chrome Web Store publish and GitHub Release.
-- `renovate.json` — dependency update config.
+- `.github/dependabot.yml` — GitHub Actions version updates (npm/bun deps are updated locally).
 
 ### Workflow
 
