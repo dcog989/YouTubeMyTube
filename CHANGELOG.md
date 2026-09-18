@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.1 - 2026-09-18
+#### Build system
+- (**release**) push branch and tag from cog post-bump hooks - (bcac5d0) - dcog989
+
+- - -
+
 ## 0.2.0 - 2026-09-17
 #### Continuous Integration
 - add verify/e2e pipeline and tag-triggered store publishing - (be6a900) - dcog989
