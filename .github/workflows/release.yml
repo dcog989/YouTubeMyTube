@@ -33,7 +33,7 @@ jobs:
 
       # Disabled: no Chrome Web Store credentials. Re-enable when secrets are added.
       # - name: Upload to Chrome Web Store
-      #   run: bunx chrome-webstore-upload-cli@4 upload --source dist/YouTubeMyTube-chrome.zip
+      #   run: bunx chrome-webstore-upload-cli@4 upload --source dist/youtubemytube-chrome.zip
       #   env:
       #     EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
       #     PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}

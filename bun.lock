@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "YouTubeMyTube",
+      "name": "youtubemytube",
       "devDependencies": {
         "@biomejs/biome": "2.5.14",
         "@playwright/test": "^1.63.0",
