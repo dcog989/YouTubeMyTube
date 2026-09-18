@@ -245,13 +245,11 @@ export function currentContext(): Entity {
     }
   }
 
-  if (!entity.channelName) {
-    for (const selector of CHANNEL_PAGE_NAME_SELECTORS) {
-      const name = textOf(document.querySelector(selector));
-      if (name) {
-        entity.channelName = name;
-        break;
-      }
+  for (const selector of CHANNEL_PAGE_NAME_SELECTORS) {
+    const name = textOf(document.querySelector(selector));
+    if (name) {
+      entity.channelName = name;
+      break;
     }
   }
 
