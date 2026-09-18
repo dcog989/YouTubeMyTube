@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.2 - 2026-09-18
+#### Continuous Integration
+- (**release**) guard AMO secrets and bump checkout to v5 - (0d734a1) - dcog989
+
+- - -
+
 ## 0.2.1 - 2026-09-18
 #### Build system
 - (**release**) push branch and tag from cog post-bump hooks - (bcac5d0) - dcog989
