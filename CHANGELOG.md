@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.7.0 - 2026-09-18
+#### Features
+- (**icons**) add 32px, 64px and 96px icons - (7122eff) - dcog989
+#### Bug Fixes
+- (**overlay**) theme channel block overlay for dark mode and pause playback - (0c2c076) - dcog989
+- (**promos**) hide memberships brand video shelf banners - (95ad9fe) - dcog989
+
+- - -
+
 ## 0.6.1 - 2026-09-18
 #### Bug Fixes
 - (**build**) correct ZIP EOCD offset and add AMO source build instructions - (1158758) - dcog989
