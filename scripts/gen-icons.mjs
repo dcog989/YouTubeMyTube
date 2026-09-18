@@ -21,6 +21,9 @@ const RING_STROKE = 3.2 * LUCIDE_UNIT;
 const DOT_RADIUS = 1.7 * LUCIDE_UNIT;
 const DOT_OFFSET = 5 * LUCIDE_UNIT;
 
+const LOZENGE_COLOR = { r: 224, g: 49, b: 64 };
+const GLYPH_COLOR = { r: 255, g: 255, b: 255 };
+
 const CRC_TABLE = (() => {
   const table = new Uint32Array(256);
   for (let n = 0; n < 256; n += 1) {
@@ -139,9 +142,9 @@ function renderIcon(size) {
       const onDot = dotCenters.some((dotX) => Math.hypot(px - dotX, py - center) <= dotRadius);
       const isGlyph = onRing || onDot;
 
-      hiBuf[offset] = 255;
-      hiBuf[offset + 1] = isGlyph ? 255 : 0;
-      hiBuf[offset + 2] = isGlyph ? 255 : 0;
+      hiBuf[offset] = isGlyph ? GLYPH_COLOR.r : LOZENGE_COLOR.r;
+      hiBuf[offset + 1] = isGlyph ? GLYPH_COLOR.g : LOZENGE_COLOR.g;
+      hiBuf[offset + 2] = isGlyph ? GLYPH_COLOR.b : LOZENGE_COLOR.b;
       hiBuf[offset + 3] = 255;
     }
   }

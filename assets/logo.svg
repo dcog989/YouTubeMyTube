@@ -7,7 +7,7 @@
   aria-label="YouTubeMyTube"
 >
   <title>YouTubeMyTube</title>
-  <rect x="1.44" y="4.8" width="21.12" height="14.4" rx="3.36" fill="#ff0000" />
+  <rect x="1.44" y="4.8" width="21.12" height="14.4" rx="3.36" fill="#e03140" />
   <g fill="none" stroke="#ffffff" stroke-width="1.536">
     <circle cx="12" cy="12" r="4.8" />
   </g>
