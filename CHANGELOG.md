@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.5.0 - 2026-09-18
+#### Features
+- (**icons**) redesign logo as YouTube lozenge with circle-ellipsis - (1a9229d) - dcog989
+#### Style
+- (**theme**) align icon and accent reds on #e03140 - (d7cce2f) - dcog989
+
+- - -
+
 ## 0.4.0 - 2026-09-18
 #### Features
 - (**areas**) add site-wide promo banner hiding - (5946c77) - dcog989
