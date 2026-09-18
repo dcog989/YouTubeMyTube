@@ -12,7 +12,7 @@ jobs:
     name: Publish to stores
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run check
@@ -20,6 +20,16 @@ jobs:
       - run: bun run test
       - run: SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) bun run build
       - run: bun run lint:webext
+
+      - name: Verify AMO credentials
+        run: |
+          if [ -z "$AMO_JWT_ISSUER" ] || [ -z "$AMO_JWT_SECRET" ]; then
+            echo "::error::AMO_JWT_ISSUER and AMO_JWT_SECRET must be set as repository secrets."
+            exit 1
+          fi
+        env:
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
 
       - name: Sign and upload to Firefox (AMO)
         run: >-
