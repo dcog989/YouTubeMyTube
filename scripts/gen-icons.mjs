@@ -5,7 +5,7 @@ import { deflateSync } from 'node:zlib';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = resolve(ROOT, 'assets/icons');
-export const ICON_SIZES = [16, 48, 128];
+export const ICON_SIZES = [16, 32, 48, 64, 96, 128];
 const SUPERSAMPLE = 4;
 
 const LOZENGE_WIDTH = 0.88;
