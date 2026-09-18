@@ -7,6 +7,7 @@ import { applyAreas } from './areas';
 import { currentContext } from './entity';
 import { rescan, scheduleFilter } from './filter';
 import { initMenuInjection } from './menu';
+import { onAddedElements } from './observer';
 import { setState } from './store';
 
 function applyState(next: BlockerState): void {
@@ -16,14 +17,9 @@ function applyState(next: BlockerState): void {
 }
 
 function observe(): void {
-  const observer = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) scheduleFilter(node as Element);
-      });
-    }
+  onAddedElements(document.documentElement, (nodes) => {
+    for (const node of nodes) scheduleFilter(node);
   });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
 }
 
 function listenForContextRequests(): void {

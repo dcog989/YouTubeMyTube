@@ -24,6 +24,7 @@ import {
   NON_MENU_SELECTOR,
 } from './menu/selectors';
 import { applyItemStyle, computeItemStyle, createIcon, type MenuItemStyle } from './menu/style';
+import { onAddedElements } from './observer';
 import { setPlayerBlank } from './overlay';
 
 let state: BlockerState | null = null;
@@ -180,14 +181,9 @@ function scanExisting(root: ParentNode): void {
 function observeRoot(root: Document | ShadowRoot | Element): void {
   if (observedRoots.has(root)) return;
   observedRoots.add(root);
-  const observer = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      mutation.addedNodes.forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) schedule(node as Element);
-      });
-    }
+  onAddedElements(root, (nodes) => {
+    for (const node of nodes) schedule(node);
   });
-  observer.observe(root, { childList: true, subtree: true });
 }
 
 function observeShadowTree(root: ParentNode): void {
