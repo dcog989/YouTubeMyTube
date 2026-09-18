@@ -8,6 +8,19 @@ const OUT_DIR = resolve(ROOT, 'assets/icons');
 export const ICON_SIZES = [16, 48, 128];
 const SUPERSAMPLE = 4;
 
+const LOZENGE_WIDTH = 0.88;
+const LOZENGE_HEIGHT = 0.6;
+const LOZENGE_CORNER_RADIUS = 0.14;
+
+const GLYPH_BOX = 0.48;
+const GLYPH_VIEWBOX = 24;
+const LUCIDE_UNIT = GLYPH_BOX / GLYPH_VIEWBOX;
+const RING_RADIUS = 10 * LUCIDE_UNIT;
+// Lucide uses 2/1 units; widened so the ring and dots survive at 16px.
+const RING_STROKE = 3.2 * LUCIDE_UNIT;
+const DOT_RADIUS = 1.7 * LUCIDE_UNIT;
+const DOT_OFFSET = 5 * LUCIDE_UNIT;
+
 const CRC_TABLE = (() => {
   const table = new Uint32Array(256);
   for (let n = 0; n < 256; n += 1) {
@@ -79,21 +92,21 @@ function encodePng(width, height, rgba) {
 /**
  * @param {number} px
  * @param {number} py
- * @param {number} ax
- * @param {number} ay
- * @param {number} bx
- * @param {number} by
- * @returns {number}
+ * @param {number} cx
+ * @param {number} cy
+ * @param {number} halfWidth
+ * @param {number} halfHeight
+ * @param {number} radius
+ * @returns {boolean}
  */
-function distanceToSegment(px, py, ax, ay, bx, by) {
-  const dx = bx - ax;
-  const dy = by - ay;
-  const lengthSq = dx * dx + dy * dy;
-  const t =
-    lengthSq === 0 ? 0 : Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lengthSq));
-  const cx = ax + t * dx;
-  const cy = ay + t * dy;
-  return Math.hypot(px - cx, py - cy);
+function inRoundedRect(px, py, cx, cy, halfWidth, halfHeight, radius) {
+  const dx = Math.abs(px - cx);
+  const dy = Math.abs(py - cy);
+  if (dx > halfWidth || dy > halfHeight) return false;
+  const innerX = halfWidth - radius;
+  const innerY = halfHeight - radius;
+  if (dx <= innerX || dy <= innerY) return true;
+  return Math.hypot(dx - innerX, dy - innerY) <= radius;
 }
 
 /**
@@ -104,29 +117,32 @@ function renderIcon(size) {
   const hi = size * SUPERSAMPLE;
   const hiBuf = new Uint8ClampedArray(hi * hi * 4);
   const center = hi / 2;
-  const radius = hi * 0.48;
-  const barHalf = hi * 0.055;
+
+  const halfWidth = hi * (LOZENGE_WIDTH / 2);
+  const halfHeight = hi * (LOZENGE_HEIGHT / 2);
+  const cornerRadius = hi * LOZENGE_CORNER_RADIUS;
+  const ringInner = hi * (RING_RADIUS - RING_STROKE / 2);
+  const ringOuter = hi * (RING_RADIUS + RING_STROKE / 2);
+  const dotRadius = hi * DOT_RADIUS;
+  const dotOffset = hi * DOT_OFFSET;
+  const dotCenters = [center - dotOffset, center, center + dotOffset];
 
   for (let y = 0; y < hi; y += 1) {
     for (let x = 0; x < hi; x += 1) {
+      const px = x + 0.5;
+      const py = y + 0.5;
+      if (!inRoundedRect(px, py, center, center, halfWidth, halfHeight, cornerRadius)) continue;
+
       const offset = (y * hi + x) * 4;
-      const inCircle = Math.hypot(x + 0.5 - center, y + 0.5 - center) <= radius;
-      if (!inCircle) continue;
+      const radius = Math.hypot(px - center, py - center);
+      const onRing = radius >= ringInner && radius <= ringOuter;
+      const onDot = dotCenters.some((dotX) => Math.hypot(px - dotX, py - center) <= dotRadius);
+      const isGlyph = onRing || onDot;
 
-      const onBar =
-        distanceToSegment(x + 0.5, y + 0.5, hi * 0.3, hi * 0.3, hi * 0.7, hi * 0.7) <= barHalf;
-
-      if (onBar) {
-        hiBuf[offset] = 255;
-        hiBuf[offset + 1] = 255;
-        hiBuf[offset + 2] = 255;
-        hiBuf[offset + 3] = 255;
-      } else {
-        hiBuf[offset] = 229;
-        hiBuf[offset + 1] = 57;
-        hiBuf[offset + 2] = 53;
-        hiBuf[offset + 3] = 255;
-      }
+      hiBuf[offset] = 255;
+      hiBuf[offset + 1] = isGlyph ? 255 : 0;
+      hiBuf[offset + 2] = isGlyph ? 255 : 0;
+      hiBuf[offset + 3] = 255;
     }
   }
 
