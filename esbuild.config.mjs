@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { build, context } from 'esbuild';
 import { generateIcons, ICON_SIZES } from './scripts/gen-icons.mjs';
 import { validateManifests } from './scripts/manifest-check.mjs';
+import { createSourceZip } from './scripts/source-zip.mjs';
 import { createZip } from './scripts/zip.mjs';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
@@ -179,6 +180,10 @@ async function main() {
       console.log(`Built ${browser} v${VERSION} → ${distDir(browser)}`);
       console.log(`Packaged ${entries} files → ${archive}`);
     }
+
+    const sourceArchive = resolve(ROOT, 'dist', `${pkg.name}-source.zip`);
+    const { entries: sourceEntries } = createSourceZip(sourceArchive);
+    console.log(`Packaged ${sourceEntries} source files → ${sourceArchive}`);
   }
 }
 

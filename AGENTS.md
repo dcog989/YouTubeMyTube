@@ -32,6 +32,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - `esbuild.config.mjs` — build/packaging for both browsers.
 - `scripts/manifest-check.mjs` — validates the shared fields of the Chrome/Firefox manifests (`validateManifests`).
 - `scripts/zip.mjs` — dependency-free ZIP writer for the store archives (`createZip`).
+- `scripts/source-zip.mjs` — packages git-tracked files into the AMO review source archive (`createSourceZip`).
 - `scripts/sync-version.mjs` — writes cog's target version into `package.json` (the build's version source).
 - `scripts/gen-icons.mjs` — generates the PNG icons from a vector description.
 - `tests/` — Vitest suites for the pure logic (`vitest.config.ts` limits the run to this directory).
@@ -46,7 +47,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - Dev: `npm run watch` (rebuilds bundles and re-copies HTML/CSS/manifests on change).
 - Test: `npm test` (or `npm run test:coverage`, whose thresholds CI enforces); e2e: `npm run test:e2e` after `npm run build:chrome` and `bunx playwright install chromium`.
 - Typecheck: `npm run typecheck` (or `npm run typecheck:watch` alongside `npm run watch`); `checkJs` covers the `.mjs` build scripts too.
-- Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`); validates manifest drift and writes store zips to `dist/`. Set `SOURCE_DATE_EPOCH` for reproducible archives.
+- Build: `npm run build` (or `npm run build:chrome` / `npm run build:firefox`); validates manifest drift and writes store zips plus the AMO source archive to `dist/`. Set `SOURCE_DATE_EPOCH` for reproducible archives.
 - Lint: `npm run check` (Biome, HTML included; `npm run check:fix` to write). Config: `biome.json`. Firefox validation: `npm run lint:webext` (`web-ext lint`).
 - Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit. Pushing the tag publishes via `release.yml` (secrets listed in `README.md`).
 - Commit messages: Conventional Commits, enforced by lefthook + cocogitto (`cog.toml`). Cocogitto is a system binary, not an npm dependency.

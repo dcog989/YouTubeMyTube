@@ -135,13 +135,12 @@ function centralRecord(stamp, checksum, compressed, uncompressed, nameLength, of
 }
 
 /**
- * @param {string} sourceDir
+ * @param {ZipEntry[]} files
  * @param {string} outFile
  * @returns {{ entries: number, bytes: number }}
  */
-export function createZip(sourceDir, outFile) {
+export function writeZip(files, outFile) {
   const stamp = dosTimestamp(archiveDate());
-  const files = collectFiles(sourceDir);
   const localParts = [];
   const centralParts = [];
   let offset = 0;
@@ -180,4 +179,13 @@ export function createZip(sourceDir, outFile) {
     entries: files.length,
     bytes: localData.length + centralData.length + END_RECORD_SIZE,
   };
+}
+
+/**
+ * @param {string} sourceDir
+ * @param {string} outFile
+ * @returns {{ entries: number, bytes: number }}
+ */
+export function createZip(sourceDir, outFile) {
+  return writeZip(collectFiles(sourceDir), outFile);
 }
