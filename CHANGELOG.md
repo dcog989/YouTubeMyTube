@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.3.0 - 2026-09-18
+#### Continuous Integration
+- use native bun audit and bump actions to node24 releases - (62f95a5) - dcog989
+
+- - -
+
 ## 0.2.5 - 2026-09-18
 #### Bug Fixes
 - (**evaluate**) stop double-matching video/channel/handle rules on navigation - (daec921) - dcog989
