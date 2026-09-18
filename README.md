@@ -50,7 +50,26 @@ bun run release           # cog bump --auto: tag + changelog, syncs package.json
 
 `bun run test:e2e` needs the Playwright Chromium build once: `bunx playwright install chromium`.
 
-`bun install` runs `prepare`, which installs the [lefthook](https://lefthook.dev) git hooks. The `pre-commit` hook runs Biome against staged files and a full `tsc --noEmit` type-check, and the `commit-msg` hook enforces [Conventional Commits](https://www.conventionalcommits.org) via [cocogitto](https://docs.cocogitto.io) (`cog`). Cocogitto is a system binary, not an bun dependency; install it separately (e.g. `pacman -S cocogitto`, `cargo install cocogitto`, or your package manager).
+`bun install` runs `prepare`, which installs the [lefthook](https://lefthook.dev) git hooks. The `pre-commit` hook runs Biome against staged files and a full `tsc --noEmit` type-check, and the `commit-msg` hook enforces [Conventional Commits](https://www.conventionalcommits.org) via [cocogitto](https://docs.cocogitto.io) (`cog`). Cocogitto is a system binary, not an bun dependency; install it separately (e.g. `pacman -S cocogitto`, `cargo install cocogitto`, or your package manager). Hook installation is skipped automatically when there is no `.git` directory (for example when building from the submitted source archive).
+
+## Building from source
+
+The extension is built with esbuild via `esbuild.config.mjs`; the same build produces the store archives and the AMO review source archive.
+
+### Requirements
+
+- Node.js 26.8.2 or newer (https://nodejs.org), or Bun 1.4.2 or newer (https://bun.sh) as the package manager/runtime.
+- Linux, macOS or Windows; the build uses only Node built-ins and esbuild, with no platform-specific tooling.
+- Dependencies are pinned in `bun.lock`; use Bun with `--frozen-lockfile` for an exact reproduction. `npm install` resolves from `package.json`.
+
+### Steps
+
+1. Get the source: `git clone https://github.com/dcog989/YouTubeMyTube` (or unpack the submitted source archive).
+2. Install dependencies: `bun install --frozen-lockfile` (or `npm install`).
+3. Build Firefox: `npm run build:firefox` (or `bun run build:firefox`). This runs `node esbuild.config.mjs firefox`.
+4. Output: the unpacked extension in `dist/firefox/` and the archive `dist/youtubemytube-firefox.zip`.
+
+`npm run build` builds both browsers plus the source archive. The submitted source is the original TypeScript under `src/`; esbuild only bundles and minifies it into the shipped JavaScript, so no generated code is included in the source archive. `SOURCE_DATE_EPOCH` (set from the release commit, e.g. `SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)`) only fixes the archive timestamps for byte-identical zips; the emitted JavaScript is deterministic without it.
 
 ## Package
 

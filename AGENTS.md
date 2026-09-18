@@ -33,6 +33,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 - `scripts/manifest-check.mjs` — validates the shared fields of the Chrome/Firefox manifests (`validateManifests`).
 - `scripts/zip.mjs` — dependency-free ZIP writer for the store archives (`createZip`).
 - `scripts/source-zip.mjs` — packages git-tracked files into the AMO review source archive (`createSourceZip`).
+- `scripts/install-hooks.mjs` — installs lefthook hooks via `prepare`, skipping when there is no `.git` (source archive builds).
 - `scripts/sync-version.mjs` — writes cog's target version into `package.json` (the build's version source).
 - `scripts/gen-icons.mjs` — generates the PNG icons from a vector description.
 - `tests/` — Vitest suites for the pure logic (`vitest.config.ts` limits the run to this directory).

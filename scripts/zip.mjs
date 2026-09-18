@@ -172,7 +172,7 @@ export function writeZip(files, outFile) {
   end.writeUInt16LE(files.length, 10);
   end.writeUInt32LE(centralData.length, 12);
   end.writeUInt32LE(localData.length, 16);
-  end.writeUInt16LE(0, 18);
+  end.writeUInt16LE(0, 20);
 
   writeFileSync(outFile, Buffer.concat([localData, centralData, end]));
   return {
