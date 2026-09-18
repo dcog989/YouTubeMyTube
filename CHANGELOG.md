@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.6.1 - 2026-09-18
+#### Bug Fixes
+- (**build**) correct ZIP EOCD offset and add AMO source build instructions - (1158758) - dcog989
+
+- - -
+
 ## 0.6.0 - 2026-09-18
 #### Features
 - (**build**) auto-generate AMO source archive - (3581010) - dcog989
