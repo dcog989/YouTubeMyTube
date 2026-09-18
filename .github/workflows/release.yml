@@ -16,10 +16,8 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run check
-      - run: bun run typecheck
       - run: bun run test
       - run: SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) bun run build
-      - run: bun run lint:webext
 
       # Disabled: no AMO JWT API credentials. Re-enable when secrets are added.
       # - name: Sign and upload to Firefox (AMO)

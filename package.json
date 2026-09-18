@@ -8,7 +8,7 @@
     "build": "node esbuild.config.mjs all",
     "build:chrome": "node esbuild.config.mjs chrome",
     "build:firefox": "node esbuild.config.mjs firefox",
-    "check": "biome check .",
+    "check": "biome check . && bun run typecheck && bun run build:firefox && bun run lint:webext",
     "check:fix": "biome check --write .",
     "clean": "rm -rf dist node_modules bun.lock",
     "format": "biome format --write .",

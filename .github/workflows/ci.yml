@@ -21,11 +21,9 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run check
-      - run: bun run typecheck
       - run: bun run test:coverage
       - run: SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) bun run build
-      - run: bun run lint:webext
-      - run: bun audit
+      - run: bun run audit
       - uses: actions/upload-artifact@v4
         with:
           name: extension-archives
