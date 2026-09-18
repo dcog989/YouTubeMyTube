@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.4 - 2026-09-18
+#### Continuous Integration
+- (**release**) disable Chrome Web Store publishing until credentials exist - (305b297) - dcog989
+
+- - -
+
 ## 0.2.3 - 2026-09-18
 #### Continuous Integration
 - (**release**) disable AMO signing until API credentials exist - (ab10f4e) - dcog989
