@@ -50,7 +50,7 @@ jobs:
       #     CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
       #     REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
 
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: dist/*.zip
           generate_release_notes: true
