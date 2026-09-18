@@ -177,9 +177,11 @@ html.ytb-hide-related ytm-item-section-renderer#related {
 
 html.ytb-hide-promos ytd-statement-banner-renderer,
 html.ytb-hide-promos ytd-brand-video-singleton-renderer,
+html.ytb-hide-promos ytd-brand-video-shelf-renderer,
 html.ytb-hide-promos ytd-banner-promo-renderer,
 html.ytb-hide-promos ytm-statement-banner-renderer,
 html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-statement-banner-renderer),
-html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-brand-video-singleton-renderer) {
+html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-brand-video-singleton-renderer),
+html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-brand-video-shelf-renderer) {
   display: none !important;
 }
