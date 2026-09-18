@@ -12,7 +12,7 @@ skip_untracked = false
 # `package.json` is the build's only version source (the manifests use a `__VERSION__`
 # placeholder), so bump it with cog's target version before the version commit is created.
 pre_bump_hooks = ["node scripts/sync-version.mjs {{version}}"]
-post_bump_hooks = []
+post_bump_hooks = ["git push", "git push origin {{version_tag}}"]
 pre_package_bump_hooks = []
 post_package_bump_hooks = []
 
