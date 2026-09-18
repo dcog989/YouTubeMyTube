@@ -7,6 +7,7 @@ const AREA_CLASSES: ReadonlyArray<readonly [string, keyof BlockerState['areas']]
   ['ytb-hide-comments', 'commentsSection'],
   ['ytb-hide-live-chat', 'liveChat'],
   ['ytb-hide-related', 'relatedVideos'],
+  ['ytb-hide-promos', 'promoSections'],
 ];
 
 export function applyAreas(): void {

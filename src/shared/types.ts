@@ -18,6 +18,7 @@ export interface AreaFlags {
   commentsSection: boolean;
   liveChat: boolean;
   relatedVideos: boolean;
+  promoSections: boolean;
 }
 
 export interface Settings {

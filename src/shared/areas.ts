@@ -72,6 +72,13 @@ export const AREA_DEFINITIONS: readonly AreaDefinition[] = [
     path: null,
     redirect: false,
   },
+  {
+    key: 'promoSections',
+    title: 'Promo banners',
+    sub: 'Hide promotional banners such as channel memberships and Premium.',
+    path: null,
+    redirect: false,
+  },
 ];
 
 export const REDIRECT_AREAS: ReadonlySet<AreaKey> = new Set(

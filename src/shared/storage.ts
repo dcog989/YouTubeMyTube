@@ -18,6 +18,7 @@ export function defaultAreas(): AreaFlags {
     commentsSection: false,
     liveChat: false,
     relatedVideos: false,
+    promoSections: false,
   };
 }
 
