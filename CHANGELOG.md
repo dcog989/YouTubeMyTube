@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.4.0 - 2026-09-18
+#### Features
+- (**areas**) add site-wide promo banner hiding - (5946c77) - dcog989
+#### Continuous Integration
+- (**deps**) bump softprops/action-gh-release from 2 to 3 - (109ea93) - dependabot[bot]
+- (**deps**) bump actions/upload-artifact from 5 to 7 - (5bac24b) - dependabot[bot]
+- (**deps**) bump actions/checkout from 5 to 7 - (9a52eca) - dependabot[bot]
+#### Miscellaneous Chores
+- (**rebrand**) use lowercase npm package name - (2700ee2) - dcog989
+- rebrand to YouTubeMyTube - (522a2e0) - dcog989
+
+- - -
+
 ## 0.3.0 - 2026-09-18
 #### Continuous Integration
 - use native bun audit and bump actions to node24 releases - (62f95a5) - dcog989
