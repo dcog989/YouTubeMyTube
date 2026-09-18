@@ -194,6 +194,14 @@ export function areaForPath(pathname: string): AreaKey | null {
   return null;
 }
 
+export function matchAreaRedirect(pathname: string, areas: AreaFlags): MatchResult {
+  const area = areaForPath(pathname);
+  if (area && REDIRECT_AREAS.has(area) && areas[area]) {
+    return { blocked: true, reason: formatReason('area', area) };
+  }
+  return { blocked: false };
+}
+
 export function matchDirectNavigation(
   parsed: ParsedUrl,
   pathname: string,
@@ -209,9 +217,5 @@ export function matchDirectNavigation(
   if (parsed.handle && rules.handles.has(normalizeHandle(parsed.handle))) {
     return { blocked: true, reason: formatReason('handle', parsed.handle) };
   }
-  const area = areaForPath(pathname);
-  if (area && REDIRECT_AREAS.has(area) && areas[area]) {
-    return { blocked: true, reason: formatReason('area', area) };
-  }
-  return { blocked: false };
+  return matchAreaRedirect(pathname, areas);
 }

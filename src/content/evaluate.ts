@@ -1,6 +1,6 @@
 import { BLOCKED_PAGE, YOUTUBE_HOME } from '../shared/constants';
 import { getRuntimeUrl } from '../shared/ext';
-import { matchDirectNavigation, matchEntity, parseYouTubeUrl } from '../shared/matcher';
+import { matchAreaRedirect, matchEntity, parseYouTubeUrl } from '../shared/matcher';
 import { parseReason } from '../shared/reason';
 import type { ParsedUrl } from '../shared/types';
 import { currentContext } from './entity';
@@ -49,9 +49,9 @@ function evaluateBlocking(): void {
   const path = window.location.pathname;
   const parsed = parseYouTubeUrl(window.location.href);
 
-  const nav = matchDirectNavigation(parsed, path, compiled, state.areas);
-  if (nav.blocked && nav.reason && parseReason(nav.reason)?.kind === 'area') {
-    redirectFor(nav.reason);
+  const area = matchAreaRedirect(path, state.areas);
+  if (area.blocked && area.reason) {
+    redirectFor(area.reason);
     return;
   }
 
