@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.2.3 - 2026-09-18
+#### Continuous Integration
+- (**release**) disable AMO signing until API credentials exist - (ab10f4e) - dcog989
+
+- - -
+
 ## 0.2.2 - 2026-09-18
 #### Continuous Integration
 - (**release**) guard AMO secrets and bump checkout to v5 - (0d734a1) - dcog989
