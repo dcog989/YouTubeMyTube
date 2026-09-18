@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.6.0 - 2026-09-18
+#### Features
+- (**build**) auto-generate AMO source archive - (3581010) - dcog989
+- (**firefox**) declare gecko_android compatibility for AMO - (fc48030) - dcog989
+
+- - -
+
 ## 0.5.0 - 2026-09-18
 #### Features
 - (**icons**) redesign logo as YouTube lozenge with circle-ellipsis - (1a9229d) - dcog989
