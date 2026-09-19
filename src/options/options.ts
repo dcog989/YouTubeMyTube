@@ -547,7 +547,7 @@ function exportSettings(): void {
   anchor.href = url;
   anchor.download = 'YouTubeMyTube-settings.json';
   anchor.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 function isBlockerState(value: unknown): boolean {
