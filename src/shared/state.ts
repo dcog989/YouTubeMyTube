@@ -18,7 +18,7 @@ export async function saveState(state: BlockerState): Promise<void> {
 let mutationQueue: Promise<unknown> = Promise.resolve();
 
 export function mutateState(
-  mutator: (state: BlockerState) => boolean | void,
+  mutator: (state: BlockerState) => boolean | undefined,
 ): Promise<BlockerState | null> {
   const run = async (): Promise<BlockerState | null> => {
     const state = await loadState();

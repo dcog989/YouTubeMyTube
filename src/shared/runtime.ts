@@ -16,7 +16,7 @@ type MessageHandler = (
   message: unknown,
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: unknown) => void,
-) => boolean | void;
+) => boolean | undefined;
 
 export function onRuntimeMessage(handler: MessageHandler): void {
   chrome.runtime.onMessage.addListener(handler);
