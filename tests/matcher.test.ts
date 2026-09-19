@@ -2,8 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   areaForPath,
   compileRules,
-  findChannel,
-  hasVideoId,
   matchDirectNavigation,
   matchEntity,
   parseYouTubeUrl,
@@ -93,21 +91,6 @@ describe('matchEntity', () => {
     const rules = rulesWith({ commentFilters: ['needle'] });
     expect(matchEntity({ commentContent: 'needle' }, rules).blocked).toBe(true);
     expect(matchEntity({ commentContent: `${'x'.repeat(5000)}needle` }, rules).blocked).toBe(false);
-  });
-});
-
-describe('hasVideoId / findChannel', () => {
-  it('looks up videos and channels by id or handle', () => {
-    const rules = {
-      ...defaultRules(),
-      videos: [{ id: 'abc', title: '' }],
-      channels: [{ id: 'UC1', name: '', handle: 'SomeChannel' }],
-    };
-    expect(hasVideoId(rules, 'abc')).toBe(true);
-    expect(hasVideoId(rules, 'missing')).toBe(false);
-    expect(findChannel(rules, { id: 'UC1' })?.id).toBe('UC1');
-    expect(findChannel(rules, { handle: '@somechannel' })?.id).toBe('UC1');
-    expect(findChannel(rules, { id: 'nope' })).toBeUndefined();
   });
 });
 

@@ -7,8 +7,6 @@ import { PATTERN_FILTERS, type PatternFilterKey } from '../shared/filters';
 import {
   compileRules,
   countActiveEntries,
-  findChannel,
-  hasVideoId,
   matchDirectNavigation,
   matchEntity,
   parseYouTubeUrl,
@@ -19,6 +17,12 @@ import {
   resolveChannel,
   resolveVideoTitle,
 } from '../shared/resolve';
+import {
+  addChannel as addChannelRule,
+  addVideo as addVideoRule,
+  removeChannel,
+  removeVideo,
+} from '../shared/rules';
 import { loadState, saveState } from '../shared/state';
 import { defaultState, normalizeState } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
@@ -153,7 +157,7 @@ function selectPanel(name: string): void {
 function renderChannels(): void {
   const body = byId('channel-rows');
   body.replaceChildren();
-  draft.rules.channels.forEach((channel, index) => {
+  draft.rules.channels.forEach((channel) => {
     const row = document.createElement('tr');
 
     const idCell = document.createElement('td');
@@ -184,7 +188,7 @@ function renderChannels(): void {
     remove.className = 'btn btn-danger';
     remove.textContent = 'Remove';
     remove.addEventListener('click', () => {
-      draft.rules.channels.splice(index, 1);
+      removeChannel(draft.rules, { id: channel.id, handle: channel.handle });
       renderChannels();
       setDirty(true);
     });
@@ -199,7 +203,7 @@ function renderChannels(): void {
 function renderVideos(): void {
   const body = byId('video-rows');
   body.replaceChildren();
-  draft.rules.videos.forEach((video, index) => {
+  draft.rules.videos.forEach((video) => {
     const row = document.createElement('tr');
 
     const idCell = document.createElement('td');
@@ -226,7 +230,7 @@ function renderVideos(): void {
     remove.className = 'btn btn-danger';
     remove.textContent = 'Remove';
     remove.addEventListener('click', () => {
-      draft.rules.videos.splice(index, 1);
+      removeVideo(draft.rules, video.id);
       renderVideos();
       setDirty(true);
     });
@@ -248,13 +252,12 @@ async function addChannel(): Promise<void> {
 
   const id = parsed.channelId ?? '';
   const handle = parsed.handle ?? '';
-  if (findChannel(draft.rules, { id, handle })) {
+  const entry: ChannelEntry = { id, name: '', handle };
+  if (!addChannelRule(draft.rules, entry)) {
     setStatus('channel-status', 'That channel is already blocked.', false);
     return;
   }
 
-  const entry: ChannelEntry = { id, name: '', handle };
-  draft.rules.channels.push(entry);
   input.value = '';
   renderChannels();
   setDirty(true);
@@ -281,13 +284,12 @@ async function addVideo(): Promise<void> {
     return;
   }
 
-  if (hasVideoId(draft.rules, parsed.videoId)) {
+  const entry: VideoEntry = { id: parsed.videoId, title: '' };
+  if (!addVideoRule(draft.rules, entry)) {
     setStatus('video-status', 'That video is already blocked.', false);
     return;
   }
 
-  const entry: VideoEntry = { id: parsed.videoId, title: '' };
-  draft.rules.videos.push(entry);
   input.value = '';
   renderVideos();
   setDirty(true);

@@ -1,4 +1,5 @@
 import { isActiveEntry } from './matcher';
+import { addChannel, addVideo } from './rules';
 import type { AreaFlags, AreaKey, BlockerState, FilterRules } from './types';
 
 const DEFAULT_JAVASCRIPT_MARKER = 'Custom conditions did not match, do not block';
@@ -150,20 +151,12 @@ export function mergeBlockTubeImport(
   };
   let added = 0;
 
-  const videoIds = new Set(rules.videos.map((video) => video.id));
   for (const id of data.videoIds) {
-    if (videoIds.has(id)) continue;
-    videoIds.add(id);
-    rules.videos.push({ id, title: '' });
-    added += 1;
+    if (addVideo(rules, { id, title: '' })) added += 1;
   }
 
-  const channelIds = new Set(rules.channels.map((channel) => channel.id));
   for (const id of data.channelIds) {
-    if (channelIds.has(id)) continue;
-    channelIds.add(id);
-    rules.channels.push({ id, name: '', handle: '' });
-    added += 1;
+    if (addChannel(rules, { id, name: '', handle: '' })) added += 1;
   }
 
   const channelFilters = mergePatternList(rules.channelFilters, data.channelFilters);

@@ -1,5 +1,6 @@
 import { normalizeHandle } from './matcher';
 import { parseReason, type ReasonKind } from './reason';
+import { removeChannel, removeVideo } from './rules';
 import type { FilterRules } from './types';
 
 const YOUTUBE_ORIGIN = 'https://www.youtube.com';
@@ -37,21 +38,9 @@ export function ruleRefForReason(reason: string): RuleRef | null {
 }
 
 export function removeRule(rules: FilterRules, ref: RuleRef): boolean {
-  if (ref.kind === 'video') {
-    const index = rules.videos.findIndex((video) => video.id === ref.value);
-    if (index === -1) return false;
-    rules.videos.splice(index, 1);
-    return true;
-  }
-
-  const index = rules.channels.findIndex((channel) =>
-    ref.kind === 'channel'
-      ? channel.id === ref.value
-      : normalizeHandle(channel.handle) === ref.value,
-  );
-  if (index === -1) return false;
-  rules.channels.splice(index, 1);
-  return true;
+  if (ref.kind === 'video') return removeVideo(rules, ref.value);
+  if (ref.kind === 'channel') return removeChannel(rules, { id: ref.value });
+  return removeChannel(rules, { handle: ref.value });
 }
 
 export function reasonLabel(reason: string, fallback: string): string {

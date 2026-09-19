@@ -1,6 +1,7 @@
 import { onLocalStorageChanged } from '../shared/ext';
-import { normalizeHandle, parseYouTubeUrl } from '../shared/matcher';
+import { parseYouTubeUrl } from '../shared/matcher';
 import { formatReason } from '../shared/reason';
+import { addChannel, addVideo, removeChannel, removeVideo } from '../shared/rules';
 import { loadState, saveState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState, ChannelEntry, Entity, FilterRules, VideoEntry } from '../shared/types';
@@ -194,25 +195,13 @@ function closeMenu(): void {
 }
 
 function applyVideo(rules: FilterRules, entry: VideoEntry, mode: MenuAction['mode']): void {
-  const index = rules.videos.findIndex((video) => video.id === entry.id);
-  if (mode === 'unblock') {
-    if (index !== -1) rules.videos.splice(index, 1);
-    return;
-  }
-  if (index === -1) rules.videos.push(entry);
+  if (mode === 'unblock') removeVideo(rules, entry.id);
+  else addVideo(rules, entry);
 }
 
 function applyChannel(rules: FilterRules, entry: ChannelEntry, mode: MenuAction['mode']): void {
-  const index = rules.channels.findIndex(
-    (channel) =>
-      (entry.id !== '' && channel.id === entry.id) ||
-      (entry.handle !== '' && normalizeHandle(channel.handle) === entry.handle),
-  );
-  if (mode === 'unblock') {
-    if (index !== -1) rules.channels.splice(index, 1);
-    return;
-  }
-  if (index === -1) rules.channels.push(entry);
+  if (mode === 'unblock') removeChannel(rules, { id: entry.id, handle: entry.handle });
+  else addChannel(rules, entry);
 }
 
 async function applyAction(action: MenuAction, owner: Element | undefined): Promise<void> {

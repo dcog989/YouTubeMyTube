@@ -1,6 +1,7 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
 import { openOptionsPage, queryActiveTab, sendTabMessage } from '../shared/ext';
-import { countActiveEntries, findChannel, hasVideoId, parseYouTubeUrl } from '../shared/matcher';
+import { countActiveEntries, parseYouTubeUrl } from '../shared/matcher';
+import { addChannel, addVideo, findChannel, hasVideoId } from '../shared/rules';
 import { loadState, saveState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
@@ -83,8 +84,8 @@ function registerHandlers(): void {
   });
 
   byId('block-video').addEventListener('click', () => {
-    if (!activeVideoId || hasVideoId(state.rules, activeVideoId)) return;
-    state.rules.videos.push({ id: activeVideoId, title: '' });
+    if (!activeVideoId) return;
+    if (!addVideo(state.rules, { id: activeVideoId, title: '' })) return;
     renderCounts();
     renderContext();
     void saveState(state);
@@ -92,12 +93,12 @@ function registerHandlers(): void {
 
   byId('block-channel').addEventListener('click', () => {
     if (!activeChannelId && !activeHandle) return;
-    if (findChannel(state.rules, { id: activeChannelId, handle: activeHandle })) return;
-    state.rules.channels.push({
+    const added = addChannel(state.rules, {
       id: activeChannelId ?? '',
       name: activeChannelName ?? '',
       handle: activeHandle ?? '',
     });
+    if (!added) return;
     renderCounts();
     renderContext();
     void saveState(state);

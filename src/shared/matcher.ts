@@ -4,7 +4,6 @@ import { formatReason } from './reason';
 import type {
   AreaFlags,
   AreaKey,
-  ChannelEntry,
   CompiledPattern,
   CompiledRules,
   Entity,
@@ -101,24 +100,6 @@ export function compileRules(rules: FilterRules): CompiledRules {
 
 export function hasCommentRules(rules: CompiledRules): boolean {
   return rules.commentFilters.length > 0;
-}
-
-export function hasVideoId(rules: FilterRules, videoId: string): boolean {
-  return rules.videos.some((video) => video.id.trim() === videoId);
-}
-
-export function findChannel(
-  rules: FilterRules,
-  lookup: { id?: string | null; handle?: string | null },
-): ChannelEntry | undefined {
-  const id = lookup.id?.trim() ?? '';
-  const handle = lookup.handle ? normalizeHandle(lookup.handle) : '';
-  if (!id && !handle) return undefined;
-  return rules.channels.find(
-    (channel) =>
-      (id !== '' && channel.id.trim() === id) ||
-      (handle !== '' && normalizeHandle(channel.handle) === handle),
-  );
 }
 
 export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {

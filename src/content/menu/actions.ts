@@ -1,4 +1,5 @@
-import { findChannel, hasVideoId, normalizeHandle } from '../../shared/matcher';
+import { normalizeHandle } from '../../shared/matcher';
+import { findChannel, hasVideoId } from '../../shared/rules';
 import type { ChannelEntry, Entity, FilterRules, VideoEntry } from '../../shared/types';
 
 export interface MenuAction {

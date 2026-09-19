@@ -18,6 +18,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`; both are pure and
 ### Key Files
 
 - `src/shared/matcher.ts` — URL parsing and rule matching (pure, unit-tested).
+- `src/shared/rules.ts` — rule lookups and mutations (`add`/`remove` video/channel, `channelMatches`) shared by the UI surfaces (pure, unit-tested).
 - `src/shared/filters.ts` — pattern-filter metadata (`channelFilters` / `titleFilters` / `commentFilters`) used by the options UI.
 - `src/shared/areas.ts` — content-area definitions and path mapping.
 - `src/shared/reason.ts` — block-reason wire format (format/parse).
