@@ -537,7 +537,6 @@ async function init(): Promise<void> {
   populate();
   setDirty(false);
   selectPanel('channels');
-  byId('app-version').textContent = `YouTubeMyTube v${chrome.runtime.getManifest().version}`;
   void backfillMissing();
 }
 
