@@ -162,7 +162,7 @@ function renderVideos(): void {
 async function addChannel(): Promise<void> {
   const input = byId<HTMLInputElement>('channel-add');
   const parsed = parseBlockInput(input.value);
-  if (!parsed || parsed.kind !== 'channel') {
+  if (parsed?.kind !== 'channel') {
     setStatus('channel-status', 'Paste a channel URL, @handle, or UC channel ID.', false);
     return;
   }
@@ -197,7 +197,7 @@ async function addChannel(): Promise<void> {
 async function addVideo(): Promise<void> {
   const input = byId<HTMLInputElement>('video-add');
   const parsed = parseBlockInput(input.value);
-  if (!parsed || parsed.kind !== 'video') {
+  if (parsed?.kind !== 'video') {
     setStatus('video-status', 'Paste a video URL or an 11-character video ID.', false);
     return;
   }
@@ -323,8 +323,14 @@ function wirePatternEditors(): void {
   }
 }
 
+function syncThemeButtons(): void {
+  document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.theme === draft.settings.theme);
+  });
+}
+
 function populate(): void {
-  byId<HTMLSelectElement>('theme').value = draft.settings.theme;
+  syncThemeButtons();
   byId<HTMLInputElement>('enabled').checked = draft.settings.enabled;
 
   for (const config of PATTERN_FILTERS) {
@@ -460,14 +466,18 @@ function showImportStatus(message: string, ok: boolean): void {
 
 function wireStatic(): void {
   document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
-    button.addEventListener('click', () => selectPanel(button.dataset.panel ?? 'general'));
+    button.addEventListener('click', () => selectPanel(button.dataset.panel ?? 'filters'));
   });
 
-  byId<HTMLSelectElement>('theme').addEventListener('change', (event) => {
-    draft.settings.theme = (event.target as HTMLSelectElement)
-      .value as BlockerState['settings']['theme'];
-    applyTheme(draft.settings.theme);
-    setDirty(true);
+  document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach((button) => {
+    button.addEventListener('click', () => {
+      const theme = button.dataset.theme;
+      if (theme !== 'system' && theme !== 'light' && theme !== 'dark') return;
+      draft.settings.theme = theme;
+      applyTheme(theme);
+      syncThemeButtons();
+      setDirty(true);
+    });
   });
 
   byId<HTMLInputElement>('enabled').addEventListener('change', (event) => {
