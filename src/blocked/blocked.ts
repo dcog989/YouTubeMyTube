@@ -1,6 +1,7 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { entityUrlForReason } from '../shared/navigation';
-import { parseReason, type Reason, reasonDetail, reasonLabel } from '../shared/reason';
+import { parseReason, type Reason } from '../shared/reason';
+import { reasonDetail, reasonLabel } from '../shared/reason-copy';
 import { unblockReason } from '../shared/rules-service';
 import { openOptionsPage, requestSync } from '../shared/runtime';
 import { loadState } from '../shared/state';

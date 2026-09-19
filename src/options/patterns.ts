@@ -1,4 +1,4 @@
-import { PATTERN_FILTERS, type PatternFilterKey } from '../shared/filters';
+import { PATTERN_FILTER_KEYS, type PatternFilterKey } from '../shared/filters';
 import { byId } from '../shared/ui';
 import { updateCounts } from './counts';
 import { arrayToLines, autoGrowTextarea, linesToArray } from './dom';
@@ -8,24 +8,24 @@ const patternEditors = new Map<PatternFilterKey, HTMLTextAreaElement>();
 
 export function wirePatternEditors(): void {
   const draft = getDraft();
-  for (const config of PATTERN_FILTERS) {
-    const textarea = byId<HTMLTextAreaElement>(`input-${config.key}`);
+  for (const key of PATTERN_FILTER_KEYS) {
+    const textarea = byId<HTMLTextAreaElement>(`input-${key}`);
     textarea.addEventListener('input', () => {
-      draft.rules[config.key] = linesToArray(textarea.value);
+      draft.rules[key] = linesToArray(textarea.value);
       updateCounts();
       setDirty(true);
       autoGrowTextarea(textarea);
     });
-    patternEditors.set(config.key, textarea);
+    patternEditors.set(key, textarea);
   }
 }
 
 export function syncPatternEditors(): void {
   const draft = getDraft();
-  for (const config of PATTERN_FILTERS) {
-    const editor = patternEditors.get(config.key);
+  for (const key of PATTERN_FILTER_KEYS) {
+    const editor = patternEditors.get(key);
     if (editor) {
-      editor.value = arrayToLines(draft.rules[config.key]);
+      editor.value = arrayToLines(draft.rules[key]);
       if (editor.offsetParent) autoGrowTextarea(editor);
     }
   }

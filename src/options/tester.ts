@@ -1,6 +1,6 @@
 import { YOUTUBE_ORIGIN } from '../shared/constants';
 import { matchDirectNavigation, matchEntity } from '../shared/match';
-import { reasonDetail } from '../shared/reason';
+import { reasonDetail } from '../shared/reason-copy';
 import { compileRules } from '../shared/rules';
 import type { Entity, MatchResult } from '../shared/types';
 import { byId } from '../shared/ui';

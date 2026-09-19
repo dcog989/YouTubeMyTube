@@ -1,5 +1,6 @@
 import { YOUTUBE_HOME } from '../shared/constants';
-import { type Reason, reasonDetail } from '../shared/reason';
+import type { Reason } from '../shared/reason';
+import { reasonDetail } from '../shared/reason-copy';
 import { unblockReason } from '../shared/rules-service';
 import { getRuntimeUrl } from '../shared/runtime';
 import { h } from '../shared/ui';

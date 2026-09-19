@@ -21,9 +21,10 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/patterns.ts` — filter-pattern parsing/compilation and active-entry helpers (pure, unit-tested).
 - `src/shared/match.ts` — entity matching and area-redirect routing (pure, unit-tested).
 - `src/shared/rules.ts` — rule lookups, mutations (`add`/`remove` video/channel, `channelMatches`) and `compileRules` shared by the UI surfaces (pure, unit-tested).
-- `src/shared/filters.ts` — pattern-filter metadata (`channelFilters` / `titleFilters` / `commentFilters`) used by the options UI.
-- `src/shared/areas.ts` — content-area definitions and path mapping.
-- `src/shared/reason.ts` — per-kind reason registry (`REASONS`): wire format (format/parse), copy (label/detail), rule refs and entity URLs.
+- `src/shared/filters.ts` — pattern-filter keys (`channelFilters` / `titleFilters` / `commentFilters`); display copy lives in `src/options/copy.ts`.
+- `src/shared/areas.ts` — content-area behavior (keys, paths, redirect flags, CSS classes); display copy lives in `src/options/copy.ts`.
+- `src/shared/reason.ts` — per-kind reason registry (`REASONS`): wire format (format/parse), rule refs and entity URLs.
+- `src/shared/reason-copy.ts` — UI copy for reasons (label/detail) keyed by `ReasonKind`.
 - `src/shared/dnr.ts` — generates declarativeNetRequest rules from state and wraps the dynamic-rule API.
 - `src/shared/storage.ts` — rule model, defaults, normalization (entity rows + pattern lists, deduplicated).
 - `src/shared/storage-ext.ts` — thin `chrome.storage.local` get/set wrappers.
@@ -72,9 +73,10 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 
 ### Common Patterns
 
-- Add a pattern filter: add an entry to `PATTERN_FILTERS` in `src/shared/filters.ts`, add the field to `FilterRules` in `src/shared/types.ts`, compile it in `compileRules`, match it in `matchEntity`, and render it in `src/options/options.ts`. Entity rows (channels/videos) are edited in the options tables; their exact fields are compiled into the `CompiledRules` sets.
-- Add a content area: add an entry to `AREA_DEFINITIONS` in `src/shared/areas.ts` (keys, flags, redirect set and classes are derived from it) and add a matching selector to `src/content/content.css`.
-- Add a reason kind: add an entry to `REASONS` in `src/shared/reason.ts` (wire pattern, format, optional label/detail, rule ref and entity URL); `ReasonKind`, `formatReason`, `parseReason`, `reasonLabel`, `reasonDetail`, `ruleRefForReason` and `entityUrlForReason` all derive from it.
+- Add a pattern filter: add an entry to `PATTERN_FILTER_KEYS` in `src/shared/filters.ts`, add the field to `FilterRules` in `src/shared/types.ts`, compile it in `compileRules`, match it in `matchEntity`, and render it in the options HTML/textareas. Entity rows (channels/videos) are edited in the options tables; their exact fields are compiled into the `CompiledRules` sets.
+- Add a content area: add an entry to `AREA_DEFINITIONS` in `src/shared/areas.ts` (keys, flags, redirect set and classes are derived from it), add matching `AREA_COPY` in `src/options/copy.ts`, and add a selector in `src/content/content.css`.
+- Add a reason kind: add an entry to `REASONS` in `src/shared/reason.ts` (wire pattern, format, rule ref and entity URL) and matching `LABELS`/`DETAILS` in `src/shared/reason-copy.ts`; `ReasonKind`, `formatReason`, `parseReason`, `reasonLabel`, `reasonDetail`, `ruleRefForReason` and `entityUrlForReason` all derive from them.
+- Display copy vs behavior: domain modules (`areas.ts`, `filters.ts`, `reason.ts`) hold behavior; user-facing strings live in `src/options/copy.ts` (options surfaces) and `src/shared/reason-copy.ts` (reason labels/details).
 - Add a browser: add `manifests/<browser>.json` and add the name to `SUPPORTED` in `esbuild.config.mjs`.
 - State access: load via `loadState()` in `src/shared/state.ts`; mutate via `mutateState()` or the `src/shared/rules-service.ts` operations; never write `chrome.storage` directly.
 
