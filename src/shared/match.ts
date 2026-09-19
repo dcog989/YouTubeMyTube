@@ -40,7 +40,7 @@ export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
 export function areaForPath(pathname: string): AreaKey | null {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
   for (const area of AREA_DEFINITIONS) {
-    if (!area.path) continue;
+    if (area.mode !== 'redirect') continue;
     if (normalized === area.path || normalized.startsWith(`${area.path}/`)) return area.key;
   }
   return null;

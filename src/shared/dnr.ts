@@ -70,9 +70,8 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
   };
 
   for (const area of AREA_DEFINITIONS) {
-    if (area.redirect && area.path && state.areas[area.key]) {
-      push(`${YOUTUBE_HOST_PATTERN}${area.path}(?:[/?#]|$)`, { url: YOUTUBE_HOME });
-    }
+    if (area.mode !== 'redirect' || !state.areas[area.key]) continue;
+    push(`${YOUTUBE_HOST_PATTERN}${area.path}(?:[/?#]|$)`, { url: YOUTUBE_HOME });
   }
 
   for (const { id } of state.rules.videos) {

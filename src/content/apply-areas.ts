@@ -4,8 +4,11 @@ import { getSnapshot } from './store';
 export function applyAreas(): void {
   const state = getSnapshot()?.state;
   const enabled = Boolean(state?.settings.enabled);
-  for (const { key, className } of AREA_DEFINITIONS) {
-    if (!className) continue;
-    document.documentElement.classList.toggle(className, enabled && Boolean(state?.areas[key]));
+  for (const area of AREA_DEFINITIONS) {
+    if (area.mode !== 'hide') continue;
+    document.documentElement.classList.toggle(
+      area.className,
+      enabled && Boolean(state?.areas[area.key]),
+    );
   }
 }
