@@ -11,17 +11,21 @@
   <body>
     <header class="app-header">
       <div class="header-inner">
-        <div class="brand">
-          <img src="assets/icons/48.png" alt="" width="28" height="28">
-          <span class="brand-name">YouTubeMyTube</span>
+        <div class="header-left">
+          <div class="brand">
+            <img src="assets/icons/48.png" alt="" width="28" height="28">
+            <span class="brand-name">YouTubeMyTube</span>
+          </div>
+          <div class="blocking-row">
+            <span class="theme-label">Blocking</span>
+            <label class="switch" for="enabled" aria-label="Enable blocking">
+              <input type="checkbox" id="enabled">
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
         <div class="header-actions">
           <span id="dirty" class="dirty" hidden>Unsaved changes</span>
-          <span class="theme-label">Blocking</span>
-          <label class="switch" for="enabled" aria-label="Enable blocking">
-            <input type="checkbox" id="enabled">
-            <span class="slider"></span>
-          </label>
           <fieldset class="theme-switch" aria-label="Theme">
             <button
               type="button"
