@@ -111,6 +111,12 @@ function createItem(action: MenuAction, style: MenuItemStyle): HTMLElement {
   item.addEventListener('mouseleave', () => {
     item.style.backgroundColor = 'transparent';
   });
+  item.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+    event.preventDefault();
+    event.stopPropagation();
+    activateItem(item);
+  });
   itemActions.set(item, action);
   return item;
 }
