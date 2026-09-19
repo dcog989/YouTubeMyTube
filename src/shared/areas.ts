@@ -12,7 +12,7 @@ export const AREA_DEFINITIONS: readonly AreaDefinition[] = [
   {
     key: 'homePage',
     title: 'Home page',
-    sub: 'Redirect the YouTube home feed.',
+    sub: 'Hide the YouTube home feed.',
     path: '/',
     redirect: false,
   },
