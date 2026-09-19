@@ -15,11 +15,15 @@ const LOZENGE_CORNER_RADIUS = 0.14;
 const GLYPH_BOX = 0.48;
 const GLYPH_VIEWBOX = 24;
 const LUCIDE_UNIT = GLYPH_BOX / GLYPH_VIEWBOX;
-const RING_RADIUS = 10 * LUCIDE_UNIT;
-// Lucide uses 2/1 units; widened so the ring and dots survive at 16px.
-const RING_STROKE = 3.2 * LUCIDE_UNIT;
-const DOT_RADIUS = 1.7 * LUCIDE_UNIT;
-const DOT_OFFSET = 5 * LUCIDE_UNIT;
+// Lucide check polyline (M20 6 9 17l-5-5) uses 2/1 units; widened so the
+// stroke survives at 16px.
+const CHECK_STROKE = 3.2 * LUCIDE_UNIT;
+/** @type {[number, number][]} */
+const CHECK_POINTS = [
+  [20, 6],
+  [9, 17],
+  [4, 12],
+];
 
 const LOZENGE_COLOR = { r: 224, g: 49, b: 64 };
 const GLYPH_COLOR = { r: 255, g: 255, b: 255 };
@@ -113,6 +117,24 @@ function inRoundedRect(px, py, cx, cy, halfWidth, halfHeight, radius) {
 }
 
 /**
+ * @param {number} px
+ * @param {number} py
+ * @param {number} x1
+ * @param {number} y1
+ * @param {number} x2
+ * @param {number} y2
+ * @returns {number}
+ */
+function distanceToSegment(px, py, x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const lengthSq = dx * dx + dy * dy;
+  const t =
+    lengthSq === 0 ? 0 : Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / lengthSq));
+  return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+}
+
+/**
  * @param {number} size
  * @returns {Buffer}
  */
@@ -124,11 +146,12 @@ function renderIcon(size) {
   const halfWidth = hi * (LOZENGE_WIDTH / 2);
   const halfHeight = hi * (LOZENGE_HEIGHT / 2);
   const cornerRadius = hi * LOZENGE_CORNER_RADIUS;
-  const ringInner = hi * (RING_RADIUS - RING_STROKE / 2);
-  const ringOuter = hi * (RING_RADIUS + RING_STROKE / 2);
-  const dotRadius = hi * DOT_RADIUS;
-  const dotOffset = hi * DOT_OFFSET;
-  const dotCenters = [center - dotOffset, center, center + dotOffset];
+  const checkStroke = hi * (CHECK_STROKE / 2);
+  /** @type {[number, number][]} */
+  const checkPath = CHECK_POINTS.map(([x, y]) => [
+    center + (x - GLYPH_VIEWBOX / 2) * hi * LUCIDE_UNIT,
+    center + (y - GLYPH_VIEWBOX / 2) * hi * LUCIDE_UNIT,
+  ]);
 
   for (let y = 0; y < hi; y += 1) {
     for (let x = 0; x < hi; x += 1) {
@@ -137,10 +160,14 @@ function renderIcon(size) {
       if (!inRoundedRect(px, py, center, center, halfWidth, halfHeight, cornerRadius)) continue;
 
       const offset = (y * hi + x) * 4;
-      const radius = Math.hypot(px - center, py - center);
-      const onRing = radius >= ringInner && radius <= ringOuter;
-      const onDot = dotCenters.some((dotX) => Math.hypot(px - dotX, py - center) <= dotRadius);
-      const isGlyph = onRing || onDot;
+      let onCheck = false;
+      for (let i = 0; i < checkPath.length - 1 && !onCheck; i += 1) {
+        const start = checkPath[i];
+        const end = checkPath[i + 1];
+        if (!start || !end) continue;
+        onCheck = distanceToSegment(px, py, start[0], start[1], end[0], end[1]) <= checkStroke;
+      }
+      const isGlyph = onCheck;
 
       hiBuf[offset] = isGlyph ? GLYPH_COLOR.r : LOZENGE_COLOR.r;
       hiBuf[offset + 1] = isGlyph ? GLYPH_COLOR.g : LOZENGE_COLOR.g;

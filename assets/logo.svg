@@ -8,12 +8,13 @@
 >
   <title>YouTubeMyTube</title>
   <rect x="1.44" y="4.8" width="21.12" height="14.4" rx="3.36" fill="#e03140" />
-  <g fill="none" stroke="#ffffff" stroke-width="1.536">
-    <circle cx="12" cy="12" r="4.8" />
-  </g>
-  <g fill="#ffffff">
-    <circle cx="9.6" cy="12" r="0.816" />
-    <circle cx="12" cy="12" r="0.816" />
-    <circle cx="14.4" cy="12" r="0.816" />
+  <g
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="1.536"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M15.84 9.12 10.56 14.4 8.16 12" />
   </g>
 </svg>
