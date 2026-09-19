@@ -130,7 +130,7 @@
         </div>
 
         <section class="panel is-active" id="panel-channels">
-          <div class="card">
+          <div class="card card-scroll">
             <label class="row-title" for="channel-add">Block a channel</label>
             <p class="help">
               Paste a channel URL, @handle, or UC channel ID. The ID is matched exactly; the handle
@@ -147,17 +147,19 @@
               <button type="button" id="channel-add-btn" class="btn btn-primary">Add</button>
             </div>
             <div id="channel-status" class="row-sub" hidden></div>
-            <table class="entity-table">
-              <thead>
-                <tr>
-                  <th>Channel ID</th>
-                  <th>Name</th>
-                  <th>Handle</th>
-                  <th class="col-action"></th>
-                </tr>
-              </thead>
-              <tbody id="channel-rows"></tbody>
-            </table>
+            <div class="table-scroll">
+              <table class="entity-table">
+                <thead>
+                  <tr>
+                    <th>Channel ID</th>
+                    <th>Name</th>
+                    <th>Handle</th>
+                    <th class="col-action"></th>
+                  </tr>
+                </thead>
+                <tbody id="channel-rows"></tbody>
+              </table>
+            </div>
             <div class="field">
               <div class="editor-head">
                 <label class="row-title" for="input-channelFilters">
@@ -178,7 +180,7 @@
         </section>
 
         <section class="panel" id="panel-videos">
-          <div class="card">
+          <div class="card card-scroll">
             <label class="row-title" for="video-add">Block a video</label>
             <p class="help">Paste a video URL or an 11-character video ID.</p>
             <div class="test-row">
@@ -192,16 +194,18 @@
               <button type="button" id="video-add-btn" class="btn btn-primary">Add</button>
             </div>
             <div id="video-status" class="row-sub" hidden></div>
-            <table class="entity-table">
-              <thead>
-                <tr>
-                  <th>Video ID</th>
-                  <th>Title</th>
-                  <th class="col-action"></th>
-                </tr>
-              </thead>
-              <tbody id="video-rows"></tbody>
-            </table>
+            <div class="table-scroll">
+              <table class="entity-table">
+                <thead>
+                  <tr>
+                    <th>Video ID</th>
+                    <th>Title</th>
+                    <th class="col-action"></th>
+                  </tr>
+                </thead>
+                <tbody id="video-rows"></tbody>
+              </table>
+            </div>
             <div class="field">
               <div class="editor-head">
                 <label class="row-title" for="input-titleFilters">Video title filters</label>
@@ -230,6 +234,7 @@
             </p>
             <textarea
               id="input-commentFilters"
+              class="textarea-fit"
               spellcheck="false"
               placeholder="spammer&#10;/free\s+crypto/i"
             ></textarea>
@@ -292,10 +297,6 @@
         </section>
       </main>
     </div>
-
-    <footer class="app-footer">
-      <span id="app-version"></span>
-    </footer>
 
     <script type="module" src="options.js"></script>
   </body>

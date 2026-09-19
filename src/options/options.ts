@@ -71,6 +71,8 @@ function selectPanel(name: string): void {
   document.querySelectorAll<HTMLElement>('.panel').forEach((panel) => {
     panel.classList.toggle('is-active', panel.id === `panel-${name}`);
   });
+  const active = document.querySelector<HTMLElement>('.panel.is-active');
+  active?.querySelectorAll<HTMLTextAreaElement>('textarea').forEach(autoGrowTextarea);
   const navButton = document.querySelector<HTMLButtonElement>(`.nav-item[data-panel="${name}"]`);
   if (navButton) byId('panel-title').textContent = navButton.textContent ?? '';
 }
@@ -337,7 +339,7 @@ function populate(): void {
     const editor = patternEditors.get(config.key);
     if (editor) {
       editor.value = arrayToLines(draft.rules[config.key]);
-      autoGrowTextarea(editor);
+      if (editor.offsetParent) autoGrowTextarea(editor);
     }
     updateCount(config.key);
   }
