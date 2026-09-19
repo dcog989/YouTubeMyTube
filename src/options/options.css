@@ -478,6 +478,14 @@ textarea {
   margin-bottom: 12px;
 }
 
+.app-footer {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 12px 28px 24px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
 @media (max-width: 760px) {
   .layout,
   .filters-layout {
