@@ -17,12 +17,15 @@ import type { AreaKey, BlockerState, ChannelEntry, Entity, VideoEntry } from '..
 import { byId } from '../shared/ui';
 
 const patternEditors = new Map<PatternFilterKey, HTMLTextAreaElement>();
-const counters = new Map<PatternFilterKey, HTMLElement>();
 const areaInputs = new Map<AreaKey, HTMLInputElement>();
 
 const MAX_BACKFILL_LOOKUPS = 25;
 
+const COUNTED_PANELS = ['channels', 'videos', 'comments', 'areas'] as const;
+const COUNTED_PANEL_SET = new Set<string>(COUNTED_PANELS);
+
 let draft: BlockerState = defaultState();
+let activePanel = 'channels';
 
 function linesToArray(text: string): string[] {
   return text
@@ -45,10 +48,31 @@ function setDirty(value: boolean): void {
   byId<HTMLButtonElement>('save').disabled = !value;
 }
 
-function updateCount(key: PatternFilterKey): void {
-  const count = activeRuleCount(draft.rules[key]);
-  const target = counters.get(key);
-  if (target) target.textContent = count === 1 ? '1 rule' : `${count} rules`;
+function panelFilterCount(panel: string): number {
+  const rules = draft.rules;
+  switch (panel) {
+    case 'channels':
+      return rules.channels.length + activeRuleCount(rules.channelFilters);
+    case 'videos':
+      return rules.videos.length + activeRuleCount(rules.titleFilters);
+    case 'comments':
+      return activeRuleCount(rules.commentFilters);
+    case 'areas':
+      return AREA_DEFINITIONS.filter((area) => draft.areas[area.key]).length;
+    default:
+      return 0;
+  }
+}
+
+function formatCount(count: number): string {
+  return count === 1 ? '1 filter' : `${count} filters`;
+}
+
+function updateCounts(): void {
+  const isCounted = COUNTED_PANEL_SET.has(activePanel);
+  byId('panel-count').textContent = isCounted ? formatCount(panelFilterCount(activePanel)) : '';
+  const total = COUNTED_PANELS.reduce((sum, panel) => sum + panelFilterCount(panel), 0);
+  byId('total-count').textContent = formatCount(total);
 }
 
 function autoGrowTextarea(textarea: HTMLTextAreaElement): void {
@@ -65,6 +89,7 @@ function setStatus(id: string, message: string, ok: boolean): void {
 }
 
 function selectPanel(name: string): void {
+  activePanel = name;
   document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
     button.classList.toggle('is-active', button.dataset.panel === name);
   });
@@ -75,6 +100,7 @@ function selectPanel(name: string): void {
   active?.querySelectorAll<HTMLTextAreaElement>('textarea').forEach(autoGrowTextarea);
   const navButton = document.querySelector<HTMLButtonElement>(`.nav-item[data-panel="${name}"]`);
   if (navButton) byId('panel-title').textContent = navButton.textContent ?? '';
+  updateCounts();
 }
 
 function renderChannels(): void {
@@ -119,6 +145,7 @@ function renderChannels(): void {
     row.append(idCell, nameCell, handleCell, actionCell);
     body.appendChild(row);
   });
+  updateCounts();
 }
 
 function renderVideos(): void {
@@ -159,6 +186,7 @@ function renderVideos(): void {
     row.append(idCell, titleCell, actionCell);
     body.appendChild(row);
   });
+  updateCounts();
 }
 
 async function addChannel(): Promise<void> {
@@ -299,6 +327,7 @@ function buildAreas(): void {
     input.addEventListener('change', () => {
       draft.areas[config.key] = input.checked;
       setDirty(true);
+      updateCounts();
     });
     const slider = document.createElement('span');
     slider.className = 'slider';
@@ -313,15 +342,13 @@ function buildAreas(): void {
 function wirePatternEditors(): void {
   for (const config of PATTERN_FILTERS) {
     const textarea = byId<HTMLTextAreaElement>(`input-${config.key}`);
-    const count = byId(`count-${config.key}`);
     textarea.addEventListener('input', () => {
       draft.rules[config.key] = linesToArray(textarea.value);
-      updateCount(config.key);
+      updateCounts();
       setDirty(true);
       autoGrowTextarea(textarea);
     });
     patternEditors.set(config.key, textarea);
-    counters.set(config.key, count);
   }
 }
 
@@ -341,7 +368,6 @@ function populate(): void {
       editor.value = arrayToLines(draft.rules[config.key]);
       if (editor.offsetParent) autoGrowTextarea(editor);
     }
-    updateCount(config.key);
   }
 
   for (const [key, input] of areaInputs) {
@@ -350,6 +376,7 @@ function populate(): void {
 
   renderChannels();
   renderVideos();
+  updateCounts();
 }
 
 function showResult(blocked: boolean | null, message: string): void {

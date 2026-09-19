@@ -182,6 +182,13 @@ body {
   margin-bottom: 4px;
 }
 
+.panel-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
 .panel-actions {
   display: flex;
   align-items: center;
@@ -432,6 +439,7 @@ textarea:focus {
 .count {
   color: var(--muted);
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .help {

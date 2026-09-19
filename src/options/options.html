@@ -22,6 +22,7 @@
               <input type="checkbox" id="enabled">
               <span class="slider"></span>
             </label>
+            <span id="total-count" class="count"></span>
           </div>
           <fieldset class="theme-switch" aria-label="Theme">
             <button
@@ -122,7 +123,10 @@
 
       <main class="content">
         <div class="panel-head">
-          <h2 id="panel-title">Block Channels</h2>
+          <div class="panel-title-group">
+            <h2 id="panel-title">Block Channels</h2>
+            <span id="panel-count" class="count"></span>
+          </div>
           <div class="panel-actions">
             <span id="dirty" class="dirty" hidden>Unsaved changes</span>
             <button type="button" id="save" class="btn btn-primary" disabled>Save</button>
@@ -165,7 +169,6 @@
                 <label class="row-title" for="input-channelFilters">
                   Channel name / handle filters
                 </label>
-                <span class="count" id="count-channelFilters"></span>
               </div>
               <p class="help">
                 Keywords or /regex/flags, one per line. Matched against channel names and handles.
@@ -209,7 +212,6 @@
             <div class="field">
               <div class="editor-head">
                 <label class="row-title" for="input-titleFilters">Video title filters</label>
-                <span class="count" id="count-titleFilters"></span>
               </div>
               <p class="help">
                 Keywords or /regex/flags, one per line. Matched against card titles.
@@ -227,7 +229,6 @@
           <div class="card">
             <div class="editor-head">
               <label class="row-title" for="input-commentFilters">Comment filters</label>
-              <span class="count" id="count-commentFilters"></span>
             </div>
             <p class="help">
               Keywords or /regex/flags, one per line. Matched against comment authors and text.
