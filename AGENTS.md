@@ -31,6 +31,8 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/unblock.ts` — maps exact block reasons back to removals.
 - `src/shared/navigation.ts` — builds YouTube entity URLs from block reasons.
 - `src/content/content.ts` — content-script wiring (state lifecycle, observer, messaging).
+- `src/content/entity-selectors.ts` — YouTube DOM selector data (`CARD_SELECTOR`, `COMMENT_SELECTOR`, `HIDDEN_CLASS`).
+- `src/content/entity.ts` — entity extraction from cards, comments and the current page.
 - `src/content/filter.ts` — card/comment DOM filtering engine.
 - `src/content/menu.ts` + `src/content/menu/` — in-page menu injection.
 - `src/background/service-worker.ts` — keeps DNR rules in sync with storage.

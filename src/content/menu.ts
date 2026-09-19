@@ -5,7 +5,8 @@ import type { BlockerState, Entity } from '../shared/types';
 import { h } from '../shared/ui';
 import { parseYouTubeUrl } from '../shared/url';
 import { closestAcrossShadow } from './dom';
-import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, currentContext } from './entity';
+import { cardEntity, currentContext } from './entity';
+import { CARD_SELECTOR, COMMENT_SELECTOR } from './entity-selectors';
 import { hide, show } from './filter';
 import { actionsFor, type MenuAction } from './menu/actions';
 import {

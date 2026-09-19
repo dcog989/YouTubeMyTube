@@ -1,101 +1,16 @@
 import type { Entity, ParsedUrl } from '../shared/types';
 import { normalizeHandle, parseYouTubeUrl } from '../shared/url';
 import { forEachShadowRoot } from './dom';
-
-const ITEM_SELECTORS = [
-  'ytd-rich-item-renderer',
-  'ytd-video-renderer',
-  'ytd-grid-video-renderer',
-  'ytd-compact-video-renderer',
-  'ytd-playlist-video-renderer',
-  'ytd-playlist-renderer',
-  'ytd-radio-renderer',
-  'ytd-reel-item-renderer',
-  'ytd-reel-video-renderer',
-  'ytd-channel-renderer',
-  'ytd-grid-channel-renderer',
-  'ytd-compact-channel-renderer',
-  'ytd-movie-renderer',
-  'ytd-compact-movie-renderer',
-  'yt-lockup-view-model',
-  'ytm-video-with-context-renderer',
-  'ytm-compact-video-renderer',
-  'ytm-video-renderer',
-  'ytm-reel-item-renderer',
-  'ytm-channel-renderer',
-  'ytm-compact-channel-renderer',
-];
-
-const COMMENT_SELECTORS = [
-  'ytd-comment-thread-renderer',
-  'ytd-comment-renderer',
-  'ytm-comment-thread-renderer',
-  'ytm-comment-renderer',
-];
-
-const TITLE_SELECTORS = [
-  '#video-title',
-  '#video-title-link',
-  'a#video-title',
-  '.yt-lockup-metadata-view-model__title',
-  'h3 a',
-];
-
-const CHANNEL_TEXT_SELECTORS = ['ytd-channel-name a', '#channel-name a', 'ytm-channel-name a'];
-
-const OWNER_SCOPES = [
-  '#owner',
-  'ytd-watch-metadata #owner',
-  'ytd-video-owner-renderer',
-  '#upload-info',
-  'ytm-slim-owner-renderer',
-  'ytm-video-owner-renderer',
-  'ytd-watch-metadata',
-  'ytd-video-primary-info-renderer',
-];
-
-const CHANNEL_LINK_SELECTORS = [
-  'ytd-channel-name a[href]',
-  '#channel-name a[href]',
-  '#avatar-link[href]',
-  'a[href^="/@"]',
-  'a[href^="/channel/"]',
-  'link[itemprop="url"][href]',
-  'link[href^="/@"]',
-  'link[href^="/channel/"]',
-  'a[href]',
-  'link[href]',
-];
-
-const CHANNEL_PAGE_NAME_SELECTORS = [
-  '#channel-name #text',
-  '#channel-name yt-formatted-string',
-  'ytd-channel-name #text',
-  'ytd-channel-name yt-formatted-string',
-  'yt-channel-name',
-];
-
-const SHADOW_ANCHOR_HOSTS = [
-  'yt-lockup-view-model',
-  'yt-lockup-metadata-view-model',
-  'yt-content-metadata-view-model',
-  'yt-thumbnail-view-model',
-  'yt-avatar-view-model',
-  'yt-decorated-avatar-view-model',
-];
-
-const SHADOW_ANCHOR_HOST_SELECTOR = SHADOW_ANCHOR_HOSTS.join(',');
-
-const CHANNEL_HEADER_SELECTORS = [
-  'ytd-channel-header-renderer',
-  'ytd-c4-tabbed-header-renderer',
-  '#channel-header',
-  '#channel-header-container',
-];
-
-export const CARD_SELECTOR = ITEM_SELECTORS.join(',');
-export const COMMENT_SELECTOR = COMMENT_SELECTORS.join(',');
-export const HIDDEN_CLASS = 'ytb-hidden';
+import {
+  CHANNEL_HEADER_SELECTORS,
+  CHANNEL_LINK_SELECTORS,
+  CHANNEL_PAGE_NAME_SELECTORS,
+  CHANNEL_TEXT_SELECTORS,
+  METADATA_SELECTOR,
+  OWNER_SCOPES,
+  SHADOW_ANCHOR_HOST_SELECTOR,
+  TITLE_SELECTORS,
+} from './entity-selectors';
 
 function textOf(element: Element | null): string {
   return (element?.textContent ?? '').replace(/\s+/g, ' ').trim();
@@ -110,17 +25,8 @@ function firstText(element: ParentNode, selectors: string[]): string {
   return '';
 }
 
-const METADATA_TEXT_SELECTORS = [
-  '.yt-content-metadata-view-model__metadata-text',
-  '.ytContentMetadataViewModelMetadataText',
-  '.ytAttributedStringHost',
-  '.yt-core-attributed-string',
-];
-
 const NON_CHANNEL_METADATA = /\bviews?\b|\bago\b|^[\d.,]+(?:\s*[KMB])?$/i;
 const CHANNEL_AVATAR_LABEL = /^Go to channel\s+/i;
-
-const METADATA_SELECTOR = METADATA_TEXT_SELECTORS.join(',');
 
 function firstChannelText(candidates: ArrayLike<Element>): string {
   for (const candidate of Array.from(candidates)) {

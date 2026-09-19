@@ -1,7 +1,8 @@
 import { matchEntity } from '../shared/match';
 import { hasCommentRules } from '../shared/rules';
 import type { BlockerState, CompiledRules, Entity } from '../shared/types';
-import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, commentEntity, HIDDEN_CLASS } from './entity';
+import { cardEntity, commentEntity } from './entity';
+import { CARD_SELECTOR, COMMENT_SELECTOR, HIDDEN_CLASS } from './entity-selectors';
 import { scheduleEvaluate } from './evaluate';
 import { getSnapshot } from './store';
 
