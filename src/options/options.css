@@ -74,14 +74,6 @@ body {
   padding: 12px 0;
 }
 
-.header-left {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  min-width: 0;
-}
-
 .brand {
   display: flex;
   align-items: center;
@@ -96,16 +88,15 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-left: 12px;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 10px;
   max-width: 900px;
-  padding-right: 28px;
+  padding: 0 28px;
 }
 
 .dirty {
@@ -533,11 +524,8 @@ textarea {
   .brand {
     padding-left: 0;
   }
-  .blocking-row {
-    padding-left: 0;
-  }
   .header-actions {
     justify-content: flex-end;
-    padding-right: 0;
+    padding: 0;
   }
 }
