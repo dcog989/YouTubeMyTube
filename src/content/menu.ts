@@ -222,9 +222,9 @@ async function applyAction(action: MenuAction, owner: Element | undefined): Prom
 
   const current = await loadState();
   if (action.kind === 'video') {
-    applyVideo(current.rules, action.entry as VideoEntry, action.mode);
+    applyVideo(current.rules, action.entry, action.mode);
   } else {
-    applyChannel(current.rules, action.entry as ChannelEntry, action.mode);
+    applyChannel(current.rules, action.entry, action.mode);
   }
 
   await saveState(current);

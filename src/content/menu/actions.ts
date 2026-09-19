@@ -2,13 +2,23 @@ import { normalizeHandle } from '../../shared/matcher';
 import { findChannel, hasVideoId } from '../../shared/rules';
 import type { ChannelEntry, Entity, FilterRules, VideoEntry } from '../../shared/types';
 
-export interface MenuAction {
+interface MenuActionBase {
   label: string;
-  kind: 'video' | 'channel';
   mode: 'block' | 'unblock';
   value: string;
-  entry: VideoEntry | ChannelEntry;
 }
+
+export interface VideoMenuAction extends MenuActionBase {
+  kind: 'video';
+  entry: VideoEntry;
+}
+
+export interface ChannelMenuAction extends MenuActionBase {
+  kind: 'channel';
+  entry: ChannelEntry;
+}
+
+export type MenuAction = VideoMenuAction | ChannelMenuAction;
 
 export function actionsFor(entity: Entity, rules: FilterRules): MenuAction[] {
   const actions: MenuAction[] = [];
