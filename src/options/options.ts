@@ -1,6 +1,6 @@
 import { AREA_DEFINITIONS } from '../shared/areas';
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
-import { MAX_DNR_REGEX_RULES } from '../shared/constants';
+import { MAX_DNR_REGEX_RULES, YOUTUBE_ORIGIN } from '../shared/constants';
 import { buildDnrRules } from '../shared/dnr';
 import { onLocalStorageChanged } from '../shared/ext';
 import { PATTERN_FILTERS, type PatternFilterKey } from '../shared/filters';
@@ -504,7 +504,7 @@ function showResult(blocked: boolean | null, message: string): void {
 
 function pathnameOf(value: string): string {
   try {
-    return new URL(value, 'https://www.youtube.com').pathname;
+    return new URL(value, YOUTUBE_ORIGIN).pathname;
   } catch {
     return '/';
   }

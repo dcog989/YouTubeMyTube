@@ -1,9 +1,8 @@
+import { YOUTUBE_ORIGIN } from './constants';
 import { normalizeHandle } from './matcher';
 import { parseReason, type ReasonKind } from './reason';
 import { removeChannel, removeVideo } from './rules';
 import type { FilterRules } from './types';
-
-const YOUTUBE_ORIGIN = 'https://www.youtube.com';
 
 export type RuleRefKind = 'video' | 'channel' | 'handle';
 

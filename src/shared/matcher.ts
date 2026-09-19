@@ -1,5 +1,5 @@
 import { AREA_DEFINITIONS, REDIRECT_AREAS } from './areas';
-import { YOUTUBE_HOSTS } from './constants';
+import { YOUTUBE_DOMAIN, YOUTUBE_HOSTS, YOUTUBE_ORIGIN } from './constants';
 import { formatReason } from './reason';
 import type {
   AreaFlags,
@@ -132,13 +132,13 @@ export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
 
 export function isYouTubeHost(hostname: string): boolean {
   if ((YOUTUBE_HOSTS as readonly string[]).includes(hostname)) return true;
-  return hostname.endsWith('.youtube.com');
+  return hostname.endsWith(`.${YOUTUBE_DOMAIN}`);
 }
 
 export function parseYouTubeUrl(href: string): ParsedUrl {
   let url: URL;
   try {
-    url = new URL(href, 'https://www.youtube.com');
+    url = new URL(href, YOUTUBE_ORIGIN);
   } catch {
     return { kind: 'other' };
   }

@@ -1,3 +1,4 @@
+import { YOUTUBE_ORIGIN } from './constants';
 import { normalizeHandle, parseYouTubeUrl } from './matcher';
 
 export type BlockInput =
@@ -103,8 +104,8 @@ export async function resolveVideoTitle(
   videoId: string,
   deps?: Partial<ResolveDeps>,
 ): Promise<string> {
-  const target = `https://www.youtube.com/watch?v=${videoId}`;
-  const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(target)}&format=json`;
+  const target = `${YOUTUBE_ORIGIN}/watch?v=${videoId}`;
+  const url = `${YOUTUBE_ORIGIN}/oembed?url=${encodeURIComponent(target)}&format=json`;
   const response = await fetchWith(deps)(url);
   if (!response.ok) return '';
   const payload: unknown = await response.json();
@@ -124,7 +125,7 @@ export async function resolveChannel(
       : '';
   if (!path) return { id, name: '', handle };
 
-  const response = await fetchWith(deps)(`https://www.youtube.com${path}`);
+  const response = await fetchWith(deps)(`${YOUTUBE_ORIGIN}${path}`);
   if (!response.ok) return { id, name: '', handle };
 
   const meta = channelMetaFromHtml(await response.text());

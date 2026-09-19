@@ -1,10 +1,8 @@
 import { AREA_DEFINITIONS } from './areas';
-import { MAX_DNR_REGEX_RULES, YOUTUBE_HOME } from './constants';
+import { MAX_DNR_REGEX_RULES, YOUTUBE_HOME, YOUTUBE_HOST_PATTERN } from './constants';
 import { escapeRegExp, isActiveEntry, normalizeHandle } from './matcher';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
-
-const HOST = String.raw`https?://(?:www|m)\.youtube\.com`;
 
 export interface DnrBuild {
   rules: chrome.declarativeNetRequest.Rule[];
@@ -33,11 +31,11 @@ function redirectRule(
 
 function videoIdPattern(videoId: string): string {
   const id = escapeRegExp(videoId);
-  return `${HOST}/(?:watch\\?(?:[^#]*&)?v=${id}(?:[&#]|$)|(?:shorts|embed|live)/${id}(?:[/?#]|$))`;
+  return `${YOUTUBE_HOST_PATTERN}/(?:watch\\?(?:[^#]*&)?v=${id}(?:[&#]|$)|(?:shorts|embed|live)/${id}(?:[/?#]|$))`;
 }
 
 function channelIdPattern(channelId: string): string {
-  return `${HOST}/channel/${escapeRegExp(channelId)}(?:[/?#]|$)`;
+  return `${YOUTUBE_HOST_PATTERN}/channel/${escapeRegExp(channelId)}(?:[/?#]|$)`;
 }
 
 function caseInsensitiveLiteral(value: string): string {
@@ -49,7 +47,7 @@ function caseInsensitiveLiteral(value: string): string {
 }
 
 function handlePattern(handle: string): string {
-  return `${HOST}/${caseInsensitiveLiteral(`@${normalizeHandle(handle)}`)}(?:[/?#]|$)`;
+  return `${YOUTUBE_HOST_PATTERN}/${caseInsensitiveLiteral(`@${normalizeHandle(handle)}`)}(?:[/?#]|$)`;
 }
 
 function blockedPage(reason: string): chrome.declarativeNetRequest.Redirect {
@@ -74,7 +72,7 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
 
   for (const area of AREA_DEFINITIONS) {
     if (area.redirect && area.path && state.areas[area.key]) {
-      push(`${HOST}${area.path}(?:[/?#]|$)`, { url: YOUTUBE_HOME });
+      push(`${YOUTUBE_HOST_PATTERN}${area.path}(?:[/?#]|$)`, { url: YOUTUBE_HOME });
     }
   }
 
