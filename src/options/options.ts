@@ -6,6 +6,7 @@ import { onLocalStorageChanged } from '../shared/ext';
 import { PATTERN_FILTERS, type PatternFilterKey } from '../shared/filters';
 import {
   compileRules,
+  countActiveEntries,
   findChannel,
   hasVideoId,
   matchDirectNavigation,
@@ -50,10 +51,6 @@ function arrayToLines(items: string[]): string {
   return items.join('\n');
 }
 
-function activeRuleCount(items: string[]): number {
-  return items.filter((item) => item && !item.startsWith('//')).length;
-}
-
 function setDirty(value: boolean): void {
   dirty = value;
   byId('dirty').hidden = !value;
@@ -89,11 +86,11 @@ function panelFilterCount(panel: string): number {
   const rules = draft.rules;
   switch (panel) {
     case 'channels':
-      return rules.channels.length + activeRuleCount(rules.channelFilters);
+      return rules.channels.length + countActiveEntries(rules.channelFilters);
     case 'videos':
-      return rules.videos.length + activeRuleCount(rules.titleFilters);
+      return rules.videos.length + countActiveEntries(rules.titleFilters);
     case 'comments':
-      return activeRuleCount(rules.commentFilters);
+      return countActiveEntries(rules.commentFilters);
     case 'areas':
       return AREA_DEFINITIONS.filter((area) => draft.areas[area.key]).length;
     default:

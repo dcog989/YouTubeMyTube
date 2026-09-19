@@ -33,9 +33,13 @@ function matchesAny(patterns: CompiledPattern[], value: string): boolean {
   return patterns.some((pattern) => pattern.test(value));
 }
 
-function isActiveEntry(value: string): boolean {
+export function isActiveEntry(value: string): boolean {
   const trimmed = value.trim();
   return trimmed.length > 0 && !trimmed.startsWith('//');
+}
+
+export function countActiveEntries(entries: string[]): number {
+  return entries.filter((entry) => isActiveEntry(entry)).length;
 }
 
 export interface ParsedPattern {
@@ -45,7 +49,7 @@ export interface ParsedPattern {
 
 export function parsePattern(raw: string): ParsedPattern | null {
   const trimmed = raw.trim();
-  if (!trimmed || trimmed.startsWith('//')) return null;
+  if (!isActiveEntry(trimmed)) return null;
 
   const regexForm = /^\/(.*)\/([a-z]*)$/i.exec(trimmed);
   if (regexForm) {

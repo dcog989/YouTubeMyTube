@@ -1,6 +1,6 @@
 import { AREA_DEFINITIONS } from './areas';
 import { MAX_DNR_REGEX_RULES, YOUTUBE_HOME } from './constants';
-import { escapeRegExp, normalizeHandle } from './matcher';
+import { escapeRegExp, isActiveEntry, normalizeHandle } from './matcher';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
 
@@ -80,17 +80,17 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
 
   for (const { id } of state.rules.videos) {
     const value = id.trim();
-    if (!value || value.startsWith('//')) continue;
+    if (!isActiveEntry(value)) continue;
     push(videoIdPattern(value), blockedPage(formatReason('video', value)));
   }
 
   for (const { id, handle } of state.rules.channels) {
     const channelId = id.trim();
-    if (channelId && !channelId.startsWith('//')) {
+    if (isActiveEntry(channelId)) {
       push(channelIdPattern(channelId), blockedPage(formatReason('channel', channelId)));
     }
     const normalized = normalizeHandle(handle);
-    if (normalized && !normalized.startsWith('//')) {
+    if (isActiveEntry(normalized)) {
       push(handlePattern(normalized), blockedPage(formatReason('handle', normalized)));
     }
   }

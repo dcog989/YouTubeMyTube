@@ -90,7 +90,7 @@ describe('ruleCount', () => {
     const state = defaultState();
     state.rules.videos = [{ id: 'a', title: '' }];
     state.rules.channels = [{ id: 'UC1', name: '', handle: '' }];
-    state.rules.titleFilters = ['x', '// comment', ''];
+    state.rules.titleFilters = ['x', '// comment', '  // indented comment', '   ', ''];
     state.rules.commentFilters = ['y'];
     expect(ruleCount(state)).toBe(4);
   });

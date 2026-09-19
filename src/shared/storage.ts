@@ -1,4 +1,4 @@
-import { normalizeHandle } from './matcher';
+import { countActiveEntries, normalizeHandle } from './matcher';
 import type {
   AreaFlags,
   BlockerState,
@@ -141,17 +141,13 @@ export function normalizeState(value: unknown): BlockerState {
   };
 }
 
-function activeCount(list: string[]): number {
-  return list.filter((entry) => entry.trim().length > 0 && !entry.startsWith('//')).length;
-}
-
 export function ruleCount(state: BlockerState): number {
   const { channels, channelFilters, videos, titleFilters, commentFilters } = state.rules;
   return (
     channels.length +
     videos.length +
-    activeCount(channelFilters) +
-    activeCount(titleFilters) +
-    activeCount(commentFilters)
+    countActiveEntries(channelFilters) +
+    countActiveEntries(titleFilters) +
+    countActiveEntries(commentFilters)
   );
 }

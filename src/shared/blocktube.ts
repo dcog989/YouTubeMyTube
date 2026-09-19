@@ -1,3 +1,4 @@
+import { isActiveEntry } from './matcher';
 import type { AreaFlags, AreaKey, BlockerState, FilterRules } from './types';
 
 const DEFAULT_JAVASCRIPT_MARKER = 'Custom conditions did not match, do not block';
@@ -40,7 +41,7 @@ function sanitizeList(value: unknown): string[] {
   for (const item of value) {
     if (typeof item !== 'string') continue;
     const entry = item.trim();
-    if (!entry || entry.startsWith('//')) continue;
+    if (!isActiveEntry(entry)) continue;
     if (seen.has(entry)) continue;
     seen.add(entry);
     result.push(entry);

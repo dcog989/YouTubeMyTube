@@ -1,6 +1,6 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
 import { openOptionsPage, queryActiveTab, sendTabMessage } from '../shared/ext';
-import { findChannel, hasVideoId, parseYouTubeUrl } from '../shared/matcher';
+import { countActiveEntries, findChannel, hasVideoId, parseYouTubeUrl } from '../shared/matcher';
 import { loadState, saveState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
@@ -18,9 +18,11 @@ function renderCounts(): void {
   const parts: string[] = [];
   if (rules.videos.length) parts.push(`${rules.videos.length} videos`);
   if (rules.channels.length) parts.push(`${rules.channels.length} channels`);
-  const keywords = rules.channelFilters.length + rules.titleFilters.length;
+  const keywords =
+    countActiveEntries(rules.channelFilters) + countActiveEntries(rules.titleFilters);
   if (keywords) parts.push(`${keywords} keyword filters`);
-  if (rules.commentFilters.length) parts.push(`${rules.commentFilters.length} comment filters`);
+  const comments = countActiveEntries(rules.commentFilters);
+  if (comments) parts.push(`${comments} comment filters`);
 
   const counts = byId('counts');
   counts.textContent = parts.length > 0 ? parts.join(' · ') : 'No filters yet';
