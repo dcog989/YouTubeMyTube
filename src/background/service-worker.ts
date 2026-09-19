@@ -5,7 +5,12 @@ import { ensureState, loadState } from '../shared/state';
 
 async function doSync(): Promise<void> {
   const state = await loadState();
-  const addRules = buildDnrRules(state);
+  const { rules: addRules, dropped } = buildDnrRules(state);
+  if (dropped > 0) {
+    console.warn(
+      `YouTubeMyTube: ${dropped} DNR rule(s) exceed the browser's regex limit and are enforced in-page only.`,
+    );
+  }
   const existing = await getDynamicRules();
   const removeRuleIds = existing.map((rule) => rule.id);
   await updateDynamicRules({ removeRuleIds, addRules });

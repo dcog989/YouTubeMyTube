@@ -1,5 +1,7 @@
 import { AREA_DEFINITIONS } from '../shared/areas';
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
+import { MAX_DNR_REGEX_RULES } from '../shared/constants';
+import { buildDnrRules } from '../shared/dnr';
 import { PATTERN_FILTERS, type PatternFilterKey } from '../shared/filters';
 import {
   compileRules,
@@ -73,6 +75,19 @@ function updateCounts(): void {
   byId('panel-count').textContent = isCounted ? formatCount(panelFilterCount(activePanel)) : '';
   const total = COUNTED_PANELS.reduce((sum, panel) => sum + panelFilterCount(panel), 0);
   byId('total-count').textContent = formatCount(total);
+  updateDnrWarning();
+}
+
+function updateDnrWarning(): void {
+  const notice = byId('dnr-warning');
+  const { dropped } = buildDnrRules(draft);
+  const noun = dropped === 1 ? 'filter' : 'filters';
+  const verb = dropped === 1 ? 'exceeds' : 'exceed';
+  notice.hidden = dropped === 0;
+  notice.textContent =
+    dropped === 0
+      ? ''
+      : `${dropped} ${noun} ${verb} the browser's ${MAX_DNR_REGEX_RULES}-rule limit and will be enforced in-page only.`;
 }
 
 function autoGrowTextarea(textarea: HTMLTextAreaElement): void {

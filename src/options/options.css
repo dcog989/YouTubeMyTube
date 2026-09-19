@@ -189,6 +189,15 @@ body {
   min-width: 0;
 }
 
+.notice {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: var(--bad-bg);
+  color: var(--bad-text);
+  font-size: 13px;
+}
+
 .panel-actions {
   display: flex;
   align-items: center;

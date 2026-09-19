@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { MAX_DNR_REGEX_RULES } from '../src/shared/constants';
 import { buildDnrRules } from '../src/shared/dnr';
 import { defaultState } from '../src/shared/storage';
 import type { ChannelEntry, VideoEntry } from '../src/shared/types';
@@ -27,12 +28,12 @@ function video(id: string): VideoEntry {
 
 describe('buildDnrRules', () => {
   it('returns no rules when disabled', () => {
-    const rules = buildDnrRules(stateWith({ videos: [video('abc')], enabled: false }));
+    const { rules } = buildDnrRules(stateWith({ videos: [video('abc')], enabled: false }));
     expect(rules).toHaveLength(0);
   });
 
   it('creates one redirect rule per video id and channel field', () => {
-    const rules = buildDnrRules(
+    const { rules } = buildDnrRules(
       stateWith({
         videos: [video('abc')],
         channels: [channel('UC123', 'SomeChannel')],
@@ -43,14 +44,14 @@ describe('buildDnrRules', () => {
   });
 
   it('redirects entity rules to the extension blocked page with a reason', () => {
-    const rules = buildDnrRules(stateWith({ videos: [video('abc')] }));
+    const { rules } = buildDnrRules(stateWith({ videos: [video('abc')] }));
     expect(decodeURIComponent(rules[0]?.action.redirect?.extensionPath ?? '')).toBe(
       '/blocked.html?reason=video id abc',
     );
   });
 
   it('uses a distinct reason per entity type', () => {
-    const rules = buildDnrRules(
+    const { rules } = buildDnrRules(
       stateWith({
         videos: [video('abc')],
         channels: [channel('UC123', 'SomeChannel')],
@@ -67,7 +68,7 @@ describe('buildDnrRules', () => {
   });
 
   it('matches handles case-insensitively', () => {
-    const rules = buildDnrRules(stateWith({ channels: [channel('', 'SomeChannel')] }));
+    const { rules } = buildDnrRules(stateWith({ channels: [channel('', 'SomeChannel')] }));
     const filter = rules[0]?.condition.regexFilter ?? '';
     expect(new RegExp(filter).test('https://www.youtube.com/@somechannel')).toBe(true);
     expect(new RegExp(filter).test('https://www.youtube.com/@SOMECHANNEL')).toBe(true);
@@ -75,12 +76,12 @@ describe('buildDnrRules', () => {
   });
 
   it('skips channels without an id or handle', () => {
-    const rules = buildDnrRules(stateWith({ channels: [channel('', '')] }));
+    const { rules } = buildDnrRules(stateWith({ channels: [channel('', '')] }));
     expect(rules).toHaveLength(0);
   });
 
   it('redirects area rules to the YouTube home page', () => {
-    const rules = buildDnrRules(stateWith({ trendingPage: true }));
+    const { rules } = buildDnrRules(stateWith({ trendingPage: true }));
     expect(rules).toHaveLength(1);
     expect(rules[0]?.action.redirect?.url).toBe('https://www.youtube.com/');
   });
@@ -89,12 +90,14 @@ describe('buildDnrRules', () => {
     const state = defaultState();
     state.areas.homePage = true;
     expect(
-      buildDnrRules(state).some((rule) => rule.action.redirect?.url === 'https://www.youtube.com/'),
+      buildDnrRules(state).rules.some(
+        (rule) => rule.action.redirect?.url === 'https://www.youtube.com/',
+      ),
     ).toBe(false);
   });
 
   it('builds a combined video regex including shorts and watch paths', () => {
-    const rules = buildDnrRules(stateWith({ videos: [video('dQw4w9WgXcQ')] }));
+    const { rules } = buildDnrRules(stateWith({ videos: [video('dQw4w9WgXcQ')] }));
     const filter = rules[0]?.condition.regexFilter ?? '';
     expect(filter).toContain('watch');
     expect(filter).toContain('shorts');
@@ -102,7 +105,7 @@ describe('buildDnrRules', () => {
   });
 
   it('assigns unique positive rule ids', () => {
-    const rules = buildDnrRules(
+    const { rules } = buildDnrRules(
       stateWith({ videos: [video('a'), video('b'), video('c')], channels: [channel('UC1')] }),
     );
     const ids = rules.map((rule) => rule.id);
@@ -111,7 +114,16 @@ describe('buildDnrRules', () => {
   });
 
   it('skips blank entries', () => {
-    const rules = buildDnrRules(stateWith({ videos: [video(''), video('  ')] }));
+    const { rules } = buildDnrRules(stateWith({ videos: [video(''), video('  ')] }));
     expect(rules).toHaveLength(0);
+  });
+
+  it('caps regex rules at the browser limit and reports the overflow', () => {
+    const videos = Array.from({ length: MAX_DNR_REGEX_RULES + 1 }, (_, index) =>
+      video(`v${index}`),
+    );
+    const { rules, dropped } = buildDnrRules(stateWith({ videos }));
+    expect(rules).toHaveLength(MAX_DNR_REGEX_RULES);
+    expect(dropped).toBe(1);
   });
 });

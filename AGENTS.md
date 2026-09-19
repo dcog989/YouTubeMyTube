@@ -70,7 +70,7 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 
 - DOM filtering can briefly render content before it is hidden; the network layer covers direct navigation instead.
 - Cold direct navigation to blocked content redirects to the block page (`declarativeNetRequest`); the in-page full-screen channel overlay and player blanking apply to in-page/SPA navigation.
-- The `declarativeNetRequest` rule count is capped (`MAX_DNR_RULES`); the DOM layer remains authoritative beyond that.
+- The `declarativeNetRequest` layer is capped at the browser's regex-rule limit (`MAX_DNR_REGEX_RULES`); overflow is surfaced in the options UI and enforced in-page by the content script.
 - Comment filtering requires comments to be rendered.
 - In-menu blocking is desktop-only and relies on YouTube's menu DOM; it may be affected by YouTube layout changes.
 - BlockTube imports map filter lists, the Trending/Shorts toggles and the block message. BlockTube-only features (duration filters, advanced JavaScript blocking, autoplay/mix/movie options) are not imported and are listed in the import report.

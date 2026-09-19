@@ -1,10 +1,15 @@
 import { AREA_DEFINITIONS } from './areas';
-import { MAX_DNR_RULES, YOUTUBE_HOME } from './constants';
+import { MAX_DNR_REGEX_RULES, YOUTUBE_HOME } from './constants';
 import { escapeRegExp, normalizeHandle } from './matcher';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
 
 const HOST = String.raw`https?://(?:www|m)\.youtube\.com`;
+
+export interface DnrBuild {
+  rules: chrome.declarativeNetRequest.Rule[];
+  dropped: number;
+}
 
 function redirectRule(
   id: number,
@@ -51,14 +56,18 @@ function blockedPage(reason: string): chrome.declarativeNetRequest.Redirect {
   return { extensionPath: `/blocked.html?reason=${encodeURIComponent(reason)}` };
 }
 
-export function buildDnrRules(state: BlockerState): chrome.declarativeNetRequest.Rule[] {
-  if (!state.settings.enabled) return [];
+export function buildDnrRules(state: BlockerState): DnrBuild {
+  if (!state.settings.enabled) return { rules: [], dropped: 0 };
 
   const rules: chrome.declarativeNetRequest.Rule[] = [];
   let nextId = 1;
+  let dropped = 0;
 
   const push = (regexFilter: string, target: chrome.declarativeNetRequest.Redirect): void => {
-    if (rules.length >= MAX_DNR_RULES) return;
+    if (rules.length >= MAX_DNR_REGEX_RULES) {
+      dropped += 1;
+      return;
+    }
     rules.push(redirectRule(nextId, regexFilter, target));
     nextId += 1;
   };
@@ -86,5 +95,5 @@ export function buildDnrRules(state: BlockerState): chrome.declarativeNetRequest
     }
   }
 
-  return rules;
+  return { rules, dropped };
 }
