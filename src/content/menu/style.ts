@@ -1,4 +1,5 @@
 import { getRuntimeUrl } from '../../shared/ext';
+import { walkShadowRoots } from '../dom';
 import type { MenuContainer } from './container';
 import { MENU_ITEM_SELECTOR } from './selectors';
 
@@ -36,27 +37,18 @@ function findLabelElement(root: Element | ShadowRoot): Element | null {
   let best: Element | null = null;
   let bestScore = -1;
 
-  function visitElement(element: Element): void {
-    if (hasDirectText(element)) {
-      const size = Number.parseFloat(window.getComputedStyle(element).fontSize) || 0;
-      if (size >= MIN_LABEL_SIZE && size <= MAX_LABEL_SIZE) {
-        const bonus = element.matches(LABEL_SELECTOR) ? LABEL_SELECTOR_BONUS : 0;
-        const score = bonus + size;
-        if (score > bestScore) {
-          bestScore = score;
-          best = element;
-        }
-      }
+  walkShadowRoots(root, (element) => {
+    if (!hasDirectText(element)) return;
+    const size = Number.parseFloat(window.getComputedStyle(element).fontSize) || 0;
+    if (size < MIN_LABEL_SIZE || size > MAX_LABEL_SIZE) return;
+    const bonus = element.matches(LABEL_SELECTOR) ? LABEL_SELECTOR_BONUS : 0;
+    const score = bonus + size;
+    if (score > bestScore) {
+      bestScore = score;
+      best = element;
     }
-    if (element.shadowRoot) visit(element.shadowRoot);
-  }
+  });
 
-  function visit(node: Element | ShadowRoot): void {
-    if (node instanceof Element) visitElement(node);
-    for (const element of node.querySelectorAll('*')) visitElement(element);
-  }
-
-  visit(root);
   return best;
 }
 

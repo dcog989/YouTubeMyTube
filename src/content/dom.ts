@@ -9,26 +9,34 @@ export function closestAcrossShadow(element: Element, selector: string): Element
   return null;
 }
 
-export function forEachShadowRoot(
+export function walkShadowRoots(
   root: ParentNode,
-  visit: (shadow: ShadowRoot) => boolean | undefined,
+  visit: (element: Element, shadow: ShadowRoot | null) => boolean | undefined,
 ): void {
-  function visitElement(element: Element): boolean {
-    const shadow = element.shadowRoot;
-    if (!shadow) return true;
-    if (visit(shadow) === false) return false;
-    return iterate(shadow);
+  function walkElement(element: Element): boolean {
+    if (visit(element, element.shadowRoot) === false) return false;
+    return element.shadowRoot ? walk(element.shadowRoot) : true;
   }
 
-  function iterate(node: ParentNode): boolean {
-    if (node instanceof Element && !visitElement(node)) return false;
+  function walk(node: ParentNode): boolean {
+    if (node instanceof Element && !walkElement(node)) return false;
     for (const element of node.querySelectorAll('*')) {
-      if (!visitElement(element)) return false;
+      if (!walkElement(element)) return false;
     }
     return true;
   }
 
-  iterate(root);
+  walk(root);
+}
+
+export function forEachShadowRoot(
+  root: ParentNode,
+  visit: (shadow: ShadowRoot) => boolean | undefined,
+): void {
+  walkShadowRoots(root, (_element, shadow) => {
+    if (!shadow) return true;
+    return visit(shadow);
+  });
 }
 
 export function deepQuery<T extends Element = HTMLElement>(

@@ -1,3 +1,4 @@
+import { walkShadowRoots } from '../dom';
 import { onAddedElements } from '../observer';
 
 export type ElementListener = (element: Element) => void;
@@ -17,13 +18,11 @@ export function scanExisting(root: ParentNode, selector: string, onElement: Elem
 }
 
 function observeShadowTree(root: ParentNode, selector: string, onElement: ElementListener): void {
-  for (const element of root.querySelectorAll('*')) {
-    const shadow = element.shadowRoot;
-    if (!shadow || observedRoots.has(shadow)) continue;
+  walkShadowRoots(root, (_element, shadow) => {
+    if (!shadow || observedRoots.has(shadow)) return;
     observeRoot(shadow, onElement);
     scanExisting(shadow, selector, onElement);
-    observeShadowTree(shadow, selector, onElement);
-  }
+  });
 }
 
 export function attachShadows(owner: Element, selector: string, onElement: ElementListener): void {
