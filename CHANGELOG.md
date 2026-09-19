@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.8.1 - 2026-09-19
+#### Bug Fixes
+- (**content**) hide the Explore more topics shelf under promo sections - (f57408b) - dcog989
+- (**content**) resolve channel identity for sidebar lockup menus - (20a106b) - dcog989
+- (**options**) read the live draft in area and pattern editors - (8bdf0ee) - dcog989
+
+- - -
+
 ## 0.8.0 - 2026-09-19
 #### Features
 - (**icons**) replace circle-ellipsis glyph with check mark - (782d12f) - dcog989
