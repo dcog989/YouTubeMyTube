@@ -34,7 +34,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/runtime.ts` — `chrome.runtime` wrappers (extension URL, sync request, options page).
 - `src/shared/tabs.ts` — `chrome.tabs` wrappers (active tab, tab messaging).
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
-- `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata and video titles.
+- `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata, video titles and a video's channel (oEmbed).
 - `src/shared/unblock.ts` — maps exact block reasons back to removals.
 - `src/shared/navigation.ts` — builds YouTube entity URLs from block reasons.
 - `src/content/content.ts` — content-script wiring; owns the factory instances (playback guard, overlay feedback, evaluator, filter engine, menu injector) and threads their dependencies.
@@ -93,6 +93,7 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 - The `declarativeNetRequest` layer is capped at the browser's regex-rule limit (`MAX_DNR_REGEX_RULES`); overflow is surfaced in the options UI and enforced in-page by the content script.
 - Comment filtering requires comments to be rendered.
 - In-menu blocking is desktop-only and relies on YouTube's menu DOM; it may be affected by YouTube layout changes.
+- Watch-page related cards (`yt-lockup-view-model`) expose no channel link or ID, so the menu resolves the channel from the video's oEmbed metadata and falls back to the exact display name if that lookup fails.
 - BlockTube imports map filter lists and the Trending/Shorts toggles. BlockTube-only features (duration filters, advanced JavaScript blocking, autoplay/mix/movie options, the block message) are not imported and are listed in the import report.
 
 ### File System Access

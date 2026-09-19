@@ -6,7 +6,7 @@ Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarative
 
 ## Features
 
-- Block channels by ID or handle, and channel names/handles by keyword/regex.
+- Block channels by ID or handle, falling back to the exact channel name where YouTube exposes no channel link (e.g. related-video cards); channel names/handles can also be matched by keyword/regex.
 - Block videos by ID, and titles by keyword/regex.
 - Block comments by author or content keyword/regex.
 - Add a channel or video by pasting a URL, `@handle`, channel ID or 11-character video ID; the options page looks up and stores the name/title for reference.

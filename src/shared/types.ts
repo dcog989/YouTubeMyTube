@@ -62,6 +62,7 @@ export interface CompiledRules {
   videoIds: Set<string>;
   channelIds: Set<string>;
   handles: Set<string>;
+  channelNames: Set<string>;
   titleFilters: RegExp[];
   channelFilters: RegExp[];
   commentFilters: RegExp[];

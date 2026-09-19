@@ -1,3 +1,4 @@
+import { type ChannelMeta, resolveVideoChannel } from '../../shared/resolve';
 import type { BlockerState, Entity } from '../../shared/types';
 import { h } from '../../shared/ui';
 import { parseYouTubeUrl } from '../../shared/url';
@@ -40,6 +41,7 @@ export function createMenuInjector(deps: {
 }): MenuInjector {
   let lastMenuTarget: Element | null = null;
   const itemState = new WeakMap<Element, { action: MenuAction; owner: Element }>();
+  const channelCache = new Map<string, ChannelMeta>();
 
   function currentState(): BlockerState | null {
     return deps.store.getSnapshot()?.state ?? null;
@@ -74,7 +76,27 @@ export function createMenuInjector(deps: {
   }
 
   function entityFor(owner: Element): Entity {
-    return owner.matches(CARD_SELECTOR) ? cardEntity(owner) : currentContext();
+    const entity = owner.matches(CARD_SELECTOR) ? cardEntity(owner) : currentContext();
+    if (entity.videoId) {
+      const meta = channelCache.get(entity.videoId);
+      if (meta) {
+        if (!entity.channelId && meta.id) entity.channelId = meta.id;
+        if (!entity.handle && meta.handle) entity.handle = meta.handle;
+        if (!entity.channelName && meta.name) entity.channelName = meta.name;
+      }
+    }
+    return entity;
+  }
+
+  function requestChannel(videoId: string, container: MenuContainer): void {
+    if (channelCache.has(videoId)) return;
+    channelCache.set(videoId, { id: '', name: '', handle: '' });
+    void resolveVideoChannel(videoId)
+      .then((meta) => channelCache.set(videoId, meta))
+      .catch(() => undefined)
+      .finally(() => {
+        if (container.isConnected) inject(container);
+      });
   }
 
   function ownerForItem(item: Element): Element | null {
@@ -131,6 +153,22 @@ export function createMenuInjector(deps: {
     return item;
   }
 
+  function ownedItems(scope: Element, owner: Element): Element[] {
+    return Array.from(scope.querySelectorAll(`[${INJECTED_ATTR}]`)).filter(
+      (item) => itemState.get(item)?.owner === owner,
+    );
+  }
+
+  function actionsMatch(owned: Element[], actions: MenuAction[]): boolean {
+    if (owned.length !== actions.length) return false;
+    return owned.every((item, index) => {
+      const stored = itemState.get(item)?.action;
+      const action = actions[index];
+      if (!stored || !action) return false;
+      return stored.kind === action.kind && stored.label === action.label;
+    });
+  }
+
   function inject(container: MenuContainer): void {
     if (!currentState()?.settings.enabled) return;
 
@@ -149,17 +187,22 @@ export function createMenuInjector(deps: {
       if (itemState.get(existing)?.owner !== owner) existing.remove();
     }
 
-    const owned = Array.from(scope.querySelectorAll(`[${INJECTED_ATTR}]`)).filter(
-      (item) => itemState.get(item)?.owner === owner,
-    );
-    if (owned.length > 0) {
+    const entity = entityFor(owner);
+    if (entity.videoId && !entity.channelId && !entity.handle) {
+      requestChannel(entity.videoId, container);
+    }
+
+    const actions = pendingActions(entity);
+    const owned = ownedItems(scope, owner);
+    if (actions.length === 0) {
+      for (const item of owned) item.remove();
+      return;
+    }
+    if (owned.length > 0 && actionsMatch(owned, actions)) {
       moveToEnd(host, owned);
       return;
     }
-
-    const entity = entityFor(owner);
-    const actions = pendingActions(entity);
-    if (actions.length === 0) return;
+    for (const item of owned) item.remove();
 
     const style = computeItemStyle(container);
     for (const action of actions) {

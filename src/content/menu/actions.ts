@@ -34,16 +34,17 @@ export function actionsFor(entity: Entity, rules: FilterRules): MenuAction[] {
     });
   }
 
-  if (entity.channelId || entity.handle) {
+  if (entity.channelId || entity.handle || entity.channelName) {
     const id = entity.channelId ?? '';
     const handle = entity.handle ? normalizeHandle(entity.handle) : '';
-    const blocked = findChannel(rules, { id, handle }) !== undefined;
+    const name = entity.channelName ?? '';
+    const blocked = findChannel(rules, { id, handle, name }) !== undefined;
     actions.push({
       label: `${blocked ? 'Unblock' : 'Block'} channel`,
       kind: 'channel',
       mode: blocked ? 'unblock' : 'block',
-      value: id || handle,
-      entry: { id, name: entity.channelName ?? '', handle },
+      value: id || handle || name,
+      entry: { id, name, handle },
     });
   }
 

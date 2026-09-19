@@ -3,7 +3,7 @@ import { defaultAreas, defaultRules, defaultSettings, defaultState } from './def
 import { countActiveEntries } from './patterns';
 import { isTheme } from './theme';
 import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
-import { normalizeHandle } from './url';
+import { normalizeChannelName, normalizeHandle } from './url';
 
 function pickStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
@@ -15,17 +15,21 @@ function pickChannels(value: unknown): ChannelEntry[] {
   const result: ChannelEntry[] = [];
   const ids = new Set<string>();
   const handles = new Set<string>();
+  const names = new Set<string>();
   for (const item of value) {
     if (!item || typeof item !== 'object') continue;
     const record = item as Record<string, unknown>;
     const id = typeof record.id === 'string' ? record.id.trim() : '';
     const name = typeof record.name === 'string' ? record.name.trim() : '';
     const handle = typeof record.handle === 'string' ? normalizeHandle(record.handle) : '';
-    if (!id && !handle) continue;
+    if (!id && !handle && !name) continue;
     if (id && ids.has(id)) continue;
     if (handle && handles.has(handle)) continue;
+    const normalizedName = normalizeChannelName(name);
+    if (!id && !handle && normalizedName && names.has(normalizedName)) continue;
     if (id) ids.add(id);
     if (handle) handles.add(handle);
+    if (normalizedName) names.add(normalizedName);
     const entry: ChannelEntry = { id, name, handle };
     if (record.lookupFailed === true) entry.lookupFailed = true;
     result.push(entry);

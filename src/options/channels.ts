@@ -29,7 +29,7 @@ export function renderChannels(): void {
       text: 'Remove',
     });
     remove.addEventListener('click', () => {
-      removeChannel(draft.rules, { id: channel.id, handle: channel.handle });
+      removeChannel(draft.rules, { id: channel.id, handle: channel.handle, name: channel.name });
       renderChannels();
       setDirty(true);
     });

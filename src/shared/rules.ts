@@ -1,6 +1,6 @@
 import { compilePatterns, isActiveEntry } from './patterns';
 import type { ChannelEntry, CompiledRules, FilterRules, VideoEntry } from './types';
-import { normalizeHandle } from './url';
+import { normalizeChannelName, normalizeHandle } from './url';
 
 export function compileRules(rules: FilterRules): CompiledRules {
   const videoIds = new Set<string>();
@@ -11,16 +11,20 @@ export function compileRules(rules: FilterRules): CompiledRules {
 
   const channelIds = new Set<string>();
   const handles = new Set<string>();
-  for (const { id, handle } of rules.channels) {
+  const channelNames = new Set<string>();
+  for (const { id, handle, name } of rules.channels) {
     const channelId = id.trim();
     if (isActiveEntry(channelId)) channelIds.add(channelId);
     if (isActiveEntry(handle)) handles.add(handle);
+    const channelName = normalizeChannelName(name);
+    if (channelName) channelNames.add(channelName);
   }
 
   return {
     videoIds,
     channelIds,
     handles,
+    channelNames,
     titleFilters: compilePatterns(rules.titleFilters),
     channelFilters: compilePatterns(rules.channelFilters),
     commentFilters: compilePatterns(rules.commentFilters),
@@ -34,13 +38,19 @@ export function hasCommentRules(rules: CompiledRules): boolean {
 export interface ChannelLookup {
   id?: string | null;
   handle?: string | null;
+  name?: string | null;
 }
 
 export function channelMatches(entry: ChannelEntry, lookup: ChannelLookup): boolean {
   const id = lookup.id?.trim() ?? '';
   const handle = lookup.handle ? normalizeHandle(lookup.handle) : '';
-  if (!id && !handle) return false;
-  return (id !== '' && entry.id.trim() === id) || (handle !== '' && entry.handle === handle);
+  const name = lookup.name ? normalizeChannelName(lookup.name) : '';
+  if (!id && !handle && !name) return false;
+  return (
+    (id !== '' && entry.id.trim() === id) ||
+    (handle !== '' && entry.handle === handle) ||
+    (name !== '' && normalizeChannelName(entry.name) === name)
+  );
 }
 
 export function findChannel(rules: FilterRules, lookup: ChannelLookup): ChannelEntry | undefined {
@@ -72,8 +82,10 @@ export function removeVideo(rules: FilterRules, videoId: string): boolean {
 
 export function addChannel(rules: FilterRules, entry: ChannelEntry): boolean {
   entry.handle = normalizeHandle(entry.handle);
-  if (!isActiveEntry(entry.id) && !isActiveEntry(entry.handle)) return false;
-  if (findChannel(rules, { id: entry.id, handle: entry.handle })) return false;
+  if (!isActiveEntry(entry.id) && !isActiveEntry(entry.handle) && !isActiveEntry(entry.name)) {
+    return false;
+  }
+  if (findChannel(rules, { id: entry.id, handle: entry.handle, name: entry.name })) return false;
   rules.channels.push(entry);
   return true;
 }

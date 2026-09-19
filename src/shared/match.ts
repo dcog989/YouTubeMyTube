@@ -1,6 +1,6 @@
 import { AREA_DEFINITIONS, REDIRECT_AREAS } from './areas';
 import type { AreaFlags, AreaKey, CompiledRules, Entity, MatchResult, ParsedUrl } from './types';
-import { normalizeHandle } from './url';
+import { normalizeChannelName, normalizeHandle } from './url';
 
 const MAX_MATCH_LENGTH = 4096;
 
@@ -18,6 +18,12 @@ export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
   if (entity.handle && rules.handles.has(normalizeHandle(entity.handle))) {
     const value = normalizeHandle(entity.handle);
     return { blocked: true, reason: { kind: 'handle', value } };
+  }
+  if (entity.channelName) {
+    const name = normalizeChannelName(entity.channelName);
+    if (name && rules.channelNames.has(name)) {
+      return { blocked: true, reason: { kind: 'channelName', value: entity.channelName } };
+    }
   }
   if (entity.title && matchesAny(rules.titleFilters, entity.title)) {
     return { blocked: true, reason: { kind: 'title', value: entity.title } };

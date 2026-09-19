@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   channelMetaFromHtml,
+  channelRefFromOembed,
   parseBlockInput,
   resolveChannel,
+  resolveVideoChannel,
   resolveVideoTitle,
   videoTitleFromOembed,
 } from '../src/shared/resolve';
@@ -121,5 +123,50 @@ describe('resolveChannel / resolveVideoTitle', () => {
   it('returns an empty title when oEmbed fails', async () => {
     const title = await resolveVideoTitle('dQw4w9WgXcQ', { fetch: fetchStub('{}', false) });
     expect(title).toBe('');
+  });
+});
+
+describe('channelRefFromOembed', () => {
+  it('reads the handle and name from author_url', () => {
+    expect(
+      channelRefFromOembed({
+        author_name: ' Rick Astley ',
+        author_url: 'https://www.youtube.com/@RickAstleyYT',
+      }),
+    ).toEqual({ id: '', name: 'Rick Astley', handle: 'rickastleyyt' });
+  });
+
+  it('reads the channel id when author_url points at /channel', () => {
+    expect(
+      channelRefFromOembed({
+        author_name: 'Rick Astley',
+        author_url: 'https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw',
+      }),
+    ).toEqual({ id: 'UCuAXFkgsw1L7xaCfnd5JJOw', name: 'Rick Astley', handle: '' });
+  });
+
+  it('tolerates missing or malformed payloads', () => {
+    expect(channelRefFromOembed(null)).toEqual({ id: '', name: '', handle: '' });
+    expect(channelRefFromOembed({ author_url: 'https://example.com/@x' })).toEqual({
+      id: '',
+      name: '',
+      handle: '',
+    });
+  });
+});
+
+describe('resolveVideoChannel', () => {
+  it('keeps the oEmbed identity when the author_url is a handle', async () => {
+    const meta = await resolveVideoChannel('dQw4w9WgXcQ', {
+      fetch: fetchStub(
+        '{"author_name":"Rick Astley","author_url":"https://www.youtube.com/@RickAstleyYT"}',
+      ),
+    });
+    expect(meta).toEqual({ id: '', name: 'Rick Astley', handle: 'rickastleyyt' });
+  });
+
+  it('returns empty identity when oEmbed fails', async () => {
+    const meta = await resolveVideoChannel('dQw4w9WgXcQ', { fetch: fetchStub('{}', false) });
+    expect(meta).toEqual({ id: '', name: '', handle: '' });
   });
 });

@@ -96,6 +96,19 @@ export function videoTitleFromOembed(payload: unknown): string {
   return typeof title === 'string' ? title.trim() : '';
 }
 
+export function channelRefFromOembed(payload: unknown): ChannelMeta {
+  if (!payload || typeof payload !== 'object') return { id: '', name: '', handle: '' };
+  const record = payload as Record<string, unknown>;
+  const name = typeof record.author_name === 'string' ? record.author_name.trim() : '';
+  const authorUrl = typeof record.author_url === 'string' ? record.author_url : '';
+  const parsed = parseYouTubeUrl(authorUrl);
+  return {
+    id: parsed.channelId ?? '',
+    name,
+    handle: parsed.handle ? normalizeHandle(parsed.handle) : '',
+  };
+}
+
 function fetchWith(deps?: Partial<ResolveDeps>): typeof fetch {
   return deps?.fetch ?? globalThis.fetch;
 }
@@ -110,6 +123,25 @@ export async function resolveVideoTitle(
   if (!response.ok) return '';
   const payload: unknown = await response.json();
   return videoTitleFromOembed(payload);
+}
+
+export async function resolveVideoChannel(
+  videoId: string,
+  deps?: Partial<ResolveDeps>,
+): Promise<ChannelMeta> {
+  const target = `${YOUTUBE_ORIGIN}/watch?v=${encodeURIComponent(videoId)}`;
+  const url = `${YOUTUBE_ORIGIN}/oembed?url=${encodeURIComponent(target)}&format=json`;
+  const response = await fetchWith(deps)(url);
+  if (!response.ok) return { id: '', name: '', handle: '' };
+  const meta = channelRefFromOembed(await response.json());
+  if (meta.id || !meta.handle) return meta;
+
+  const resolved = await resolveChannel({ handle: meta.handle }, deps);
+  return {
+    id: resolved.id,
+    name: resolved.name || meta.name,
+    handle: resolved.handle || meta.handle,
+  };
 }
 
 export async function resolveChannel(

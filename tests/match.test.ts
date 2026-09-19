@@ -27,6 +27,13 @@ describe('matchEntity', () => {
     expect(matchEntity({ channelName: 'Comedy Central' }, rules).blocked).toBe(false);
   });
 
+  it('blocks exact channel names from blocked channel entries', () => {
+    const rules = rulesWith({ channels: [{ id: '', name: 'Rick Astley', handle: '' }] });
+    expect(matchEntity({ channelName: 'Rick Astley' }, rules).blocked).toBe(true);
+    expect(matchEntity({ channelName: 'rick astley' }, rules).blocked).toBe(true);
+    expect(matchEntity({ channelName: 'Rick Astley Tribute' }, rules).blocked).toBe(false);
+  });
+
   it('matches channel filters against handles', () => {
     const rules = rulesWith({ channelFilters: ['somehandle'] });
     expect(matchEntity({ handle: 'SomeHandle' }, rules).blocked).toBe(true);

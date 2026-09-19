@@ -7,6 +7,6 @@ export function persistAction(action: MenuAction): Promise<BlockerState | null> 
     return action.mode === 'unblock' ? unblockVideo(action.entry.id) : blockVideo(action.entry);
   }
   return action.mode === 'unblock'
-    ? unblockChannel({ id: action.entry.id, handle: action.entry.handle })
+    ? unblockChannel({ id: action.entry.id, handle: action.entry.handle, name: action.entry.name })
     : blockChannel(action.entry);
 }

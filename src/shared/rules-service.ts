@@ -19,6 +19,7 @@ export function blockChannel(entry: ChannelEntry): Promise<BlockerState | null> 
 export function unblockChannel(lookup: {
   id?: string | null;
   handle?: string | null;
+  name?: string | null;
 }): Promise<BlockerState | null> {
   return mutateState((state) => removeChannel(state.rules, lookup));
 }

@@ -5,6 +5,10 @@ export function normalizeHandle(value: string): string {
   return value.trim().replace(/^@/, '').toLowerCase();
 }
 
+export function normalizeChannelName(value: string): string {
+  return value.trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
 function safeDecode(value: string): string {
   try {
     return decodeURIComponent(value);

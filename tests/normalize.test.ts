@@ -49,6 +49,19 @@ describe('normalizeState', () => {
     expect(state.rules.channels[0]).toEqual({ id: '', name: '', handle: 'foo' });
   });
 
+  it('keeps name-only channel entries and dedupes them by name', () => {
+    const state = normalizeState({
+      rules: {
+        channels: [
+          { id: '', name: 'Rick Astley', handle: '' },
+          { id: '', name: 'rick astley', handle: '' },
+          { id: '', name: '', handle: '' },
+        ],
+      },
+    });
+    expect(state.rules.channels).toEqual([{ id: '', name: 'Rick Astley', handle: '' }]);
+  });
+
   it('preserves the lookupFailed marker on entities', () => {
     const state = normalizeState({
       rules: {

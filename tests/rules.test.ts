@@ -37,6 +37,18 @@ describe('compileRules', () => {
     expect(hasCommentRules(compileRules(defaultRules()))).toBe(false);
     expect(hasCommentRules(compileRules({ ...defaultRules(), commentFilters: ['x'] }))).toBe(true);
   });
+
+  it('collects normalized channel names for name-based matching', () => {
+    const rules = compileRules({
+      ...defaultRules(),
+      channels: [
+        { id: '', name: 'Rick Astley', handle: '' },
+        { id: 'UC1', name: '', handle: 'somehandle' },
+      ],
+    });
+    expect(rules.channelNames.has('rick astley')).toBe(true);
+    expect(rules.channelNames.size).toBe(1);
+  });
 });
 
 describe('channelMatches', () => {
@@ -51,6 +63,13 @@ describe('channelMatches', () => {
   it('does not match an empty lookup', () => {
     expect(channelMatches(entry, {})).toBe(false);
     expect(channelMatches(entry, { id: '', handle: '' })).toBe(false);
+  });
+
+  it('matches by normalized name as a fallback', () => {
+    const named = { id: '', name: 'Rick Astley', handle: '' };
+    expect(channelMatches(named, { name: 'rick astley' })).toBe(true);
+    expect(channelMatches(named, { name: '  Rick   Astley ' })).toBe(true);
+    expect(channelMatches(named, { name: 'Someone Else' })).toBe(false);
   });
 });
 
@@ -93,5 +112,15 @@ describe('add / remove', () => {
     expect(removeChannel(rules, { handle: '@somechannel' })).toBe(true);
     expect(rules.channels).toHaveLength(0);
     expect(removeChannel(rules, { id: 'UC1' })).toBe(false);
+  });
+
+  it('accepts and removes name-only channel entries', () => {
+    const rules = defaultRules();
+    expect(addChannel(rules, { id: '', name: 'Rick Astley', handle: '' })).toBe(true);
+    expect(addChannel(rules, { id: '', name: 'rick astley', handle: '' })).toBe(false);
+    expect(rules.channels).toHaveLength(1);
+    expect(findChannel(rules, { name: 'Rick Astley' })?.name).toBe('Rick Astley');
+    expect(removeChannel(rules, { name: 'rick astley' })).toBe(true);
+    expect(rules.channels).toHaveLength(0);
   });
 });
