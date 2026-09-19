@@ -3,7 +3,7 @@ import { buildDnrRules } from '../shared/dnr';
 import { getDynamicRules, updateDynamicRules } from '../shared/ext';
 import { ensureState, loadState } from '../shared/state';
 
-async function syncDynamicRules(): Promise<void> {
+async function doSync(): Promise<void> {
   const state = await loadState();
   const addRules = buildDnrRules(state);
   const existing = await getDynamicRules();
@@ -11,12 +11,17 @@ async function syncDynamicRules(): Promise<void> {
   await updateDynamicRules({ removeRuleIds, addRules });
 }
 
+let queue: Promise<void> = Promise.resolve();
+
+function syncDynamicRules(): Promise<void> {
+  queue = queue.then(doSync).catch((error) => {
+    console.error('DNR sync failed', error);
+  });
+  return queue;
+}
+
 chrome.runtime.onInstalled.addListener(() => {
   void ensureState().then(syncDynamicRules);
-});
-
-chrome.runtime.onStartup.addListener(() => {
-  void syncDynamicRules();
 });
 
 chrome.storage.onChanged.addListener((changes, areaName) => {
