@@ -67,8 +67,10 @@ export function reasonDetail(reason: string): string {
       return `Blocked video ID: ${parsed.value}`;
     case 'channel':
       return `Blocked channel ID: ${parsed.value}`;
-    case 'handle':
-      return `Blocked channel: @${parsed.value}`;
+    case 'handle': {
+      const value = normalizeHandle(parsed.value);
+      return value ? `Blocked channel: @${value}` : reason;
+    }
     case 'title':
       return parsed.value ? `Blocked title: ${parsed.value}` : reason;
     case 'channelName':

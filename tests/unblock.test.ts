@@ -70,6 +70,7 @@ describe('reasonDetail', () => {
     expect(reasonDetail('video id abc')).toBe('Blocked video ID: abc');
     expect(reasonDetail('channel id UC1')).toBe('Blocked channel ID: UC1');
     expect(reasonDetail('channel handle @foo')).toBe('Blocked channel: @foo');
+    expect(reasonDetail('channel handle @FooBar')).toBe('Blocked channel: @foobar');
     expect(reasonDetail('title filter "x"')).toBe('Blocked title: x');
     expect(reasonDetail('channel filter "x"')).toBe('Blocked channel name: x');
     expect(reasonDetail('comment filter "x"')).toBe('Blocked comment: x');
