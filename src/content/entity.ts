@@ -1,5 +1,5 @@
-import { normalizeHandle, parseYouTubeUrl } from '../shared/matcher';
 import type { Entity, ParsedUrl } from '../shared/types';
+import { normalizeHandle, parseYouTubeUrl } from '../shared/url';
 import { forEachShadowRoot } from './dom';
 
 const ITEM_SELECTORS = [

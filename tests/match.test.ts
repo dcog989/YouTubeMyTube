@@ -1,52 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import {
-  areaForPath,
-  compileRules,
-  countActiveEntries,
-  isActiveEntry,
-  matchDirectNavigation,
-  matchEntity,
-  parseYouTubeUrl,
-} from '../src/shared/matcher';
+import { areaForPath, matchDirectNavigation, matchEntity } from '../src/shared/match';
+import { compileRules } from '../src/shared/rules';
 import { defaultAreas, defaultRules } from '../src/shared/storage';
 import type { FilterRules } from '../src/shared/types';
+import { parseYouTubeUrl } from '../src/shared/url';
 
 function rulesWith(overrides: Partial<FilterRules> = {}) {
   return compileRules({ ...defaultRules(), ...overrides });
 }
-
-describe('parseYouTubeUrl', () => {
-  it('parses watch URLs', () => {
-    const parsed = parseYouTubeUrl('https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=10s');
-    expect(parsed.kind).toBe('video');
-    expect(parsed.videoId).toBe('dQw4w9WgXcQ');
-  });
-
-  it('parses relative watch URLs', () => {
-    expect(parseYouTubeUrl('/watch?v=abcdefghijk').videoId).toBe('abcdefghijk');
-  });
-
-  it('parses shorts, live and embed URLs', () => {
-    expect(parseYouTubeUrl('https://m.youtube.com/shorts/abc')).toMatchObject({
-      kind: 'shorts',
-      videoId: 'abc',
-    });
-    expect(parseYouTubeUrl('https://www.youtube.com/live/xyz').videoId).toBe('xyz');
-    expect(parseYouTubeUrl('https://www.youtube.com/embed/123').videoId).toBe('123');
-  });
-
-  it('parses channel and handle URLs', () => {
-    expect(parseYouTubeUrl('https://www.youtube.com/channel/UC123').channelId).toBe('UC123');
-    expect(parseYouTubeUrl('https://www.youtube.com/@SomeHandle/videos')).toMatchObject({
-      kind: 'handle',
-      handle: 'SomeHandle',
-    });
-  });
-
-  it('ignores non-YouTube hosts', () => {
-    expect(parseYouTubeUrl('https://example.com/watch?v=abc').kind).toBe('other');
-  });
-});
 
 describe('matchEntity', () => {
   it('blocks exact video ids only', () => {
@@ -77,11 +38,6 @@ describe('matchEntity', () => {
     expect(matchEntity({ title: 'A nice video' }, rules).blocked).toBe(false);
   });
 
-  it('drops malformed regex patterns', () => {
-    const rules = rulesWith({ titleFilters: ['/[unclosed/'] });
-    expect(rules.titleFilters).toHaveLength(0);
-  });
-
   it('matches comment filters against authors and content', () => {
     const rules = rulesWith({ commentFilters: ['spammer', '/free crypto/i'] });
     expect(matchEntity({ commentAuthor: 'Spammer99' }, rules).blocked).toBe(true);
@@ -93,16 +49,6 @@ describe('matchEntity', () => {
     const rules = rulesWith({ commentFilters: ['needle'] });
     expect(matchEntity({ commentContent: 'needle' }, rules).blocked).toBe(true);
     expect(matchEntity({ commentContent: `${'x'.repeat(5000)}needle` }, rules).blocked).toBe(false);
-  });
-});
-
-describe('isActiveEntry / countActiveEntries', () => {
-  it('ignores blank and comment entries after trimming', () => {
-    expect(isActiveEntry(' hello ')).toBe(true);
-    expect(isActiveEntry('// note')).toBe(false);
-    expect(isActiveEntry('  // note')).toBe(false);
-    expect(isActiveEntry('   ')).toBe(false);
-    expect(countActiveEntries(['a', '// b', '  // c', '', ' d '])).toBe(2);
   });
 });
 

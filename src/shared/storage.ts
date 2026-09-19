@@ -1,7 +1,8 @@
 import { AREA_DEFINITIONS, type AreaFlags } from './areas';
-import { countActiveEntries, normalizeHandle } from './matcher';
+import { countActiveEntries } from './patterns';
 import { isTheme } from './theme';
 import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
+import { normalizeHandle } from './url';
 
 export function defaultRules(): FilterRules {
   return {

@@ -1,5 +1,35 @@
-import { isActiveEntry, normalizeHandle } from './matcher';
-import type { ChannelEntry, FilterRules, VideoEntry } from './types';
+import { compilePatterns, isActiveEntry } from './patterns';
+import type { ChannelEntry, CompiledRules, FilterRules, VideoEntry } from './types';
+import { normalizeHandle } from './url';
+
+export function compileRules(rules: FilterRules): CompiledRules {
+  const videoIds = new Set<string>();
+  for (const { id } of rules.videos) {
+    const value = id.trim();
+    if (isActiveEntry(value)) videoIds.add(value);
+  }
+
+  const channelIds = new Set<string>();
+  const handles = new Set<string>();
+  for (const { id, handle } of rules.channels) {
+    const channelId = id.trim();
+    if (isActiveEntry(channelId)) channelIds.add(channelId);
+    if (isActiveEntry(handle)) handles.add(handle);
+  }
+
+  return {
+    videoIds,
+    channelIds,
+    handles,
+    titleFilters: compilePatterns(rules.titleFilters),
+    channelFilters: compilePatterns(rules.channelFilters),
+    commentFilters: compilePatterns(rules.commentFilters),
+  };
+}
+
+export function hasCommentRules(rules: CompiledRules): boolean {
+  return rules.commentFilters.length > 0;
+}
 
 export interface ChannelLookup {
   id?: string | null;

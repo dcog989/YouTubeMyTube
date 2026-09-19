@@ -13,12 +13,14 @@ Two layers, no page injection:
 1. `declarativeNetRequest` rules (generated from state) redirect direct navigation to blocked videos, channels, handles and area pages. The background service worker reconciles them on every state change.
 2. A content script (isolated world) applies CSS classes and a `MutationObserver` to hide matching cards, channels and comments, and handles SPA navigation that DNR cannot see.
 
-Rule matching and URL parsing live in `src/shared/matcher.ts`; both are pure and unit-tested. The rule model (entity rows plus pattern lists), area definitions, reason wire format, lookup/URL resolution and DNR generation are in `src/shared/`. Content-script concerns are split under `src/content/` (wiring, filtering, areas, evaluation, menu).
+URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area routing (`match.ts`) and rule lookups/compilation (`rules.ts`) live in `src/shared/`; all are pure and unit-tested. The rule model (entity rows plus pattern lists), area definitions, reason wire format, lookup/URL resolution and DNR generation are also in `src/shared/`. Content-script concerns are split under `src/content/` (wiring, filtering, areas, evaluation, menu).
 
 ### Key Files
 
-- `src/shared/matcher.ts` — URL parsing and rule matching (pure, unit-tested).
-- `src/shared/rules.ts` — rule lookups and mutations (`add`/`remove` video/channel, `channelMatches`) shared by the UI surfaces (pure, unit-tested).
+- `src/shared/url.ts` — YouTube URL/host parsing and handle normalization (pure, unit-tested).
+- `src/shared/patterns.ts` — filter-pattern parsing/compilation and active-entry helpers (pure, unit-tested).
+- `src/shared/match.ts` — entity matching and area-redirect routing (pure, unit-tested).
+- `src/shared/rules.ts` — rule lookups, mutations (`add`/`remove` video/channel, `channelMatches`) and `compileRules` shared by the UI surfaces (pure, unit-tested).
 - `src/shared/filters.ts` — pattern-filter metadata (`channelFilters` / `titleFilters` / `commentFilters`) used by the options UI.
 - `src/shared/areas.ts` — content-area definitions and path mapping.
 - `src/shared/reason.ts` — block-reason wire format (format/parse).

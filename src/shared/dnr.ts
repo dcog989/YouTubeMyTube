@@ -1,6 +1,6 @@
 import { AREA_DEFINITIONS } from './areas';
 import { MAX_DNR_REGEX_RULES, YOUTUBE_HOME, YOUTUBE_HOST_PATTERN } from './constants';
-import { escapeRegExp, isActiveEntry } from './matcher';
+import { escapeRegExp, isActiveEntry } from './patterns';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
 

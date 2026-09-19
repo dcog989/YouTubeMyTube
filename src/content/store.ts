@@ -1,4 +1,4 @@
-import { compileRules } from '../shared/matcher';
+import { compileRules } from '../shared/rules';
 import type { BlockerState, CompiledRules } from '../shared/types';
 
 export interface Snapshot {

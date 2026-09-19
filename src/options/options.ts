@@ -4,13 +4,8 @@ import { MAX_DNR_REGEX_RULES, YOUTUBE_ORIGIN } from '../shared/constants';
 import { buildDnrRules } from '../shared/dnr';
 import { onLocalStorageChanged } from '../shared/ext';
 import { PATTERN_FILTERS, type PatternFilterKey } from '../shared/filters';
-import {
-  compileRules,
-  countActiveEntries,
-  matchDirectNavigation,
-  matchEntity,
-  parseYouTubeUrl,
-} from '../shared/matcher';
+import { matchDirectNavigation, matchEntity } from '../shared/match';
+import { countActiveEntries } from '../shared/patterns';
 import {
   type ChannelMeta,
   parseBlockInput,
@@ -20,6 +15,7 @@ import {
 import {
   addChannel as addChannelRule,
   addVideo as addVideoRule,
+  compileRules,
   removeChannel,
   removeVideo,
 } from '../shared/rules';
@@ -36,6 +32,7 @@ import type {
 } from '../shared/types';
 import { byId, h } from '../shared/ui';
 import { reasonDetail } from '../shared/unblock';
+import { parseYouTubeUrl } from '../shared/url';
 
 const patternEditors = new Map<PatternFilterKey, HTMLTextAreaElement>();
 const areaInputs = new Map<AreaKey, HTMLInputElement>();

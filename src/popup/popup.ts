@@ -1,12 +1,13 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
 import { openOptionsPage, queryActiveTab, sendTabMessage } from '../shared/ext';
-import { countActiveEntries, parseYouTubeUrl } from '../shared/matcher';
+import { countActiveEntries } from '../shared/patterns';
 import { addChannel, addVideo, findChannel, hasVideoId } from '../shared/rules';
 import { loadState, saveState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
 import type { BlockerState, Entity } from '../shared/types';
 import { byId } from '../shared/ui';
+import { parseYouTubeUrl } from '../shared/url';
 
 let state: BlockerState;
 let activeVideoId: string | null = null;

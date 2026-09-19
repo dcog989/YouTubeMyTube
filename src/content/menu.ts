@@ -1,10 +1,10 @@
 import { onLocalStorageChanged } from '../shared/ext';
-import { parseYouTubeUrl } from '../shared/matcher';
 import { addChannel, addVideo, removeChannel, removeVideo } from '../shared/rules';
 import { loadState, saveState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState, ChannelEntry, Entity, FilterRules, VideoEntry } from '../shared/types';
 import { h } from '../shared/ui';
+import { parseYouTubeUrl } from '../shared/url';
 import { closestAcrossShadow } from './dom';
 import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, currentContext } from './entity';
 import { hide, show } from './filter';

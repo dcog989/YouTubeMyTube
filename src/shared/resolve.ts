@@ -1,5 +1,5 @@
 import { YOUTUBE_ORIGIN } from './constants';
-import { normalizeHandle, parseYouTubeUrl } from './matcher';
+import { normalizeHandle, parseYouTubeUrl } from './url';
 
 export type BlockInput =
   | { kind: 'video'; videoId: string }

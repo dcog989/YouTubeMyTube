@@ -3,13 +3,41 @@ import {
   addChannel,
   addVideo,
   channelMatches,
+  compileRules,
   findChannel,
   findVideo,
+  hasCommentRules,
   hasVideoId,
   removeChannel,
   removeVideo,
 } from '../src/shared/rules';
 import { defaultRules } from '../src/shared/storage';
+
+describe('compileRules', () => {
+  it('collects active ids, handles and compiled patterns', () => {
+    const rules = compileRules({
+      ...defaultRules(),
+      videos: [
+        { id: 'abc', title: '' },
+        { id: '  ', title: '' },
+      ],
+      channels: [{ id: 'UC1', name: '', handle: '@SomeHandle' }],
+      titleFilters: ['/spoiler/i', '// ignored'],
+      commentFilters: ['spam'],
+    });
+    expect(rules.videoIds.has('abc')).toBe(true);
+    expect(rules.videoIds.size).toBe(1);
+    expect(rules.channelIds.has('UC1')).toBe(true);
+    expect(rules.handles.has('@SomeHandle')).toBe(true);
+    expect(rules.titleFilters).toHaveLength(1);
+    expect(rules.commentFilters).toHaveLength(1);
+  });
+
+  it('reports whether comment rules exist', () => {
+    expect(hasCommentRules(compileRules(defaultRules()))).toBe(false);
+    expect(hasCommentRules(compileRules({ ...defaultRules(), commentFilters: ['x'] }))).toBe(true);
+  });
+});
 
 describe('channelMatches', () => {
   const entry = { id: 'UC1', name: '', handle: 'somechannel' };

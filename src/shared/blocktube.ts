@@ -1,4 +1,4 @@
-import { isActiveEntry } from './matcher';
+import { isActiveEntry } from './patterns';
 import { addChannel, addVideo } from './rules';
 import type { AreaFlags, AreaKey, BlockerState, FilterRules } from './types';
 

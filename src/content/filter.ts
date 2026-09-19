@@ -1,4 +1,5 @@
-import { hasCommentRules, matchEntity } from '../shared/matcher';
+import { matchEntity } from '../shared/match';
+import { hasCommentRules } from '../shared/rules';
 import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, commentEntity, HIDDEN_CLASS } from './entity';
 import { scheduleEvaluate } from './evaluate';
