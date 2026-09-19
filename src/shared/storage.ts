@@ -64,13 +64,12 @@ function pickChannels(value: unknown): ChannelEntry[] {
     const record = item as Record<string, unknown>;
     const id = typeof record.id === 'string' ? record.id.trim() : '';
     const name = typeof record.name === 'string' ? record.name.trim() : '';
-    const handle = typeof record.handle === 'string' ? record.handle.trim() : '';
-    const normalized = normalizeHandle(handle);
-    if (!id && !normalized) continue;
+    const handle = typeof record.handle === 'string' ? normalizeHandle(record.handle) : '';
+    if (!id && !handle) continue;
     if (id && ids.has(id)) continue;
-    if (normalized && handles.has(normalized)) continue;
+    if (handle && handles.has(handle)) continue;
     if (id) ids.add(id);
-    if (normalized) handles.add(normalized);
+    if (handle) handles.add(handle);
     const entry: ChannelEntry = { id, name, handle };
     if (record.lookupFailed === true) entry.lookupFailed = true;
     result.push(entry);

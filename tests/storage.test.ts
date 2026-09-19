@@ -43,6 +43,11 @@ describe('normalizeState', () => {
     expect(state.rules.videos).toEqual([{ id: 'abc', title: 'A' }]);
   });
 
+  it('normalizes channel handles so they are not double-prefixed', () => {
+    const state = normalizeState({ rules: { channels: [{ id: '', handle: '@Foo' }] } });
+    expect(state.rules.channels[0]).toEqual({ id: '', name: '', handle: 'foo' });
+  });
+
   it('preserves the lookupFailed marker on entities', () => {
     const state = normalizeState({
       rules: {
