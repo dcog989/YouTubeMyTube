@@ -171,6 +171,7 @@ function flush(): void {
   pruneHiddenCards();
   const nodes = Array.from(pending);
   pending.clear();
+  if (!lastMenuTarget?.isConnected) return;
 
   const containers = new Set<MenuContainer>();
   for (const node of nodes) {
@@ -188,6 +189,7 @@ function flush(): void {
 }
 
 function closeMenu(): void {
+  lastMenuTarget = null;
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 }
 

@@ -69,14 +69,25 @@ function processSubtree(root: Element, state: BlockerState, compiled: CompiledRu
   }
 }
 
+function hasAncestorIn(node: Element, roots: Set<Element>): boolean {
+  for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+    if (roots.has(parent)) return true;
+  }
+  return false;
+}
+
 function flushPending(): void {
   scheduled = false;
   const nodes = Array.from(pending);
   pending.clear();
+  const roots = new Set(nodes);
   const state = getState();
   const compiled = getCompiled();
   if (state && compiled) {
-    for (const node of nodes) processSubtree(node, state, compiled);
+    for (const node of nodes) {
+      if (hasAncestorIn(node, roots)) continue;
+      processSubtree(node, state, compiled);
+    }
   }
 }
 
