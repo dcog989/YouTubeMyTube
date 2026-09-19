@@ -59,7 +59,7 @@ describe('parseBlockTubeBackup', () => {
     expect(result.data.areas.trendingPage).toBe(true);
     expect(result.data.areas.shortsPage).toBe(true);
     expect(result.data.areas.shortsShelf).toBe(true);
-    expect(result.data.blockMessage).toBe('Blocked!');
+    expect(result.data.skipped).toContain('block message');
   });
 
   it('reports unsupported fields instead of failing', () => {
@@ -128,11 +128,10 @@ describe('mergeBlockTubeImport', () => {
     expect(merged.areas.relatedVideos).toBe(true);
   });
 
-  it('applies an imported block message when present', () => {
+  it('reports an imported block message as unsupported', () => {
     const parsed = parseBlockTubeBackup(backup({}, { block_message: 'Go away' }));
-    if (!parsed.ok) throw new Error('expected parse success');
-
-    const { state: merged } = mergeBlockTubeImport(defaultState(), parsed.data);
-    expect(merged.settings.blockMessage).toBe('Go away');
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    expect(parsed.data.skipped).toContain('block message');
   });
 });

@@ -37,7 +37,6 @@ export function defaultSettings(): Settings {
   return {
     enabled: true,
     theme: 'system',
-    blockMessage: 'This content is blocked by YouTubeMyTube.',
   };
 }
 
@@ -126,7 +125,6 @@ function mergeSettings(value: unknown): Settings {
   return {
     enabled: typeof record.enabled === 'boolean' ? record.enabled : base.enabled,
     theme: theme === 'light' || theme === 'dark' || theme === 'system' ? theme : base.theme,
-    blockMessage: typeof record.blockMessage === 'string' ? record.blockMessage : base.blockMessage,
   };
 }
 

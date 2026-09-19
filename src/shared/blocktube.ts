@@ -21,7 +21,6 @@ export interface BlockTubeImport {
   titleFilters: string[];
   commentFilters: string[];
   areas: Partial<AreaFlags>;
-  blockMessage: string | null;
   skipped: string[];
 }
 
@@ -104,11 +103,9 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
   if (typeof record.uiPass === 'string' && record.uiPass !== '') {
     skipped.add('options password');
   }
-
-  const blockMessage =
-    typeof optionData.block_message === 'string' && optionData.block_message.trim().length > 0
-      ? optionData.block_message.trim()
-      : null;
+  if (typeof optionData.block_message === 'string' && optionData.block_message.trim().length > 0) {
+    skipped.add('block message');
+  }
 
   return {
     ok: true,
@@ -119,7 +116,6 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
       titleFilters: sanitizeList(filterData.title),
       commentFilters: sanitizeList(filterData.comment),
       areas,
-      blockMessage,
       skipped: [...skipped],
     },
   };
@@ -179,8 +175,5 @@ export function mergeBlockTubeImport(
     if (data.areas[key]) areas[key] = true;
   }
 
-  const settings = { ...state.settings };
-  if (data.blockMessage) settings.blockMessage = data.blockMessage;
-
-  return { state: { ...state, rules, areas, settings }, added };
+  return { state: { ...state, rules, areas }, added };
 }

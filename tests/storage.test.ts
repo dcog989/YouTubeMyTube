@@ -83,10 +83,6 @@ describe('normalizeState', () => {
     expect(normalizeState({ settings: { theme: 'neon' } }).settings.theme).toBe('system');
     expect(normalizeState({ settings: { theme: 'dark' } }).settings.theme).toBe('dark');
     expect(normalizeState({ settings: { enabled: 'yes' } }).settings.enabled).toBe(true);
-    expect(normalizeState({ settings: { blockMessage: 5 } }).settings.blockMessage).toBe(
-      defaultState().settings.blockMessage,
-    );
-    expect(normalizeState({ settings: { blockMessage: '' } }).settings.blockMessage).toBe('');
   });
 });
 

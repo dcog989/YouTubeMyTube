@@ -25,9 +25,7 @@ async function render(): Promise<void> {
 
   const title = document.getElementById('blocked-title');
   if (title) {
-    title.textContent = reason
-      ? reasonLabel(reason, state.settings.blockMessage || FALLBACK_MESSAGE)
-      : state.settings.blockMessage || FALLBACK_MESSAGE;
+    title.textContent = reason ? reasonLabel(reason, FALLBACK_MESSAGE) : FALLBACK_MESSAGE;
   }
 
   const detail = document.getElementById('blocked-detail');

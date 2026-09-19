@@ -35,7 +35,6 @@ export interface AreaFlags {
 export interface Settings {
   enabled: boolean;
   theme: 'system' | 'light' | 'dark';
-  blockMessage: string;
 }
 
 export interface BlockerState {
