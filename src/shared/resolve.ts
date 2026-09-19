@@ -4,6 +4,8 @@ export type BlockInput =
   | { kind: 'video'; videoId: string }
   | { kind: 'channel'; channelId?: string; handle?: string };
 
+export type BlockInputKind = BlockInput['kind'];
+
 export interface ChannelRef {
   id?: string;
   handle?: string;
@@ -21,8 +23,9 @@ export interface ResolveDeps {
 
 const CHANNEL_ID = /^UC[A-Za-z0-9_-]{20,}$/;
 const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
+const HANDLE = /^[A-Za-z0-9._-]{3,30}$/;
 
-export function parseBlockInput(input: string): BlockInput | null {
+export function parseBlockInput(input: string, kind?: BlockInputKind): BlockInput | null {
   const value = input.trim();
   if (!value) return null;
 
@@ -31,6 +34,13 @@ export function parseBlockInput(input: string): BlockInput | null {
     return handle ? { kind: 'channel', handle } : null;
   }
   if (CHANNEL_ID.test(value)) return { kind: 'channel', channelId: value };
+
+  // A bare 11-character token is a valid video id and a valid handle; the
+  // channel field must be able to claim it as a handle.
+  if (kind === 'channel' && HANDLE.test(value)) {
+    return { kind: 'channel', handle: normalizeHandle(value) };
+  }
+
   if (VIDEO_ID.test(value)) return { kind: 'video', videoId: value };
 
   const parsed = parseYouTubeUrl(value);

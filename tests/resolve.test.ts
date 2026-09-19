@@ -53,6 +53,17 @@ describe('parseBlockInput', () => {
     expect(parseBlockInput('not a channel')).toBeNull();
     expect(parseBlockInput('https://example.com/watch?v=abc')).toBeNull();
   });
+
+  it('claims a bare ambiguous token as a handle for the channel field', () => {
+    expect(parseBlockInput('MrBeastGame', 'channel')).toEqual({
+      kind: 'channel',
+      handle: 'mrbeastgame',
+    });
+    expect(parseBlockInput('MrBeastGame', 'video')).toEqual({
+      kind: 'video',
+      videoId: 'MrBeastGame',
+    });
+  });
 });
 
 describe('channelMetaFromHtml', () => {

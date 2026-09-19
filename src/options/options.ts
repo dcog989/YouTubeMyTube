@@ -240,7 +240,7 @@ function renderVideos(): void {
 
 async function addChannel(): Promise<void> {
   const input = byId<HTMLInputElement>('channel-add');
-  const parsed = parseBlockInput(input.value);
+  const parsed = parseBlockInput(input.value, 'channel');
   if (parsed?.kind !== 'channel') {
     setStatus('channel-status', 'Paste a channel URL, @handle, or UC channel ID.', false);
     return;
@@ -275,7 +275,7 @@ async function addChannel(): Promise<void> {
 
 async function addVideo(): Promise<void> {
   const input = byId<HTMLInputElement>('video-add');
-  const parsed = parseBlockInput(input.value);
+  const parsed = parseBlockInput(input.value, 'video');
   if (parsed?.kind !== 'video') {
     setStatus('video-status', 'Paste a video URL or an 11-character video ID.', false);
     return;
