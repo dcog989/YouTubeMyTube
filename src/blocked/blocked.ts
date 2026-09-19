@@ -1,15 +1,10 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { openOptionsPage, requestSync } from '../shared/ext';
-import { parseReason, type Reason } from '../shared/reason';
+import { entityUrlForReason } from '../shared/navigation';
+import { parseReason, type Reason, reasonDetail, reasonLabel } from '../shared/reason';
 import { loadState, saveState } from '../shared/state';
 import { applyTheme } from '../shared/theme';
-import {
-  entityUrlForReason,
-  reasonDetail,
-  reasonLabel,
-  removeRule,
-  ruleRefForReason,
-} from '../shared/unblock';
+import { removeRule, ruleRefForReason } from '../shared/unblock';
 
 const FALLBACK_MESSAGE = 'This content is blocked.';
 

@@ -23,12 +23,13 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/rules.ts` — rule lookups, mutations (`add`/`remove` video/channel, `channelMatches`) and `compileRules` shared by the UI surfaces (pure, unit-tested).
 - `src/shared/filters.ts` — pattern-filter metadata (`channelFilters` / `titleFilters` / `commentFilters`) used by the options UI.
 - `src/shared/areas.ts` — content-area definitions and path mapping.
-- `src/shared/reason.ts` — block-reason wire format (format/parse).
+- `src/shared/reason.ts` — block-reason wire format (format/parse) and reason copy (label/detail).
 - `src/shared/dnr.ts` — generates declarativeNetRequest rules from state.
 - `src/shared/storage.ts` — rule model, defaults, normalization (entity rows + pattern lists, deduplicated).
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
 - `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata and video titles.
 - `src/shared/unblock.ts` — maps exact block reasons back to removals.
+- `src/shared/navigation.ts` — builds YouTube entity URLs from block reasons.
 - `src/content/content.ts` — content-script wiring (state lifecycle, observer, messaging).
 - `src/content/filter.ts` — card/comment DOM filtering engine.
 - `src/content/menu.ts` + `src/content/menu/` — in-page menu injection.

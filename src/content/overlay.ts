@@ -1,9 +1,9 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { getRuntimeUrl } from '../shared/ext';
-import type { Reason } from '../shared/reason';
+import { type Reason, reasonDetail } from '../shared/reason';
 import { loadState, saveState } from '../shared/state';
 import { h } from '../shared/ui';
-import { reasonDetail, removeRule, ruleRefForReason } from '../shared/unblock';
+import { removeRule, ruleRefForReason } from '../shared/unblock';
 import { deepQuery } from './dom';
 
 const OVERLAY_CLASS = 'ytb-block-overlay';

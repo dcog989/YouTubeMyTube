@@ -1,4 +1,5 @@
 import { HANDLE_PREFIX } from './constants';
+import { normalizeHandle } from './url';
 
 export type ReasonKind =
   | 'video'
@@ -52,4 +53,39 @@ export function parseReason(raw: string): Reason | null {
     return { kind, value: kind === 'handle' ? value.replace(/^@/, '') : value };
   }
   return null;
+}
+
+const REASON_LABELS: Partial<Record<ReasonKind, string>> = {
+  video: 'This video is blocked.',
+  channel: 'This channel is blocked.',
+  handle: 'This channel is blocked.',
+  channelName: 'This channel is blocked.',
+  area: 'This page is blocked.',
+};
+
+export function reasonLabel(reason: Reason | null, fallback: string): string {
+  return reason ? (REASON_LABELS[reason.kind] ?? fallback) : fallback;
+}
+
+export function reasonDetail(reason: Reason): string {
+  switch (reason.kind) {
+    case 'video':
+      return `Blocked video ID: ${reason.value}`;
+    case 'channel':
+      return `Blocked channel ID: ${reason.value}`;
+    case 'handle': {
+      const value = normalizeHandle(reason.value);
+      return value ? `Blocked channel: @${value}` : 'Blocked channel.';
+    }
+    case 'title':
+      return reason.value ? `Blocked title: ${reason.value}` : 'Blocked by a title filter.';
+    case 'channelName':
+      return reason.value
+        ? `Blocked channel name: ${reason.value}`
+        : 'Blocked by a channel filter.';
+    case 'comment':
+      return reason.value ? `Blocked comment: ${reason.value}` : 'Blocked by a comment filter.';
+    case 'area':
+      return `Blocked page: ${reason.value}`;
+  }
 }

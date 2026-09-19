@@ -1,9 +1,9 @@
 import { YOUTUBE_ORIGIN } from '../shared/constants';
 import { matchDirectNavigation, matchEntity } from '../shared/match';
+import { reasonDetail } from '../shared/reason';
 import { compileRules } from '../shared/rules';
 import type { Entity, MatchResult } from '../shared/types';
 import { byId } from '../shared/ui';
-import { reasonDetail } from '../shared/unblock';
 import { parseYouTubeUrl } from '../shared/url';
 import { setStatus } from './dom';
 import { getDraft } from './state';
