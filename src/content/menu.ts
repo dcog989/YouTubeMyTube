@@ -267,14 +267,7 @@ function trackMenuTrigger(event: MouseEvent): void {
   lastMenuTarget = owner;
 
   attachShadows(owner, MENU_ITEM_SELECTOR, schedule);
-  queueMicrotask(() => {
-    if (lastMenuTarget === owner) attachShadows(owner, MENU_ITEM_SELECTOR, schedule);
-  });
-  setTimeout(() => {
-    if (lastMenuTarget === owner) attachShadows(owner, MENU_ITEM_SELECTOR, schedule);
-  }, 100);
 }
-
 function handleInjectedClick(event: MouseEvent): void {
   const target = eventTarget(event);
   if (!target) return;
@@ -298,7 +291,6 @@ export function initMenuInjection(): void {
     });
   })();
 
-  window.addEventListener('click', trackMenuTrigger, true);
   window.addEventListener('click', handleInjectedClick, true);
   window.addEventListener('pointerdown', trackMenuTrigger, true);
   observeRoot(document.documentElement, schedule);
