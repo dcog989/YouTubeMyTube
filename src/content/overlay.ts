@@ -30,6 +30,7 @@ export interface ChannelOverlayInfo {
 let overlay: HTMLElement | null = null;
 let blankCover: HTMLElement | null = null;
 let blankObserver: ResizeObserver | null = null;
+let placeFrame = 0;
 let playerBox: HTMLElement | null = null;
 let currentKey = '';
 
@@ -64,6 +65,14 @@ function placeCover(): void {
   blankCover.style.height = `${rect.height}px`;
 }
 
+function schedulePlaceCover(): void {
+  if (placeFrame !== 0) return;
+  placeFrame = requestAnimationFrame(() => {
+    placeFrame = 0;
+    placeCover();
+  });
+}
+
 function retryPlace(attempts: number): void {
   if (!blankCover) return;
   const box = resolvePlayerBox();
@@ -84,8 +93,12 @@ function watchCoverBox(): void {
 
 function removeBlankCover(): void {
   document.removeEventListener('play', pauseVideo, true);
-  window.removeEventListener('resize', placeCover, true);
-  window.removeEventListener('scroll', placeCover, true);
+  window.removeEventListener('resize', schedulePlaceCover, true);
+  window.removeEventListener('scroll', schedulePlaceCover, true);
+  if (placeFrame !== 0) {
+    cancelAnimationFrame(placeFrame);
+    placeFrame = 0;
+  }
   blankObserver?.disconnect();
   blankObserver = null;
   playerBox = null;
@@ -125,8 +138,8 @@ export function setPlayerBlank(blanked: boolean, reason?: string): void {
     blankCover = document.createElement('div');
     blankCover.className = 'ytb-blank-cover';
     document.body.appendChild(blankCover);
-    window.addEventListener('resize', placeCover, true);
-    window.addEventListener('scroll', placeCover, true);
+    window.addEventListener('resize', schedulePlaceCover, true);
+    window.addEventListener('scroll', schedulePlaceCover, true);
     retryPlace(10);
   }
 
