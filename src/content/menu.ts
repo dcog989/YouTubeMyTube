@@ -3,7 +3,7 @@ import { normalizeHandle, parseYouTubeUrl } from '../shared/matcher';
 import { formatReason } from '../shared/reason';
 import { loadState, saveState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
-import type { BlockerState, Entity } from '../shared/types';
+import type { BlockerState, ChannelEntry, Entity, FilterRules, VideoEntry } from '../shared/types';
 import { closestAcrossShadow } from './dom';
 import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, currentContext } from './entity';
 import { hideCard, pruneHiddenCards, refreshHiddenCards, showCard } from './hidden-cards';
@@ -80,9 +80,9 @@ function liveActionFor(item: Element): MenuAction | null {
   if (!owner) return stored;
   const fresh = actionsFor(entityFor(owner), state.rules);
   const match =
-    stored.key === 'videoIds'
-      ? fresh.find((action) => action.key === 'videoIds')
-      : fresh.find((action) => action.key !== 'videoIds');
+    stored.kind === 'video'
+      ? fresh.find((action) => action.kind === 'video')
+      : fresh.find((action) => action.kind === 'channel');
   return match ?? null;
 }
 
@@ -185,10 +185,32 @@ function closeMenu(): void {
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 }
 
+function applyVideo(rules: FilterRules, entry: VideoEntry, mode: MenuAction['mode']): void {
+  const index = rules.videos.findIndex((video) => video.id === entry.id);
+  if (mode === 'unblock') {
+    if (index !== -1) rules.videos.splice(index, 1);
+    return;
+  }
+  if (index === -1) rules.videos.push(entry);
+}
+
+function applyChannel(rules: FilterRules, entry: ChannelEntry, mode: MenuAction['mode']): void {
+  const index = rules.channels.findIndex(
+    (channel) =>
+      (entry.id !== '' && channel.id === entry.id) ||
+      (entry.handle !== '' && normalizeHandle(channel.handle) === entry.handle),
+  );
+  if (mode === 'unblock') {
+    if (index !== -1) rules.channels.splice(index, 1);
+    return;
+  }
+  if (index === -1) rules.channels.push(entry);
+}
+
 async function applyAction(action: MenuAction, owner: Element | undefined): Promise<void> {
   const card = owner instanceof HTMLElement && owner.matches(CARD_SELECTOR) ? owner : null;
   const isCurrentVideo =
-    action.key === 'videoIds' && parseYouTubeUrl(window.location.href).videoId === action.value;
+    action.kind === 'video' && parseYouTubeUrl(window.location.href).videoId === action.value;
 
   if (action.mode === 'block') {
     if (card) {
@@ -205,24 +227,10 @@ async function applyAction(action: MenuAction, owner: Element | undefined): Prom
   }
 
   const current = await loadState();
-  const list = current.rules[action.key];
-  const index =
-    action.key === 'handles'
-      ? list.findIndex((entry) => normalizeHandle(entry) === action.value)
-      : list.indexOf(action.value);
-
-  if (action.mode === 'unblock') {
-    if (index === -1) {
-      closeMenu();
-      return;
-    }
-    list.splice(index, 1);
+  if (action.kind === 'video') {
+    applyVideo(current.rules, action.entry as VideoEntry, action.mode);
   } else {
-    if (index !== -1) {
-      closeMenu();
-      return;
-    }
-    list.push(action.value);
+    applyChannel(current.rules, action.entry as ChannelEntry, action.mode);
   }
 
   await saveState(current);

@@ -14,10 +14,11 @@ const UNSUPPORTED_OPTIONS: ReadonlyArray<readonly [string, string]> = [
 ];
 
 export interface BlockTubeImport {
-  rules: Pick<
-    FilterRules,
-    'videoIds' | 'channelIds' | 'channelNames' | 'titles' | 'commentContents'
-  >;
+  videoIds: string[];
+  channelIds: string[];
+  channelFilters: string[];
+  titleFilters: string[];
+  commentFilters: string[];
   areas: Partial<AreaFlags>;
   blockMessage: string | null;
   skipped: string[];
@@ -78,14 +79,6 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
   const filterData = filters as Record<string, unknown>;
   const optionData = options as Record<string, unknown>;
 
-  const rules: BlockTubeImport['rules'] = {
-    videoIds: sanitizeList(filterData.videoId),
-    channelIds: sanitizeList(filterData.channelId),
-    channelNames: sanitizeList(filterData.channelName),
-    titles: sanitizeList(filterData.title),
-    commentContents: sanitizeList(filterData.comment),
-  };
-
   const areas: Partial<AreaFlags> = {};
   if (optionData.trending === true) areas.trendingPage = true;
   if (optionData.shorts === true) {
@@ -118,28 +111,67 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
 
   return {
     ok: true,
-    data: { rules, areas, blockMessage, skipped: [...skipped] },
+    data: {
+      videoIds: sanitizeList(filterData.videoId),
+      channelIds: sanitizeList(filterData.channelId),
+      channelFilters: sanitizeList(filterData.channelName),
+      titleFilters: sanitizeList(filterData.title),
+      commentFilters: sanitizeList(filterData.comment),
+      areas,
+      blockMessage,
+      skipped: [...skipped],
+    },
   };
+}
+
+function mergePatternList(
+  existing: string[],
+  incoming: string[],
+): { list: string[]; added: number } {
+  const seen = new Set(existing);
+  const list = [...existing];
+  let added = 0;
+  for (const entry of incoming) {
+    if (seen.has(entry)) continue;
+    seen.add(entry);
+    list.push(entry);
+    added += 1;
+  }
+  return { list, added };
 }
 
 export function mergeBlockTubeImport(
   state: BlockerState,
   data: BlockTubeImport,
 ): BlockTubeMergeResult {
-  const rules: FilterRules = { ...state.rules };
+  const rules: FilterRules = {
+    channels: state.rules.channels.map((channel) => ({ ...channel })),
+    channelFilters: [...state.rules.channelFilters],
+    videos: state.rules.videos.map((video) => ({ ...video })),
+    titleFilters: [...state.rules.titleFilters],
+    commentFilters: [...state.rules.commentFilters],
+  };
   let added = 0;
 
-  for (const key of Object.keys(data.rules) as (keyof BlockTubeImport['rules'])[]) {
-    const existing = new Set(rules[key]);
-    const merged = [...rules[key]];
-    for (const entry of data.rules[key]) {
-      if (existing.has(entry)) continue;
-      existing.add(entry);
-      merged.push(entry);
-      added += 1;
-    }
-    rules[key] = merged;
+  for (const id of data.videoIds) {
+    if (rules.videos.some((video) => video.id === id)) continue;
+    rules.videos.push({ id, title: '' });
+    added += 1;
   }
+
+  for (const id of data.channelIds) {
+    if (rules.channels.some((channel) => channel.id === id)) continue;
+    rules.channels.push({ id, name: '', handle: '' });
+    added += 1;
+  }
+
+  const channelFilters = mergePatternList(rules.channelFilters, data.channelFilters);
+  rules.channelFilters = channelFilters.list;
+  const titleFilters = mergePatternList(rules.titleFilters, data.titleFilters);
+  rules.titleFilters = titleFilters.list;
+  const commentFilters = mergePatternList(rules.commentFilters, data.commentFilters);
+  rules.commentFilters = commentFilters.list;
+  added += channelFilters.added + titleFilters.added + commentFilters.added;
 
   const areas: AreaFlags = { ...state.areas };
   for (const key of Object.keys(data.areas) as AreaKey[]) {

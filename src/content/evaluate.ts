@@ -61,25 +61,20 @@ function evaluateBlocking(): void {
   }
 
   const entity = currentContext();
-
-  const channel = matchEntity(
-    { channelId: entity.channelId, handle: entity.handle, channelName: entity.channelName },
-    compiled,
-  );
-  if (channel.blocked && channel.reason) {
+  const result = matchEntity(entity, compiled);
+  if (result.blocked && result.reason) {
+    const kind = parseReason(result.reason)?.kind;
+    if (kind === 'video' || kind === 'title' || kind === 'comment') {
+      clearChannelOverlay();
+      setPlayerBlank(true, result.reason);
+      return;
+    }
     setPlayerBlank(false);
     showChannelOverlay({
-      reason: channel.reason,
+      reason: result.reason,
       name: entity.channelName,
       id: entity.channelId ?? (entity.handle ? `@${entity.handle}` : undefined),
     });
-    return;
-  }
-
-  const video = matchEntity({ videoId: entity.videoId }, compiled);
-  if (video.blocked && video.reason) {
-    clearChannelOverlay();
-    setPlayerBlank(true, video.reason);
     return;
   }
 

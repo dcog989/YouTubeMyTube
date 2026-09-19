@@ -353,6 +353,45 @@ textarea:focus {
   margin: 4px 0 10px;
 }
 
+.field {
+  margin-top: 16px;
+}
+
+.entity-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.entity-table th,
+.entity-table td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.entity-table th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.entity-readonly {
+  color: var(--muted);
+}
+
+.entity-input {
+  min-width: 180px;
+}
+
+.col-action {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
 textarea {
   min-height: 160px;
   resize: none;

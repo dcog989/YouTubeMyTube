@@ -1,10 +1,10 @@
 import { AREA_DEFINITIONS, REDIRECT_AREAS } from './areas';
 import { YOUTUBE_HOSTS } from './constants';
-import { FILTER_DEFINITIONS } from './filters';
 import { formatReason } from './reason';
 import type {
   AreaFlags,
   AreaKey,
+  ChannelEntry,
   CompiledPattern,
   CompiledRules,
   Entity,
@@ -31,6 +31,11 @@ function safeDecode(value: string): string {
 
 function matchesAny(patterns: CompiledPattern[], value: string): boolean {
   return patterns.some((pattern) => pattern.test(value));
+}
+
+function isActiveEntry(value: string): boolean {
+  const trimmed = value.trim();
+  return trimmed.length > 0 && !trimmed.startsWith('//');
 }
 
 export interface ParsedPattern {
@@ -74,65 +79,78 @@ export function compilePatterns(entries: string[]): CompiledPattern[] {
   return compiled;
 }
 
-function toIdSet(entries: string[]): Set<string> {
-  const set = new Set<string>();
-  for (const raw of entries) {
-    const value = raw.trim();
-    if (!value || value.startsWith('//')) continue;
-    set.add(value);
-  }
-  return set;
-}
-
-function toHandleSet(entries: string[]): Set<string> {
-  const set = new Set<string>();
-  for (const raw of entries) {
-    const value = normalizeHandle(raw);
-    if (!value || value.startsWith('//')) continue;
-    set.add(value);
-  }
-  return set;
-}
-
 export function compileRules(rules: FilterRules): CompiledRules {
-  const compiled = {} as Record<keyof FilterRules, Set<string> | CompiledPattern[]>;
-  for (const def of FILTER_DEFINITIONS) {
-    const entries = rules[def.key];
-    compiled[def.key] =
-      def.match === 'pattern'
-        ? compilePatterns(entries)
-        : def.match === 'handle'
-          ? toHandleSet(entries)
-          : toIdSet(entries);
+  const videoIds = new Set<string>();
+  for (const { id } of rules.videos) {
+    const value = id.trim();
+    if (isActiveEntry(value)) videoIds.add(value);
   }
-  return compiled as CompiledRules;
+
+  const channelIds = new Set<string>();
+  const handles = new Set<string>();
+  for (const { id, handle } of rules.channels) {
+    const channelId = id.trim();
+    if (isActiveEntry(channelId)) channelIds.add(channelId);
+    const normalized = normalizeHandle(handle);
+    if (isActiveEntry(normalized)) handles.add(normalized);
+  }
+
+  return {
+    videoIds,
+    channelIds,
+    handles,
+    titleFilters: compilePatterns(rules.titleFilters),
+    channelFilters: compilePatterns(rules.channelFilters),
+    commentFilters: compilePatterns(rules.commentFilters),
+  };
 }
 
 export function hasCommentRules(rules: CompiledRules): boolean {
-  return rules.commentAuthors.length > 0 || rules.commentContents.length > 0;
+  return rules.commentFilters.length > 0;
 }
 
-export function isRulePresent(rules: FilterRules, key: keyof FilterRules, value: string): boolean {
-  const list = rules[key];
-  if (key === 'handles') return list.some((entry) => normalizeHandle(entry) === value);
-  return list.includes(value);
+export function hasVideoId(rules: FilterRules, videoId: string): boolean {
+  return rules.videos.some((video) => video.id.trim() === videoId);
+}
+
+export function findChannel(
+  rules: FilterRules,
+  lookup: { id?: string | null; handle?: string | null },
+): ChannelEntry | undefined {
+  const id = lookup.id?.trim() ?? '';
+  const handle = lookup.handle ? normalizeHandle(lookup.handle) : '';
+  if (!id && !handle) return undefined;
+  return rules.channels.find(
+    (channel) =>
+      (id !== '' && channel.id.trim() === id) ||
+      (handle !== '' && normalizeHandle(channel.handle) === handle),
+  );
 }
 
 export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
-  const compiled = rules as Record<keyof FilterRules, Set<string> | CompiledPattern[]>;
-  for (const def of FILTER_DEFINITIONS) {
-    const raw = entity[def.entityField];
-    if (!raw) continue;
-    if (def.match === 'pattern') {
-      if (matchesAny(compiled[def.key] as CompiledPattern[], raw)) {
-        return { blocked: true, reason: formatReason(def.reason, raw) };
-      }
-      continue;
-    }
-    const value = def.match === 'handle' ? normalizeHandle(raw) : raw;
-    if ((compiled[def.key] as Set<string>).has(value)) {
-      return { blocked: true, reason: formatReason(def.reason, value) };
-    }
+  if (entity.videoId && rules.videoIds.has(entity.videoId)) {
+    return { blocked: true, reason: formatReason('video', entity.videoId) };
+  }
+  if (entity.channelId && rules.channelIds.has(entity.channelId)) {
+    return { blocked: true, reason: formatReason('channel', entity.channelId) };
+  }
+  if (entity.handle && rules.handles.has(normalizeHandle(entity.handle))) {
+    return { blocked: true, reason: formatReason('handle', normalizeHandle(entity.handle)) };
+  }
+  if (entity.title && matchesAny(rules.titleFilters, entity.title)) {
+    return { blocked: true, reason: formatReason('title', entity.title) };
+  }
+  if (entity.channelName && matchesAny(rules.channelFilters, entity.channelName)) {
+    return { blocked: true, reason: formatReason('channelName', entity.channelName) };
+  }
+  if (entity.handle && matchesAny(rules.channelFilters, entity.handle)) {
+    return { blocked: true, reason: formatReason('channelName', entity.handle) };
+  }
+  if (entity.commentAuthor && matchesAny(rules.commentFilters, entity.commentAuthor)) {
+    return { blocked: true, reason: formatReason('comment', entity.commentAuthor) };
+  }
+  if (entity.commentContent && matchesAny(rules.commentFilters, entity.commentContent)) {
+    return { blocked: true, reason: formatReason('comment', entity.commentContent) };
   }
   return { blocked: false };
 }
@@ -215,7 +233,7 @@ export function matchDirectNavigation(
     return { blocked: true, reason: formatReason('channel', parsed.channelId) };
   }
   if (parsed.handle && rules.handles.has(normalizeHandle(parsed.handle))) {
-    return { blocked: true, reason: formatReason('handle', parsed.handle) };
+    return { blocked: true, reason: formatReason('handle', normalizeHandle(parsed.handle)) };
   }
   return matchAreaRedirect(pathname, areas);
 }

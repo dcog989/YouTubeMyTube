@@ -69,22 +69,21 @@ export function buildDnrRules(state: BlockerState): chrome.declarativeNetRequest
     }
   }
 
-  for (const videoId of state.rules.videoIds) {
-    const value = videoId.trim();
+  for (const { id } of state.rules.videos) {
+    const value = id.trim();
     if (!value || value.startsWith('//')) continue;
     push(videoIdPattern(value), blockedPage(formatReason('video', value)));
   }
 
-  for (const channelId of state.rules.channelIds) {
-    const value = channelId.trim();
-    if (!value || value.startsWith('//')) continue;
-    push(channelIdPattern(value), blockedPage(formatReason('channel', value)));
-  }
-
-  for (const handle of state.rules.handles) {
-    const value = normalizeHandle(handle);
-    if (!value || value.startsWith('//')) continue;
-    push(handlePattern(value), blockedPage(formatReason('handle', value)));
+  for (const { id, handle } of state.rules.channels) {
+    const channelId = id.trim();
+    if (channelId && !channelId.startsWith('//')) {
+      push(channelIdPattern(channelId), blockedPage(formatReason('channel', channelId)));
+    }
+    const normalized = normalizeHandle(handle);
+    if (normalized && !normalized.startsWith('//')) {
+      push(handlePattern(normalized), blockedPage(formatReason('handle', normalized)));
+    }
   }
 
   return rules;

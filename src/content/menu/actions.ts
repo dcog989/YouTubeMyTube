@@ -1,38 +1,40 @@
-import { isRulePresent } from '../../shared/matcher';
-import type { Entity, FilterRules } from '../../shared/types';
+import { findChannel, hasVideoId, normalizeHandle } from '../../shared/matcher';
+import type { ChannelEntry, Entity, FilterRules, VideoEntry } from '../../shared/types';
 
 export interface MenuAction {
   label: string;
-  key: keyof FilterRules;
-  value: string;
+  kind: 'video' | 'channel';
   mode: 'block' | 'unblock';
-}
-
-function pushAction(
-  actions: MenuAction[],
-  rules: FilterRules,
-  key: keyof FilterRules,
-  value: string,
-): void {
-  const noun = key === 'videoIds' ? 'video' : 'channel';
-  const blocked = isRulePresent(rules, key, value);
-  actions.push({
-    label: `${blocked ? 'Unblock' : 'Block'} ${noun}`,
-    key,
-    value,
-    mode: blocked ? 'unblock' : 'block',
-  });
+  value: string;
+  entry: VideoEntry | ChannelEntry;
 }
 
 export function actionsFor(entity: Entity, rules: FilterRules): MenuAction[] {
   const actions: MenuAction[] = [];
-  if (entity.videoId) pushAction(actions, rules, 'videoIds', entity.videoId);
-  if (entity.channelId) {
-    pushAction(actions, rules, 'channelIds', entity.channelId);
-  } else if (entity.handle) {
-    pushAction(actions, rules, 'handles', entity.handle.toLowerCase());
-  } else if (entity.channelName) {
-    pushAction(actions, rules, 'channelNames', entity.channelName);
+
+  if (entity.videoId) {
+    const blocked = hasVideoId(rules, entity.videoId);
+    actions.push({
+      label: `${blocked ? 'Unblock' : 'Block'} video`,
+      kind: 'video',
+      mode: blocked ? 'unblock' : 'block',
+      value: entity.videoId,
+      entry: { id: entity.videoId, title: entity.title ?? '' },
+    });
   }
+
+  if (entity.channelId || entity.handle) {
+    const id = entity.channelId ?? '';
+    const handle = entity.handle ? normalizeHandle(entity.handle) : '';
+    const blocked = findChannel(rules, { id, handle }) !== undefined;
+    actions.push({
+      label: `${blocked ? 'Unblock' : 'Block'} channel`,
+      kind: 'channel',
+      mode: blocked ? 'unblock' : 'block',
+      value: id || handle,
+      entry: { id, name: entity.channelName ?? '', handle },
+    });
+  }
+
   return actions;
 }

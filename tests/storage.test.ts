@@ -18,12 +18,37 @@ describe('normalizeState', () => {
     expect(normalizeState(42)).toEqual(defaultState());
   });
 
-  it('keeps only string entries in rule lists', () => {
+  it('keeps only well-formed channel and video entries', () => {
     const state = normalizeState({
-      rules: { videoIds: ['abc', 1, null, 'def'], titles: 'not-an-array' },
+      rules: {
+        channels: [
+          { id: 'UC1', name: 'One', handle: 'one' },
+          { id: '', handle: 'two' },
+          { id: '', name: '', handle: '' },
+          { id: 'UC1', name: 'dupe', handle: '' },
+          { id: 5 },
+        ],
+        videos: [
+          { id: 'abc', title: 'A' },
+          { id: 'abc', title: 'dupe' },
+          { id: '' },
+          { title: 'no id' },
+        ],
+      },
     });
-    expect(state.rules.videoIds).toEqual(['abc', 'def']);
-    expect(state.rules.titles).toEqual([]);
+    expect(state.rules.channels).toEqual([
+      { id: 'UC1', name: 'One', handle: 'one' },
+      { id: '', name: '', handle: 'two' },
+    ]);
+    expect(state.rules.videos).toEqual([{ id: 'abc', title: 'A' }]);
+  });
+
+  it('keeps only string entries in pattern lists', () => {
+    const state = normalizeState({
+      rules: { titleFilters: ['a', 1, null, 'b'], commentFilters: 'not-an-array' },
+    });
+    expect(state.rules.titleFilters).toEqual(['a', 'b']);
+    expect(state.rules.commentFilters).toEqual([]);
   });
 
   it('ignores non-boolean area flags and keeps valid ones', () => {
@@ -47,11 +72,12 @@ describe('normalizeState', () => {
 });
 
 describe('ruleCount', () => {
-  it('sums every rule list', () => {
+  it('sums entities and active pattern entries', () => {
     const state = defaultState();
-    state.rules.videoIds = ['a', 'b'];
-    state.rules.channelIds = ['UC1'];
-    state.rules.titles = ['x'];
+    state.rules.videos = [{ id: 'a', title: '' }];
+    state.rules.channels = [{ id: 'UC1', name: '', handle: '' }];
+    state.rules.titleFilters = ['x', '// comment', ''];
+    state.rules.commentFilters = ['y'];
     expect(ruleCount(state)).toBe(4);
   });
 });

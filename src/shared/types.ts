@@ -1,11 +1,20 @@
+export interface ChannelEntry {
+  id: string;
+  name: string;
+  handle: string;
+}
+
+export interface VideoEntry {
+  id: string;
+  title: string;
+}
+
 export interface FilterRules {
-  videoIds: string[];
-  channelIds: string[];
-  handles: string[];
-  channelNames: string[];
-  titles: string[];
-  commentAuthors: string[];
-  commentContents: string[];
+  channels: ChannelEntry[];
+  channelFilters: string[];
+  videos: VideoEntry[];
+  titleFilters: string[];
+  commentFilters: string[];
 }
 
 export interface AreaFlags {
@@ -77,10 +86,9 @@ export interface CompiledRules {
   videoIds: Set<string>;
   channelIds: Set<string>;
   handles: Set<string>;
-  channelNames: CompiledPattern[];
-  titles: CompiledPattern[];
-  commentAuthors: CompiledPattern[];
-  commentContents: CompiledPattern[];
+  titleFilters: CompiledPattern[];
+  channelFilters: CompiledPattern[];
+  commentFilters: CompiledPattern[];
 }
 
 export type AreaKey = keyof AreaFlags;

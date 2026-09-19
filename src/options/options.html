@@ -62,9 +62,105 @@
         </section>
 
         <section class="panel" id="panel-filters">
-          <div class="filters-layout">
-            <nav class="filter-nav" id="filter-nav" aria-label="Filter types"></nav>
-            <div class="filter-editors" id="filter-editors"></div>
+          <div class="card">
+            <label class="row-title" for="channel-add">Block a channel</label>
+            <p class="help">
+              Paste a channel URL, @handle, or UC channel ID. The ID is matched exactly; the handle
+              is matched case-insensitively.
+            </p>
+            <div class="test-row">
+              <input
+                id="channel-add"
+                class="input"
+                type="text"
+                autocomplete="off"
+                placeholder="https://www.youtube.com/@handle"
+              >
+              <button type="button" id="channel-add-btn" class="btn btn-primary">Add</button>
+            </div>
+            <div id="channel-status" class="row-sub" hidden></div>
+            <table class="entity-table">
+              <thead>
+                <tr>
+                  <th>Channel ID</th>
+                  <th>Name</th>
+                  <th>Handle</th>
+                  <th class="col-action"></th>
+                </tr>
+              </thead>
+              <tbody id="channel-rows"></tbody>
+            </table>
+            <div class="field">
+              <div class="editor-head">
+                <label class="row-title" for="input-channelFilters">
+                  Channel name / handle filters
+                </label>
+                <span class="count" id="count-channelFilters"></span>
+              </div>
+              <p class="help">
+                Keywords or /regex/flags, one per line. Matched against channel names and handles.
+              </p>
+              <textarea
+                id="input-channelFilters"
+                spellcheck="false"
+                placeholder="Example Channel&#10;/\bdrama\b/i"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="card">
+            <label class="row-title" for="video-add">Block a video</label>
+            <p class="help">Paste a video URL or an 11-character video ID.</p>
+            <div class="test-row">
+              <input
+                id="video-add"
+                class="input"
+                type="text"
+                autocomplete="off"
+                placeholder="https://www.youtube.com/watch?v=..."
+              >
+              <button type="button" id="video-add-btn" class="btn btn-primary">Add</button>
+            </div>
+            <div id="video-status" class="row-sub" hidden></div>
+            <table class="entity-table">
+              <thead>
+                <tr>
+                  <th>Video ID</th>
+                  <th>Title</th>
+                  <th class="col-action"></th>
+                </tr>
+              </thead>
+              <tbody id="video-rows"></tbody>
+            </table>
+            <div class="field">
+              <div class="editor-head">
+                <label class="row-title" for="input-titleFilters">Video title filters</label>
+                <span class="count" id="count-titleFilters"></span>
+              </div>
+              <p class="help">
+                Keywords or /regex/flags, one per line. Matched against card titles.
+              </p>
+              <textarea
+                id="input-titleFilters"
+                spellcheck="false"
+                placeholder="clickbait&#10;/\bspoilers?\b/i"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="editor-head">
+              <label class="row-title" for="input-commentFilters">Comment filters</label>
+              <span class="count" id="count-commentFilters"></span>
+            </div>
+            <p class="help">
+              Keywords or /regex/flags, one per line. Matched against comment authors and text.
+            </p>
+            <textarea
+              id="input-commentFilters"
+              spellcheck="false"
+              placeholder="spammer&#10;/free\s+crypto/i"
+            ></textarea>
           </div>
         </section>
 
@@ -95,6 +191,7 @@
               <select id="test-type" class="select">
                 <option value="title">Video title</option>
                 <option value="channelName">Channel name</option>
+                <option value="handle">Channel handle</option>
                 <option value="commentAuthor">Comment author</option>
                 <option value="commentContent">Comment content</option>
               </select>

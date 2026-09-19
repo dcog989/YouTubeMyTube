@@ -6,9 +6,10 @@ Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarative
 
 ## Features
 
-- Block channels by ID or handle, and channel names by keyword/regex.
-- Block videos by ID, title keyword/regex.
-- Block comments by author or content.
+- Block channels by ID or handle, and channel names/handles by keyword/regex.
+- Block videos by ID, and titles by keyword/regex.
+- Block comments by author or content keyword/regex.
+- Add a channel or video by pasting a URL, `@handle`, channel ID or 11-character video ID; the options page looks up and stores the name/title for reference.
 - Block Shorts, including shelves and direct links.
 - Optional content-area blocking (home feed, Trending, Explore, Subscriptions, comments, live chat, related videos).
 - Direct navigation to blocked content redirects to a block page.

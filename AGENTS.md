@@ -13,17 +13,19 @@ Two layers, no page injection:
 1. `declarativeNetRequest` rules (generated from state) redirect direct navigation to blocked videos, channels, handles and area pages. The background service worker reconciles them on every state change.
 2. A content script (isolated world) applies CSS classes and a `MutationObserver` to hide matching cards, channels and comments, and handles SPA navigation that DNR cannot see.
 
-Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the filter registry in `src/shared/filters.ts`; both are pure and unit-tested. The rule model, area definitions, reason wire format and DNR generation are in `src/shared/`. Content-script concerns are split under `src/content/` (wiring, filtering, areas, evaluation, menu).
+Rule matching and URL parsing live in `src/shared/matcher.ts`; both are pure and unit-tested. The rule model (entity rows plus pattern lists), area definitions, reason wire format, lookup/URL resolution and DNR generation are in `src/shared/`. Content-script concerns are split under `src/content/` (wiring, filtering, areas, evaluation, menu).
 
 ### Key Files
 
 - `src/shared/matcher.ts` — URL parsing and rule matching (pure, unit-tested).
-- `src/shared/filters.ts` — filter-type registry; drives compilation, matching and the options UI.
+- `src/shared/filters.ts` — pattern-filter metadata (`channelFilters` / `titleFilters` / `commentFilters`) used by the options UI.
 - `src/shared/areas.ts` — content-area definitions and path mapping.
 - `src/shared/reason.ts` — block-reason wire format (format/parse).
 - `src/shared/dnr.ts` — generates declarativeNetRequest rules from state.
-- `src/shared/storage.ts` — rule model, defaults, normalization.
+- `src/shared/storage.ts` — rule model, defaults, normalization (entity rows + pattern lists, deduplicated).
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
+- `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata and video titles.
+- `src/shared/unblock.ts` — maps exact block reasons back to removals.
 - `src/content/content.ts` — content-script wiring (state lifecycle, observer, messaging).
 - `src/content/filter.ts` — card/comment DOM filtering engine.
 - `src/content/menu.ts` + `src/content/menu/` — in-page menu injection.
@@ -55,7 +57,7 @@ Rule matching and URL parsing live in `src/shared/matcher.ts`, driven by the fil
 
 ### Common Patterns
 
-- Add a filter type: extend `FilterRules` in `src/shared/types.ts` and add one entry to `FILTER_META` in `src/shared/filters.ts` (match kind, entity field, reason kind, UI copy). Defaults, matching, and the options UI derive from it.
+- Add a pattern filter: add an entry to `PATTERN_FILTERS` in `src/shared/filters.ts`, add the field to `FilterRules` in `src/shared/types.ts`, compile it in `compileRules`, match it in `matchEntity`, and render it in `src/options/options.ts`. Entity rows (channels/videos) are edited in the options tables; their exact fields are compiled into the `CompiledRules` sets.
 - Add a content area: extend `AreaFlags` and add an entry to `AREA_DEFINITIONS` in `src/shared/areas.ts`; wire an `AREA_CLASSES` entry in `src/content/areas.ts` and a selector in `src/content/content.css`.
 - Add a browser: add `manifests/<browser>.json` and add the name to `SUPPORTED` in `esbuild.config.mjs`.
 - State access: load via `loadState()` / persist via `saveState()` in `src/shared/state.ts`; never write `chrome.storage` directly.

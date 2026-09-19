@@ -1,10 +1,21 @@
-import { FILTER_DEFINITIONS } from './filters';
-import type { AreaFlags, BlockerState, FilterRules, Settings } from './types';
+import { normalizeHandle } from './matcher';
+import type {
+  AreaFlags,
+  BlockerState,
+  ChannelEntry,
+  FilterRules,
+  Settings,
+  VideoEntry,
+} from './types';
 
 export function defaultRules(): FilterRules {
-  const rules = {} as FilterRules;
-  for (const { key } of FILTER_DEFINITIONS) rules[key] = [];
-  return rules;
+  return {
+    channels: [],
+    channelFilters: [],
+    videos: [],
+    titleFilters: [],
+    commentFilters: [],
+  };
 }
 
 export function defaultAreas(): AreaFlags {
@@ -38,18 +49,59 @@ export function defaultState(): BlockerState {
   };
 }
 
-function pickStringArray(value: unknown, fallback: string[]): string[] {
-  if (!Array.isArray(value)) return fallback;
+function pickStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
   return value.filter((item): item is string => typeof item === 'string');
 }
 
+function pickChannels(value: unknown): ChannelEntry[] {
+  if (!Array.isArray(value)) return [];
+  const result: ChannelEntry[] = [];
+  const ids = new Set<string>();
+  const handles = new Set<string>();
+  for (const item of value) {
+    if (!item || typeof item !== 'object') continue;
+    const record = item as Record<string, unknown>;
+    const id = typeof record.id === 'string' ? record.id.trim() : '';
+    const name = typeof record.name === 'string' ? record.name.trim() : '';
+    const handle = typeof record.handle === 'string' ? record.handle.trim() : '';
+    const normalized = normalizeHandle(handle);
+    if (!id && !normalized) continue;
+    if (id && ids.has(id)) continue;
+    if (normalized && handles.has(normalized)) continue;
+    if (id) ids.add(id);
+    if (normalized) handles.add(normalized);
+    result.push({ id, name, handle });
+  }
+  return result;
+}
+
+function pickVideos(value: unknown): VideoEntry[] {
+  if (!Array.isArray(value)) return [];
+  const result: VideoEntry[] = [];
+  const ids = new Set<string>();
+  for (const item of value) {
+    if (!item || typeof item !== 'object') continue;
+    const record = item as Record<string, unknown>;
+    const id = typeof record.id === 'string' ? record.id.trim() : '';
+    const title = typeof record.title === 'string' ? record.title.trim() : '';
+    if (!id || ids.has(id)) continue;
+    ids.add(id);
+    result.push({ id, title });
+  }
+  return result;
+}
+
 function mergeRules(value: unknown): FilterRules {
-  const base = defaultRules();
-  if (!value || typeof value !== 'object') return base;
+  if (!value || typeof value !== 'object') return defaultRules();
   const record = value as Record<string, unknown>;
-  const rules = {} as FilterRules;
-  for (const { key } of FILTER_DEFINITIONS) rules[key] = pickStringArray(record[key], base[key]);
-  return rules;
+  return {
+    channels: pickChannels(record.channels),
+    channelFilters: pickStringArray(record.channelFilters),
+    videos: pickVideos(record.videos),
+    titleFilters: pickStringArray(record.titleFilters),
+    commentFilters: pickStringArray(record.commentFilters),
+  };
 }
 
 function mergeAreas(value: unknown): AreaFlags {
@@ -85,6 +137,17 @@ export function normalizeState(value: unknown): BlockerState {
   };
 }
 
+function activeCount(list: string[]): number {
+  return list.filter((entry) => entry.trim().length > 0 && !entry.startsWith('//')).length;
+}
+
 export function ruleCount(state: BlockerState): number {
-  return FILTER_DEFINITIONS.reduce((sum, { key }) => sum + state.rules[key].length, 0);
+  const { channels, channelFilters, videos, titleFilters, commentFilters } = state.rules;
+  return (
+    channels.length +
+    videos.length +
+    activeCount(channelFilters) +
+    activeCount(titleFilters) +
+    activeCount(commentFilters)
+  );
 }

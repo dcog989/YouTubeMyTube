@@ -35,11 +35,11 @@ describe('parseBlockTubeBackup', () => {
     const result = parseBlockTubeBackup(backup());
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.data.rules.videoIds).toEqual(['vid1', 'vid2']);
-    expect(result.data.rules.channelIds).toEqual(['UC1']);
-    expect(result.data.rules.channelNames).toEqual(['drama']);
-    expect(result.data.rules.titles).toEqual(['spoiler']);
-    expect(result.data.rules.commentContents).toEqual(['free crypto']);
+    expect(result.data.videoIds).toEqual(['vid1', 'vid2']);
+    expect(result.data.channelIds).toEqual(['UC1']);
+    expect(result.data.channelFilters).toEqual(['drama']);
+    expect(result.data.titleFilters).toEqual(['spoiler']);
+    expect(result.data.commentFilters).toEqual(['free crypto']);
     expect(result.data.skipped).toEqual([]);
   });
 
@@ -47,7 +47,7 @@ describe('parseBlockTubeBackup', () => {
     const result = parseBlockTubeBackup(backup({ videoId: ['a', '// comment', '', 3, 'a'] }));
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.data.rules.videoIds).toEqual(['a']);
+    expect(result.data.videoIds).toEqual(['a']);
   });
 
   it('maps supported options', () => {
@@ -102,14 +102,18 @@ describe('parseBlockTubeBackup', () => {
 describe('mergeBlockTubeImport', () => {
   it('adds new entries and skips duplicates', () => {
     const state = defaultState();
-    state.rules.videoIds = ['vid1'];
+    state.rules.videos = [{ id: 'vid1', title: '' }];
     const parsed = parseBlockTubeBackup(backup());
     if (!parsed.ok) throw new Error('expected parse success');
 
     const { state: merged, added } = mergeBlockTubeImport(state, parsed.data);
     expect(added).toBe(5);
-    expect(merged.rules.videoIds).toEqual(['vid1', 'vid2']);
-    expect(state.rules.videoIds).toEqual(['vid1']);
+    expect(merged.rules.videos.map((video) => video.id)).toEqual(['vid1', 'vid2']);
+    expect(merged.rules.channels.map((channel) => channel.id)).toEqual(['UC1']);
+    expect(merged.rules.channelFilters).toEqual(['drama']);
+    expect(merged.rules.titleFilters).toEqual(['spoiler']);
+    expect(merged.rules.commentFilters).toEqual(['free crypto']);
+    expect(state.rules.videos).toEqual([{ id: 'vid1', title: '' }]);
   });
 
   it('enables imported areas without disabling existing ones', () => {

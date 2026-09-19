@@ -5,25 +5,22 @@ export type ReasonKind =
   | 'channel'
   | 'handle'
   | 'area'
-  | 'channelName'
   | 'title'
-  | 'commentAuthor'
-  | 'commentContent';
+  | 'channelName'
+  | 'comment';
 
 export interface Reason {
   kind: ReasonKind;
   value: string;
 }
 
-const COMMENT_CONTENT_REASON = 'comment content';
-
 const REASON_PATTERNS: ReadonlyArray<readonly [ReasonKind, RegExp]> = [
   ['video', /^video id (.+)$/],
   ['channel', /^channel id (.+)$/],
   ['handle', /^channel handle (.+)$/],
-  ['channelName', /^channel name "(.*)"$/],
-  ['title', /^title "(.*)"$/],
-  ['commentAuthor', /^comment author "(.*)"$/],
+  ['channelName', /^channel filter "(.*)"$/],
+  ['title', /^title filter "(.*)"$/],
+  ['comment', /^comment filter "(.*)"$/],
   ['area', /^area (.+)$/],
 ];
 
@@ -35,21 +32,18 @@ export function formatReason(kind: ReasonKind, value = ''): string {
       return `channel id ${value}`;
     case 'handle':
       return `channel handle ${HANDLE_PREFIX}${value}`;
-    case 'channelName':
-      return `channel name "${value}"`;
     case 'title':
-      return `title "${value}"`;
-    case 'commentAuthor':
-      return `comment author "${value}"`;
+      return `title filter "${value}"`;
+    case 'channelName':
+      return `channel filter "${value}"`;
+    case 'comment':
+      return `comment filter "${value}"`;
     case 'area':
       return `area ${value}`;
-    case 'commentContent':
-      return COMMENT_CONTENT_REASON;
   }
 }
 
 export function parseReason(raw: string): Reason | null {
-  if (raw === COMMENT_CONTENT_REASON) return { kind: 'commentContent', value: '' };
   for (const [kind, pattern] of REASON_PATTERNS) {
     const match = pattern.exec(raw);
     if (match?.[1] !== undefined) return { kind, value: match[1] };

@@ -1,28 +1,28 @@
 import { AREA_DEFINITIONS } from '../shared/areas';
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
-import { FILTER_DEFINITIONS } from '../shared/filters';
+import { PATTERN_FILTERS, type PatternFilterKey } from '../shared/filters';
 import {
   compileRules,
+  findChannel,
+  hasVideoId,
   matchDirectNavigation,
   matchEntity,
   parseYouTubeUrl,
 } from '../shared/matcher';
+import { parseBlockInput, resolveChannel, resolveVideoTitle } from '../shared/resolve';
 import { loadState, saveState } from '../shared/state';
 import { defaultState, normalizeState } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
-import type { AreaKey, BlockerState, Entity, FilterRules } from '../shared/types';
+import type { AreaKey, BlockerState, ChannelEntry, Entity, VideoEntry } from '../shared/types';
 import { byId } from '../shared/ui';
 
-const editors = new Map<keyof FilterRules, HTMLTextAreaElement>();
-const counters = new Map<keyof FilterRules, HTMLElement>();
+const patternEditors = new Map<PatternFilterKey, HTMLTextAreaElement>();
+const counters = new Map<PatternFilterKey, HTMLElement>();
 const areaInputs = new Map<AreaKey, HTMLInputElement>();
 
-const TEXTAREA_MIN_HEIGHT = 160;
-const TEXTAREA_BOTTOM_GAP = 32;
+const MAX_BACKFILL_LOOKUPS = 25;
 
-let activeFilter: keyof FilterRules | null = null;
 let draft: BlockerState = defaultState();
-let growScheduled = false;
 
 function linesToArray(text: string): string[] {
   return text
@@ -45,38 +45,23 @@ function setDirty(value: boolean): void {
   byId<HTMLButtonElement>('save').disabled = !value;
 }
 
-function updateCount(key: keyof FilterRules): void {
+function updateCount(key: PatternFilterKey): void {
   const count = activeRuleCount(draft.rules[key]);
   const target = counters.get(key);
   if (target) target.textContent = count === 1 ? '1 rule' : `${count} rules`;
 }
 
 function autoGrowTextarea(textarea: HTMLTextAreaElement): void {
-  const style = window.getComputedStyle(textarea);
-  const border =
-    Number.parseFloat(style.borderTopWidth) + Number.parseFloat(style.borderBottomWidth);
   textarea.style.height = 'auto';
-  const contentHeight = textarea.scrollHeight + border;
-  const top = textarea.getBoundingClientRect().top;
-  const available = Math.max(TEXTAREA_MIN_HEIGHT, window.innerHeight - top - TEXTAREA_BOTTOM_GAP);
-  textarea.style.height = `${Math.min(contentHeight, available)}px`;
-  textarea.style.overflowY = contentHeight > available ? 'auto' : 'hidden';
+  textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
-function growActiveEditor(): void {
-  if (!activeFilter) return;
-  const textarea = editors.get(activeFilter);
-  if (!textarea || textarea.offsetParent === null) return;
-  autoGrowTextarea(textarea);
-}
-
-function scheduleGrow(): void {
-  if (growScheduled) return;
-  growScheduled = true;
-  requestAnimationFrame(() => {
-    growScheduled = false;
-    growActiveEditor();
-  });
+function setStatus(id: string, message: string, ok: boolean): void {
+  const target = byId(id);
+  target.hidden = message === '';
+  target.textContent = message;
+  target.classList.toggle('is-allowed', ok);
+  target.classList.toggle('is-blocked', !ok);
 }
 
 function selectPanel(name: string): void {
@@ -88,70 +73,205 @@ function selectPanel(name: string): void {
   });
   const navButton = document.querySelector<HTMLButtonElement>(`.nav-item[data-panel="${name}"]`);
   if (navButton) byId('panel-title').textContent = navButton.textContent ?? '';
-  if (name === 'filters') growActiveEditor();
 }
 
-function selectFilter(key: keyof FilterRules): void {
-  document.querySelectorAll<HTMLButtonElement>('.filter-nav-item').forEach((button) => {
-    button.classList.toggle('is-active', button.dataset.filter === key);
-  });
-  document.querySelectorAll<HTMLElement>('.editor-item').forEach((item) => {
-    item.classList.toggle('is-active', item.dataset.filter === key);
-  });
-  activeFilter = key;
-  growActiveEditor();
-}
+function renderChannels(): void {
+  const body = byId('channel-rows');
+  body.replaceChildren();
+  draft.rules.channels.forEach((channel, index) => {
+    const row = document.createElement('tr');
 
-function buildFilters(): void {
-  const nav = byId('filter-nav');
-  const host = byId('filter-editors');
-
-  FILTER_DEFINITIONS.forEach((config, index) => {
-    const navButton = document.createElement('button');
-    navButton.type = 'button';
-    navButton.className = `filter-nav-item${index === 0 ? ' is-active' : ''}`;
-    navButton.dataset.filter = config.key;
-    navButton.textContent = config.title;
-    navButton.addEventListener('click', () => selectFilter(config.key));
-    nav.appendChild(navButton);
-
-    const wrapper = document.createElement('div');
-    wrapper.className = `editor-item${index === 0 ? ' is-active' : ''}`;
-    wrapper.dataset.filter = config.key;
-    if (index === 0) activeFilter = config.key;
-
-    const head = document.createElement('div');
-    head.className = 'editor-head';
-    const label = document.createElement('label');
-    label.className = 'row-title';
-    label.htmlFor = `input-${config.key}`;
-    label.textContent = config.title;
-    const count = document.createElement('span');
-    count.className = 'count';
-    count.id = `count-${config.key}`;
-    head.append(label, count);
-
-    const help = document.createElement('p');
-    help.className = 'help';
-    help.textContent = config.help;
-
-    const textarea = document.createElement('textarea');
-    textarea.id = `input-${config.key}`;
-    textarea.spellcheck = false;
-    textarea.placeholder = config.placeholder;
-    textarea.addEventListener('input', () => {
-      draft.rules[config.key] = linesToArray(textarea.value);
-      updateCount(config.key);
+    const idCell = document.createElement('td');
+    const idInput = document.createElement('input');
+    idInput.className = 'input entity-input';
+    idInput.value = channel.id;
+    idInput.placeholder = 'UC…';
+    idInput.autocomplete = 'off';
+    idInput.addEventListener('input', () => {
+      channel.id = idInput.value.trim();
       setDirty(true);
-      scheduleGrow();
     });
+    idCell.appendChild(idInput);
 
-    wrapper.append(head, help, textarea);
-    host.appendChild(wrapper);
+    const nameCell = document.createElement('td');
+    nameCell.className = 'entity-readonly';
+    nameCell.textContent = channel.name || '—';
 
-    editors.set(config.key, textarea);
-    counters.set(config.key, count);
+    const handleCell = document.createElement('td');
+    handleCell.className = 'entity-readonly';
+    handleCell.textContent = channel.handle ? `@${channel.handle}` : '—';
+
+    const actionCell = document.createElement('td');
+    actionCell.className = 'col-action';
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'btn btn-danger';
+    remove.textContent = 'Remove';
+    remove.addEventListener('click', () => {
+      draft.rules.channels.splice(index, 1);
+      renderChannels();
+      setDirty(true);
+    });
+    actionCell.appendChild(remove);
+
+    row.append(idCell, nameCell, handleCell, actionCell);
+    body.appendChild(row);
   });
+}
+
+function renderVideos(): void {
+  const body = byId('video-rows');
+  body.replaceChildren();
+  draft.rules.videos.forEach((video, index) => {
+    const row = document.createElement('tr');
+
+    const idCell = document.createElement('td');
+    const idInput = document.createElement('input');
+    idInput.className = 'input entity-input';
+    idInput.value = video.id;
+    idInput.placeholder = '11-character ID';
+    idInput.autocomplete = 'off';
+    idInput.addEventListener('input', () => {
+      video.id = idInput.value.trim();
+      setDirty(true);
+    });
+    idCell.appendChild(idInput);
+
+    const titleCell = document.createElement('td');
+    titleCell.className = 'entity-readonly';
+    titleCell.textContent = video.title || '—';
+
+    const actionCell = document.createElement('td');
+    actionCell.className = 'col-action';
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'btn btn-danger';
+    remove.textContent = 'Remove';
+    remove.addEventListener('click', () => {
+      draft.rules.videos.splice(index, 1);
+      renderVideos();
+      setDirty(true);
+    });
+    actionCell.appendChild(remove);
+
+    row.append(idCell, titleCell, actionCell);
+    body.appendChild(row);
+  });
+}
+
+async function addChannel(): Promise<void> {
+  const input = byId<HTMLInputElement>('channel-add');
+  const parsed = parseBlockInput(input.value);
+  if (!parsed || parsed.kind !== 'channel') {
+    setStatus('channel-status', 'Paste a channel URL, @handle, or UC channel ID.', false);
+    return;
+  }
+
+  const id = parsed.channelId ?? '';
+  const handle = parsed.handle ?? '';
+  if (findChannel(draft.rules, { id, handle })) {
+    setStatus('channel-status', 'That channel is already blocked.', false);
+    return;
+  }
+
+  const entry: ChannelEntry = { id, name: '', handle };
+  draft.rules.channels.push(entry);
+  input.value = '';
+  renderChannels();
+  setDirty(true);
+  setStatus('channel-status', 'Looking up channel details…', true);
+
+  try {
+    const meta = await resolveChannel({ id, handle });
+    if (meta.id) entry.id = meta.id;
+    if (meta.name) entry.name = meta.name;
+    if (meta.handle) entry.handle = meta.handle;
+    renderChannels();
+    setDirty(true);
+    setStatus('channel-status', entry.name ? `Added ${entry.name}.` : 'Channel added.', true);
+  } catch {
+    setStatus('channel-status', 'Channel added. Could not fetch details.', false);
+  }
+}
+
+async function addVideo(): Promise<void> {
+  const input = byId<HTMLInputElement>('video-add');
+  const parsed = parseBlockInput(input.value);
+  if (!parsed || parsed.kind !== 'video') {
+    setStatus('video-status', 'Paste a video URL or an 11-character video ID.', false);
+    return;
+  }
+
+  if (hasVideoId(draft.rules, parsed.videoId)) {
+    setStatus('video-status', 'That video is already blocked.', false);
+    return;
+  }
+
+  const entry: VideoEntry = { id: parsed.videoId, title: '' };
+  draft.rules.videos.push(entry);
+  input.value = '';
+  renderVideos();
+  setDirty(true);
+  setStatus('video-status', 'Looking up title…', true);
+
+  try {
+    const title = await resolveVideoTitle(entry.id);
+    if (title) entry.title = title;
+    renderVideos();
+    setDirty(true);
+    setStatus('video-status', entry.title ? `Added ${entry.title}.` : 'Video added.', true);
+  } catch {
+    setStatus('video-status', 'Video added. Could not fetch title.', false);
+  }
+}
+
+async function backfillMissing(): Promise<void> {
+  let changed = false;
+  let lookups = 0;
+
+  for (const channel of draft.rules.channels) {
+    if (lookups >= MAX_BACKFILL_LOOKUPS) break;
+    if (channel.id && channel.name && channel.handle) continue;
+    lookups += 1;
+    try {
+      const meta = await resolveChannel({ id: channel.id, handle: channel.handle });
+      if (meta.id && meta.id !== channel.id) {
+        channel.id = meta.id;
+        changed = true;
+      }
+      if (meta.name && meta.name !== channel.name) {
+        channel.name = meta.name;
+        changed = true;
+      }
+      if (meta.handle && meta.handle !== channel.handle) {
+        channel.handle = meta.handle;
+        changed = true;
+      }
+    } catch {
+      // Best effort: leave the row as-is when the lookup fails.
+    }
+  }
+
+  for (const video of draft.rules.videos) {
+    if (lookups >= MAX_BACKFILL_LOOKUPS) break;
+    if (video.title) continue;
+    lookups += 1;
+    try {
+      const title = await resolveVideoTitle(video.id);
+      if (title) {
+        video.title = title;
+        changed = true;
+      }
+    } catch {
+      // Best effort.
+    }
+  }
+
+  if (changed) {
+    renderChannels();
+    renderVideos();
+    setDirty(true);
+  }
 }
 
 function buildAreas(): void {
@@ -188,14 +308,32 @@ function buildAreas(): void {
   }
 }
 
+function wirePatternEditors(): void {
+  for (const config of PATTERN_FILTERS) {
+    const textarea = byId<HTMLTextAreaElement>(`input-${config.key}`);
+    const count = byId(`count-${config.key}`);
+    textarea.addEventListener('input', () => {
+      draft.rules[config.key] = linesToArray(textarea.value);
+      updateCount(config.key);
+      setDirty(true);
+      autoGrowTextarea(textarea);
+    });
+    patternEditors.set(config.key, textarea);
+    counters.set(config.key, count);
+  }
+}
+
 function populate(): void {
   byId<HTMLSelectElement>('theme').value = draft.settings.theme;
   byId<HTMLInputElement>('enabled').checked = draft.settings.enabled;
   byId<HTMLInputElement>('block-message').value = draft.settings.blockMessage;
 
-  for (const config of FILTER_DEFINITIONS) {
-    const editor = editors.get(config.key);
-    if (editor) editor.value = arrayToLines(draft.rules[config.key]);
+  for (const config of PATTERN_FILTERS) {
+    const editor = patternEditors.get(config.key);
+    if (editor) {
+      editor.value = arrayToLines(draft.rules[config.key]);
+      autoGrowTextarea(editor);
+    }
     updateCount(config.key);
   }
 
@@ -203,7 +341,8 @@ function populate(): void {
     input.checked = draft.areas[key];
   }
 
-  growActiveEditor();
+  renderChannels();
+  renderVideos();
 }
 
 function showResult(blocked: boolean | null, message: string): void {
@@ -248,6 +387,7 @@ function testText(): void {
   const entity: Entity = {};
   if (type === 'title') entity.title = value;
   else if (type === 'channelName') entity.channelName = value;
+  else if (type === 'handle') entity.handle = value;
   else if (type === 'commentAuthor') entity.commentAuthor = value;
   else entity.commentContent = value;
 
@@ -341,6 +481,15 @@ function wireStatic(): void {
     setDirty(true);
   });
 
+  byId('channel-add-btn').addEventListener('click', () => void addChannel());
+  byId<HTMLInputElement>('channel-add').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') void addChannel();
+  });
+  byId('video-add-btn').addEventListener('click', () => void addVideo());
+  byId<HTMLInputElement>('video-add').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') void addVideo();
+  });
+
   byId('save').addEventListener('click', () => {
     void (async () => {
       draft = normalizeState(draft);
@@ -373,19 +522,18 @@ function wireStatic(): void {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (draft.settings.theme === 'system') applyTheme('system');
   });
-
-  window.addEventListener('resize', scheduleGrow);
 }
 
 async function init(): Promise<void> {
   draft = await loadState();
-  buildFilters();
   buildAreas();
+  wirePatternEditors();
   wireStatic();
   applyTheme(draft.settings.theme);
   populate();
   setDirty(false);
   selectPanel('general');
+  void backfillMissing();
 }
 
 void init();

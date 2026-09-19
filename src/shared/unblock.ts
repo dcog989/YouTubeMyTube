@@ -4,8 +4,10 @@ import type { FilterRules } from './types';
 
 const YOUTUBE_ORIGIN = 'https://www.youtube.com';
 
+export type RuleRefKind = 'video' | 'channel' | 'handle';
+
 export interface RuleRef {
-  key: keyof FilterRules;
+  kind: RuleRefKind;
   value: string;
 }
 
@@ -22,28 +24,33 @@ export function ruleRefForReason(reason: string): RuleRef | null {
   if (!parsed) return null;
   switch (parsed.kind) {
     case 'video':
-      return { key: 'videoIds', value: parsed.value };
+      return { kind: 'video', value: parsed.value };
     case 'channel':
-      return { key: 'channelIds', value: parsed.value };
+      return { kind: 'channel', value: parsed.value };
     case 'handle': {
       const value = normalizeHandle(parsed.value);
-      return value ? { key: 'handles', value } : null;
+      return value ? { kind: 'handle', value } : null;
     }
-    case 'channelName':
-      return parsed.value ? { key: 'channelNames', value: parsed.value } : null;
     default:
       return null;
   }
 }
 
 export function removeRule(rules: FilterRules, ref: RuleRef): boolean {
-  const list = rules[ref.key];
-  const index =
-    ref.key === 'handles'
-      ? list.findIndex((entry) => normalizeHandle(entry) === ref.value)
-      : list.indexOf(ref.value);
+  if (ref.kind === 'video') {
+    const index = rules.videos.findIndex((video) => video.id === ref.value);
+    if (index === -1) return false;
+    rules.videos.splice(index, 1);
+    return true;
+  }
+
+  const index = rules.channels.findIndex((channel) =>
+    ref.kind === 'channel'
+      ? channel.id === ref.value
+      : normalizeHandle(channel.handle) === ref.value,
+  );
   if (index === -1) return false;
-  list.splice(index, 1);
+  rules.channels.splice(index, 1);
   return true;
 }
 
@@ -61,11 +68,13 @@ export function reasonDetail(reason: string): string {
     case 'channel':
       return `Blocked channel ID: ${parsed.value}`;
     case 'handle':
-      return `Blocked channel: ${parsed.value}`;
+      return `Blocked channel: @${parsed.value}`;
     case 'title':
       return parsed.value ? `Blocked title: ${parsed.value}` : reason;
     case 'channelName':
       return parsed.value ? `Blocked channel name: ${parsed.value}` : reason;
+    case 'comment':
+      return parsed.value ? `Blocked comment: ${parsed.value}` : reason;
     default:
       return reason;
   }

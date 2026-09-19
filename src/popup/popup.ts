@@ -1,6 +1,6 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
 import { openOptionsPage, queryActiveTab, sendTabMessage } from '../shared/ext';
-import { isRulePresent, parseYouTubeUrl } from '../shared/matcher';
+import { findChannel, hasVideoId, parseYouTubeUrl } from '../shared/matcher';
 import { loadState, saveState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
@@ -11,17 +11,16 @@ let state: BlockerState;
 let activeVideoId: string | null = null;
 let activeChannelId: string | null = null;
 let activeHandle: string | null = null;
+let activeChannelName: string | null = null;
 
 function renderCounts(): void {
   const { rules } = state;
   const parts: string[] = [];
-  if (rules.videoIds.length) parts.push(`${rules.videoIds.length} video IDs`);
-  if (rules.channelIds.length) parts.push(`${rules.channelIds.length} channel IDs`);
-  if (rules.handles.length) parts.push(`${rules.handles.length} handles`);
-  const keywords = rules.channelNames.length + rules.titles.length;
+  if (rules.videos.length) parts.push(`${rules.videos.length} videos`);
+  if (rules.channels.length) parts.push(`${rules.channels.length} channels`);
+  const keywords = rules.channelFilters.length + rules.titleFilters.length;
   if (keywords) parts.push(`${keywords} keyword filters`);
-  const comments = rules.commentAuthors.length + rules.commentContents.length;
-  if (comments) parts.push(`${comments} comment filters`);
+  if (rules.commentFilters.length) parts.push(`${rules.commentFilters.length} comment filters`);
 
   const counts = byId('counts');
   counts.textContent = parts.length > 0 ? parts.join(' · ') : 'No filters yet';
@@ -42,10 +41,9 @@ function renderContext(): void {
   context.hidden = false;
   videoButton.hidden = activeVideoId === null;
   channelButton.hidden = !hasChannel;
-  videoButton.disabled = activeVideoId !== null && state.rules.videoIds.includes(activeVideoId);
-  channelButton.disabled =
-    (activeChannelId !== null && state.rules.channelIds.includes(activeChannelId)) ||
-    (activeHandle !== null && isRulePresent(state.rules, 'handles', activeHandle));
+  videoButton.disabled = activeVideoId !== null && hasVideoId(state.rules, activeVideoId);
+  const channel = findChannel(state.rules, { id: activeChannelId, handle: activeHandle });
+  channelButton.disabled = hasChannel && channel !== undefined;
 }
 
 async function detectActiveTab(): Promise<void> {
@@ -61,6 +59,7 @@ async function detectActiveTab(): Promise<void> {
     const context = await sendTabMessage<Entity>(tab.id, { type: CONTEXT_REQUEST });
     if (context?.channelId && !activeChannelId) activeChannelId = context.channelId;
     if (context?.handle && !activeHandle) activeHandle = context.handle.toLowerCase();
+    if (context?.channelName) activeChannelName = context.channelName;
   }
 
   const label = byId('context-label');
@@ -82,21 +81,21 @@ function registerHandlers(): void {
   });
 
   byId('block-video').addEventListener('click', () => {
-    if (!activeVideoId || state.rules.videoIds.includes(activeVideoId)) return;
-    state.rules.videoIds.push(activeVideoId);
+    if (!activeVideoId || hasVideoId(state.rules, activeVideoId)) return;
+    state.rules.videos.push({ id: activeVideoId, title: '' });
     renderCounts();
     renderContext();
     void saveState(state);
   });
 
   byId('block-channel').addEventListener('click', () => {
-    if (activeChannelId && !state.rules.channelIds.includes(activeChannelId)) {
-      state.rules.channelIds.push(activeChannelId);
-    } else if (activeHandle && !isRulePresent(state.rules, 'handles', activeHandle)) {
-      state.rules.handles.push(activeHandle);
-    } else {
-      return;
-    }
+    if (!activeChannelId && !activeHandle) return;
+    if (findChannel(state.rules, { id: activeChannelId, handle: activeHandle })) return;
+    state.rules.channels.push({
+      id: activeChannelId ?? '',
+      name: activeChannelName ?? '',
+      handle: activeHandle ?? '',
+    });
     renderCounts();
     renderContext();
     void saveState(state);
