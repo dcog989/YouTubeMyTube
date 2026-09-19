@@ -33,8 +33,7 @@ let state: BlockerState | null = null;
 let lastMenuTarget: Element | null = null;
 let scheduled = false;
 const pending = new Set<Element>();
-const itemActions = new WeakMap<Element, MenuAction>();
-const itemOwner = new WeakMap<Element, Element>();
+const itemState = new WeakMap<Element, { action: MenuAction; owner: Element }>();
 
 function pendingActions(entity: Entity): MenuAction[] {
   if (!state) return [];
@@ -70,11 +69,11 @@ function entityFor(owner: Element): Entity {
 function ownerForItem(item: Element): Element | null {
   const container = parentContainer(item);
   const resolved = container ? resolveOwner(container) : null;
-  return resolved ?? itemOwner.get(item) ?? null;
+  return resolved ?? itemState.get(item)?.owner ?? null;
 }
 
 function liveActionFor(item: Element): MenuAction | null {
-  const stored = itemActions.get(item);
+  const stored = itemState.get(item)?.action;
   if (!stored) return null;
   if (!state) return stored;
   const owner = ownerForItem(item);
@@ -93,7 +92,7 @@ function activateItem(item: Element): void {
   void applyAction(action, ownerForItem(item) ?? undefined);
 }
 
-function createItem(action: MenuAction, style: MenuItemStyle): HTMLElement {
+function createItem(action: MenuAction, owner: Element, style: MenuItemStyle): HTMLElement {
   const item = h('div', {
     className: 'ytb-menu-item',
     [INJECTED_ATTR]: '',
@@ -116,7 +115,7 @@ function createItem(action: MenuAction, style: MenuItemStyle): HTMLElement {
     event.stopPropagation();
     activateItem(item);
   });
-  itemActions.set(item, action);
+  itemState.set(item, { action, owner });
   return item;
 }
 
@@ -135,11 +134,11 @@ function inject(container: MenuContainer): void {
   const host = menuItemHost(scope, container);
 
   for (const existing of Array.from(scope.querySelectorAll(`[${INJECTED_ATTR}]`))) {
-    if (itemOwner.get(existing) !== owner) existing.remove();
+    if (itemState.get(existing)?.owner !== owner) existing.remove();
   }
 
   const owned = Array.from(scope.querySelectorAll(`[${INJECTED_ATTR}]`)).filter(
-    (item) => itemOwner.get(item) === owner,
+    (item) => itemState.get(item)?.owner === owner,
   );
   if (owned.length > 0) {
     moveToEnd(host, owned);
@@ -152,9 +151,7 @@ function inject(container: MenuContainer): void {
 
   const style = computeItemStyle(container);
   for (const action of actions) {
-    const item = createItem(action, style);
-    host.appendChild(item);
-    itemOwner.set(item, owner);
+    host.appendChild(createItem(action, owner, style));
   }
 }
 
@@ -259,7 +256,7 @@ function handleInjectedClick(event: MouseEvent): void {
   if (!target) return;
   const item = closestAcrossShadow(target, `[${INJECTED_ATTR}]`);
   if (!item) return;
-  if (!itemActions.has(item)) return;
+  if (!itemState.has(item)) return;
   event.preventDefault();
   event.stopPropagation();
   activateItem(item);
