@@ -1,3 +1,7 @@
+import type { AreaFlags } from './areas';
+
+export type { AreaFlags, AreaKey } from './areas';
+
 export interface ChannelEntry {
   id: string;
   name: string;
@@ -17,19 +21,6 @@ export interface FilterRules {
   videos: VideoEntry[];
   titleFilters: string[];
   commentFilters: string[];
-}
-
-export interface AreaFlags {
-  homePage: boolean;
-  trendingPage: boolean;
-  explorePage: boolean;
-  subscriptionsPage: boolean;
-  shortsPage: boolean;
-  shortsShelf: boolean;
-  commentsSection: boolean;
-  liveChat: boolean;
-  relatedVideos: boolean;
-  promoSections: boolean;
 }
 
 export type Theme = 'system' | 'light' | 'dark';
@@ -93,5 +84,3 @@ export interface CompiledRules {
   channelFilters: CompiledPattern[];
   commentFilters: CompiledPattern[];
 }
-
-export type AreaKey = keyof AreaFlags;

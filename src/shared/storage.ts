@@ -1,13 +1,7 @@
+import { AREA_DEFINITIONS, type AreaFlags } from './areas';
 import { countActiveEntries, normalizeHandle } from './matcher';
 import { isTheme } from './theme';
-import type {
-  AreaFlags,
-  BlockerState,
-  ChannelEntry,
-  FilterRules,
-  Settings,
-  VideoEntry,
-} from './types';
+import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
 
 export function defaultRules(): FilterRules {
   return {
@@ -20,18 +14,11 @@ export function defaultRules(): FilterRules {
 }
 
 export function defaultAreas(): AreaFlags {
-  return {
-    homePage: false,
-    trendingPage: false,
-    explorePage: false,
-    subscriptionsPage: false,
-    shortsPage: false,
-    shortsShelf: false,
-    commentsSection: false,
-    liveChat: false,
-    relatedVideos: false,
-    promoSections: false,
-  };
+  const areas = {} as AreaFlags;
+  for (const { key } of AREA_DEFINITIONS) {
+    areas[key] = false;
+  }
+  return areas;
 }
 
 export function defaultSettings(): Settings {
