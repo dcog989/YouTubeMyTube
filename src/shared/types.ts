@@ -2,11 +2,13 @@ export interface ChannelEntry {
   id: string;
   name: string;
   handle: string;
+  lookupFailed?: boolean;
 }
 
 export interface VideoEntry {
   id: string;
   title: string;
+  lookupFailed?: boolean;
 }
 
 export interface FilterRules {

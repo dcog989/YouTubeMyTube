@@ -12,7 +12,12 @@ import {
   matchEntity,
   parseYouTubeUrl,
 } from '../shared/matcher';
-import { parseBlockInput, resolveChannel, resolveVideoTitle } from '../shared/resolve';
+import {
+  type ChannelMeta,
+  parseBlockInput,
+  resolveChannel,
+  resolveVideoTitle,
+} from '../shared/resolve';
 import { loadState, saveState } from '../shared/state';
 import { defaultState, normalizeState } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
@@ -162,6 +167,7 @@ function renderChannels(): void {
     idInput.autocomplete = 'off';
     idInput.addEventListener('input', () => {
       channel.id = idInput.value.trim();
+      delete channel.lookupFailed;
       setDirty(true);
     });
     idCell.appendChild(idInput);
@@ -207,6 +213,7 @@ function renderVideos(): void {
     idInput.autocomplete = 'off';
     idInput.addEventListener('input', () => {
       video.id = idInput.value.trim();
+      delete video.lookupFailed;
       setDirty(true);
     });
     idCell.appendChild(idInput);
@@ -300,53 +307,113 @@ async function addVideo(): Promise<void> {
   }
 }
 
+interface ChannelTarget {
+  entry: ChannelEntry;
+  id: string;
+  handle: string;
+}
+
+interface VideoTarget {
+  entry: VideoEntry;
+  id: string;
+}
+
+function needsChannelBackfill(channel: ChannelEntry): boolean {
+  return !channel.lookupFailed && !channel.name;
+}
+
+function needsVideoBackfill(video: VideoEntry): boolean {
+  return !video.lookupFailed && !video.title;
+}
+
 async function backfillMissing(): Promise<void> {
+  const channelTargets: ChannelTarget[] = draft.rules.channels
+    .filter(needsChannelBackfill)
+    .map((entry) => ({ entry, id: entry.id, handle: entry.handle }));
+  const videoTargets: VideoTarget[] = draft.rules.videos
+    .filter(needsVideoBackfill)
+    .map((entry) => ({ entry, id: entry.id }));
+
   let changed = false;
   let lookups = 0;
 
-  for (const channel of draft.rules.channels) {
+  for (const target of channelTargets) {
     if (lookups >= MAX_BACKFILL_LOOKUPS) break;
-    if (channel.id && channel.name && channel.handle) continue;
+    if (!draft.rules.channels.includes(target.entry)) continue;
+    if (target.entry.id !== target.id || target.entry.handle !== target.handle) continue;
     lookups += 1;
+
+    let meta: ChannelMeta | null = null;
     try {
-      const meta = await resolveChannel({ id: channel.id, handle: channel.handle });
-      if (meta.id && meta.id !== channel.id) {
-        channel.id = meta.id;
-        changed = true;
-      }
-      if (meta.name && meta.name !== channel.name) {
-        channel.name = meta.name;
-        changed = true;
-      }
-      if (meta.handle && meta.handle !== channel.handle) {
-        channel.handle = meta.handle;
-        changed = true;
-      }
+      meta = await resolveChannel({ id: target.id, handle: target.handle });
     } catch {
-      // Best effort: leave the row as-is when the lookup fails.
+      meta = null;
+    }
+    if (!meta) continue;
+
+    if (meta.id && meta.id !== target.entry.id) {
+      target.entry.id = meta.id;
+      changed = true;
+    }
+    if (meta.name && meta.name !== target.entry.name) {
+      target.entry.name = meta.name;
+      changed = true;
+    }
+    if (meta.handle && meta.handle !== target.entry.handle) {
+      target.entry.handle = meta.handle;
+      changed = true;
+    }
+
+    if (meta.name) {
+      if (target.entry.lookupFailed) {
+        delete target.entry.lookupFailed;
+        changed = true;
+      }
+    } else if (!target.entry.lookupFailed) {
+      target.entry.lookupFailed = true;
+      changed = true;
     }
   }
 
-  for (const video of draft.rules.videos) {
+  for (const target of videoTargets) {
     if (lookups >= MAX_BACKFILL_LOOKUPS) break;
-    if (video.title) continue;
+    if (!draft.rules.videos.includes(target.entry)) continue;
+    if (target.entry.id !== target.id) continue;
     lookups += 1;
+
+    let title: string | null = null;
     try {
-      const title = await resolveVideoTitle(video.id);
-      if (title) {
-        video.title = title;
+      title = await resolveVideoTitle(target.id);
+    } catch {
+      title = null;
+    }
+    if (title === null) continue;
+
+    if (title && title !== target.entry.title) {
+      target.entry.title = title;
+      changed = true;
+    }
+
+    if (title) {
+      if (target.entry.lookupFailed) {
+        delete target.entry.lookupFailed;
         changed = true;
       }
-    } catch {
-      // Best effort.
+    } else if (!target.entry.lookupFailed) {
+      target.entry.lookupFailed = true;
+      changed = true;
     }
   }
 
-  if (changed) {
-    renderChannels();
-    renderVideos();
-    setDirty(true);
+  if (!changed) return;
+
+  if (!dirty) {
+    draft = normalizeState(draft);
+    savedSnapshot = JSON.stringify(draft);
+    await saveState(draft);
   }
+  renderChannels();
+  renderVideos();
 }
 
 function buildAreas(): void {
@@ -620,7 +687,9 @@ async function init(): Promise<void> {
   populate();
   setDirty(false);
   selectPanel('channels');
-  void backfillMissing();
+  void backfillMissing().catch((error) => {
+    console.error('Backfill failed', error);
+  });
 }
 
 void init();

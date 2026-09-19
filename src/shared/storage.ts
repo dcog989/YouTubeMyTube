@@ -71,7 +71,9 @@ function pickChannels(value: unknown): ChannelEntry[] {
     if (normalized && handles.has(normalized)) continue;
     if (id) ids.add(id);
     if (normalized) handles.add(normalized);
-    result.push({ id, name, handle });
+    const entry: ChannelEntry = { id, name, handle };
+    if (record.lookupFailed === true) entry.lookupFailed = true;
+    result.push(entry);
   }
   return result;
 }
@@ -87,7 +89,9 @@ function pickVideos(value: unknown): VideoEntry[] {
     const title = typeof record.title === 'string' ? record.title.trim() : '';
     if (!id || ids.has(id)) continue;
     ids.add(id);
-    result.push({ id, title });
+    const entry: VideoEntry = { id, title };
+    if (record.lookupFailed === true) entry.lookupFailed = true;
+    result.push(entry);
   }
   return result;
 }

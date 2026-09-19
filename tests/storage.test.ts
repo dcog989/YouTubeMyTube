@@ -43,6 +43,20 @@ describe('normalizeState', () => {
     expect(state.rules.videos).toEqual([{ id: 'abc', title: 'A' }]);
   });
 
+  it('preserves the lookupFailed marker on entities', () => {
+    const state = normalizeState({
+      rules: {
+        channels: [{ id: 'UC1', name: '', handle: '', lookupFailed: true }],
+        videos: [{ id: 'abc', title: '', lookupFailed: true }],
+      },
+    });
+    expect(state.rules.channels[0]?.lookupFailed).toBe(true);
+    expect(state.rules.videos[0]?.lookupFailed).toBe(true);
+    expect(
+      normalizeState({ rules: { videos: [{ id: 'x', title: '' }] } }).rules.videos[0],
+    ).not.toHaveProperty('lookupFailed');
+  });
+
   it('keeps only string entries in pattern lists', () => {
     const state = normalizeState({
       rules: { titleFilters: ['a', 1, null, 'b'], commentFilters: 'not-an-array' },
