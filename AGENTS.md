@@ -33,7 +33,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/content/filter.ts` — card/comment DOM filtering engine.
 - `src/content/menu.ts` + `src/content/menu/` — in-page menu injection.
 - `src/background/service-worker.ts` — keeps DNR rules in sync with storage.
-- `src/options/options.ts` — settings UI controller.
+- `src/options/options.ts` + `src/options/` — settings UI, split into entry point, state store, panel modules (channels/videos/areas/patterns), tester, import/export and metadata backfill.
 - `esbuild.config.mjs` — build/packaging for both browsers.
 - `scripts/manifest-check.mjs` — validates the shared fields of the Chrome/Firefox manifests (`validateManifests`).
 - `scripts/zip.mjs` — dependency-free ZIP writer for the store archives (`createZip`).
