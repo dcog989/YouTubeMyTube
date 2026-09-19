@@ -75,6 +75,17 @@ const CHANNEL_PAGE_NAME_SELECTORS = [
   'yt-channel-name',
 ];
 
+const SHADOW_ANCHOR_HOSTS = [
+  'yt-lockup-view-model',
+  'yt-lockup-metadata-view-model',
+  'yt-content-metadata-view-model',
+  'yt-thumbnail-view-model',
+  'yt-avatar-view-model',
+  'yt-decorated-avatar-view-model',
+];
+
+const SHADOW_ANCHOR_HOST_SELECTOR = SHADOW_ANCHOR_HOSTS.join(',');
+
 const CHANNEL_HEADER_SELECTORS = [
   'ytd-channel-header-renderer',
   'ytd-c4-tabbed-header-renderer',
@@ -159,20 +170,27 @@ function applyAnchor(entity: Entity, anchor: HTMLAnchorElement): void {
 }
 
 function applyAnchors(entity: Entity, anchors: ArrayLike<HTMLAnchorElement>): void {
-  for (const anchor of Array.from(anchors)) applyAnchor(entity, anchor);
+  for (const anchor of Array.from(anchors)) {
+    applyAnchor(entity, anchor);
+    if (hasIdentity(entity)) return;
+  }
 }
 
 function hasIdentity(entity: Entity): boolean {
   return Boolean(entity.videoId) && Boolean(entity.channelId || entity.handle);
 }
 
-function applyShadowAnchors(entity: Entity, root: Element): void {
-  forEachShadowRoot(root, (shadow) => {
+function applyShadowAnchors(entity: Entity, root: ParentNode): void {
+  for (const host of root.querySelectorAll(SHADOW_ANCHOR_HOST_SELECTOR)) {
+    const shadow = host.shadowRoot;
+    if (!shadow) continue;
     shadow.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((anchor) => {
       applyAnchor(entity, anchor);
     });
-    return !hasIdentity(entity);
-  });
+    if (hasIdentity(entity)) return;
+    applyShadowAnchors(entity, shadow);
+    if (hasIdentity(entity)) return;
+  }
 }
 
 export function cardEntity(card: Element): Entity {
