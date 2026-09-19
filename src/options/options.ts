@@ -2,6 +2,7 @@ import { AREA_DEFINITIONS } from '../shared/areas';
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
 import { MAX_DNR_REGEX_RULES } from '../shared/constants';
 import { buildDnrRules } from '../shared/dnr';
+import { onLocalStorageChanged } from '../shared/ext';
 import { PATTERN_FILTERS, type PatternFilterKey } from '../shared/filters';
 import {
   compileRules,
@@ -28,6 +29,9 @@ const COUNTED_PANEL_SET = new Set<string>(COUNTED_PANELS);
 
 let draft: BlockerState = defaultState();
 let activePanel = 'channels';
+let dirty = false;
+let savedSnapshot = '';
+let externalState: BlockerState | null = null;
 
 function linesToArray(text: string): string[] {
   return text
@@ -46,8 +50,34 @@ function activeRuleCount(items: string[]): number {
 }
 
 function setDirty(value: boolean): void {
+  dirty = value;
   byId('dirty').hidden = !value;
   byId<HTMLButtonElement>('save').disabled = !value;
+}
+
+function showConflict(): void {
+  byId('conflict-warning').hidden = false;
+}
+
+function hideConflict(): void {
+  byId('conflict-warning').hidden = true;
+}
+
+function adoptState(next: BlockerState): void {
+  draft = next;
+  savedSnapshot = JSON.stringify(draft);
+  externalState = null;
+  hideConflict();
+  populate();
+  setDirty(false);
+}
+
+function handleExternalChange(value: unknown): void {
+  const incoming = normalizeState(value);
+  if (JSON.stringify(incoming) === savedSnapshot) return;
+  externalState = incoming;
+  if (dirty) showConflict();
+  else adoptState(incoming);
 }
 
 function panelFilterCount(panel: string): number {
@@ -541,10 +571,18 @@ function wireStatic(): void {
   byId('save').addEventListener('click', () => {
     void (async () => {
       draft = normalizeState(draft);
+      savedSnapshot = JSON.stringify(draft);
+      hideConflict();
       await saveState(draft);
       populate();
       setDirty(false);
     })();
+  });
+
+  onLocalStorageChanged(handleExternalChange);
+  byId('conflict-reload').addEventListener('click', () => {
+    if (externalState) adoptState(externalState);
+    else hideConflict();
   });
 
   byId('test-url-btn').addEventListener('click', testUrl);
@@ -574,6 +612,7 @@ function wireStatic(): void {
 
 async function init(): Promise<void> {
   draft = await loadState();
+  savedSnapshot = JSON.stringify(draft);
   buildAreas();
   wirePatternEditors();
   wireStatic();

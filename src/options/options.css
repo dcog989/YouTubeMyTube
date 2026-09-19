@@ -190,12 +190,21 @@ body {
 }
 
 .notice {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-top: 12px;
   padding: 10px 14px;
   border-radius: var(--radius);
   background: var(--bad-bg);
   color: var(--bad-text);
   font-size: 13px;
+}
+
+.notice[hidden] {
+  display: none;
 }
 
 .panel-actions {
