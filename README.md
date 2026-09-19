@@ -51,7 +51,7 @@ bun run release           # cog bump --auto: tag + changelog, syncs package.json
 
 `bun run test:e2e` needs the Playwright Chromium build once: `bunx playwright install chromium`.
 
-`bun install` runs `prepare`, which installs the [lefthook](https://lefthook.dev) git hooks. The `pre-commit` hook runs Biome against staged files and a full `tsc --noEmit` type-check, and the `commit-msg` hook enforces [Conventional Commits](https://www.conventionalcommits.org) via [cocogitto](https://docs.cocogitto.io) (`cog`). Cocogitto is a system binary, not an bun dependency; install it separately (e.g. `pacman -S cocogitto`, `cargo install cocogitto`, or your package manager). Hook installation is skipped automatically when there is no `.git` directory (for example when building from the submitted source archive).
+`bun install` runs `prepare`, which installs the [Lefthook](https://lefthook.dev) git hooks. The `pre-commit` hook runs Biome against staged files and a full `tsc --noEmit` type-check, and the `commit-msg` hook enforces [Conventional Commits](https://www.conventionalcommits.org) via [Cocogitto](https://docs.cocogitto.io) (`cog`). Cocogitto is a system binary, not a Bun dependency; install it separately (e.g. `pacman -S cocogitto`, `cargo install cocogitto`, or your package manager). Hook installation is skipped automatically when there is no `.git` directory (for example when building from the submitted source archive).
 
 ## Building from source
 
@@ -59,7 +59,7 @@ The extension is built with esbuild via `esbuild.config.mjs`; the same build pro
 
 ### Requirements
 
-- Node.js 26.8.2 or newer (https://nodejs.org), or Bun 1.4.2 or newer (https://bun.sh) as the package manager/runtime.
+- Node.js 26.8.2 or newer (<https://nodejs.org>), or Bun 1.4.2 or newer (<https://bun.sh>) as the package manager/runtime.
 - Linux, macOS or Windows; the build uses only Node built-ins and esbuild, with no platform-specific tooling.
 - Dependencies are pinned in `bun.lock`; use Bun with `--frozen-lockfile` for an exact reproduction. `npm install` resolves from `package.json`.
 
