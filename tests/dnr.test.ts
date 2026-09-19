@@ -36,7 +36,7 @@ describe('buildDnrRules', () => {
     const { rules } = buildDnrRules(
       stateWith({
         videos: [video('abc')],
-        channels: [channel('UC123', 'SomeChannel')],
+        channels: [channel('UC123', 'somechannel')],
       }),
     );
     expect(rules).toHaveLength(3);
@@ -54,7 +54,7 @@ describe('buildDnrRules', () => {
     const { rules } = buildDnrRules(
       stateWith({
         videos: [video('abc')],
-        channels: [channel('UC123', 'SomeChannel')],
+        channels: [channel('UC123', 'somechannel')],
       }),
     );
     const reasons = rules.map((rule) =>

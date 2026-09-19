@@ -1,6 +1,6 @@
 import { AREA_DEFINITIONS } from './areas';
 import { MAX_DNR_REGEX_RULES, YOUTUBE_HOME, YOUTUBE_HOST_PATTERN } from './constants';
-import { escapeRegExp, isActiveEntry, normalizeHandle } from './matcher';
+import { escapeRegExp, isActiveEntry } from './matcher';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
 
@@ -47,7 +47,7 @@ function caseInsensitiveLiteral(value: string): string {
 }
 
 function handlePattern(handle: string): string {
-  return `${YOUTUBE_HOST_PATTERN}/${caseInsensitiveLiteral(`@${normalizeHandle(handle)}`)}(?:[/?#]|$)`;
+  return `${YOUTUBE_HOST_PATTERN}/${caseInsensitiveLiteral(`@${handle}`)}(?:[/?#]|$)`;
 }
 
 function blockedPage(reason: string): chrome.declarativeNetRequest.Redirect {
@@ -87,9 +87,8 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
     if (isActiveEntry(channelId)) {
       push(channelIdPattern(channelId), blockedPage(formatReason('channel', channelId)));
     }
-    const normalized = normalizeHandle(handle);
-    if (isActiveEntry(normalized)) {
-      push(handlePattern(normalized), blockedPage(formatReason('handle', normalized)));
+    if (isActiveEntry(handle)) {
+      push(handlePattern(handle), blockedPage(formatReason('handle', handle)));
     }
   }
 

@@ -56,8 +56,8 @@ describe('matchEntity', () => {
   });
 
   it('matches handles case-insensitively and ignores the @', () => {
-    const rules = rulesWith({ channels: [{ id: '', name: '', handle: 'SomeChannel' }] });
-    expect(matchEntity({ handle: '@somechannel' }, rules).blocked).toBe(true);
+    const rules = rulesWith({ channels: [{ id: '', name: '', handle: 'somechannel' }] });
+    expect(matchEntity({ handle: '@SomeChannel' }, rules).blocked).toBe(true);
   });
 
   it('matches channel names as case-insensitive substrings', () => {

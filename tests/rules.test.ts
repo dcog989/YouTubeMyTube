@@ -12,7 +12,7 @@ import {
 import { defaultRules } from '../src/shared/storage';
 
 describe('channelMatches', () => {
-  const entry = { id: 'UC1', name: '', handle: 'SomeChannel' };
+  const entry = { id: 'UC1', name: '', handle: 'somechannel' };
 
   it('matches by id or normalized handle', () => {
     expect(channelMatches(entry, { id: 'UC1' })).toBe(true);
@@ -30,7 +30,7 @@ describe('find / has', () => {
   const rules = {
     ...defaultRules(),
     videos: [{ id: 'abc', title: '' }],
-    channels: [{ id: 'UC1', name: '', handle: 'SomeChannel' }],
+    channels: [{ id: 'UC1', name: '', handle: 'somechannel' }],
   };
 
   it('looks up videos and channels', () => {
@@ -57,7 +57,7 @@ describe('add / remove', () => {
 
   it('adds unique channels and removes by id or handle', () => {
     const rules = defaultRules();
-    expect(addChannel(rules, { id: 'UC1', name: '', handle: 'SomeChannel' })).toBe(true);
+    expect(addChannel(rules, { id: 'UC1', name: '', handle: 'somechannel' })).toBe(true);
     expect(addChannel(rules, { id: 'UC1', name: '', handle: '' })).toBe(false);
     expect(addChannel(rules, { id: '', name: '', handle: '@somechannel' })).toBe(false);
     expect(addChannel(rules, { id: '', name: '', handle: '' })).toBe(false);

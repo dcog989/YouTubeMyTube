@@ -10,10 +10,7 @@ export function channelMatches(entry: ChannelEntry, lookup: ChannelLookup): bool
   const id = lookup.id?.trim() ?? '';
   const handle = lookup.handle ? normalizeHandle(lookup.handle) : '';
   if (!id && !handle) return false;
-  return (
-    (id !== '' && entry.id.trim() === id) ||
-    (handle !== '' && normalizeHandle(entry.handle) === handle)
-  );
+  return (id !== '' && entry.id.trim() === id) || (handle !== '' && entry.handle === handle);
 }
 
 export function findChannel(rules: FilterRules, lookup: ChannelLookup): ChannelEntry | undefined {
@@ -44,7 +41,8 @@ export function removeVideo(rules: FilterRules, videoId: string): boolean {
 }
 
 export function addChannel(rules: FilterRules, entry: ChannelEntry): boolean {
-  if (!isActiveEntry(entry.id) && !isActiveEntry(normalizeHandle(entry.handle))) return false;
+  entry.handle = normalizeHandle(entry.handle);
+  if (!isActiveEntry(entry.id) && !isActiveEntry(entry.handle)) return false;
   if (findChannel(rules, { id: entry.id, handle: entry.handle })) return false;
   rules.channels.push(entry);
   return true;

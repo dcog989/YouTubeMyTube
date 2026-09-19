@@ -84,8 +84,7 @@ export function compileRules(rules: FilterRules): CompiledRules {
   for (const { id, handle } of rules.channels) {
     const channelId = id.trim();
     if (isActiveEntry(channelId)) channelIds.add(channelId);
-    const normalized = normalizeHandle(handle);
-    if (isActiveEntry(normalized)) handles.add(normalized);
+    if (isActiveEntry(handle)) handles.add(handle);
   }
 
   return {

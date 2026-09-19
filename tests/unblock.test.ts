@@ -44,7 +44,7 @@ describe('removeRule', () => {
 
   it('removes channels by id or normalized handle', () => {
     const rules = defaultRules();
-    rules.channels = [{ id: 'UC1', name: '', handle: 'SomeChannel' }];
+    rules.channels = [{ id: 'UC1', name: '', handle: 'somechannel' }];
     expect(removeRule(rules, { kind: 'handle', value: 'somechannel' })).toBe(true);
     expect(rules.channels).toEqual([]);
 
