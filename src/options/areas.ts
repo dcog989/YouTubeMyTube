@@ -9,12 +9,11 @@ const areaInputs = new Map<AreaKey, HTMLInputElement>();
 
 export function buildAreas(): void {
   const host = byId('areas');
-  const draft = getDraft();
   for (const { key } of AREA_DEFINITIONS) {
     const { title, sub } = AREA_COPY[key];
     const input = h('input', { type: 'checkbox', id: `area-${key}` });
     input.addEventListener('change', () => {
-      draft.areas[key] = input.checked;
+      getDraft().areas[key] = input.checked;
       setDirty(true);
       updateCounts();
     });

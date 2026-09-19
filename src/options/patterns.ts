@@ -7,11 +7,10 @@ import { getDraft, setDirty } from './state';
 const patternEditors = new Map<PatternFilterKey, HTMLTextAreaElement>();
 
 export function wirePatternEditors(): void {
-  const draft = getDraft();
   for (const key of PATTERN_FILTER_KEYS) {
     const textarea = byId<HTMLTextAreaElement>(`input-${key}`);
     textarea.addEventListener('input', () => {
-      draft.rules[key] = linesToArray(textarea.value);
+      getDraft().rules[key] = linesToArray(textarea.value);
       updateCounts();
       setDirty(true);
       autoGrowTextarea(textarea);
