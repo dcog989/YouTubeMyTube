@@ -1,6 +1,6 @@
 import { isActiveEntry } from './patterns';
 import { addChannel, addVideo } from './rules';
-import type { AreaFlags, AreaKey, BlockerState, FilterRules } from './types';
+import type { AreaFlags, AreaKey, BlockerState } from './types';
 
 const DEFAULT_JAVASCRIPT_MARKER = 'Custom conditions did not match, do not block';
 
@@ -142,13 +142,7 @@ export function mergeBlockTubeImport(
   state: BlockerState,
   data: BlockTubeImport,
 ): BlockTubeMergeResult {
-  const rules: FilterRules = {
-    channels: state.rules.channels.map((channel) => ({ ...channel })),
-    channelFilters: [...state.rules.channelFilters],
-    videos: state.rules.videos.map((video) => ({ ...video })),
-    titleFilters: [...state.rules.titleFilters],
-    commentFilters: [...state.rules.commentFilters],
-  };
+  const rules = structuredClone(state.rules);
   let added = 0;
 
   for (const id of data.videoIds) {

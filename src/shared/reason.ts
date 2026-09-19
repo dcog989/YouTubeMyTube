@@ -1,91 +1,107 @@
-import { HANDLE_PREFIX } from './constants';
+import { HANDLE_PREFIX, YOUTUBE_ORIGIN } from './constants';
 import { normalizeHandle } from './url';
-
-export type ReasonKind =
-  | 'video'
-  | 'channel'
-  | 'handle'
-  | 'area'
-  | 'title'
-  | 'channelName'
-  | 'comment';
 
 export interface Reason {
   kind: ReasonKind;
   value: string;
 }
 
-// Values may contain newlines (titles, comments), so capture with `[\s\S]`.
-const REASON_PATTERNS: ReadonlyArray<readonly [ReasonKind, RegExp]> = [
-  ['video', /^video id ([\s\S]+)$/],
-  ['channel', /^channel id ([\s\S]+)$/],
-  ['handle', /^channel handle (.+)$/],
-  ['channelName', /^channel filter "([\s\S]*)"$/],
-  ['title', /^title filter "([\s\S]*)"$/],
-  ['comment', /^comment filter "([\s\S]*)"$/],
-  ['area', /^area ([\s\S]+)$/],
-];
+export type RuleRefKind = 'video' | 'channel' | 'handle';
+
+export interface RuleRef {
+  kind: RuleRefKind;
+  value: string;
+}
+
+export interface ReasonSpec {
+  // Values may contain newlines (titles, comments), so capture with `[\s\S]`.
+  pattern: RegExp;
+  format: (value: string) => string;
+  label?: string;
+  detail: (value: string) => string;
+  ref?: (value: string) => RuleRef | null;
+  url?: (value: string) => string;
+}
+
+const REASONS = {
+  video: {
+    pattern: /^video id ([\s\S]+)$/,
+    format: (value) => `video id ${value}`,
+    label: 'This video is blocked.',
+    detail: (value) => `Blocked video ID: ${value}`,
+    ref: (value) => ({ kind: 'video', value }),
+    url: (value) => `${YOUTUBE_ORIGIN}/watch?v=${encodeURIComponent(value)}`,
+  },
+  channel: {
+    pattern: /^channel id ([\s\S]+)$/,
+    format: (value) => `channel id ${value}`,
+    label: 'This channel is blocked.',
+    detail: (value) => `Blocked channel ID: ${value}`,
+    ref: (value) => ({ kind: 'channel', value }),
+    url: (value) => `${YOUTUBE_ORIGIN}/channel/${encodeURIComponent(value)}`,
+  },
+  handle: {
+    pattern: /^channel handle (.+)$/,
+    format: (value) => `channel handle ${HANDLE_PREFIX}${value}`,
+    label: 'This channel is blocked.',
+    detail: (value) => {
+      const handle = normalizeHandle(value);
+      return handle ? `Blocked channel: @${handle}` : 'Blocked channel.';
+    },
+    ref: (value) => {
+      const handle = normalizeHandle(value);
+      return handle ? { kind: 'handle', value: handle } : null;
+    },
+    url: (value) => `${YOUTUBE_ORIGIN}/@${encodeURIComponent(normalizeHandle(value))}`,
+  },
+  title: {
+    pattern: /^title filter "([\s\S]*)"$/,
+    format: (value) => `title filter "${value}"`,
+    detail: (value) => (value ? `Blocked title: ${value}` : 'Blocked by a title filter.'),
+  },
+  channelName: {
+    pattern: /^channel filter "([\s\S]*)"$/,
+    format: (value) => `channel filter "${value}"`,
+    label: 'This channel is blocked.',
+    detail: (value) => (value ? `Blocked channel name: ${value}` : 'Blocked by a channel filter.'),
+  },
+  comment: {
+    pattern: /^comment filter "([\s\S]*)"$/,
+    format: (value) => `comment filter "${value}"`,
+    detail: (value) => (value ? `Blocked comment: ${value}` : 'Blocked by a comment filter.'),
+  },
+  area: {
+    pattern: /^area ([\s\S]+)$/,
+    format: (value) => `area ${value}`,
+    label: 'This page is blocked.',
+    detail: (value) => `Blocked page: ${value}`,
+  },
+} as const satisfies Record<string, ReasonSpec>;
+
+export type ReasonKind = keyof typeof REASONS;
+
+export function reasonSpec(kind: ReasonKind): ReasonSpec {
+  return REASONS[kind];
+}
 
 export function formatReason(reason: Reason): string {
-  const { kind, value } = reason;
-  switch (kind) {
-    case 'video':
-      return `video id ${value}`;
-    case 'channel':
-      return `channel id ${value}`;
-    case 'handle':
-      return `channel handle ${HANDLE_PREFIX}${value}`;
-    case 'title':
-      return `title filter "${value}"`;
-    case 'channelName':
-      return `channel filter "${value}"`;
-    case 'comment':
-      return `comment filter "${value}"`;
-    case 'area':
-      return `area ${value}`;
-  }
+  return reasonSpec(reason.kind).format(reason.value);
 }
 
 export function parseReason(raw: string): Reason | null {
-  for (const [kind, pattern] of REASON_PATTERNS) {
-    const value = pattern.exec(raw)?.[1];
+  for (const kind of Object.keys(REASONS) as ReasonKind[]) {
+    const value = reasonSpec(kind).pattern.exec(raw)?.[1];
     if (value === undefined) continue;
     return { kind, value: kind === 'handle' ? value.replace(/^@/, '') : value };
   }
   return null;
 }
 
-const REASON_LABELS: Partial<Record<ReasonKind, string>> = {
-  video: 'This video is blocked.',
-  channel: 'This channel is blocked.',
-  handle: 'This channel is blocked.',
-  channelName: 'This channel is blocked.',
-  area: 'This page is blocked.',
-};
-
 export function reasonLabel(reason: Reason | null, fallback: string): string {
-  return reason ? (REASON_LABELS[reason.kind] ?? fallback) : fallback;
+  if (!reason) return fallback;
+  return reasonSpec(reason.kind).label ?? fallback;
 }
 
 export function reasonDetail(reason: Reason): string {
-  switch (reason.kind) {
-    case 'video':
-      return `Blocked video ID: ${reason.value}`;
-    case 'channel':
-      return `Blocked channel ID: ${reason.value}`;
-    case 'handle': {
-      const value = normalizeHandle(reason.value);
-      return value ? `Blocked channel: @${value}` : 'Blocked channel.';
-    }
-    case 'title':
-      return reason.value ? `Blocked title: ${reason.value}` : 'Blocked by a title filter.';
-    case 'channelName':
-      return reason.value
-        ? `Blocked channel name: ${reason.value}`
-        : 'Blocked by a channel filter.';
-    case 'comment':
-      return reason.value ? `Blocked comment: ${reason.value}` : 'Blocked by a comment filter.';
-    case 'area':
-      return `Blocked page: ${reason.value}`;
-  }
+  return reasonSpec(reason.kind).detail(reason.value);
 }

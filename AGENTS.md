@@ -23,7 +23,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/rules.ts` — rule lookups, mutations (`add`/`remove` video/channel, `channelMatches`) and `compileRules` shared by the UI surfaces (pure, unit-tested).
 - `src/shared/filters.ts` — pattern-filter metadata (`channelFilters` / `titleFilters` / `commentFilters`) used by the options UI.
 - `src/shared/areas.ts` — content-area definitions and path mapping.
-- `src/shared/reason.ts` — block-reason wire format (format/parse) and reason copy (label/detail).
+- `src/shared/reason.ts` — per-kind reason registry (`REASONS`): wire format (format/parse), copy (label/detail), rule refs and entity URLs.
 - `src/shared/dnr.ts` — generates declarativeNetRequest rules from state.
 - `src/shared/storage.ts` — rule model, defaults, normalization (entity rows + pattern lists, deduplicated).
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
@@ -64,7 +64,8 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 ### Common Patterns
 
 - Add a pattern filter: add an entry to `PATTERN_FILTERS` in `src/shared/filters.ts`, add the field to `FilterRules` in `src/shared/types.ts`, compile it in `compileRules`, match it in `matchEntity`, and render it in `src/options/options.ts`. Entity rows (channels/videos) are edited in the options tables; their exact fields are compiled into the `CompiledRules` sets.
-- Add a content area: extend `AreaFlags` and add an entry to `AREA_DEFINITIONS` in `src/shared/areas.ts`; wire an `AREA_CLASSES` entry in `src/content/areas.ts` and a selector in `src/content/content.css`.
+- Add a content area: add an entry to `AREA_DEFINITIONS` in `src/shared/areas.ts` (keys, flags, redirect set and classes are derived from it) and add a matching selector to `src/content/content.css`.
+- Add a reason kind: add an entry to `REASONS` in `src/shared/reason.ts` (wire pattern, format, optional label/detail, rule ref and entity URL); `ReasonKind`, `formatReason`, `parseReason`, `reasonLabel`, `reasonDetail`, `ruleRefForReason` and `entityUrlForReason` all derive from it.
 - Add a browser: add `manifests/<browser>.json` and add the name to `SUPPORTED` in `esbuild.config.mjs`.
 - State access: load via `loadState()` / persist via `saveState()` in `src/shared/state.ts`; never write `chrome.storage` directly.
 
