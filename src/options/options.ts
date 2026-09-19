@@ -326,7 +326,6 @@ function wirePatternEditors(): void {
 function populate(): void {
   byId<HTMLSelectElement>('theme').value = draft.settings.theme;
   byId<HTMLInputElement>('enabled').checked = draft.settings.enabled;
-  byId<HTMLInputElement>('block-message').value = draft.settings.blockMessage;
 
   for (const config of PATTERN_FILTERS) {
     const editor = patternEditors.get(config.key);
@@ -476,11 +475,6 @@ function wireStatic(): void {
     setDirty(true);
   });
 
-  byId<HTMLInputElement>('block-message').addEventListener('input', (event) => {
-    draft.settings.blockMessage = (event.target as HTMLInputElement).value;
-    setDirty(true);
-  });
-
   byId('channel-add-btn').addEventListener('click', () => void addChannel());
   byId<HTMLInputElement>('channel-add').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') void addChannel();
@@ -532,7 +526,7 @@ async function init(): Promise<void> {
   applyTheme(draft.settings.theme);
   populate();
   setDirty(false);
-  selectPanel('general');
+  selectPanel('filters');
   void backfillMissing();
 }
 

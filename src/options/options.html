@@ -17,6 +17,11 @@
         </div>
         <div class="header-actions">
           <span id="dirty" class="dirty" hidden>Unsaved changes</span>
+          <span class="theme-label">Blocking</span>
+          <label class="switch" for="enabled" aria-label="Enable blocking">
+            <input type="checkbox" id="enabled">
+            <span class="slider"></span>
+          </label>
           <label class="theme-label" for="theme">Theme</label>
           <select id="theme" class="select">
             <option value="system">System</option>
@@ -29,8 +34,7 @@
 
     <div class="layout">
       <nav class="sidebar" aria-label="Settings sections">
-        <button type="button" class="nav-item is-active" data-panel="general">General</button>
-        <button type="button" class="nav-item" data-panel="filters">Filters</button>
+        <button type="button" class="nav-item is-active" data-panel="filters">Filters</button>
         <button type="button" class="nav-item" data-panel="areas">Content areas</button>
         <button type="button" class="nav-item" data-panel="tester">Tester</button>
         <button type="button" class="nav-item" data-panel="data">Import / Export</button>
@@ -38,30 +42,11 @@
 
       <main class="content">
         <div class="panel-head">
-          <h2 id="panel-title">General</h2>
+          <h2 id="panel-title">Filters</h2>
           <button type="button" id="save" class="btn btn-primary" disabled>Save</button>
         </div>
-        <section class="panel is-active" id="panel-general">
-          <div class="card">
-            <div class="row row-between">
-              <div>
-                <div class="row-title">Enable blocking</div>
-                <div class="row-sub">Turn all filtering on or off.</div>
-              </div>
-              <label class="switch" for="enabled" aria-label="Enable blocking">
-                <input type="checkbox" id="enabled">
-                <span class="slider"></span>
-              </label>
-            </div>
-            <div class="row">
-              <label class="row-title" for="block-message">Blocked page message</label>
-              <input id="block-message" class="input" type="text" autocomplete="off">
-              <div class="row-sub">Shown when a blocked video or channel is opened directly.</div>
-            </div>
-          </div>
-        </section>
 
-        <section class="panel" id="panel-filters">
+        <section class="panel is-active" id="panel-filters">
           <div class="card">
             <label class="row-title" for="channel-add">Block a channel</label>
             <p class="help">
