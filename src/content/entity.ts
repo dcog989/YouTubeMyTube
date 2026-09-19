@@ -162,11 +162,14 @@ function titleOf(card: Element): string {
   return textOf(card).slice(0, 300);
 }
 
-function applyAnchor(entity: Entity, anchor: HTMLAnchorElement): void {
-  const parsed = parseYouTubeUrl(anchor.getAttribute('href') ?? '');
+function applyParsed(entity: Entity, parsed: ParsedUrl): void {
   if (parsed.videoId && !entity.videoId) entity.videoId = parsed.videoId;
   if (parsed.channelId && !entity.channelId) entity.channelId = parsed.channelId;
   if (parsed.handle && !entity.handle) entity.handle = parsed.handle;
+}
+
+function applyAnchor(entity: Entity, anchor: HTMLAnchorElement): void {
+  applyParsed(entity, parseYouTubeUrl(anchor.getAttribute('href') ?? ''));
 }
 
 function applyAnchors(entity: Entity, anchors: ArrayLike<HTMLAnchorElement>): void {
@@ -211,13 +214,9 @@ export function commentEntity(thread: Element): Entity {
   const authorAnchor = thread.querySelector<HTMLAnchorElement>(
     'a[href*="/channel/"], a[href^="/@"], a[href*="/@"]',
   );
-  const parsed = authorAnchor
-    ? parseYouTubeUrl(authorAnchor.getAttribute('href') ?? '')
-    : undefined;
 
   const entity: Entity = {};
-  if (parsed?.channelId) entity.channelId = parsed.channelId;
-  if (parsed?.handle) entity.handle = parsed.handle;
+  if (authorAnchor) applyParsed(entity, parseYouTubeUrl(authorAnchor.getAttribute('href') ?? ''));
 
   const authorText = textOf(thread.querySelector('#author-text')) || textOf(authorAnchor);
   if (authorText) entity.commentAuthor = authorText;
@@ -230,12 +229,11 @@ export function commentEntity(thread: Element): Entity {
   return entity;
 }
 
-function channelLinkIn(root: ParentNode): { channelId?: string; handle?: string } | null {
+function channelLinkIn(root: ParentNode): ParsedUrl | null {
   for (const selector of CHANNEL_LINK_SELECTORS) {
     for (const link of root.querySelectorAll(selector)) {
       const parsed = parseYouTubeUrl(link.getAttribute('href') ?? '');
-      if (parsed.channelId) return { channelId: parsed.channelId };
-      if (parsed.handle) return { handle: parsed.handle };
+      if (parsed.channelId || parsed.handle) return parsed;
     }
   }
   return null;
@@ -294,9 +292,7 @@ function channelNameForPage(page: ParsedUrl): string {
 export function currentContext(): Entity {
   const entity: Entity = {};
   const page = parseYouTubeUrl(window.location.href);
-  if (page.videoId) entity.videoId = page.videoId;
-  if (page.channelId) entity.channelId = page.channelId;
-  if (page.handle) entity.handle = page.handle;
+  applyParsed(entity, page);
 
   if (entity.videoId) {
     const scope = videoScope(entity.videoId);
@@ -304,8 +300,7 @@ export function currentContext(): Entity {
     const owner = ownerElementIn(scope);
     if (owner) {
       const link = channelLinkIn(owner);
-      if (link?.channelId) entity.channelId = link.channelId;
-      if (link?.handle) entity.handle = link.handle;
+      if (link) applyParsed(entity, link);
       const name = channelNameIn(owner);
       if (name) entity.channelName = name;
     } else {
