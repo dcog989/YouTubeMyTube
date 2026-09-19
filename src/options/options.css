@@ -76,23 +76,18 @@ body {
   padding: 12px 0;
 }
 
-.brand-logo {
+.brand {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 12px;
-}
-
-.brand-logo img {
-  width: 100%;
-  height: auto;
-}
-
-.header-main {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+  gap: 10px;
   min-width: 0;
+  padding-left: 12px;
+}
+
+.brand img {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
 }
 
 .brand-name {
@@ -127,6 +122,7 @@ body {
   grid-template-columns: 220px minmax(0, 1fr);
   gap: 0;
   flex: 1 1 auto;
+  width: 100%;
   max-width: 1120px;
   margin: 0 auto;
 }
@@ -508,6 +504,7 @@ textarea {
 }
 
 .app-footer {
+  width: 100%;
   max-width: 1120px;
   margin: 0 auto;
   padding: 12px 28px 24px;
@@ -538,11 +535,12 @@ textarea {
     max-width: none;
     padding: 0;
   }
-  .brand-logo {
-    padding: 0;
+  .brand {
+    padding-left: 0;
   }
-  .brand-logo img {
-    width: 72px;
+  .brand img {
+    width: 32px;
+    height: 32px;
   }
   .header-actions {
     flex-wrap: wrap;
