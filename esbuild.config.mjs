@@ -1,16 +1,8 @@
-import {
-  cpSync,
-  existsSync,
-  watch as fsWatch,
-  mkdirSync,
-  readFileSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs';
+import { cpSync, watch as fsWatch, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build, context } from 'esbuild';
-import { generateIcons, ICON_SIZES } from './scripts/gen-icons.mjs';
+import { generateIcons } from './scripts/gen-icons.mjs';
 import { validateManifests } from './scripts/manifest-check.mjs';
 import { createSourceZip } from './scripts/source-zip.mjs';
 import { createZip } from './scripts/zip.mjs';
@@ -150,12 +142,7 @@ function esbuildOptions(browser, name) {
 async function main() {
   validateManifests(ROOT, SUPPORTED);
 
-  const iconsReady = ICON_SIZES.every((size) =>
-    existsSync(resolve(ROOT, 'assets/icons', `${size}.png`)),
-  );
-  if (!iconsReady) {
-    generateIcons();
-  }
+  generateIcons();
 
   for (const browser of browsers) {
     prepareAssets(browser);
