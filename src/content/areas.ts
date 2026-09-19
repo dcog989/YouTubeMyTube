@@ -1,8 +1,8 @@
 import { AREA_DEFINITIONS } from '../shared/areas';
-import { getState } from './store';
+import { getSnapshot } from './store';
 
 export function applyAreas(): void {
-  const state = getState();
+  const state = getSnapshot()?.state;
   const enabled = Boolean(state?.settings.enabled);
   for (const { key, className } of AREA_DEFINITIONS) {
     if (!className) continue;

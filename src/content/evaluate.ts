@@ -5,7 +5,7 @@ import { formatReason, type Reason } from '../shared/reason';
 import type { ParsedUrl } from '../shared/types';
 import { currentContext } from './entity';
 import { clearChannelOverlay, clearFeedback, setPlayerBlank, showChannelOverlay } from './overlay';
-import { getCompiled, getState } from './store';
+import { getSnapshot } from './store';
 
 const HYDRATION_EVALUATE_MS = 500;
 
@@ -21,24 +21,24 @@ function redirectFor(reason: Reason): void {
   window.location.replace(url.toString());
 }
 
-function isSupportedPage(parsed: ParsedUrl, path: string): boolean {
-  if (path === '/watch') return true;
-  if (path.startsWith('/shorts/')) return true;
-  return (
-    parsed.kind === 'channel' ||
-    parsed.kind === 'handle' ||
-    parsed.kind === 'video' ||
-    parsed.kind === 'shorts' ||
-    parsed.kind === 'live' ||
-    parsed.kind === 'embed'
-  );
+const SUPPORTED_KINDS: ReadonlySet<ParsedUrl['kind']> = new Set([
+  'video',
+  'shorts',
+  'live',
+  'embed',
+  'channel',
+  'handle',
+]);
+
+function isSupportedPage(parsed: ParsedUrl): boolean {
+  return SUPPORTED_KINDS.has(parsed.kind);
 }
 
 function evaluateBlocking(): void {
-  const state = getState();
-  const compiled = getCompiled();
-  if (!state || !compiled) return;
+  const snapshot = getSnapshot();
+  if (!snapshot) return;
   if (window.top !== window) return;
+  const { state, compiled } = snapshot;
 
   if (!state.settings.enabled) {
     clearFeedback();
@@ -54,7 +54,7 @@ function evaluateBlocking(): void {
     return;
   }
 
-  if (!isSupportedPage(parsed, path)) {
+  if (!isSupportedPage(parsed)) {
     clearFeedback();
     return;
   }

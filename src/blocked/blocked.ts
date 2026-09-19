@@ -26,9 +26,7 @@ async function render(): Promise<void> {
   applyTheme(state.settings.theme);
 
   const title = document.getElementById('blocked-title');
-  if (title) {
-    title.textContent = reason ? reasonLabel(reason, FALLBACK_MESSAGE) : FALLBACK_MESSAGE;
-  }
+  if (title) title.textContent = reasonLabel(reason, FALLBACK_MESSAGE);
 
   const detail = document.getElementById('blocked-detail');
   if (detail && reason) detail.textContent = reasonDetail(reason);
@@ -44,7 +42,7 @@ async function render(): Promise<void> {
   });
 
   const removeButton = document.getElementById('blocked-remove');
-  const ref = reason ? ruleRefForReason(reason) : null;
+  const ref = ruleRefForReason(reason);
   if (removeButton) {
     if (ref) {
       removeButton.addEventListener('click', () => {
@@ -54,7 +52,7 @@ async function render(): Promise<void> {
             await saveState(current);
             await requestSync();
           }
-          window.location.replace((reason && entityUrlForReason(reason)) ?? YOUTUBE_HOME);
+          window.location.replace(entityUrlForReason(reason) ?? YOUTUBE_HOME);
         })();
       });
     } else {

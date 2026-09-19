@@ -301,12 +301,9 @@ export function currentContext(): Entity {
     if (owner) {
       const link = channelLinkIn(owner);
       if (link) applyParsed(entity, link);
-      const name = channelNameIn(owner);
-      if (name) entity.channelName = name;
-    } else {
-      const name = channelNameIn(scope);
-      if (name) entity.channelName = name;
     }
+    const name = channelNameIn(owner ?? scope);
+    if (name) entity.channelName = name;
     return entity;
   }
 

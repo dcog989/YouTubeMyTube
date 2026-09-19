@@ -2,7 +2,7 @@ import { hasCommentRules, matchEntity } from '../shared/matcher';
 import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, commentEntity, HIDDEN_CLASS } from './entity';
 import { scheduleEvaluate } from './evaluate';
-import { getCompiled, getState } from './store';
+import { getSnapshot } from './store';
 
 let seen = new WeakMap<Element, string>();
 let scheduled = false;
@@ -89,12 +89,11 @@ function flushPending(): void {
   const nodes = Array.from(pending);
   pending.clear();
   const roots = new Set(nodes);
-  const state = getState();
-  const compiled = getCompiled();
-  if (state && compiled) {
+  const snapshot = getSnapshot();
+  if (snapshot) {
     for (const node of nodes) {
       if (hasAncestorIn(node, roots)) continue;
-      processSubtree(node, state, compiled);
+      processSubtree(node, snapshot.state, snapshot.compiled);
     }
   }
 }
@@ -109,9 +108,9 @@ export function scheduleFilter(root: Element): void {
 export function rescan(): void {
   clearHidden();
   seen = new WeakMap<Element, string>();
-  const state = getState();
-  const compiled = getCompiled();
-  if (state?.settings.enabled && compiled) {
+  const snapshot = getSnapshot();
+  if (snapshot?.state.settings.enabled) {
+    const { state, compiled } = snapshot;
     document.querySelectorAll(CARD_SELECTOR).forEach((node) => {
       processNode(node, state, compiled);
     });

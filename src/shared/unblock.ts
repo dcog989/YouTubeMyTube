@@ -19,7 +19,8 @@ const REASON_LABELS: Partial<Record<ReasonKind, string>> = {
   area: 'This page is blocked.',
 };
 
-export function ruleRefForReason(reason: Reason): RuleRef | null {
+export function ruleRefForReason(reason: Reason | null): RuleRef | null {
+  if (!reason) return null;
   switch (reason.kind) {
     case 'video':
       return { kind: 'video', value: reason.value };
@@ -40,8 +41,8 @@ export function removeRule(rules: FilterRules, ref: RuleRef): boolean {
   return removeChannel(rules, { handle: ref.value });
 }
 
-export function reasonLabel(reason: Reason, fallback: string): string {
-  return REASON_LABELS[reason.kind] ?? fallback;
+export function reasonLabel(reason: Reason | null, fallback: string): string {
+  return reason ? (REASON_LABELS[reason.kind] ?? fallback) : fallback;
 }
 
 export function reasonDetail(reason: Reason): string {
@@ -67,7 +68,8 @@ export function reasonDetail(reason: Reason): string {
   }
 }
 
-export function entityUrlForReason(reason: Reason): string | null {
+export function entityUrlForReason(reason: Reason | null): string | null {
+  if (!reason) return null;
   switch (reason.kind) {
     case 'video':
       return `${YOUTUBE_ORIGIN}/watch?v=${encodeURIComponent(reason.value)}`;

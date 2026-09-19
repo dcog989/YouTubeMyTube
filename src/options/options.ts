@@ -521,12 +521,7 @@ function testText(): void {
     showResult(null, '');
     return;
   }
-  const entity: Entity = {};
-  if (type === 'title') entity.title = value;
-  else if (type === 'channelName') entity.channelName = value;
-  else if (type === 'handle') entity.handle = value;
-  else if (type === 'commentAuthor') entity.commentAuthor = value;
-  else entity.commentContent = value;
+  const entity = { [type]: value } as Entity;
 
   const result = matchEntity(entity, compileRules(draft.rules));
   showResult(result.blocked, blockedMessage(result));

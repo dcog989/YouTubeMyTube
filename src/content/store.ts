@@ -1,18 +1,17 @@
 import { compileRules } from '../shared/matcher';
 import type { BlockerState, CompiledRules } from '../shared/types';
 
-let state: BlockerState | null = null;
-let compiled: CompiledRules | null = null;
-
-export function getState(): BlockerState | null {
-  return state;
+export interface Snapshot {
+  state: BlockerState;
+  compiled: CompiledRules;
 }
 
-export function getCompiled(): CompiledRules | null {
-  return compiled;
+let snapshot: Snapshot | null = null;
+
+export function getSnapshot(): Snapshot | null {
+  return snapshot;
 }
 
 export function setState(next: BlockerState): void {
-  state = next;
-  compiled = compileRules(next.rules);
+  snapshot = { state: next, compiled: compileRules(next.rules) };
 }
