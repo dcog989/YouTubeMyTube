@@ -479,15 +479,7 @@ function populate(): void {
 }
 
 function showResult(blocked: boolean | null, message: string): void {
-  const result = byId('test-result');
-  if (blocked === null) {
-    result.hidden = true;
-    return;
-  }
-  result.hidden = false;
-  result.textContent = message;
-  result.classList.toggle('is-blocked', blocked);
-  result.classList.toggle('is-allowed', !blocked);
+  setStatus('test-result', blocked === null ? '' : message, !blocked);
 }
 
 function pathnameOf(value: string): string {
@@ -551,7 +543,7 @@ function importSettings(file: File): void {
     try {
       parsed = JSON.parse(String(reader.result));
     } catch {
-      showImportStatus('That file is not valid JSON.', false);
+      setStatus('import-status', 'That file is not valid JSON.', false);
       return;
     }
 
@@ -565,7 +557,7 @@ function importSettings(file: File): void {
       const skipped = blocktube.data.skipped.length
         ? ` Skipped: ${blocktube.data.skipped.join(', ')}.`
         : '';
-      showImportStatus(`Imported ${filters} from a BlockTube backup.${skipped}`, true);
+      setStatus('import-status', `Imported ${filters} from a BlockTube backup.${skipped}`, true);
       return;
     }
 
@@ -573,21 +565,13 @@ function importSettings(file: File): void {
       draft = normalizeState(parsed);
       populate();
       setDirty(true);
-      showImportStatus('Imported YouTubeMyTube settings.', true);
+      setStatus('import-status', 'Imported YouTubeMyTube settings.', true);
       return;
     }
 
-    showImportStatus('That file is not a YouTubeMyTube or BlockTube backup.', false);
+    setStatus('import-status', 'That file is not a YouTubeMyTube or BlockTube backup.', false);
   };
   reader.readAsText(file);
-}
-
-function showImportStatus(message: string, ok: boolean): void {
-  const status = byId('import-status');
-  status.hidden = false;
-  status.textContent = message;
-  status.classList.toggle('is-allowed', ok);
-  status.classList.toggle('is-blocked', !ok);
 }
 
 function wireStatic(): void {
