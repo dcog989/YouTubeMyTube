@@ -3,15 +3,36 @@ import { buildDnrRules } from '../shared/dnr';
 import { getDynamicRules, updateDynamicRules } from '../shared/ext';
 import { ensureState, loadState } from '../shared/state';
 
+function ruleKey(rule: chrome.declarativeNetRequest.Rule): string {
+  const redirect = rule.action.redirect;
+  return [
+    rule.id,
+    rule.condition.regexFilter ?? '',
+    redirect?.extensionPath ?? redirect?.url ?? '',
+  ].join('\u0000');
+}
+
+function sameRules(
+  existing: chrome.declarativeNetRequest.Rule[],
+  next: chrome.declarativeNetRequest.Rule[],
+): boolean {
+  if (existing.length !== next.length) return false;
+  return existing.every((rule, index) => {
+    const other = next[index];
+    return other !== undefined && ruleKey(rule) === ruleKey(other);
+  });
+}
+
 async function doSync(): Promise<void> {
   const state = await loadState();
   const { rules: addRules, dropped } = buildDnrRules(state);
+  const existing = await getDynamicRules();
+  if (sameRules(existing, addRules)) return;
   if (dropped > 0) {
     console.warn(
       `YouTubeMyTube: ${dropped} DNR rule(s) exceed the browser's regex limit and are enforced in-page only.`,
     );
   }
-  const existing = await getDynamicRules();
   const removeRuleIds = existing.map((rule) => rule.id);
   await updateDynamicRules({ removeRuleIds, addRules });
 }
