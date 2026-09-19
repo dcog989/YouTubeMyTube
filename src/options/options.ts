@@ -25,7 +25,7 @@ import {
 } from '../shared/rules';
 import { loadState, saveState } from '../shared/state';
 import { defaultState, normalizeState } from '../shared/storage';
-import { applyTheme } from '../shared/theme';
+import { applyTheme, isTheme } from '../shared/theme';
 import type { AreaKey, BlockerState, ChannelEntry, Entity, VideoEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
 
@@ -582,7 +582,7 @@ function wireStatic(): void {
   document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach((button) => {
     button.addEventListener('click', () => {
       const theme = button.dataset.theme;
-      if (theme !== 'system' && theme !== 'light' && theme !== 'dark') return;
+      if (!isTheme(theme)) return;
       draft.settings.theme = theme;
       applyTheme(theme);
       syncThemeButtons();

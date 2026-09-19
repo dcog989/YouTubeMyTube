@@ -1,4 +1,5 @@
 import { countActiveEntries, normalizeHandle } from './matcher';
+import { isTheme } from './theme';
 import type {
   AreaFlags,
   BlockerState,
@@ -124,7 +125,7 @@ function mergeSettings(value: unknown): Settings {
   const theme = record.theme;
   return {
     enabled: typeof record.enabled === 'boolean' ? record.enabled : base.enabled,
-    theme: theme === 'light' || theme === 'dark' || theme === 'system' ? theme : base.theme,
+    theme: isTheme(theme) ? theme : base.theme,
   };
 }
 

@@ -32,9 +32,11 @@ export interface AreaFlags {
   promoSections: boolean;
 }
 
+export type Theme = 'system' | 'light' | 'dark';
+
 export interface Settings {
   enabled: boolean;
-  theme: 'system' | 'light' | 'dark';
+  theme: Theme;
 }
 
 export interface BlockerState {
