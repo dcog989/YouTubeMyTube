@@ -150,14 +150,18 @@ export function mergeBlockTubeImport(
   };
   let added = 0;
 
+  const videoIds = new Set(rules.videos.map((video) => video.id));
   for (const id of data.videoIds) {
-    if (rules.videos.some((video) => video.id === id)) continue;
+    if (videoIds.has(id)) continue;
+    videoIds.add(id);
     rules.videos.push({ id, title: '' });
     added += 1;
   }
 
+  const channelIds = new Set(rules.channels.map((channel) => channel.id));
   for (const id of data.channelIds) {
-    if (rules.channels.some((channel) => channel.id === id)) continue;
+    if (channelIds.has(id)) continue;
+    channelIds.add(id);
     rules.channels.push({ id, name: '', handle: '' });
     added += 1;
   }

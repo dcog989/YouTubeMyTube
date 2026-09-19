@@ -21,6 +21,8 @@ export function normalizeHandle(value: string): string {
   return value.trim().replace(/^@/, '').toLowerCase();
 }
 
+const MAX_MATCH_LENGTH = 4096;
+
 function safeDecode(value: string): string {
   try {
     return decodeURIComponent(value);
@@ -42,12 +44,7 @@ export function countActiveEntries(entries: string[]): number {
   return entries.filter((entry) => isActiveEntry(entry)).length;
 }
 
-export interface ParsedPattern {
-  source: string;
-  flags: string;
-}
-
-export function parsePattern(raw: string): ParsedPattern | null {
+export function parsePattern(raw: string): RegExp | null {
   const trimmed = raw.trim();
   if (!isActiveEntry(trimmed)) return null;
 
@@ -57,28 +54,21 @@ export function parsePattern(raw: string): ParsedPattern | null {
     // `g`/`y` are stateful with reused `test()` calls; drop them.
     const flags = (regexForm[2] ?? '').replace(/[gy]/gi, '') || 'i';
     try {
-      // Validate eagerly; invalid patterns are dropped.
-      new RegExp(source, flags);
-      return { source, flags };
+      return new RegExp(source, flags);
     } catch {
       return null;
     }
   }
 
-  return { source: escapeRegExp(trimmed), flags: 'i' };
+  return new RegExp(escapeRegExp(trimmed), 'i');
 }
 
 export function compilePatterns(entries: string[]): CompiledPattern[] {
   const compiled: CompiledPattern[] = [];
   for (const raw of entries) {
-    const parsed = parsePattern(raw);
-    if (!parsed) continue;
-    try {
-      const regex = new RegExp(parsed.source, parsed.flags);
-      compiled.push({ test: (value: string) => regex.test(value) });
-    } catch {
-      // Skip patterns that fail to compile.
-    }
+    const regex = parsePattern(raw);
+    if (!regex) continue;
+    compiled.push({ test: (value: string) => regex.test(value.slice(0, MAX_MATCH_LENGTH)) });
   }
   return compiled;
 }

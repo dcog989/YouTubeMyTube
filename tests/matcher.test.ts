@@ -88,6 +88,12 @@ describe('matchEntity', () => {
     expect(matchEntity({ commentContent: 'Get FREE CRYPTO now' }, rules).blocked).toBe(true);
     expect(matchEntity({ commentContent: 'Nice video' }, rules).blocked).toBe(false);
   });
+
+  it('caps the tested string length', () => {
+    const rules = rulesWith({ commentFilters: ['needle'] });
+    expect(matchEntity({ commentContent: 'needle' }, rules).blocked).toBe(true);
+    expect(matchEntity({ commentContent: `${'x'.repeat(5000)}needle` }, rules).blocked).toBe(false);
+  });
 });
 
 describe('hasVideoId / findChannel', () => {
