@@ -67,6 +67,15 @@ describe('channelMetaFromHtml', () => {
   it('returns empty fields when nothing is present', () => {
     expect(channelMetaFromHtml('<html></html>')).toEqual({ id: '', name: '', handle: '' });
   });
+
+  it('decodes entities with &amp; last to avoid double-decoding', () => {
+    expect(channelMetaFromHtml('<meta property="og:title" content="Tom &amp; Jerry">').name).toBe(
+      'Tom & Jerry',
+    );
+    expect(channelMetaFromHtml('<meta property="og:title" content="&amp;quot;">').name).toBe(
+      '&quot;',
+    );
+  });
 });
 
 describe('videoTitleFromOembed', () => {

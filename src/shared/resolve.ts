@@ -42,11 +42,11 @@ export function parseBlockInput(input: string): BlockInput | null {
 
 function decodeEntities(value: string): string {
   return value
-    .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
 }
 
 function firstGroup(html: string, pattern: RegExp): string {
