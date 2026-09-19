@@ -7,10 +7,9 @@ import { currentContext } from './entity';
 import { clearChannelOverlay, clearFeedback, setPlayerBlank, showChannelOverlay } from './overlay';
 import { getCompiled, getState } from './store';
 
-const EVALUATE_THROTTLE_MS = 150;
+const HYDRATION_EVALUATE_MS = 500;
 
-let lastEvaluate = 0;
-let evaluatePending = false;
+let hydrationTimer: ReturnType<typeof setTimeout> | null = null;
 
 function redirectFor(reason: string): void {
   if (parseReason(reason)?.kind === 'area') {
@@ -82,17 +81,10 @@ function evaluateBlocking(): void {
 }
 
 export function scheduleEvaluate(): void {
-  if (evaluatePending) return;
-  const elapsed = performance.now() - lastEvaluate;
-  if (elapsed >= EVALUATE_THROTTLE_MS) {
-    lastEvaluate = performance.now();
+  evaluateBlocking();
+  if (hydrationTimer !== null) clearTimeout(hydrationTimer);
+  hydrationTimer = setTimeout(() => {
+    hydrationTimer = null;
     evaluateBlocking();
-    return;
-  }
-  evaluatePending = true;
-  setTimeout(() => {
-    evaluatePending = false;
-    lastEvaluate = performance.now();
-    evaluateBlocking();
-  }, EVALUATE_THROTTLE_MS - elapsed);
+  }, HYDRATION_EVALUATE_MS);
 }

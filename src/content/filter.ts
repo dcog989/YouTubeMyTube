@@ -78,7 +78,6 @@ function flushPending(): void {
   if (state && compiled) {
     for (const node of nodes) processSubtree(node, state, compiled);
   }
-  scheduleEvaluate();
 }
 
 export function scheduleFilter(root: Element): void {
