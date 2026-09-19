@@ -1,9 +1,10 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
-import { openOptionsPage, queryActiveTab, sendTabMessage } from '../shared/ext';
 import { countActiveEntries } from '../shared/patterns';
 import { addChannel, addVideo, findChannel, hasVideoId } from '../shared/rules';
+import { openOptionsPage } from '../shared/runtime';
 import { loadState, saveState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
+import { queryActiveTab, sendTabMessage } from '../shared/tabs';
 import { applyTheme } from '../shared/theme';
 import type { BlockerState, Entity } from '../shared/types';
 import { byId } from '../shared/ui';

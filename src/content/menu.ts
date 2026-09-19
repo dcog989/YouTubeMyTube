@@ -1,5 +1,4 @@
-import { onLocalStorageChanged } from '../shared/ext';
-import { loadState } from '../shared/state';
+import { loadState, onLocalStorageChanged } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState, Entity } from '../shared/types';
 import { h } from '../shared/ui';

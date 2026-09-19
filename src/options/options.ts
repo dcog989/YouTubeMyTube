@@ -1,5 +1,4 @@
-import { onLocalStorageChanged } from '../shared/ext';
-import { loadState, saveState } from '../shared/state';
+import { loadState, onLocalStorageChanged, saveState } from '../shared/state';
 import { defaultState, normalizeState } from '../shared/storage';
 import { applyTheme, isTheme } from '../shared/theme';
 import { byId } from '../shared/ui';

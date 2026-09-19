@@ -1,6 +1,5 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
-import { onLocalStorageChanged } from '../shared/ext';
-import { loadState } from '../shared/state';
+import { loadState, onLocalStorageChanged } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState } from '../shared/types';
 import { applyAreas } from './areas';

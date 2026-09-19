@@ -93,3 +93,13 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
 
   return { rules, dropped };
 }
+
+export function getDynamicRules(): Promise<chrome.declarativeNetRequest.Rule[]> {
+  return chrome.declarativeNetRequest.getDynamicRules();
+}
+
+export function updateDynamicRules(
+  options: chrome.declarativeNetRequest.UpdateRuleOptions,
+): Promise<void> {
+  return chrome.declarativeNetRequest.updateDynamicRules(options);
+}

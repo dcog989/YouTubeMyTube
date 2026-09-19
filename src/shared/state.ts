@@ -1,6 +1,6 @@
 import { STATE_KEY } from './constants';
-import { getStored, setStored } from './ext';
 import { defaultState, normalizeState } from './storage';
+import { getStored, setStored } from './storage-ext';
 import type { BlockerState } from './types';
 
 export async function loadState(): Promise<BlockerState> {
@@ -20,4 +20,13 @@ export async function ensureState(): Promise<BlockerState> {
     return initial;
   }
   return normalizeState(stored);
+}
+
+export function onLocalStorageChanged(listener: (newValue: unknown) => void): void {
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== 'local') return;
+    const change = changes[STATE_KEY];
+    if (!change) return;
+    listener(change.newValue);
+  });
 }

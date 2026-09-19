@@ -1,7 +1,7 @@
 import { BLOCKED_PAGE, YOUTUBE_HOME } from '../shared/constants';
-import { getRuntimeUrl } from '../shared/ext';
 import { matchAreaRedirect, matchEntity } from '../shared/match';
 import { formatReason, type Reason } from '../shared/reason';
+import { getRuntimeUrl } from '../shared/runtime';
 import type { ParsedUrl } from '../shared/types';
 import { parseYouTubeUrl } from '../shared/url';
 import { currentContext } from './entity';

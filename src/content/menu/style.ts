@@ -1,4 +1,4 @@
-import { getRuntimeUrl } from '../../shared/ext';
+import { getRuntimeUrl } from '../../shared/runtime';
 import { h } from '../../shared/ui';
 import { walkShadowRoots } from '../dom';
 import type { MenuContainer } from './container';

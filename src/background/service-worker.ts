@@ -1,6 +1,5 @@
 import { STATE_KEY, SYNC_REQUEST } from '../shared/constants';
-import { buildDnrRules } from '../shared/dnr';
-import { getDynamicRules, updateDynamicRules } from '../shared/ext';
+import { buildDnrRules, getDynamicRules, updateDynamicRules } from '../shared/dnr';
 import { ensureState, loadState } from '../shared/state';
 
 function ruleKey(rule: chrome.declarativeNetRequest.Rule): string {

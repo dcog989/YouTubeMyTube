@@ -1,6 +1,6 @@
 import { YOUTUBE_HOME } from '../shared/constants';
-import { getRuntimeUrl } from '../shared/ext';
 import { type Reason, reasonDetail } from '../shared/reason';
+import { getRuntimeUrl } from '../shared/runtime';
 import { loadState, saveState } from '../shared/state';
 import { h } from '../shared/ui';
 import { removeRule, ruleRefForReason } from '../shared/unblock';

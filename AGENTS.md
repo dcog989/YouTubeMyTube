@@ -24,8 +24,12 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/filters.ts` — pattern-filter metadata (`channelFilters` / `titleFilters` / `commentFilters`) used by the options UI.
 - `src/shared/areas.ts` — content-area definitions and path mapping.
 - `src/shared/reason.ts` — per-kind reason registry (`REASONS`): wire format (format/parse), copy (label/detail), rule refs and entity URLs.
-- `src/shared/dnr.ts` — generates declarativeNetRequest rules from state.
+- `src/shared/dnr.ts` — generates declarativeNetRequest rules from state and wraps the dynamic-rule API.
 - `src/shared/storage.ts` — rule model, defaults, normalization (entity rows + pattern lists, deduplicated).
+- `src/shared/storage-ext.ts` — thin `chrome.storage.local` get/set wrappers.
+- `src/shared/state.ts` — load/save/ensure the blocker state and `onLocalStorageChanged`.
+- `src/shared/runtime.ts` — `chrome.runtime` wrappers (extension URL, sync request, options page).
+- `src/shared/tabs.ts` — `chrome.tabs` wrappers (active tab, tab messaging).
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
 - `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata and video titles.
 - `src/shared/unblock.ts` — maps exact block reasons back to removals.
