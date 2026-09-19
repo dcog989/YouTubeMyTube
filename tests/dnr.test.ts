@@ -67,12 +67,13 @@ describe('buildDnrRules', () => {
     ]);
   });
 
-  it('matches handles case-insensitively', () => {
+  it('marks handle rules as case-insensitive', () => {
     const { rules } = buildDnrRules(stateWith({ channels: [channel('', 'SomeChannel')] }));
-    const filter = rules[0]?.condition.regexFilter ?? '';
-    expect(new RegExp(filter).test('https://www.youtube.com/@somechannel')).toBe(true);
-    expect(new RegExp(filter).test('https://www.youtube.com/@SOMECHANNEL')).toBe(true);
-    expect(new RegExp(filter).test('https://www.youtube.com/@another')).toBe(false);
+    const rule = rules[0];
+    expect(rule?.condition.isUrlFilterCaseSensitive).toBe(false);
+    const filter = rule?.condition.regexFilter ?? '';
+    expect(new RegExp(filter, 'i').test('https://www.youtube.com/@SOMECHANNEL')).toBe(true);
+    expect(new RegExp(filter, 'i').test('https://www.youtube.com/@another')).toBe(false);
   });
 
   it('skips channels without an id or handle', () => {

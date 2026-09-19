@@ -63,7 +63,7 @@ function evaluateBlocking(): void {
   const result = matchEntity(entity, compiled);
   if (result.blocked && result.reason) {
     const kind = parseReason(result.reason)?.kind;
-    if (kind === 'video' || kind === 'title' || kind === 'comment') {
+    if (kind === 'video') {
       clearChannelOverlay();
       setPlayerBlank(true, result.reason);
       return;

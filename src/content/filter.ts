@@ -12,6 +12,14 @@ function setHidden(element: Element, hidden: boolean): void {
   element.classList.toggle(HIDDEN_CLASS, hidden);
 }
 
+export function hide(element: Element): void {
+  setHidden(element, true);
+}
+
+export function show(element: Element): void {
+  setHidden(element, false);
+}
+
 function clearHidden(): void {
   document.querySelectorAll(`.${HIDDEN_CLASS}`).forEach((element) => {
     element.classList.remove(HIDDEN_CLASS);

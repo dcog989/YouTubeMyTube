@@ -51,36 +51,20 @@ export interface MatchResult {
   reason?: string;
 }
 
-export type UrlKind =
-  | 'video'
-  | 'shorts'
-  | 'live'
-  | 'embed'
-  | 'channel'
-  | 'handle'
-  | 'playlist'
-  | 'feed'
-  | 'search'
-  | 'other';
+export type UrlKind = 'video' | 'shorts' | 'live' | 'embed' | 'channel' | 'handle' | 'other';
 
 export interface ParsedUrl {
   kind: UrlKind;
   videoId?: string;
   channelId?: string;
   handle?: string;
-  playlistId?: string;
-  feed?: string;
-}
-
-export interface CompiledPattern {
-  test(value: string): boolean;
 }
 
 export interface CompiledRules {
   videoIds: Set<string>;
   channelIds: Set<string>;
   handles: Set<string>;
-  titleFilters: CompiledPattern[];
-  channelFilters: CompiledPattern[];
-  commentFilters: CompiledPattern[];
+  titleFilters: RegExp[];
+  channelFilters: RegExp[];
+  commentFilters: RegExp[];
 }

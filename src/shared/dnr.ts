@@ -13,6 +13,7 @@ function redirectRule(
   id: number,
   regexFilter: string,
   target: chrome.declarativeNetRequest.Redirect,
+  caseSensitive: boolean,
 ): chrome.declarativeNetRequest.Rule {
   return {
     id,
@@ -23,7 +24,7 @@ function redirectRule(
     },
     condition: {
       regexFilter,
-      isUrlFilterCaseSensitive: true,
+      isUrlFilterCaseSensitive: caseSensitive,
       resourceTypes: ['main_frame' as chrome.declarativeNetRequest.ResourceType],
     },
   };
@@ -38,16 +39,8 @@ function channelIdPattern(channelId: string): string {
   return `${YOUTUBE_HOST_PATTERN}/channel/${escapeRegExp(channelId)}(?:[/?#]|$)`;
 }
 
-function caseInsensitiveLiteral(value: string): string {
-  return escapeRegExp(value).replace(/[a-z]/gi, (letter) => {
-    const lower = letter.toLowerCase();
-    const upper = letter.toUpperCase();
-    return lower === upper ? letter : `[${lower}${upper}]`;
-  });
-}
-
 function handlePattern(handle: string): string {
-  return `${YOUTUBE_HOST_PATTERN}/${caseInsensitiveLiteral(`@${handle}`)}(?:[/?#]|$)`;
+  return `${YOUTUBE_HOST_PATTERN}/${escapeRegExp(`@${handle}`)}(?:[/?#]|$)`;
 }
 
 function blockedPage(reason: string): chrome.declarativeNetRequest.Redirect {
@@ -61,12 +54,16 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
   let nextId = 1;
   let dropped = 0;
 
-  const push = (regexFilter: string, target: chrome.declarativeNetRequest.Redirect): void => {
+  const push = (
+    regexFilter: string,
+    target: chrome.declarativeNetRequest.Redirect,
+    caseSensitive = true,
+  ): void => {
     if (rules.length >= MAX_DNR_REGEX_RULES) {
       dropped += 1;
       return;
     }
-    rules.push(redirectRule(nextId, regexFilter, target));
+    rules.push(redirectRule(nextId, regexFilter, target, caseSensitive));
     nextId += 1;
   };
 
@@ -88,7 +85,7 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
       push(channelIdPattern(channelId), blockedPage(formatReason('channel', channelId)));
     }
     if (isActiveEntry(handle)) {
-      push(handlePattern(handle), blockedPage(formatReason('handle', handle)));
+      push(handlePattern(handle), blockedPage(formatReason('handle', handle)), false);
     }
   }
 

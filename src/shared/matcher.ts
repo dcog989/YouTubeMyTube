@@ -4,7 +4,6 @@ import { formatReason } from './reason';
 import type {
   AreaFlags,
   AreaKey,
-  CompiledPattern,
   CompiledRules,
   Entity,
   FilterRules,
@@ -30,8 +29,8 @@ function safeDecode(value: string): string {
   }
 }
 
-function matchesAny(patterns: CompiledPattern[], value: string): boolean {
-  return patterns.some((pattern) => pattern.test(value));
+function matchesAny(patterns: RegExp[], value: string): boolean {
+  return patterns.some((pattern) => pattern.test(value.slice(0, MAX_MATCH_LENGTH)));
 }
 
 export function isActiveEntry(value: string): boolean {
@@ -62,12 +61,11 @@ export function parsePattern(raw: string): RegExp | null {
   return new RegExp(escapeRegExp(trimmed), 'i');
 }
 
-export function compilePatterns(entries: string[]): CompiledPattern[] {
-  const compiled: CompiledPattern[] = [];
+export function compilePatterns(entries: string[]): RegExp[] {
+  const compiled: RegExp[] = [];
   for (const raw of entries) {
     const regex = parsePattern(raw);
-    if (!regex) continue;
-    compiled.push({ test: (value: string) => regex.test(value.slice(0, MAX_MATCH_LENGTH)) });
+    if (regex) compiled.push(regex);
   }
   return compiled;
 }
@@ -146,11 +144,10 @@ export function parseYouTubeUrl(href: string): ParsedUrl {
 
   const path = url.pathname;
   const params = url.searchParams;
-  const playlistId = params.get('list') ?? undefined;
 
   if (path === '/watch') {
     const videoId = params.get('v');
-    if (videoId) return { kind: 'video', videoId, ...(playlistId ? { playlistId } : {}) };
+    if (videoId) return { kind: 'video', videoId };
   }
 
   let match = /^\/shorts\/([^/?#]+)/.exec(path);
@@ -167,12 +164,6 @@ export function parseYouTubeUrl(href: string): ParsedUrl {
 
   match = /^\/@([^/?#]+)/.exec(path);
   if (match?.[1]) return { kind: 'handle', handle: safeDecode(match[1]) };
-
-  if (path === '/playlist') return { kind: 'playlist', ...(playlistId ? { playlistId } : {}) };
-  if (path === '/results') return { kind: 'search' };
-
-  match = /^\/feed\/([^/?#]+)/.exec(path);
-  if (match?.[1]) return { kind: 'feed', feed: match[1] };
 
   return { kind: 'other' };
 }

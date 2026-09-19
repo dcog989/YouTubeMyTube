@@ -58,7 +58,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (!message || typeof message !== 'object') return;
   if ((message as { type?: unknown }).type !== SYNC_REQUEST) return;
-  void syncDynamicRules().then(() => sendResponse({ ok: true }));
+  void syncDynamicRules().then(() => sendResponse());
   return true;
 });
 

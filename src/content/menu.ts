@@ -8,7 +8,7 @@ import type { BlockerState, ChannelEntry, Entity, FilterRules, VideoEntry } from
 import { h } from '../shared/ui';
 import { closestAcrossShadow } from './dom';
 import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, currentContext } from './entity';
-import { hideCard, pruneHiddenCards, refreshHiddenCards, showCard } from './hidden-cards';
+import { hide, show } from './filter';
 import { actionsFor, type MenuAction } from './menu/actions';
 import {
   containerStart,
@@ -168,7 +168,6 @@ function schedule(element: Element): void {
 
 function flush(): void {
   scheduled = false;
-  pruneHiddenCards();
   const nodes = Array.from(pending);
   pending.clear();
   if (!lastMenuTarget?.isConnected) return;
@@ -210,13 +209,13 @@ async function applyAction(action: MenuAction, owner: Element | undefined): Prom
 
   if (action.mode === 'block') {
     if (card) {
-      hideCard(card);
+      hide(card);
     } else if (isCurrentVideo) {
       setPlayerBlank(true, formatReason('video', action.value));
     }
   } else {
     if (card) {
-      showCard(card);
+      show(card);
     } else if (isCurrentVideo) {
       setPlayerBlank(false);
     }
@@ -275,7 +274,6 @@ export function initMenuInjection(): void {
     state = await loadState();
     onLocalStorageChanged((value) => {
       state = normalizeState(value);
-      refreshHiddenCards(state);
     });
   })();
 

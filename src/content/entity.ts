@@ -2,7 +2,7 @@ import { normalizeHandle, parseYouTubeUrl } from '../shared/matcher';
 import type { Entity, ParsedUrl } from '../shared/types';
 import { forEachShadowRoot } from './dom';
 
-export const ITEM_SELECTORS = [
+const ITEM_SELECTORS = [
   'ytd-rich-item-renderer',
   'ytd-video-renderer',
   'ytd-grid-video-renderer',
@@ -26,7 +26,7 @@ export const ITEM_SELECTORS = [
   'ytm-compact-channel-renderer',
 ];
 
-export const COMMENT_SELECTORS = [
+const COMMENT_SELECTORS = [
   'ytd-comment-thread-renderer',
   'ytd-comment-renderer',
   'ytm-comment-thread-renderer',

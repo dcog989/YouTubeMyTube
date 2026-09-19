@@ -3,7 +3,7 @@ export const AREA_DEFINITIONS = [
     key: 'homePage',
     title: 'Home page',
     sub: 'Hide the YouTube home feed.',
-    path: '/',
+    path: null,
     redirect: false,
     className: 'ytb-hide-home',
   },

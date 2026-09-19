@@ -108,7 +108,7 @@ describe('isActiveEntry / countActiveEntries', () => {
 
 describe('areaForPath', () => {
   it('maps known paths', () => {
-    expect(areaForPath('/')).toBe('homePage');
+    expect(areaForPath('/')).toBeNull();
     expect(areaForPath('/feed/trending')).toBe('trendingPage');
     expect(areaForPath('/shorts')).toBe('shortsPage');
     expect(areaForPath('/feed/trending/')).toBe('trendingPage');
