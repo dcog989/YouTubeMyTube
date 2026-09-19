@@ -1,5 +1,5 @@
-import { parseYouTubeUrl } from '../shared/matcher';
-import type { Entity } from '../shared/types';
+import { normalizeHandle, parseYouTubeUrl } from '../shared/matcher';
+import type { Entity, ParsedUrl } from '../shared/types';
 import { forEachShadowRoot } from './dom';
 
 export const ITEM_SELECTORS = [
@@ -50,6 +50,8 @@ const OWNER_SCOPES = [
   '#upload-info',
   'ytm-slim-owner-renderer',
   'ytm-video-owner-renderer',
+  'ytd-watch-metadata',
+  'ytd-video-primary-info-renderer',
 ];
 
 const CHANNEL_LINK_SELECTORS = [
@@ -71,6 +73,13 @@ const CHANNEL_PAGE_NAME_SELECTORS = [
   'ytd-channel-name #text',
   'ytd-channel-name yt-formatted-string',
   'yt-channel-name',
+];
+
+const CHANNEL_HEADER_SELECTORS = [
+  'ytd-channel-header-renderer',
+  'ytd-c4-tabbed-header-renderer',
+  '#channel-header',
+  '#channel-header-container',
 ];
 
 export const CARD_SELECTOR = ITEM_SELECTORS.join(',');
@@ -214,6 +223,56 @@ function channelLinkIn(root: ParentNode): { channelId?: string; handle?: string 
   return null;
 }
 
+function ownerElementIn(scope: ParentNode): Element | null {
+  for (const selector of OWNER_SCOPES) {
+    const owner = scope.querySelector(selector);
+    if (owner) return owner;
+  }
+  return null;
+}
+
+function videoScope(videoId: string): ParentNode | null {
+  const watch = document.querySelector('ytd-watch-flexy');
+  const attribute = watch?.getAttribute('video-id');
+  if (!watch || !attribute) return document;
+  return attribute === videoId ? watch : null;
+}
+
+function channelNameIn(scope: ParentNode): string {
+  for (const selector of CHANNEL_PAGE_NAME_SELECTORS) {
+    const name = textOf(scope.querySelector(selector));
+    if (name) return name;
+  }
+  return '';
+}
+
+function channelHeaderMatches(scope: ParentNode, page: ParsedUrl): boolean {
+  const id = page.channelId ?? '';
+  const handle = page.handle ? normalizeHandle(page.handle) : '';
+  for (const selector of CHANNEL_LINK_SELECTORS) {
+    for (const link of scope.querySelectorAll(selector)) {
+      const parsed = parseYouTubeUrl(link.getAttribute('href') ?? '');
+      if (id && parsed.channelId === id) return true;
+      if (handle && parsed.handle && normalizeHandle(parsed.handle) === handle) return true;
+    }
+  }
+  return false;
+}
+
+function channelNameForPage(page: ParsedUrl): string {
+  if (!page.channelId && !page.handle) return '';
+  const headerSelector = CHANNEL_HEADER_SELECTORS.join(',');
+  for (const selector of CHANNEL_PAGE_NAME_SELECTORS) {
+    const element = document.querySelector(selector);
+    if (!element) continue;
+    const header = element.closest(headerSelector);
+    if (header && !channelHeaderMatches(header, page)) continue;
+    const name = textOf(element);
+    if (name) return name;
+  }
+  return '';
+}
+
 export function currentContext(): Entity {
   const entity: Entity = {};
   const page = parseYouTubeUrl(window.location.href);
@@ -221,37 +280,24 @@ export function currentContext(): Entity {
   if (page.channelId) entity.channelId = page.channelId;
   if (page.handle) entity.handle = page.handle;
 
-  if (!entity.channelId && !entity.handle) {
-    for (const scopeSelector of OWNER_SCOPES) {
-      const scope = document.querySelector(scopeSelector);
-      if (!scope) continue;
-      const link = channelLinkIn(scope);
-      if (!link) continue;
-      if (link.channelId) entity.channelId = link.channelId;
-      if (link.handle) entity.handle = link.handle;
-      break;
+  if (entity.videoId) {
+    const scope = videoScope(entity.videoId);
+    if (!scope) return entity;
+    const owner = ownerElementIn(scope);
+    if (owner) {
+      const link = channelLinkIn(owner);
+      if (link?.channelId) entity.channelId = link.channelId;
+      if (link?.handle) entity.handle = link.handle;
+      const name = channelNameIn(owner);
+      if (name) entity.channelName = name;
+    } else {
+      const name = channelNameIn(scope);
+      if (name) entity.channelName = name;
     }
+    return entity;
   }
 
-  if (!entity.channelId && !entity.handle) {
-    for (const selector of ['ytd-watch-metadata', 'ytd-video-primary-info-renderer']) {
-      const scope = document.querySelector(selector);
-      if (!scope) continue;
-      const link = channelLinkIn(scope);
-      if (!link) continue;
-      if (link.channelId) entity.channelId = link.channelId;
-      if (link.handle) entity.handle = link.handle;
-      break;
-    }
-  }
-
-  for (const selector of CHANNEL_PAGE_NAME_SELECTORS) {
-    const name = textOf(document.querySelector(selector));
-    if (name) {
-      entity.channelName = name;
-      break;
-    }
-  }
-
+  const name = channelNameForPage(page);
+  if (name) entity.channelName = name;
   return entity;
 }
