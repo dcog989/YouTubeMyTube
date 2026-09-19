@@ -17,6 +17,6 @@ export const AREA_COPY: Record<AreaKey, AreaCopy> = {
   relatedVideos: { title: 'Related videos', sub: 'Hide the watch-page sidebar.' },
   promoSections: {
     title: 'Promo banners',
-    sub: 'Hide promotional banners such as channel memberships and Premium.',
+    sub: 'Hide promotional banners and discovery shelves such as Premium, memberships and Explore more topics.',
   },
 };

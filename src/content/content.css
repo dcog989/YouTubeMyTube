@@ -188,6 +188,11 @@ html.ytb-hide-promos ytd-banner-promo-renderer,
 html.ytb-hide-promos ytm-statement-banner-renderer,
 html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-statement-banner-renderer),
 html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-brand-video-singleton-renderer),
-html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-brand-video-shelf-renderer) {
+html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-brand-video-shelf-renderer),
+html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-chips-shelf-with-video-shelf-renderer),
+html.ytb-hide-promos
+  ytd-browse[page-subtype="home"]
+  ytd-rich-section-renderer:has(.ytChipsShelfViewModelHost),
+html.ytb-hide-promos ytd-chips-shelf-with-video-shelf-renderer {
   display: none !important;
 }
