@@ -2,11 +2,12 @@ import { BLOCKED_PAGE, YOUTUBE_HOME } from '../shared/constants';
 import { matchAreaRedirect, matchEntity } from '../shared/match';
 import { formatReason, type Reason } from '../shared/reason';
 import { getRuntimeUrl } from '../shared/runtime';
-import type { BlockerState, CompiledRules, ParsedUrl } from '../shared/types';
+import type { ParsedUrl } from '../shared/types';
 import { parseYouTubeUrl } from '../shared/url';
 import { createCoalescer } from './batch';
 import { currentContext } from './entity';
 import type { OverlayFeedback } from './overlay';
+import type { Store } from './store';
 
 const HYDRATION_EVALUATE_MS = 500;
 
@@ -37,12 +38,9 @@ export interface Evaluator {
   schedule(): void;
 }
 
-export function createEvaluator(deps: {
-  getSnapshot(): { state: BlockerState; compiled: CompiledRules } | null;
-  overlay: OverlayFeedback;
-}): Evaluator {
+export function createEvaluator(deps: { store: Store; overlay: OverlayFeedback }): Evaluator {
   function evaluateBlocking(): void {
-    const snapshot = deps.getSnapshot();
+    const snapshot = deps.store.getSnapshot();
     if (!snapshot) return;
     if (window.top !== window) return;
     const { state, compiled } = snapshot;

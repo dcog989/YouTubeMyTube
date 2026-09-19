@@ -1,5 +1,3 @@
-import { normalizeState } from '../../shared/normalize';
-import { loadState, onLocalStorageChanged } from '../../shared/state';
 import type { BlockerState, Entity } from '../../shared/types';
 import { h } from '../../shared/ui';
 import { parseYouTubeUrl } from '../../shared/url';
@@ -9,6 +7,7 @@ import { cardEntity, currentContext } from '../entity';
 import { CARD_SELECTOR, COMMENT_SELECTOR } from '../entity-selectors';
 import type { FilterEngine } from '../filter';
 import type { OverlayFeedback } from '../overlay';
+import type { Store } from '../store';
 import { actionsFor, type MenuAction } from './actions';
 import {
   containerStart,
@@ -35,14 +34,19 @@ export interface MenuInjector {
 }
 
 export function createMenuInjector(deps: {
+  store: Store;
   filter: FilterEngine;
   overlay: OverlayFeedback;
 }): MenuInjector {
-  let state: BlockerState | null = null;
   let lastMenuTarget: Element | null = null;
   const itemState = new WeakMap<Element, { action: MenuAction; owner: Element }>();
 
+  function currentState(): BlockerState | null {
+    return deps.store.getSnapshot()?.state ?? null;
+  }
+
   function pendingActions(entity: Entity): MenuAction[] {
+    const state = currentState();
     if (!state) return [];
     return actionsFor(entity, state.rules);
   }
@@ -82,6 +86,7 @@ export function createMenuInjector(deps: {
   function liveActionFor(item: Element): MenuAction | null {
     const stored = itemState.get(item)?.action;
     if (!stored) return null;
+    const state = currentState();
     if (!state) return stored;
     const owner = ownerForItem(item);
     if (!owner) return stored;
@@ -127,7 +132,7 @@ export function createMenuInjector(deps: {
   }
 
   function inject(container: MenuContainer): void {
-    if (!state?.settings.enabled) return;
+    if (!currentState()?.settings.enabled) return;
 
     const start = containerStart(container);
     if (!start?.isConnected) return;
@@ -205,7 +210,8 @@ export function createMenuInjector(deps: {
 
   async function applyAction(action: MenuAction, owner: Element | undefined): Promise<void> {
     applyVisibility(action, owner);
-    state = (await persistAction(action)) ?? state;
+    const persisted = await persistAction(action);
+    if (persisted) deps.store.setState(persisted);
     closeMenu();
   }
 
@@ -246,13 +252,6 @@ export function createMenuInjector(deps: {
   function init(): void {
     if (window.top !== window) return;
     if (window.location.hostname === MOBILE_HOST) return;
-
-    void (async () => {
-      state = await loadState();
-      onLocalStorageChanged((value) => {
-        state = normalizeState(value);
-      });
-    })();
 
     window.addEventListener('click', handleInjectedClick, true);
     window.addEventListener('pointerdown', trackMenuTrigger, true);

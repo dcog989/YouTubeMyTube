@@ -38,6 +38,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/unblock.ts` — maps exact block reasons back to removals.
 - `src/shared/navigation.ts` — builds YouTube entity URLs from block reasons.
 - `src/content/content.ts` — content-script wiring; owns the factory instances (playback guard, overlay feedback, evaluator, filter engine, menu injector) and threads their dependencies.
+- `src/content/store.ts` — the content script's single state source (`getSnapshot`/`setState` + `store`); `content.ts` is the only storage listener.
 - `src/content/batch.ts` — `createBatcher`/`createCoalescer` for coalescing DOM work (microtask or timed).
 - `src/content/playback.ts` — `createPlaybackGuard`, the ref-counted play listener/pause-all shared by the blank cover and channel overlay.
 - `src/content/entity-selectors.ts` — YouTube DOM selector data (`CARD_SELECTOR`, `COMMENT_SELECTOR`, `HIDDEN_CLASS`).

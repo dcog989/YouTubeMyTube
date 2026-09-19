@@ -15,3 +15,10 @@ export function getSnapshot(): Snapshot | null {
 export function setState(next: BlockerState): void {
   snapshot = { state: next, compiled: compileRules(next.rules) };
 }
+
+export interface Store {
+  getSnapshot(): Snapshot | null;
+  setState(next: BlockerState): void;
+}
+
+export const store: Store = { getSnapshot, setState };

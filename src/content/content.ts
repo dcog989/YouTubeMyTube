@@ -11,14 +11,14 @@ import { createMenuInjector } from './menu';
 import { onAddedElements } from './observer';
 import { createOverlayFeedback } from './overlay';
 import { createPlaybackGuard } from './playback';
-import { getSnapshot, setState } from './store';
+import { setState, store } from './store';
 
 async function init(): Promise<void> {
   const guard = createPlaybackGuard();
   const overlay = createOverlayFeedback(guard);
-  const evaluator = createEvaluator({ getSnapshot, overlay });
-  const filter = createFilterEngine({ getSnapshot, evaluate: () => evaluator.schedule() });
-  const menu = createMenuInjector({ filter, overlay });
+  const evaluator = createEvaluator({ store, overlay });
+  const filter = createFilterEngine({ store, evaluate: () => evaluator.schedule() });
+  const menu = createMenuInjector({ store, filter, overlay });
 
   function applyState(next: BlockerState): void {
     setState(next);

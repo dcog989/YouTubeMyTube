@@ -4,6 +4,7 @@ import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { createBatcher } from './batch';
 import { cardEntity, commentEntity } from './entity';
 import { CARD_SELECTOR, COMMENT_SELECTOR, HIDDEN_CLASS } from './entity-selectors';
+import type { Store } from './store';
 
 export interface FilterEngine {
   hide(element: Element): void;
@@ -12,10 +13,7 @@ export interface FilterEngine {
   rescan(): void;
 }
 
-export function createFilterEngine(deps: {
-  getSnapshot(): { state: BlockerState; compiled: CompiledRules } | null;
-  evaluate(): void;
-}): FilterEngine {
+export function createFilterEngine(deps: { store: Store; evaluate(): void }): FilterEngine {
   let seen = new WeakMap<Element, string>();
 
   function setHidden(element: Element, hidden: boolean): void {
@@ -96,7 +94,7 @@ export function createFilterEngine(deps: {
 
   const batcher = createBatcher<Element>((nodes) => {
     const roots = new Set(nodes);
-    const snapshot = deps.getSnapshot();
+    const snapshot = deps.store.getSnapshot();
     if (!snapshot) return;
     for (const node of nodes) {
       if (hasAncestorIn(node, roots)) continue;
@@ -107,7 +105,7 @@ export function createFilterEngine(deps: {
   function rescan(): void {
     clearHidden();
     seen = new WeakMap<Element, string>();
-    const snapshot = deps.getSnapshot();
+    const snapshot = deps.store.getSnapshot();
     if (snapshot?.state.settings.enabled) {
       const { state, compiled } = snapshot;
       document.querySelectorAll(CARD_SELECTOR).forEach((node) => {
