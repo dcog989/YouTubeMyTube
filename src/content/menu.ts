@@ -3,10 +3,11 @@ import { normalizeState } from '../shared/storage';
 import type { BlockerState, Entity } from '../shared/types';
 import { h } from '../shared/ui';
 import { parseYouTubeUrl } from '../shared/url';
+import { createBatcher } from './batch';
 import { closestAcrossShadow } from './dom';
 import { cardEntity, currentContext } from './entity';
 import { CARD_SELECTOR, COMMENT_SELECTOR } from './entity-selectors';
-import { hide, show } from './filter';
+import type { FilterEngine } from './filter';
 import { actionsFor, type MenuAction } from './menu/actions';
 import {
   containerStart,
@@ -27,240 +28,237 @@ import {
 } from './menu/selectors';
 import { attachShadows, observeRoot, scanExisting } from './menu/shadow';
 import { applyItemStyle, computeItemStyle, createIcon, type MenuItemStyle } from './menu/style';
-import { setPlayerBlank } from './overlay';
+import type { OverlayFeedback } from './overlay';
 
-let state: BlockerState | null = null;
-let lastMenuTarget: Element | null = null;
-let scheduled = false;
-const pending = new Set<Element>();
-const itemState = new WeakMap<Element, { action: MenuAction; owner: Element }>();
-
-function pendingActions(entity: Entity): MenuAction[] {
-  if (!state) return [];
-  return actionsFor(entity, state.rules);
+export interface MenuInjector {
+  init(): void;
 }
 
-function resolveOwner(container: MenuContainer): Element | null {
-  const start = containerStart(container);
-  if (start) {
-    const card = closestAcrossShadow(start, CARD_SELECTOR);
-    if (card) return card;
-    const host = closestAcrossShadow(start, MENU_HOST_SELECTOR);
-    if (host) return host;
+export function createMenuInjector(deps: {
+  filter: FilterEngine;
+  overlay: OverlayFeedback;
+}): MenuInjector {
+  let state: BlockerState | null = null;
+  let lastMenuTarget: Element | null = null;
+  const itemState = new WeakMap<Element, { action: MenuAction; owner: Element }>();
+
+  function pendingActions(entity: Entity): MenuAction[] {
+    if (!state) return [];
+    return actionsFor(entity, state.rules);
   }
 
-  if (lastMenuTarget?.isConnected) return lastMenuTarget;
+  function resolveOwner(container: MenuContainer): Element | null {
+    const start = containerStart(container);
+    if (start) {
+      const card = closestAcrossShadow(start, CARD_SELECTOR);
+      if (card) return card;
+      const host = closestAcrossShadow(start, MENU_HOST_SELECTOR);
+      if (host) return host;
+    }
 
-  const expanded = document.querySelector('[aria-expanded="true"]');
-  if (expanded) {
-    const card = closestAcrossShadow(expanded, CARD_SELECTOR);
-    if (card) return card;
-    const host = closestAcrossShadow(expanded, MENU_HOST_SELECTOR);
-    if (host) return host;
+    if (lastMenuTarget?.isConnected) return lastMenuTarget;
+
+    const expanded = document.querySelector('[aria-expanded="true"]');
+    if (expanded) {
+      const card = closestAcrossShadow(expanded, CARD_SELECTOR);
+      if (card) return card;
+      const host = closestAcrossShadow(expanded, MENU_HOST_SELECTOR);
+      if (host) return host;
+    }
+
+    return null;
   }
 
-  return null;
-}
+  function entityFor(owner: Element): Entity {
+    return owner.matches(CARD_SELECTOR) ? cardEntity(owner) : currentContext();
+  }
 
-function entityFor(owner: Element): Entity {
-  return owner.matches(CARD_SELECTOR) ? cardEntity(owner) : currentContext();
-}
+  function ownerForItem(item: Element): Element | null {
+    const container = parentContainer(item);
+    const resolved = container ? resolveOwner(container) : null;
+    return resolved ?? itemState.get(item)?.owner ?? null;
+  }
 
-function ownerForItem(item: Element): Element | null {
-  const container = parentContainer(item);
-  const resolved = container ? resolveOwner(container) : null;
-  return resolved ?? itemState.get(item)?.owner ?? null;
-}
+  function liveActionFor(item: Element): MenuAction | null {
+    const stored = itemState.get(item)?.action;
+    if (!stored) return null;
+    if (!state) return stored;
+    const owner = ownerForItem(item);
+    if (!owner) return stored;
+    const fresh = actionsFor(entityFor(owner), state.rules);
+    const match =
+      stored.kind === 'video'
+        ? fresh.find((action) => action.kind === 'video')
+        : fresh.find((action) => action.kind === 'channel');
+    return match ?? null;
+  }
 
-function liveActionFor(item: Element): MenuAction | null {
-  const stored = itemState.get(item)?.action;
-  if (!stored) return null;
-  if (!state) return stored;
-  const owner = ownerForItem(item);
-  if (!owner) return stored;
-  const fresh = actionsFor(entityFor(owner), state.rules);
-  const match =
-    stored.kind === 'video'
-      ? fresh.find((action) => action.kind === 'video')
-      : fresh.find((action) => action.kind === 'channel');
-  return match ?? null;
-}
+  function activateItem(item: Element): void {
+    const action = liveActionFor(item);
+    if (!action) return;
+    void applyAction(action, ownerForItem(item) ?? undefined);
+  }
 
-function activateItem(item: Element): void {
-  const action = liveActionFor(item);
-  if (!action) return;
-  void applyAction(action, ownerForItem(item) ?? undefined);
-}
+  function createItem(action: MenuAction, owner: Element, style: MenuItemStyle): HTMLElement {
+    const item = h('div', {
+      className: 'ytb-menu-item',
+      [INJECTED_ATTR]: '',
+      role: 'menuitem',
+      tabIndex: 0,
+    });
+    applyItemStyle(item, style);
 
-function createItem(action: MenuAction, owner: Element, style: MenuItemStyle): HTMLElement {
-  const item = h('div', {
-    className: 'ytb-menu-item',
-    [INJECTED_ATTR]: '',
-    role: 'menuitem',
-    tabIndex: 0,
+    const label = h('span', { className: 'ytb-menu-item-label', text: action.label });
+    item.append(createIcon(), label);
+    item.addEventListener('mouseenter', () => {
+      item.style.backgroundColor = 'var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.2))';
+    });
+    item.addEventListener('mouseleave', () => {
+      item.style.backgroundColor = 'transparent';
+    });
+    item.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+      event.preventDefault();
+      event.stopPropagation();
+      activateItem(item);
+    });
+    itemState.set(item, { action, owner });
+    return item;
+  }
+
+  function inject(container: MenuContainer): void {
+    if (!state?.settings.enabled) return;
+
+    const start = containerStart(container);
+    if (!start?.isConnected) return;
+    if (closestAcrossShadow(start, COMMENT_SELECTOR)) return;
+    if (closestAcrossShadow(start, NON_MENU_SELECTOR)) return;
+
+    const owner = resolveOwner(container);
+    if (!owner) return;
+
+    const scope = popupOf(container) ?? start;
+    const host = menuItemHost(scope, container);
+
+    for (const existing of Array.from(scope.querySelectorAll(`[${INJECTED_ATTR}]`))) {
+      if (itemState.get(existing)?.owner !== owner) existing.remove();
+    }
+
+    const owned = Array.from(scope.querySelectorAll(`[${INJECTED_ATTR}]`)).filter(
+      (item) => itemState.get(item)?.owner === owner,
+    );
+    if (owned.length > 0) {
+      moveToEnd(host, owned);
+      return;
+    }
+
+    const entity = entityFor(owner);
+    const actions = pendingActions(entity);
+    if (actions.length === 0) return;
+
+    const style = computeItemStyle(container);
+    for (const action of actions) {
+      host.appendChild(createItem(action, owner, style));
+    }
+  }
+
+  const batcher = createBatcher<Element>((nodes) => {
+    if (!lastMenuTarget?.isConnected) return;
+
+    const containers = new Set<MenuContainer>();
+    for (const node of nodes) {
+      const item = node.matches(MENU_ITEM_SELECTOR) ? node : node.querySelector(MENU_ITEM_SELECTOR);
+      const container = item ? parentContainer(item) : null;
+      if (container) containers.add(container);
+    }
+
+    for (const container of containers) {
+      if (container.isConnected) inject(container);
+    }
   });
-  applyItemStyle(item, style);
 
-  const label = h('span', { className: 'ytb-menu-item-label', text: action.label });
-  item.append(createIcon(), label);
-  item.addEventListener('mouseenter', () => {
-    item.style.backgroundColor = 'var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.2))';
-  });
-  item.addEventListener('mouseleave', () => {
-    item.style.backgroundColor = 'transparent';
-  });
-  item.addEventListener('keydown', (event) => {
-    if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+  function closeMenu(): void {
+    lastMenuTarget = null;
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  }
+
+  function applyVisibility(action: MenuAction, owner: Element | undefined): void {
+    const card = owner instanceof HTMLElement && owner.matches(CARD_SELECTOR) ? owner : null;
+    const isCurrentVideo =
+      action.kind === 'video' && parseYouTubeUrl(window.location.href).videoId === action.value;
+
+    if (action.mode === 'block') {
+      if (card) {
+        deps.filter.hide(card);
+      } else if (isCurrentVideo) {
+        deps.overlay.requestBlank(true, { kind: 'video', value: action.value });
+      }
+      return;
+    }
+
+    if (card) {
+      deps.filter.show(card);
+    } else if (isCurrentVideo) {
+      deps.overlay.requestBlank(false);
+    }
+  }
+
+  async function applyAction(action: MenuAction, owner: Element | undefined): Promise<void> {
+    applyVisibility(action, owner);
+    state = (await persistAction(action)) ?? state;
+    closeMenu();
+  }
+
+  function eventTarget(event: Event): Element | null {
+    return event.composedPath().find((node): node is Element => node instanceof Element) ?? null;
+  }
+
+  function trackMenuTrigger(event: MouseEvent): void {
+    const target = eventTarget(event);
+    if (!target) return;
+
+    const trigger = closestAcrossShadow(target, MENU_TRIGGER_SELECTOR);
+    const owner =
+      closestAcrossShadow(target, CARD_SELECTOR) ??
+      closestAcrossShadow(target, MENU_HOST_SELECTOR) ??
+      (trigger
+        ? (closestAcrossShadow(trigger, CARD_SELECTOR) ??
+          closestAcrossShadow(trigger, MENU_HOST_SELECTOR))
+        : null);
+
+    if (!owner) return;
+    lastMenuTarget = owner;
+
+    attachShadows(owner, MENU_ITEM_SELECTOR, (element) => batcher.add(element));
+  }
+
+  function handleInjectedClick(event: MouseEvent): void {
+    const target = eventTarget(event);
+    if (!target) return;
+    const item = closestAcrossShadow(target, `[${INJECTED_ATTR}]`);
+    if (!item) return;
+    if (!itemState.has(item)) return;
     event.preventDefault();
     event.stopPropagation();
     activateItem(item);
-  });
-  itemState.set(item, { action, owner });
-  return item;
-}
-
-function inject(container: MenuContainer): void {
-  if (!state?.settings.enabled) return;
-
-  const start = containerStart(container);
-  if (!start?.isConnected) return;
-  if (closestAcrossShadow(start, COMMENT_SELECTOR)) return;
-  if (closestAcrossShadow(start, NON_MENU_SELECTOR)) return;
-
-  const owner = resolveOwner(container);
-  if (!owner) return;
-
-  const scope = popupOf(container) ?? start;
-  const host = menuItemHost(scope, container);
-
-  for (const existing of Array.from(scope.querySelectorAll(`[${INJECTED_ATTR}]`))) {
-    if (itemState.get(existing)?.owner !== owner) existing.remove();
   }
 
-  const owned = Array.from(scope.querySelectorAll(`[${INJECTED_ATTR}]`)).filter(
-    (item) => itemState.get(item)?.owner === owner,
-  );
-  if (owned.length > 0) {
-    moveToEnd(host, owned);
-    return;
+  function init(): void {
+    if (window.top !== window) return;
+    if (window.location.hostname === MOBILE_HOST) return;
+
+    void (async () => {
+      state = await loadState();
+      onLocalStorageChanged((value) => {
+        state = normalizeState(value);
+      });
+    })();
+
+    window.addEventListener('click', handleInjectedClick, true);
+    window.addEventListener('pointerdown', trackMenuTrigger, true);
+    observeRoot(document.documentElement, (element) => batcher.add(element));
+    scanExisting(document, MENU_ITEM_SELECTOR, (element) => batcher.add(element));
   }
 
-  const entity = entityFor(owner);
-  const actions = pendingActions(entity);
-  if (actions.length === 0) return;
-
-  const style = computeItemStyle(container);
-  for (const action of actions) {
-    host.appendChild(createItem(action, owner, style));
-  }
-}
-
-function schedule(element: Element): void {
-  pending.add(element);
-  if (scheduled) return;
-  scheduled = true;
-  queueMicrotask(flush);
-}
-
-function flush(): void {
-  scheduled = false;
-  const nodes = Array.from(pending);
-  pending.clear();
-  if (!lastMenuTarget?.isConnected) return;
-
-  const containers = new Set<MenuContainer>();
-  for (const node of nodes) {
-    const element = node as Element;
-    const item = element.matches(MENU_ITEM_SELECTOR)
-      ? element
-      : element.querySelector(MENU_ITEM_SELECTOR);
-    const container = item ? parentContainer(item) : null;
-    if (container) containers.add(container);
-  }
-
-  for (const container of containers) {
-    if (container.isConnected) inject(container);
-  }
-}
-
-function closeMenu(): void {
-  lastMenuTarget = null;
-  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-}
-
-function applyVisibility(action: MenuAction, owner: Element | undefined): void {
-  const card = owner instanceof HTMLElement && owner.matches(CARD_SELECTOR) ? owner : null;
-  const isCurrentVideo =
-    action.kind === 'video' && parseYouTubeUrl(window.location.href).videoId === action.value;
-
-  if (action.mode === 'block') {
-    if (card) {
-      hide(card);
-    } else if (isCurrentVideo) {
-      setPlayerBlank(true, { kind: 'video', value: action.value });
-    }
-    return;
-  }
-
-  if (card) {
-    show(card);
-  } else if (isCurrentVideo) {
-    setPlayerBlank(false);
-  }
-}
-
-async function applyAction(action: MenuAction, owner: Element | undefined): Promise<void> {
-  applyVisibility(action, owner);
-  state = (await persistAction(action)) ?? state;
-  closeMenu();
-}
-
-function eventTarget(event: Event): Element | null {
-  return event.composedPath().find((node): node is Element => node instanceof Element) ?? null;
-}
-
-function trackMenuTrigger(event: MouseEvent): void {
-  const target = eventTarget(event);
-  if (!target) return;
-
-  const trigger = closestAcrossShadow(target, MENU_TRIGGER_SELECTOR);
-  const owner =
-    closestAcrossShadow(target, CARD_SELECTOR) ??
-    closestAcrossShadow(target, MENU_HOST_SELECTOR) ??
-    (trigger
-      ? (closestAcrossShadow(trigger, CARD_SELECTOR) ??
-        closestAcrossShadow(trigger, MENU_HOST_SELECTOR))
-      : null);
-
-  if (!owner) return;
-  lastMenuTarget = owner;
-
-  attachShadows(owner, MENU_ITEM_SELECTOR, schedule);
-}
-function handleInjectedClick(event: MouseEvent): void {
-  const target = eventTarget(event);
-  if (!target) return;
-  const item = closestAcrossShadow(target, `[${INJECTED_ATTR}]`);
-  if (!item) return;
-  if (!itemState.has(item)) return;
-  event.preventDefault();
-  event.stopPropagation();
-  activateItem(item);
-}
-
-export function initMenuInjection(): void {
-  if (window.top !== window) return;
-  if (window.location.hostname === MOBILE_HOST) return;
-
-  void (async () => {
-    state = await loadState();
-    onLocalStorageChanged((value) => {
-      state = normalizeState(value);
-    });
-  })();
-
-  window.addEventListener('click', handleInjectedClick, true);
-  window.addEventListener('pointerdown', trackMenuTrigger, true);
-  observeRoot(document.documentElement, schedule);
-  scanExisting(document, MENU_ITEM_SELECTOR, schedule);
+  return { init };
 }

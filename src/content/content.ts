@@ -5,43 +5,42 @@ import { normalizeState } from '../shared/storage';
 import type { BlockerState } from '../shared/types';
 import { applyAreas } from './areas';
 import { currentContext } from './entity';
-import { rescan, scheduleFilter } from './filter';
-import { initMenuInjection } from './menu';
+import { createEvaluator } from './evaluate';
+import { createFilterEngine } from './filter';
+import { createMenuInjector } from './menu';
 import { onAddedElements } from './observer';
-import { setState } from './store';
+import { createOverlayFeedback } from './overlay';
+import { createPlaybackGuard } from './playback';
+import { getSnapshot, setState } from './store';
 
-function applyState(next: BlockerState): void {
-  setState(next);
-  applyAreas();
-  rescan();
-}
+async function init(): Promise<void> {
+  const guard = createPlaybackGuard();
+  const overlay = createOverlayFeedback(guard);
+  const evaluator = createEvaluator({ getSnapshot, overlay });
+  const filter = createFilterEngine({ getSnapshot, evaluate: () => evaluator.schedule() });
+  const menu = createMenuInjector({ filter, overlay });
 
-function observe(): void {
+  function applyState(next: BlockerState): void {
+    setState(next);
+    applyAreas();
+    filter.rescan();
+  }
+
   onAddedElements(document.documentElement, (nodes) => {
-    for (const node of nodes) scheduleFilter(node);
+    for (const node of nodes) filter.schedule(node);
   });
-}
 
-function listenForContextRequests(): void {
   onRuntimeMessage((message, _sender, sendResponse) => {
     if (!message || typeof message !== 'object') return;
     if ((message as { type?: unknown }).type !== CONTEXT_REQUEST) return;
     sendResponse(currentContext());
   });
-}
 
-async function init(): Promise<void> {
   applyState(await loadState());
   onLocalStorageChanged((value) => applyState(normalizeState(value)));
-  observe();
-  listenForContextRequests();
-  initMenuInjection();
-  window.addEventListener('yt-navigate-finish', () => {
-    rescan();
-  });
-  window.addEventListener('popstate', () => {
-    rescan();
-  });
+  menu.init();
+  window.addEventListener('yt-navigate-finish', () => filter.rescan());
+  window.addEventListener('popstate', () => filter.rescan());
 }
 
 void init();

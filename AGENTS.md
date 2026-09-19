@@ -35,11 +35,15 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata and video titles.
 - `src/shared/unblock.ts` — maps exact block reasons back to removals.
 - `src/shared/navigation.ts` — builds YouTube entity URLs from block reasons.
-- `src/content/content.ts` — content-script wiring (state lifecycle, observer, messaging).
+- `src/content/content.ts` — content-script wiring; owns the factory instances (playback guard, overlay feedback, evaluator, filter engine, menu injector) and threads their dependencies.
+- `src/content/batch.ts` — `createBatcher`/`createCoalescer` for coalescing DOM work (microtask or timed).
+- `src/content/playback.ts` — `createPlaybackGuard`, the ref-counted play listener/pause-all shared by the blank cover and channel overlay.
 - `src/content/entity-selectors.ts` — YouTube DOM selector data (`CARD_SELECTOR`, `COMMENT_SELECTOR`, `HIDDEN_CLASS`).
 - `src/content/entity.ts` — entity extraction from cards, comments and the current page.
-- `src/content/filter.ts` — card/comment DOM filtering engine.
-- `src/content/menu.ts` + `src/content/menu/` — in-page menu injection.
+- `src/content/filter.ts` — `createFilterEngine`: card/comment DOM filtering.
+- `src/content/evaluate.ts` — `createEvaluator`: block routing and overlay/blank decisions.
+- `src/content/overlay.ts` — `createBlankCover` / `createChannelOverlay` / `createOverlayFeedback`.
+- `src/content/menu.ts` + `src/content/menu/` — `createMenuInjector`: in-page menu injection.
 - `src/background/service-worker.ts` — keeps DNR rules in sync with storage.
 - `src/options/options.ts` + `src/options/` — settings UI, split into entry point, state store, panel modules (channels/videos/areas/patterns), tester, import/export and metadata backfill.
 - `esbuild.config.mjs` — build/packaging for both browsers.
