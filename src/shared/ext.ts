@@ -2,30 +2,22 @@ import { STATE_KEY, SYNC_REQUEST } from './constants';
 
 type StorageItems = Record<string, unknown>;
 
-export function getStored<T>(key: string): Promise<T | undefined> {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(key, (items) => {
-      resolve(items[key] as T | undefined);
-    });
-  });
+export async function getStored<T>(key: string): Promise<T | undefined> {
+  const items = await chrome.storage.local.get(key);
+  return items[key] as T | undefined;
 }
 
 export function setStored(values: StorageItems): Promise<void> {
-  return new Promise((resolve) => {
-    chrome.storage.local.set(values, () => resolve());
-  });
+  return chrome.storage.local.set(values);
 }
 
 export function getRuntimeUrl(path: string): string {
   return chrome.runtime.getURL(path);
 }
 
-export function queryActiveTab(): Promise<chrome.tabs.Tab | undefined> {
-  return new Promise((resolve) => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      resolve(tabs[0]);
-    });
-  });
+export async function queryActiveTab(): Promise<chrome.tabs.Tab | undefined> {
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  return tabs[0];
 }
 
 export function sendTabMessage<T>(tabId: number, message: unknown): Promise<T | undefined> {
@@ -45,9 +37,7 @@ export function openOptionsPage(): void {
 }
 
 export function requestSync(): Promise<void> {
-  return new Promise((resolve) => {
-    chrome.runtime.sendMessage({ type: SYNC_REQUEST }, () => resolve());
-  });
+  return chrome.runtime.sendMessage({ type: SYNC_REQUEST }).then(() => undefined);
 }
 
 export function onLocalStorageChanged(listener: (newValue: unknown) => void): void {
@@ -60,15 +50,11 @@ export function onLocalStorageChanged(listener: (newValue: unknown) => void): vo
 }
 
 export function getDynamicRules(): Promise<chrome.declarativeNetRequest.Rule[]> {
-  return new Promise((resolve) => {
-    chrome.declarativeNetRequest.getDynamicRules((rules) => resolve(rules));
-  });
+  return chrome.declarativeNetRequest.getDynamicRules();
 }
 
 export function updateDynamicRules(
   options: chrome.declarativeNetRequest.UpdateRuleOptions,
 ): Promise<void> {
-  return new Promise((resolve) => {
-    chrome.declarativeNetRequest.updateDynamicRules(options, () => resolve());
-  });
+  return chrome.declarativeNetRequest.updateDynamicRules(options);
 }
