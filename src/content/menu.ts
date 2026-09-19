@@ -1,8 +1,7 @@
 import { onLocalStorageChanged } from '../shared/ext';
-import { addChannel, addVideo, removeChannel, removeVideo } from '../shared/rules';
-import { loadState, saveState } from '../shared/state';
+import { loadState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
-import type { BlockerState, ChannelEntry, Entity, FilterRules, VideoEntry } from '../shared/types';
+import type { BlockerState, Entity } from '../shared/types';
 import { h } from '../shared/ui';
 import { parseYouTubeUrl } from '../shared/url';
 import { closestAcrossShadow } from './dom';
@@ -17,6 +16,7 @@ import {
   parentContainer,
   popupOf,
 } from './menu/container';
+import { persistAction } from './menu/persist';
 import {
   INJECTED_ATTR,
   MENU_HOST_SELECTOR,
@@ -188,17 +188,7 @@ function closeMenu(): void {
   document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 }
 
-function applyVideo(rules: FilterRules, entry: VideoEntry, mode: MenuAction['mode']): void {
-  if (mode === 'unblock') removeVideo(rules, entry.id);
-  else addVideo(rules, entry);
-}
-
-function applyChannel(rules: FilterRules, entry: ChannelEntry, mode: MenuAction['mode']): void {
-  if (mode === 'unblock') removeChannel(rules, { id: entry.id, handle: entry.handle });
-  else addChannel(rules, entry);
-}
-
-async function applyAction(action: MenuAction, owner: Element | undefined): Promise<void> {
+function applyVisibility(action: MenuAction, owner: Element | undefined): void {
   const card = owner instanceof HTMLElement && owner.matches(CARD_SELECTOR) ? owner : null;
   const isCurrentVideo =
     action.kind === 'video' && parseYouTubeUrl(window.location.href).videoId === action.value;
@@ -209,23 +199,19 @@ async function applyAction(action: MenuAction, owner: Element | undefined): Prom
     } else if (isCurrentVideo) {
       setPlayerBlank(true, { kind: 'video', value: action.value });
     }
-  } else {
-    if (card) {
-      show(card);
-    } else if (isCurrentVideo) {
-      setPlayerBlank(false);
-    }
+    return;
   }
 
-  const current = await loadState();
-  if (action.kind === 'video') {
-    applyVideo(current.rules, action.entry, action.mode);
-  } else {
-    applyChannel(current.rules, action.entry, action.mode);
+  if (card) {
+    show(card);
+  } else if (isCurrentVideo) {
+    setPlayerBlank(false);
   }
+}
 
-  await saveState(current);
-  state = current;
+async function applyAction(action: MenuAction, owner: Element | undefined): Promise<void> {
+  applyVisibility(action, owner);
+  state = await persistAction(action);
   closeMenu();
 }
 
