@@ -466,7 +466,7 @@ function showImportStatus(message: string, ok: boolean): void {
 
 function wireStatic(): void {
   document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
-    button.addEventListener('click', () => selectPanel(button.dataset.panel ?? 'filters'));
+    button.addEventListener('click', () => selectPanel(button.dataset.panel ?? 'channels'));
   });
 
   document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach((button) => {
@@ -536,7 +536,7 @@ async function init(): Promise<void> {
   applyTheme(draft.settings.theme);
   populate();
   setDirty(false);
-  selectPanel('filters');
+  selectPanel('channels');
   void backfillMissing();
 }
 

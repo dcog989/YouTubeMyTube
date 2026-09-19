@@ -109,19 +109,23 @@
 
     <div class="layout">
       <nav class="sidebar" aria-label="Settings sections">
-        <button type="button" class="nav-item is-active" data-panel="filters">Filters</button>
-        <button type="button" class="nav-item" data-panel="areas">Content areas</button>
-        <button type="button" class="nav-item" data-panel="tester">Tester</button>
-        <button type="button" class="nav-item" data-panel="data">Import / Export</button>
+        <button type="button" class="nav-item is-active" data-panel="channels">
+          Block Channels
+        </button>
+        <button type="button" class="nav-item" data-panel="videos">Block Videos</button>
+        <button type="button" class="nav-item" data-panel="comments">Block Comments</button>
+        <button type="button" class="nav-item" data-panel="areas">Block Areas</button>
+        <button type="button" class="nav-item" data-panel="tester">Test Filters</button>
+        <button type="button" class="nav-item" data-panel="data">Import / Export / Reset</button>
       </nav>
 
       <main class="content">
         <div class="panel-head">
-          <h2 id="panel-title">Filters</h2>
+          <h2 id="panel-title">Block Channels</h2>
           <button type="button" id="save" class="btn btn-primary" disabled>Save</button>
         </div>
 
-        <section class="panel is-active" id="panel-filters">
+        <section class="panel is-active" id="panel-channels">
           <div class="card">
             <label class="row-title" for="channel-add">Block a channel</label>
             <p class="help">
@@ -167,7 +171,9 @@
               ></textarea>
             </div>
           </div>
+        </section>
 
+        <section class="panel" id="panel-videos">
           <div class="card">
             <label class="row-title" for="video-add">Block a video</label>
             <p class="help">Paste a video URL or an 11-character video ID.</p>
@@ -207,7 +213,9 @@
               ></textarea>
             </div>
           </div>
+        </section>
 
+        <section class="panel" id="panel-comments">
           <div class="card">
             <div class="editor-head">
               <label class="row-title" for="input-commentFilters">Comment filters</label>
