@@ -2,6 +2,90 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.8.0 - 2026-09-19
+#### Features
+- (**icons**) replace circle-ellipsis glyph with check mark - (782d12f) - dcog989
+- (**options**) show per-panel and total filter counts - (424b3f7) - dcog989
+- (**options**) show extension version in settings footer - (2153801) - dcog989
+- (**options**) icon theme switcher in header - (aabd456) - dcog989
+#### Bug Fixes
+- (**areas**) describe home page block as hiding, not redirecting - (cc39459) - dcog989
+- (**background**) serialize DNR sync and drop redundant startup sync - (7f26122) - dcog989
+- (**build**) always regenerate icons instead of skipping existing files - (e2782a8) - dcog989
+- (**content**) scope current-context lookups to the active watch video - (1fd5ac9) - dcog989
+- (**content**) re-evaluate hydrated and recycled cards by identity - (58950ff) - dcog989
+- (**dnr**) cap rules at the browser regex limit and surface overflow - (3cd40a0) - dcog989
+- (**ext**) propagate chrome API errors instead of swallowing lastError - (7f7c1e2) - dcog989
+- (**filters**) apply one trimmed active-entry rule to counting and matching - (f6dadc1) - dcog989
+- (**menu**) activate injected menu items with Enter and Space - (b61fc79) - dcog989
+- (**options**) revoke export blob URL after the download starts - (44733e1) - dcog989
+- (**options**) make backfill persist, resumable, and non-dirtying - (0448775) - dcog989
+- (**options**) detect external state changes to avoid silent overwrites - (5e09da4) - dcog989
+- (**options**) auto-size comment filters textarea to content - (63a0286) - dcog989
+- (**resolve**) treat bare ambiguous tokens as handles in the channel field - (b22aac6) - dcog989
+- (**resolve**) decode &amp; last to avoid double-decoding entities - (ef32dd9) - dcog989
+- (**shared**) use undefined instead of void in union return types - (729e775) - dcog989
+- (**storage**) store normalized channel handles - (5a556eb) - dcog989
+- (**unblock**) avoid double @ in handle reason detail - (3781a5d) - dcog989
+#### Performance Improvements
+- (**background**) skip DNR update when rules are unchanged - (71437a9) - dcog989
+- (**content**) dedupe nested mutation roots and gate menu scanning - (b21eb04) - dcog989
+- (**content**) stop anchor parsing early and bound the shadow walk - (1a4d7f1) - dcog989
+- (**content**) coalesce cover repositioning into one animation frame - (3611c95) - dcog989
+- (**content**) make setPlayerBlank idempotent per reason - (afa084d) - dcog989
+- (**content**) evaluate on navigation and hydration, not every mutation batch - (817533a) - dcog989
+- (**menu**) track triggers on pointerdown only and drop rescan retries - (b47d830) - dcog989
+- use Sets for import merge, compile patterns once, cap match length - (379f875) - dcog989
+#### Documentation
+- rumdl format - (e669567) - dcog989
+#### Refactoring
+- (**areas**) model area definitions as a redirect/hide union - (134ae25) - dcog989
+- (**areas**) derive area keys, defaults, and classes from definitions - (cbb47e3) - dcog989
+- (**constants**) centralize YouTube origin literals - (c205b38) - dcog989
+- (**content**) make the store the menu's single source of truth - (b7ada9f) - dcog989
+- (**content**) compose overlay/filter/menu from factories - (c082d12) - dcog989
+- (**content**) split entity selector data from extraction - (79b10a4) - dcog989
+- (**content**) add applyParsed for URL-derived entity identity - (3146acb) - dcog989
+- (**content**) unify shadow-DOM walks on walkShadowRoots - (6c43085) - dcog989
+- (**matcher**) reuse matchEntity in matchDirectNavigation - (63302c6) - dcog989
+- (**menu**) extract menu action persistence into menu/persist - (8ee6689) - dcog989
+- (**menu**) merge item action/owner maps into one WeakMap - (b1b2ac0) - dcog989
+- (**menu**) make MenuAction a discriminated union - (e14577e) - dcog989
+- (**options**) split settings UI into panel modules - (9b1a832) - dcog989
+- (**options**) funnel status toggling through setStatus - (37325b4) - dcog989
+- (**options**) remove version footer - (32f7f15) - dcog989
+- (**options**) split filters into channels, videos and comments tabs - (010c57e) - dcog989
+- (**options**) move blocking toggle to header, drop general tab - (87b855a) - dcog989
+- (**reason**) drive reason behavior from a per-kind registry - (e18b63b) - dcog989
+- (**reason**) make MatchResult a discriminated union - (8d123dd) - dcog989
+- (**reason**) carry a structured Reason instead of wire strings - (c1ab747) - dcog989
+- (**rules**) trust canonical handles from normalizeState - (8e6500a) - dcog989
+- (**rules**) route entry validation through isActiveEntry - (f4720ce) - dcog989
+- (**rules**) centralize video/channel mutations in shared/rules - (74da3ff) - dcog989
+- (**rules**) split entity rows from pattern filter lists - (4bd57b8) - dcog989
+- (**settings**) remove unused blockMessage setting - (a62282b) - dcog989
+- (**shared**) separate display copy from domain definitions - (387f6f8) - dcog989
+- (**shared**) add transactional rules service and invert chrome deps - (c0c2c6d) - dcog989
+- (**shared**) segregate chrome API wrappers out of ext.ts - (f020ca6) - dcog989
+- (**shared**) separate reason copy, unblock domain and navigation - (14d9c17) - dcog989
+- (**shared**) split matcher into url, patterns, match and rules modules - (15269b6) - dcog989
+- (**theme**) add shared isTheme guard - (cd54d99) - dcog989
+- (**ui**) add h() DOM helper and use it for element building - (3e95727) - dcog989
+- disambiguate storage/defaults/normalize and area/menu modules - (f9879de) - dcog989
+- consolidate content-script state and trim redundant branching - (fc2706f) - dcog989
+- remove dead code and the redundant card-hiding path - (5cda80d) - dcog989
+#### Miscellaneous Chores
+- updates - (954caf7) - dcog989
+#### Style
+- (**options**) order import before export in data panel - (7e0bf81) - dcog989
+- (**options**) shrink header logo, left-align brand name next to logo - (b22b087) - dcog989
+- (**options**) enlarge header logo and move brand name beside toggle - (5c009ff) - dcog989
+- (**options**) left-align blocking toggle with the content column - (d313fda) - dcog989
+- (**options**) place unsaved indicator next to the save button - (8866ef8) - dcog989
+- (**options**) align blocking toggle over the sidebar column - (8dcaccc) - dcog989
+
+- - -
+
 ## 0.7.0 - 2026-09-18
 #### Features
 - (**icons**) add 32px, 64px and 96px icons - (7122eff) - dcog989
