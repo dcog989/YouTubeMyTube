@@ -1,15 +1,15 @@
 import { hasCommentRules, matchEntity } from '../shared/matcher';
-import type { BlockerState, CompiledRules } from '../shared/types';
+import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, commentEntity, HIDDEN_CLASS } from './entity';
 import { scheduleEvaluate } from './evaluate';
 import { getCompiled, getState } from './store';
 
-let processed = new WeakSet<Element>();
+let seen = new WeakMap<Element, string>();
 let scheduled = false;
 const pending = new Set<Element>();
 
-function hide(element: Element): void {
-  element.classList.add(HIDDEN_CLASS);
+function setHidden(element: Element, hidden: boolean): void {
+  element.classList.toggle(HIDDEN_CLASS, hidden);
 }
 
 function clearHidden(): void {
@@ -18,24 +18,46 @@ function clearHidden(): void {
   });
 }
 
+function entityKey(entity: Entity): string {
+  const parts = [
+    entity.videoId,
+    entity.channelId,
+    entity.handle,
+    entity.channelName,
+    entity.title,
+    entity.commentAuthor,
+    entity.commentContent,
+  ].filter((part): part is string => Boolean(part));
+  return parts.join('\u0000');
+}
+
 function processNode(node: Element, state: BlockerState, compiled: CompiledRules): void {
   if (!state.settings.enabled) return;
-  if (processed.has(node)) return;
 
   if (node.matches(CARD_SELECTOR)) {
-    processed.add(node);
-    const result = matchEntity(cardEntity(node), compiled);
-    if (result.blocked) hide(node);
+    const entity = cardEntity(node);
+    const key = entityKey(entity);
+    if (key && seen.get(node) === key) return;
+    if (key) seen.set(node, key);
+    setHidden(node, matchEntity(entity, compiled).blocked);
+    return;
   }
 
   if (hasCommentRules(compiled) && node.matches(COMMENT_SELECTOR)) {
-    processed.add(node);
-    const result = matchEntity(commentEntity(node), compiled);
-    if (result.blocked) hide(node);
+    const entity = commentEntity(node);
+    const key = entityKey(entity);
+    if (key && seen.get(node) === key) return;
+    if (key) seen.set(node, key);
+    setHidden(node, matchEntity(entity, compiled).blocked);
   }
 }
 
 function processSubtree(root: Element, state: BlockerState, compiled: CompiledRules): void {
+  const card = root.closest(CARD_SELECTOR);
+  if (card) processNode(card, state, compiled);
+  const comment = root.closest(COMMENT_SELECTOR);
+  if (comment) processNode(comment, state, compiled);
+
   processNode(root, state, compiled);
   root.querySelectorAll(CARD_SELECTOR).forEach((node) => {
     processNode(node, state, compiled);
@@ -68,7 +90,7 @@ export function scheduleFilter(root: Element): void {
 
 export function rescan(): void {
   clearHidden();
-  processed = new WeakSet<Element>();
+  seen = new WeakMap<Element, string>();
   const state = getState();
   const compiled = getCompiled();
   if (state?.settings.enabled && compiled) {
