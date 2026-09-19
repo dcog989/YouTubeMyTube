@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { defaultAreas, defaultRules } from '../src/shared/defaults';
 import { areaForPath, matchDirectNavigation, matchEntity } from '../src/shared/match';
 import { compileRules } from '../src/shared/rules';
-import { defaultAreas, defaultRules } from '../src/shared/storage';
 import type { FilterRules } from '../src/shared/types';
 import { parseYouTubeUrl } from '../src/shared/url';
 

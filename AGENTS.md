@@ -26,7 +26,8 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/reason.ts` — per-kind reason registry (`REASONS`): wire format (format/parse), rule refs and entity URLs.
 - `src/shared/reason-copy.ts` — UI copy for reasons (label/detail) keyed by `ReasonKind`.
 - `src/shared/dnr.ts` — generates declarativeNetRequest rules from state and wraps the dynamic-rule API.
-- `src/shared/storage.ts` — rule model, defaults, normalization (entity rows + pattern lists, deduplicated).
+- `src/shared/defaults.ts` — default rules, areas, settings and state.
+- `src/shared/normalize.ts` — state normalization and `ruleCount` (entity rows + pattern lists, deduplicated).
 - `src/shared/storage-ext.ts` — thin `chrome.storage.local` get/set wrappers.
 - `src/shared/state.ts` — load/save/ensure the blocker state, serialized `mutateState` and `onLocalStorageChanged`.
 - `src/shared/rules-service.ts` — transactional block/unblock operations (`blockVideo`/`blockChannel`/`unblockReason`) used by the UI surfaces.
@@ -44,7 +45,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/content/filter.ts` — `createFilterEngine`: card/comment DOM filtering.
 - `src/content/evaluate.ts` — `createEvaluator`: block routing and overlay/blank decisions.
 - `src/content/overlay.ts` — `createBlankCover` / `createChannelOverlay` / `createOverlayFeedback`.
-- `src/content/menu.ts` + `src/content/menu/` — `createMenuInjector`: in-page menu injection.
+- `src/content/menu/index.ts` + `src/content/menu/` — `createMenuInjector`: in-page menu injection.
 - `src/background/service-worker.ts` — keeps DNR rules in sync with storage.
 - `src/options/options.ts` + `src/options/` — settings UI, split into entry point, state store, panel modules (channels/videos/areas/patterns), tester, import/export and metadata backfill.
 - `esbuild.config.mjs` — build/packaging for both browsers.

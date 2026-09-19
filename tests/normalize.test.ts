@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { defaultState, normalizeState, ruleCount } from '../src/shared/storage';
+import { defaultState } from '../src/shared/defaults';
+import { normalizeState, ruleCount } from '../src/shared/normalize';
 
 describe('defaultState', () => {
   it('starts empty, disabled areas and enabled blocking', () => {

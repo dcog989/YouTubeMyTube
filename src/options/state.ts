@@ -1,4 +1,5 @@
-import { defaultState, normalizeState } from '../shared/storage';
+import { defaultState } from '../shared/defaults';
+import { normalizeState } from '../shared/normalize';
 import type { BlockerState } from '../shared/types';
 import { byId } from '../shared/ui';
 

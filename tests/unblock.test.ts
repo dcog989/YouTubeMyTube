@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { defaultRules } from '../src/shared/storage';
+import { defaultRules } from '../src/shared/defaults';
 import { removeRule, ruleRefForReason } from '../src/shared/unblock';
 
 describe('ruleRefForReason', () => {

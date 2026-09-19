@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { MAX_DNR_REGEX_RULES } from '../src/shared/constants';
+import { defaultState } from '../src/shared/defaults';
 import { buildDnrRules } from '../src/shared/dnr';
-import { defaultState } from '../src/shared/storage';
 import type { ChannelEntry, VideoEntry } from '../src/shared/types';
 
 function stateWith(overrides: {

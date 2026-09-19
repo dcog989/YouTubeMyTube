@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { defaultRules } from '../src/shared/defaults';
 import {
   addChannel,
   addVideo,
@@ -11,7 +12,6 @@ import {
   removeChannel,
   removeVideo,
 } from '../src/shared/rules';
-import { defaultRules } from '../src/shared/storage';
 
 describe('compileRules', () => {
   it('collects active ids, handles and compiled patterns', () => {

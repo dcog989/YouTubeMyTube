@@ -1,14 +1,15 @@
-import { loadState, onLocalStorageChanged } from '../shared/state';
-import { normalizeState } from '../shared/storage';
-import type { BlockerState, Entity } from '../shared/types';
-import { h } from '../shared/ui';
-import { parseYouTubeUrl } from '../shared/url';
-import { createBatcher } from './batch';
-import { closestAcrossShadow } from './dom';
-import { cardEntity, currentContext } from './entity';
-import { CARD_SELECTOR, COMMENT_SELECTOR } from './entity-selectors';
-import type { FilterEngine } from './filter';
-import { actionsFor, type MenuAction } from './menu/actions';
+import { normalizeState } from '../../shared/normalize';
+import { loadState, onLocalStorageChanged } from '../../shared/state';
+import type { BlockerState, Entity } from '../../shared/types';
+import { h } from '../../shared/ui';
+import { parseYouTubeUrl } from '../../shared/url';
+import { createBatcher } from '../batch';
+import { closestAcrossShadow } from '../dom';
+import { cardEntity, currentContext } from '../entity';
+import { CARD_SELECTOR, COMMENT_SELECTOR } from '../entity-selectors';
+import type { FilterEngine } from '../filter';
+import type { OverlayFeedback } from '../overlay';
+import { actionsFor, type MenuAction } from './actions';
 import {
   containerStart,
   type MenuContainer,
@@ -16,8 +17,8 @@ import {
   moveToEnd,
   parentContainer,
   popupOf,
-} from './menu/container';
-import { persistAction } from './menu/persist';
+} from './container';
+import { persistAction } from './persist';
 import {
   INJECTED_ATTR,
   MENU_HOST_SELECTOR,
@@ -25,10 +26,9 @@ import {
   MENU_TRIGGER_SELECTOR,
   MOBILE_HOST,
   NON_MENU_SELECTOR,
-} from './menu/selectors';
-import { attachShadows, observeRoot, scanExisting } from './menu/shadow';
-import { applyItemStyle, computeItemStyle, createIcon, type MenuItemStyle } from './menu/style';
-import type { OverlayFeedback } from './overlay';
+} from './selectors';
+import { attachShadows, observeRoot, scanExisting } from './shadow';
+import { applyItemStyle, computeItemStyle, createIcon, type MenuItemStyle } from './style';
 
 export interface MenuInjector {
   init(): void;

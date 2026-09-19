@@ -1,9 +1,9 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
+import { normalizeState } from '../shared/normalize';
 import { onRuntimeMessage } from '../shared/runtime';
 import { loadState, onLocalStorageChanged } from '../shared/state';
-import { normalizeState } from '../shared/storage';
 import type { BlockerState } from '../shared/types';
-import { applyAreas } from './areas';
+import { applyAreas } from './apply-areas';
 import { currentContext } from './entity';
 import { createEvaluator } from './evaluate';
 import { createFilterEngine } from './filter';

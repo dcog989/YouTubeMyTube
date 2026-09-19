@@ -1,6 +1,6 @@
+import { normalizeState } from '../shared/normalize';
 import { type ChannelMeta, resolveChannel, resolveVideoTitle } from '../shared/resolve';
 import { saveState } from '../shared/state';
-import { normalizeState } from '../shared/storage';
 import type { ChannelEntry, VideoEntry } from '../shared/types';
 import { commit, getDraft, isDirty, notify } from './state';
 

@@ -1,41 +1,9 @@
-import { AREA_DEFINITIONS, type AreaFlags } from './areas';
+import type { AreaFlags } from './areas';
+import { defaultAreas, defaultRules, defaultSettings, defaultState } from './defaults';
 import { countActiveEntries } from './patterns';
 import { isTheme } from './theme';
 import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
 import { normalizeHandle } from './url';
-
-export function defaultRules(): FilterRules {
-  return {
-    channels: [],
-    channelFilters: [],
-    videos: [],
-    titleFilters: [],
-    commentFilters: [],
-  };
-}
-
-export function defaultAreas(): AreaFlags {
-  const areas = {} as AreaFlags;
-  for (const { key } of AREA_DEFINITIONS) {
-    areas[key] = false;
-  }
-  return areas;
-}
-
-export function defaultSettings(): Settings {
-  return {
-    enabled: true,
-    theme: 'system',
-  };
-}
-
-export function defaultState(): BlockerState {
-  return {
-    rules: defaultRules(),
-    areas: defaultAreas(),
-    settings: defaultSettings(),
-  };
-}
 
 function pickStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) return [];

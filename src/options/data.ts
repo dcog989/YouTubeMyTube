@@ -1,5 +1,5 @@
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
-import { normalizeState } from '../shared/storage';
+import { normalizeState } from '../shared/normalize';
 import { h } from '../shared/ui';
 import { setStatus } from './dom';
 import { getDraft, notify, setDirty, setDraft } from './state';

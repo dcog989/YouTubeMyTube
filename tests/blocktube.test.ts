@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../src/shared/blocktube';
-import { defaultState } from '../src/shared/storage';
+import { defaultState } from '../src/shared/defaults';
 
 const DEFAULT_JS = `(video, objectType) => {
   // Add custom conditions below

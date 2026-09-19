@@ -1,5 +1,6 @@
+import { defaultState } from '../shared/defaults';
+import { normalizeState } from '../shared/normalize';
 import { loadState, onLocalStorageChanged, saveState } from '../shared/state';
-import { defaultState, normalizeState } from '../shared/storage';
 import { applyTheme, isTheme } from '../shared/theme';
 import { byId } from '../shared/ui';
 import { buildAreas, syncAreas } from './areas';

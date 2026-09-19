@@ -1,5 +1,6 @@
 import { STATE_KEY } from './constants';
-import { defaultState, normalizeState } from './storage';
+import { defaultState } from './defaults';
+import { normalizeState } from './normalize';
 import { getStored, setStored } from './storage-ext';
 import type { BlockerState } from './types';
 
