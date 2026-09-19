@@ -25,7 +25,6 @@
           </div>
         </div>
         <div class="header-actions">
-          <span id="dirty" class="dirty" hidden>Unsaved changes</span>
           <fieldset class="theme-switch" aria-label="Theme">
             <button
               type="button"
@@ -126,7 +125,10 @@
       <main class="content">
         <div class="panel-head">
           <h2 id="panel-title">Block Channels</h2>
-          <button type="button" id="save" class="btn btn-primary" disabled>Save</button>
+          <div class="panel-actions">
+            <span id="dirty" class="dirty" hidden>Unsaved changes</span>
+            <button type="button" id="save" class="btn btn-primary" disabled>Save</button>
+          </div>
         </div>
 
         <section class="panel is-active" id="panel-channels">

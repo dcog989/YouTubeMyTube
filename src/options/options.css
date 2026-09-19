@@ -171,6 +171,12 @@ body {
   margin-bottom: 4px;
 }
 
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .panel {
   display: none;
 }
