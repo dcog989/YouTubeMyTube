@@ -1,4 +1,5 @@
 import { getRuntimeUrl } from '../../shared/ext';
+import { h } from '../../shared/ui';
 import { walkShadowRoots } from '../dom';
 import type { MenuContainer } from './container';
 import { MENU_ITEM_SELECTOR } from './selectors';
@@ -118,14 +119,16 @@ export function applyItemStyle(item: HTMLElement, style: MenuItemStyle): void {
 }
 
 export function createIcon(): HTMLImageElement {
-  const icon = document.createElement('img');
-  icon.className = 'ytb-menu-item-icon';
-  icon.src = getRuntimeUrl(ICON_PATH);
-  icon.alt = '';
-  icon.style.flex = 'none';
-  icon.style.width = ICON_SIZE;
-  icon.style.height = ICON_SIZE;
-  icon.style.marginRight = ICON_GAP;
-  icon.style.objectFit = 'contain';
-  return icon;
+  return h('img', {
+    className: 'ytb-menu-item-icon',
+    src: getRuntimeUrl(ICON_PATH),
+    alt: '',
+    style: {
+      flex: 'none',
+      width: ICON_SIZE,
+      height: ICON_SIZE,
+      marginRight: ICON_GAP,
+      objectFit: 'contain',
+    },
+  });
 }

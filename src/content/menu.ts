@@ -5,6 +5,7 @@ import { addChannel, addVideo, removeChannel, removeVideo } from '../shared/rule
 import { loadState, saveState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState, ChannelEntry, Entity, FilterRules, VideoEntry } from '../shared/types';
+import { h } from '../shared/ui';
 import { closestAcrossShadow } from './dom';
 import { CARD_SELECTOR, COMMENT_SELECTOR, cardEntity, currentContext } from './entity';
 import { hideCard, pruneHiddenCards, refreshHiddenCards, showCard } from './hidden-cards';
@@ -94,17 +95,15 @@ function activateItem(item: Element): void {
 }
 
 function createItem(action: MenuAction, style: MenuItemStyle): HTMLElement {
-  const item = document.createElement('div');
-  item.className = 'ytb-menu-item';
-  item.setAttribute(INJECTED_ATTR, '');
-  item.setAttribute('role', 'menuitem');
-  item.tabIndex = 0;
+  const item = h('div', {
+    className: 'ytb-menu-item',
+    [INJECTED_ATTR]: '',
+    role: 'menuitem',
+    tabIndex: 0,
+  });
   applyItemStyle(item, style);
 
-  const label = document.createElement('span');
-  label.className = 'ytb-menu-item-label';
-  label.textContent = action.label;
-
+  const label = h('span', { className: 'ytb-menu-item-label', text: action.label });
   item.append(createIcon(), label);
   item.addEventListener('mouseenter', () => {
     item.style.backgroundColor = 'var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.2))';

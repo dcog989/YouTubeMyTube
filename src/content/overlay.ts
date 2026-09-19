@@ -1,6 +1,7 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { getRuntimeUrl } from '../shared/ext';
 import { loadState, saveState } from '../shared/state';
+import { h } from '../shared/ui';
 import { reasonDetail, removeRule, ruleRefForReason } from '../shared/unblock';
 import { deepQuery } from './dom';
 
@@ -135,8 +136,7 @@ export function setPlayerBlank(blanked: boolean, reason?: string): void {
   if (!document.body) return;
 
   if (!blankCover) {
-    blankCover = document.createElement('div');
-    blankCover.className = 'ytb-blank-cover';
+    blankCover = h('div', { className: 'ytb-blank-cover' });
     document.body.appendChild(blankCover);
     window.addEventListener('resize', schedulePlaceCover, true);
     window.addEventListener('scroll', schedulePlaceCover, true);
@@ -168,24 +168,20 @@ function channelLabel(info: ChannelOverlayInfo): string {
 }
 
 function buildLogo(className: string): HTMLImageElement {
-  const logo = document.createElement('img');
-  logo.className = className;
-  logo.src = getRuntimeUrl(LOGO_PATH);
-  logo.alt = '';
-  return logo;
+  return h('img', { className, src: getRuntimeUrl(LOGO_PATH), alt: '' });
 }
 
 function buildActions(reason: string): HTMLElement {
-  const actions = document.createElement('div');
-  actions.className = 'ytb-block-actions';
+  const actions = h('div', { className: 'ytb-block-actions' });
 
   const ref = ruleRefForReason(reason);
 
-  const remove = document.createElement('button');
-  remove.type = 'button';
-  remove.className = 'ytb-block-btn ytb-block-btn-primary ytb-block-remove';
-  remove.textContent = 'Remove from blocklist';
-  remove.hidden = ref === null;
+  const remove = h('button', {
+    type: 'button',
+    className: 'ytb-block-btn ytb-block-btn-primary ytb-block-remove',
+    text: 'Remove from blocklist',
+    hidden: ref === null,
+  });
   remove.addEventListener('click', () => {
     void (async () => {
       if (!ref) return;
@@ -195,10 +191,11 @@ function buildActions(reason: string): HTMLElement {
     })();
   });
 
-  const home = document.createElement('button');
-  home.type = 'button';
-  home.className = 'ytb-block-btn ytb-block-home';
-  home.textContent = 'YouTube home';
+  const home = h('button', {
+    type: 'button',
+    className: 'ytb-block-btn ytb-block-home',
+    text: 'YouTube home',
+  });
   home.addEventListener('click', () => {
     window.location.href = YOUTUBE_HOME;
   });
@@ -208,25 +205,16 @@ function buildActions(reason: string): HTMLElement {
 }
 
 function buildOverlay(info: ChannelOverlayInfo): HTMLElement {
-  const root = document.createElement('div');
-  root.className = OVERLAY_CLASS;
-  root.setAttribute('data-ytb-reason', info.reason);
+  const root = h('div', { className: OVERLAY_CLASS, 'data-ytb-reason': info.reason });
+  const channel = channelLabel(info);
 
-  const title = document.createElement('h2');
-  title.className = 'ytb-block-title';
-  title.textContent = 'Blocked by YouTubeMyTube';
-
-  const channel = document.createElement('p');
-  channel.className = 'ytb-block-channel';
-  channel.textContent = channelLabel(info);
-
-  const detail = document.createElement('p');
-  detail.className = 'ytb-block-detail';
-  detail.textContent = reasonDetail(info.reason);
-
-  root.append(buildLogo('ytb-block-logo'), title);
-  if (channel.textContent) root.append(channel);
-  root.append(detail, buildActions(info.reason));
+  root.append(buildLogo('ytb-block-logo'));
+  root.append(h('h2', { className: 'ytb-block-title', text: 'Blocked by YouTubeMyTube' }));
+  if (channel) root.append(h('p', { className: 'ytb-block-channel', text: channel }));
+  root.append(
+    h('p', { className: 'ytb-block-detail', text: reasonDetail(info.reason) }),
+    buildActions(info.reason),
+  );
   return root;
 }
 
@@ -234,15 +222,12 @@ function renderBlankContent(cover: HTMLElement, reason: string): void {
   if (cover.dataset.reason === reason) return;
   cover.dataset.reason = reason;
 
-  const title = document.createElement('h2');
-  title.className = 'ytb-blank-title';
-  title.textContent = 'Blocked by YouTubeMyTube';
-
-  const detail = document.createElement('p');
-  detail.className = 'ytb-blank-detail';
-  detail.textContent = reasonDetail(reason);
-
-  cover.replaceChildren(buildLogo('ytb-blank-logo'), title, detail, buildActions(reason));
+  cover.replaceChildren(
+    buildLogo('ytb-blank-logo'),
+    h('h2', { className: 'ytb-blank-title', text: 'Blocked by YouTubeMyTube' }),
+    h('p', { className: 'ytb-blank-detail', text: reasonDetail(reason) }),
+    buildActions(reason),
+  );
 }
 
 export function showChannelOverlay(info: ChannelOverlayInfo): void {

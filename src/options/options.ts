@@ -27,7 +27,7 @@ import { loadState, saveState } from '../shared/state';
 import { defaultState, normalizeState } from '../shared/storage';
 import { applyTheme } from '../shared/theme';
 import type { AreaKey, BlockerState, ChannelEntry, Entity, VideoEntry } from '../shared/types';
-import { byId } from '../shared/ui';
+import { byId, h } from '../shared/ui';
 
 const patternEditors = new Map<PatternFilterKey, HTMLTextAreaElement>();
 const areaInputs = new Map<AreaKey, HTMLInputElement>();
@@ -158,44 +158,42 @@ function renderChannels(): void {
   const body = byId('channel-rows');
   body.replaceChildren();
   draft.rules.channels.forEach((channel) => {
-    const row = document.createElement('tr');
-
-    const idCell = document.createElement('td');
-    const idInput = document.createElement('input');
-    idInput.className = 'input entity-input';
-    idInput.value = channel.id;
-    idInput.placeholder = 'UC…';
-    idInput.autocomplete = 'off';
+    const idInput = h('input', {
+      className: 'input entity-input',
+      value: channel.id,
+      placeholder: 'UC…',
+      autocomplete: 'off',
+    });
     idInput.addEventListener('input', () => {
       channel.id = idInput.value.trim();
       delete channel.lookupFailed;
       setDirty(true);
     });
-    idCell.appendChild(idInput);
 
-    const nameCell = document.createElement('td');
-    nameCell.className = 'entity-readonly';
-    nameCell.textContent = channel.name || '—';
-
-    const handleCell = document.createElement('td');
-    handleCell.className = 'entity-readonly';
-    handleCell.textContent = channel.handle ? `@${channel.handle}` : '—';
-
-    const actionCell = document.createElement('td');
-    actionCell.className = 'col-action';
-    const remove = document.createElement('button');
-    remove.type = 'button';
-    remove.className = 'btn btn-danger';
-    remove.textContent = 'Remove';
+    const remove = h('button', {
+      type: 'button',
+      className: 'btn btn-danger',
+      text: 'Remove',
+    });
     remove.addEventListener('click', () => {
       removeChannel(draft.rules, { id: channel.id, handle: channel.handle });
       renderChannels();
       setDirty(true);
     });
-    actionCell.appendChild(remove);
 
-    row.append(idCell, nameCell, handleCell, actionCell);
-    body.appendChild(row);
+    body.appendChild(
+      h(
+        'tr',
+        {},
+        h('td', {}, idInput),
+        h('td', { className: 'entity-readonly', text: channel.name || '—' }),
+        h('td', {
+          className: 'entity-readonly',
+          text: channel.handle ? `@${channel.handle}` : '—',
+        }),
+        h('td', { className: 'col-action' }, remove),
+      ),
+    );
   });
   updateCounts();
 }
@@ -204,40 +202,38 @@ function renderVideos(): void {
   const body = byId('video-rows');
   body.replaceChildren();
   draft.rules.videos.forEach((video) => {
-    const row = document.createElement('tr');
-
-    const idCell = document.createElement('td');
-    const idInput = document.createElement('input');
-    idInput.className = 'input entity-input';
-    idInput.value = video.id;
-    idInput.placeholder = '11-character ID';
-    idInput.autocomplete = 'off';
+    const idInput = h('input', {
+      className: 'input entity-input',
+      value: video.id,
+      placeholder: '11-character ID',
+      autocomplete: 'off',
+    });
     idInput.addEventListener('input', () => {
       video.id = idInput.value.trim();
       delete video.lookupFailed;
       setDirty(true);
     });
-    idCell.appendChild(idInput);
 
-    const titleCell = document.createElement('td');
-    titleCell.className = 'entity-readonly';
-    titleCell.textContent = video.title || '—';
-
-    const actionCell = document.createElement('td');
-    actionCell.className = 'col-action';
-    const remove = document.createElement('button');
-    remove.type = 'button';
-    remove.className = 'btn btn-danger';
-    remove.textContent = 'Remove';
+    const remove = h('button', {
+      type: 'button',
+      className: 'btn btn-danger',
+      text: 'Remove',
+    });
     remove.addEventListener('click', () => {
       removeVideo(draft.rules, video.id);
       renderVideos();
       setDirty(true);
     });
-    actionCell.appendChild(remove);
 
-    row.append(idCell, titleCell, actionCell);
-    body.appendChild(row);
+    body.appendChild(
+      h(
+        'tr',
+        {},
+        h('td', {}, idInput),
+        h('td', { className: 'entity-readonly', text: video.title || '—' }),
+        h('td', { className: 'col-action' }, remove),
+      ),
+    );
   });
   updateCounts();
 }
@@ -418,34 +414,26 @@ async function backfillMissing(): Promise<void> {
 function buildAreas(): void {
   const host = byId('areas');
   for (const config of AREA_DEFINITIONS) {
-    const row = document.createElement('div');
-    row.className = 'row row-between';
-
-    const left = document.createElement('div');
-    const title = document.createElement('div');
-    title.className = 'row-title';
-    title.textContent = config.title;
-    const sub = document.createElement('div');
-    sub.className = 'row-sub';
-    sub.textContent = config.sub;
-    left.append(title, sub);
-
-    const label = document.createElement('label');
-    label.className = 'switch';
-    const input = document.createElement('input');
-    input.type = 'checkbox';
-    input.id = `area-${config.key}`;
+    const input = h('input', { type: 'checkbox', id: `area-${config.key}` });
     input.addEventListener('change', () => {
       draft.areas[config.key] = input.checked;
       setDirty(true);
       updateCounts();
     });
-    const slider = document.createElement('span');
-    slider.className = 'slider';
-    label.append(input, slider);
 
-    row.append(left, label);
-    host.appendChild(row);
+    host.appendChild(
+      h(
+        'div',
+        { className: 'row row-between' },
+        h(
+          'div',
+          {},
+          h('div', { className: 'row-title', text: config.title }),
+          h('div', { className: 'row-sub', text: config.sub }),
+        ),
+        h('label', { className: 'switch' }, input, h('span', { className: 'slider' })),
+      ),
+    );
     areaInputs.set(config.key, input);
   }
 }
@@ -545,9 +533,7 @@ function exportSettings(): void {
     type: 'application/json',
   });
   const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = 'YouTubeMyTube-settings.json';
+  const anchor = h('a', { href: url, download: 'YouTubeMyTube-settings.json' });
   anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 0);
 }
