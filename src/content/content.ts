@@ -1,4 +1,5 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
+import { onRuntimeMessage } from '../shared/runtime';
 import { loadState, onLocalStorageChanged } from '../shared/state';
 import { normalizeState } from '../shared/storage';
 import type { BlockerState } from '../shared/types';
@@ -22,7 +23,7 @@ function observe(): void {
 }
 
 function listenForContextRequests(): void {
-  chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  onRuntimeMessage((message, _sender, sendResponse) => {
     if (!message || typeof message !== 'object') return;
     if ((message as { type?: unknown }).type !== CONTEXT_REQUEST) return;
     sendResponse(currentContext());

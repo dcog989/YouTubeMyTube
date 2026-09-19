@@ -4,8 +4,10 @@ import { escapeRegExp, isActiveEntry } from './patterns';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
 
+export type DnrRule = chrome.declarativeNetRequest.Rule;
+
 export interface DnrBuild {
-  rules: chrome.declarativeNetRequest.Rule[];
+  rules: DnrRule[];
   dropped: number;
 }
 

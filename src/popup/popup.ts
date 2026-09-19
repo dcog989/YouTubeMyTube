@@ -1,8 +1,9 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
 import { countActiveEntries } from '../shared/patterns';
-import { addChannel, addVideo, findChannel, hasVideoId } from '../shared/rules';
+import { findChannel, hasVideoId } from '../shared/rules';
+import { blockChannel, blockVideo } from '../shared/rules-service';
 import { openOptionsPage } from '../shared/runtime';
-import { loadState, saveState } from '../shared/state';
+import { loadState, mutateState } from '../shared/state';
 import { ruleCount } from '../shared/storage';
 import { queryActiveTab, sendTabMessage } from '../shared/tabs';
 import { applyTheme } from '../shared/theme';
@@ -79,31 +80,36 @@ async function detectActiveTab(): Promise<void> {
   renderContext();
 }
 
+async function applyMutation(mutation: Promise<BlockerState | null>): Promise<void> {
+  const next = await mutation;
+  if (!next) return;
+  state = next;
+  renderCounts();
+  renderContext();
+}
+
 function registerHandlers(): void {
   byId<HTMLInputElement>('enabled').addEventListener('change', (event) => {
-    state.settings.enabled = (event.target as HTMLInputElement).checked;
-    void saveState(state);
+    const enabled = (event.target as HTMLInputElement).checked;
+    void mutateState((current) => {
+      current.settings.enabled = enabled;
+    });
   });
 
   byId('block-video').addEventListener('click', () => {
     if (!activeVideoId) return;
-    if (!addVideo(state.rules, { id: activeVideoId, title: '' })) return;
-    renderCounts();
-    renderContext();
-    void saveState(state);
+    void applyMutation(blockVideo({ id: activeVideoId, title: '' }));
   });
 
   byId('block-channel').addEventListener('click', () => {
     if (!activeChannelId && !activeHandle) return;
-    const added = addChannel(state.rules, {
-      id: activeChannelId ?? '',
-      name: activeChannelName ?? '',
-      handle: activeHandle ?? '',
-    });
-    if (!added) return;
-    renderCounts();
-    renderContext();
-    void saveState(state);
+    void applyMutation(
+      blockChannel({
+        id: activeChannelId ?? '',
+        name: activeChannelName ?? '',
+        handle: activeHandle ?? '',
+      }),
+    );
   });
 
   byId('options').addEventListener('click', () => {

@@ -211,7 +211,7 @@ function applyVisibility(action: MenuAction, owner: Element | undefined): void {
 
 async function applyAction(action: MenuAction, owner: Element | undefined): Promise<void> {
   applyVisibility(action, owner);
-  state = await persistAction(action);
+  state = (await persistAction(action)) ?? state;
   closeMenu();
 }
 

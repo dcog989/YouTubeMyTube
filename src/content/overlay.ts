@@ -1,9 +1,9 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { type Reason, reasonDetail } from '../shared/reason';
+import { unblockReason } from '../shared/rules-service';
 import { getRuntimeUrl } from '../shared/runtime';
-import { loadState, saveState } from '../shared/state';
 import { h } from '../shared/ui';
-import { removeRule, ruleRefForReason } from '../shared/unblock';
+import { ruleRefForReason } from '../shared/unblock';
 import { deepQuery } from './dom';
 
 const OVERLAY_CLASS = 'ytb-block-overlay';
@@ -192,8 +192,7 @@ function buildActions(reason: Reason): HTMLElement {
   remove.addEventListener('click', () => {
     void (async () => {
       if (!ref) return;
-      const current = await loadState();
-      if (removeRule(current.rules, ref)) await saveState(current);
+      await unblockReason(reason);
       clearFeedback();
     })();
   });

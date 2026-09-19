@@ -27,7 +27,8 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/dnr.ts` — generates declarativeNetRequest rules from state and wraps the dynamic-rule API.
 - `src/shared/storage.ts` — rule model, defaults, normalization (entity rows + pattern lists, deduplicated).
 - `src/shared/storage-ext.ts` — thin `chrome.storage.local` get/set wrappers.
-- `src/shared/state.ts` — load/save/ensure the blocker state and `onLocalStorageChanged`.
+- `src/shared/state.ts` — load/save/ensure the blocker state, serialized `mutateState` and `onLocalStorageChanged`.
+- `src/shared/rules-service.ts` — transactional block/unblock operations (`blockVideo`/`blockChannel`/`unblockReason`) used by the UI surfaces.
 - `src/shared/runtime.ts` — `chrome.runtime` wrappers (extension URL, sync request, options page).
 - `src/shared/tabs.ts` — `chrome.tabs` wrappers (active tab, tab messaging).
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
@@ -71,7 +72,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - Add a content area: add an entry to `AREA_DEFINITIONS` in `src/shared/areas.ts` (keys, flags, redirect set and classes are derived from it) and add a matching selector to `src/content/content.css`.
 - Add a reason kind: add an entry to `REASONS` in `src/shared/reason.ts` (wire pattern, format, optional label/detail, rule ref and entity URL); `ReasonKind`, `formatReason`, `parseReason`, `reasonLabel`, `reasonDetail`, `ruleRefForReason` and `entityUrlForReason` all derive from it.
 - Add a browser: add `manifests/<browser>.json` and add the name to `SUPPORTED` in `esbuild.config.mjs`.
-- State access: load via `loadState()` / persist via `saveState()` in `src/shared/state.ts`; never write `chrome.storage` directly.
+- State access: load via `loadState()` in `src/shared/state.ts`; mutate via `mutateState()` or the `src/shared/rules-service.ts` operations; never write `chrome.storage` directly.
 
 ### Filter Syntax
 

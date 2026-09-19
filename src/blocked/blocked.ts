@@ -1,10 +1,11 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { entityUrlForReason } from '../shared/navigation';
 import { parseReason, type Reason, reasonDetail, reasonLabel } from '../shared/reason';
+import { unblockReason } from '../shared/rules-service';
 import { openOptionsPage, requestSync } from '../shared/runtime';
-import { loadState, saveState } from '../shared/state';
+import { loadState } from '../shared/state';
 import { applyTheme } from '../shared/theme';
-import { removeRule, ruleRefForReason } from '../shared/unblock';
+import { ruleRefForReason } from '../shared/unblock';
 
 const FALLBACK_MESSAGE = 'This content is blocked.';
 
@@ -42,11 +43,7 @@ async function render(): Promise<void> {
     if (ref) {
       removeButton.addEventListener('click', () => {
         void (async () => {
-          const current = await loadState();
-          if (removeRule(current.rules, ref)) {
-            await saveState(current);
-            await requestSync();
-          }
+          if (await unblockReason(reason)) await requestSync();
           window.location.replace(entityUrlForReason(reason) ?? YOUTUBE_HOME);
         })();
       });

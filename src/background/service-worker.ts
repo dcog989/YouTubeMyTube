@@ -1,8 +1,9 @@
-import { STATE_KEY, SYNC_REQUEST } from '../shared/constants';
-import { buildDnrRules, getDynamicRules, updateDynamicRules } from '../shared/dnr';
-import { ensureState, loadState } from '../shared/state';
+import { SYNC_REQUEST } from '../shared/constants';
+import { buildDnrRules, type DnrRule, getDynamicRules, updateDynamicRules } from '../shared/dnr';
+import { onInstalled, onRuntimeMessage } from '../shared/runtime';
+import { ensureState, loadState, onLocalStorageChanged } from '../shared/state';
 
-function ruleKey(rule: chrome.declarativeNetRequest.Rule): string {
+function ruleKey(rule: DnrRule): string {
   const redirect = rule.action.redirect;
   return [
     rule.id,
@@ -11,10 +12,7 @@ function ruleKey(rule: chrome.declarativeNetRequest.Rule): string {
   ].join('\u0000');
 }
 
-function sameRules(
-  existing: chrome.declarativeNetRequest.Rule[],
-  next: chrome.declarativeNetRequest.Rule[],
-): boolean {
+function sameRules(existing: DnrRule[], next: DnrRule[]): boolean {
   if (existing.length !== next.length) return false;
   return existing.every((rule, index) => {
     const other = next[index];
@@ -45,16 +43,15 @@ function syncDynamicRules(): Promise<void> {
   return queue;
 }
 
-chrome.runtime.onInstalled.addListener(() => {
+onInstalled(() => {
   void ensureState().then(syncDynamicRules);
 });
 
-chrome.storage.onChanged.addListener((changes, areaName) => {
-  if (areaName !== 'local' || !changes[STATE_KEY]) return;
+onLocalStorageChanged(() => {
   void syncDynamicRules();
 });
 
-chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+onRuntimeMessage((message, _sender, sendResponse) => {
   if (!message || typeof message !== 'object') return;
   if ((message as { type?: unknown }).type !== SYNC_REQUEST) return;
   void syncDynamicRules().then(() => sendResponse());
