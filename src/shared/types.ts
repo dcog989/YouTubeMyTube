@@ -47,10 +47,7 @@ export interface Entity {
   commentContent?: string;
 }
 
-export interface MatchResult {
-  blocked: boolean;
-  reason?: Reason;
-}
+export type MatchResult = { blocked: false } | { blocked: true; reason: Reason };
 
 export type UrlKind = 'video' | 'shorts' | 'live' | 'embed' | 'channel' | 'handle' | 'other';
 

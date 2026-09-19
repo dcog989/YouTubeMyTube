@@ -49,7 +49,7 @@ function evaluateBlocking(): void {
   const parsed = parseYouTubeUrl(window.location.href);
 
   const area = matchAreaRedirect(path, state.areas);
-  if (area.blocked && area.reason) {
+  if (area.blocked) {
     redirectFor(area.reason);
     return;
   }
@@ -61,7 +61,7 @@ function evaluateBlocking(): void {
 
   const entity = currentContext();
   const result = matchEntity(entity, compiled);
-  if (result.blocked && result.reason) {
+  if (result.blocked) {
     if (result.reason.kind === 'video') {
       clearChannelOverlay();
       setPlayerBlank(true, result.reason);

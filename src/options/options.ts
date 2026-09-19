@@ -491,8 +491,7 @@ function showResult(blocked: boolean | null, message: string): void {
 }
 
 function blockedMessage(result: MatchResult): string {
-  if (!result.blocked) return 'Not blocked';
-  return result.reason ? reasonDetail(result.reason) : 'Blocked';
+  return result.blocked ? reasonDetail(result.reason) : 'Not blocked';
 }
 
 function pathnameOf(value: string): string {
