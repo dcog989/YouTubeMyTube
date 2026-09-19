@@ -112,6 +112,10 @@ export function setPlayerBlank(blanked: boolean, reason?: string): void {
     return;
   }
 
+  if (blankCover?.isConnected && reason !== undefined && blankCover.dataset.reason === reason) {
+    return;
+  }
+
   document.addEventListener('play', pauseVideo, true);
   pauseAll();
 
