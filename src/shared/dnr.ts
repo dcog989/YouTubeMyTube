@@ -76,16 +76,18 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
   for (const { id } of state.rules.videos) {
     const value = id.trim();
     if (!isActiveEntry(value)) continue;
-    push(videoIdPattern(value), blockedPage(formatReason('video', value)));
+    push(videoIdPattern(value), blockedPage(formatReason({ kind: 'video', value })));
   }
 
   for (const { id, handle } of state.rules.channels) {
     const channelId = id.trim();
     if (isActiveEntry(channelId)) {
-      push(channelIdPattern(channelId), blockedPage(formatReason('channel', channelId)));
+      const reason = formatReason({ kind: 'channel', value: channelId });
+      push(channelIdPattern(channelId), blockedPage(reason));
     }
     if (isActiveEntry(handle)) {
-      push(handlePattern(handle), blockedPage(formatReason('handle', handle)), false);
+      const reason = formatReason({ kind: 'handle', value: handle });
+      push(handlePattern(handle), blockedPage(reason), false);
     }
   }
 

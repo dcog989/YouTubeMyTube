@@ -1,4 +1,5 @@
 import type { AreaFlags } from './areas';
+import type { Reason } from './reason';
 
 export type { AreaFlags, AreaKey } from './areas';
 
@@ -48,7 +49,7 @@ export interface Entity {
 
 export interface MatchResult {
   blocked: boolean;
-  reason?: string;
+  reason?: Reason;
 }
 
 export type UrlKind = 'video' | 'shorts' | 'live' | 'embed' | 'channel' | 'handle' | 'other';

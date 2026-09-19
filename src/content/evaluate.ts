@@ -1,7 +1,7 @@
 import { BLOCKED_PAGE, YOUTUBE_HOME } from '../shared/constants';
 import { getRuntimeUrl } from '../shared/ext';
 import { matchAreaRedirect, matchEntity, parseYouTubeUrl } from '../shared/matcher';
-import { parseReason } from '../shared/reason';
+import { formatReason, type Reason } from '../shared/reason';
 import type { ParsedUrl } from '../shared/types';
 import { currentContext } from './entity';
 import { clearChannelOverlay, clearFeedback, setPlayerBlank, showChannelOverlay } from './overlay';
@@ -11,13 +11,13 @@ const HYDRATION_EVALUATE_MS = 500;
 
 let hydrationTimer: ReturnType<typeof setTimeout> | null = null;
 
-function redirectFor(reason: string): void {
-  if (parseReason(reason)?.kind === 'area') {
+function redirectFor(reason: Reason): void {
+  if (reason.kind === 'area') {
     window.location.replace(YOUTUBE_HOME);
     return;
   }
   const url = new URL(getRuntimeUrl(BLOCKED_PAGE));
-  url.searchParams.set('reason', reason);
+  url.searchParams.set('reason', formatReason(reason));
   window.location.replace(url.toString());
 }
 
@@ -62,8 +62,7 @@ function evaluateBlocking(): void {
   const entity = currentContext();
   const result = matchEntity(entity, compiled);
   if (result.blocked && result.reason) {
-    const kind = parseReason(result.reason)?.kind;
-    if (kind === 'video') {
+    if (result.reason.kind === 'video') {
       clearChannelOverlay();
       setPlayerBlank(true, result.reason);
       return;

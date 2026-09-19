@@ -1,6 +1,5 @@
 import { onLocalStorageChanged } from '../shared/ext';
 import { parseYouTubeUrl } from '../shared/matcher';
-import { formatReason } from '../shared/reason';
 import { addChannel, addVideo, removeChannel, removeVideo } from '../shared/rules';
 import { loadState, saveState } from '../shared/state';
 import { normalizeState } from '../shared/storage';
@@ -211,7 +210,7 @@ async function applyAction(action: MenuAction, owner: Element | undefined): Prom
     if (card) {
       hide(card);
     } else if (isCurrentVideo) {
-      setPlayerBlank(true, formatReason('video', action.value));
+      setPlayerBlank(true, { kind: 'video', value: action.value });
     }
   } else {
     if (card) {

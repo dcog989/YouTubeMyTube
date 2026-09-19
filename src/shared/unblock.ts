@@ -1,6 +1,6 @@
 import { YOUTUBE_ORIGIN } from './constants';
 import { normalizeHandle } from './matcher';
-import { parseReason, type ReasonKind } from './reason';
+import type { Reason, ReasonKind } from './reason';
 import { removeChannel, removeVideo } from './rules';
 import type { FilterRules } from './types';
 
@@ -19,16 +19,14 @@ const REASON_LABELS: Partial<Record<ReasonKind, string>> = {
   area: 'This page is blocked.',
 };
 
-export function ruleRefForReason(reason: string): RuleRef | null {
-  const parsed = parseReason(reason);
-  if (!parsed) return null;
-  switch (parsed.kind) {
+export function ruleRefForReason(reason: Reason): RuleRef | null {
+  switch (reason.kind) {
     case 'video':
-      return { kind: 'video', value: parsed.value };
+      return { kind: 'video', value: reason.value };
     case 'channel':
-      return { kind: 'channel', value: parsed.value };
+      return { kind: 'channel', value: reason.value };
     case 'handle': {
-      const value = normalizeHandle(parsed.value);
+      const value = normalizeHandle(reason.value);
       return value ? { kind: 'handle', value } : null;
     }
     default:
@@ -42,44 +40,41 @@ export function removeRule(rules: FilterRules, ref: RuleRef): boolean {
   return removeChannel(rules, { handle: ref.value });
 }
 
-export function reasonLabel(reason: string, fallback: string): string {
-  const parsed = parseReason(reason);
-  return (parsed && REASON_LABELS[parsed.kind]) || fallback;
+export function reasonLabel(reason: Reason, fallback: string): string {
+  return REASON_LABELS[reason.kind] ?? fallback;
 }
 
-export function reasonDetail(reason: string): string {
-  const parsed = parseReason(reason);
-  if (!parsed) return reason;
-  switch (parsed.kind) {
+export function reasonDetail(reason: Reason): string {
+  switch (reason.kind) {
     case 'video':
-      return `Blocked video ID: ${parsed.value}`;
+      return `Blocked video ID: ${reason.value}`;
     case 'channel':
-      return `Blocked channel ID: ${parsed.value}`;
+      return `Blocked channel ID: ${reason.value}`;
     case 'handle': {
-      const value = normalizeHandle(parsed.value);
-      return value ? `Blocked channel: @${value}` : reason;
+      const value = normalizeHandle(reason.value);
+      return value ? `Blocked channel: @${value}` : 'Blocked channel.';
     }
     case 'title':
-      return parsed.value ? `Blocked title: ${parsed.value}` : reason;
+      return reason.value ? `Blocked title: ${reason.value}` : 'Blocked by a title filter.';
     case 'channelName':
-      return parsed.value ? `Blocked channel name: ${parsed.value}` : reason;
+      return reason.value
+        ? `Blocked channel name: ${reason.value}`
+        : 'Blocked by a channel filter.';
     case 'comment':
-      return parsed.value ? `Blocked comment: ${parsed.value}` : reason;
-    default:
-      return reason;
+      return reason.value ? `Blocked comment: ${reason.value}` : 'Blocked by a comment filter.';
+    case 'area':
+      return `Blocked page: ${reason.value}`;
   }
 }
 
-export function entityUrlForReason(reason: string): string | null {
-  const parsed = parseReason(reason);
-  if (!parsed) return null;
-  switch (parsed.kind) {
+export function entityUrlForReason(reason: Reason): string | null {
+  switch (reason.kind) {
     case 'video':
-      return `${YOUTUBE_ORIGIN}/watch?v=${encodeURIComponent(parsed.value)}`;
+      return `${YOUTUBE_ORIGIN}/watch?v=${encodeURIComponent(reason.value)}`;
     case 'channel':
-      return `${YOUTUBE_ORIGIN}/channel/${encodeURIComponent(parsed.value)}`;
+      return `${YOUTUBE_ORIGIN}/channel/${encodeURIComponent(reason.value)}`;
     case 'handle':
-      return `${YOUTUBE_ORIGIN}/@${encodeURIComponent(parsed.value.replace(/^@/, ''))}`;
+      return `${YOUTUBE_ORIGIN}/@${encodeURIComponent(normalizeHandle(reason.value))}`;
     default:
       return null;
   }

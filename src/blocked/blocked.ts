@@ -1,5 +1,6 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { openOptionsPage, requestSync } from '../shared/ext';
+import { parseReason, type Reason } from '../shared/reason';
 import { loadState, saveState } from '../shared/state';
 import { applyTheme } from '../shared/theme';
 import {
@@ -12,9 +13,10 @@ import {
 
 const FALLBACK_MESSAGE = 'This content is blocked.';
 
-function reasonFromQuery(): string {
+function reasonFromQuery(): Reason | null {
   const params = new URLSearchParams(window.location.search);
-  return params.get('reason') ?? '';
+  const raw = params.get('reason') ?? '';
+  return raw ? parseReason(raw) : null;
 }
 
 async function render(): Promise<void> {
@@ -52,7 +54,7 @@ async function render(): Promise<void> {
             await saveState(current);
             await requestSync();
           }
-          window.location.replace(entityUrlForReason(reason) ?? YOUTUBE_HOME);
+          window.location.replace((reason && entityUrlForReason(reason)) ?? YOUTUBE_HOME);
         })();
       });
     } else {

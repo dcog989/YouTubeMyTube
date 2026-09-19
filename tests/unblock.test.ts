@@ -10,23 +10,26 @@ import {
 
 describe('ruleRefForReason', () => {
   it('maps exact video, channel and handle reasons', () => {
-    expect(ruleRefForReason('video id dQw4w9WgXcQ')).toEqual({
+    expect(ruleRefForReason({ kind: 'video', value: 'dQw4w9WgXcQ' })).toEqual({
       kind: 'video',
       value: 'dQw4w9WgXcQ',
     });
-    expect(ruleRefForReason('channel id UCabc')).toEqual({ kind: 'channel', value: 'UCabc' });
-    expect(ruleRefForReason('channel handle @SomeChannel')).toEqual({
+    expect(ruleRefForReason({ kind: 'channel', value: 'UCabc' })).toEqual({
+      kind: 'channel',
+      value: 'UCabc',
+    });
+    expect(ruleRefForReason({ kind: 'handle', value: 'SomeChannel' })).toEqual({
       kind: 'handle',
       value: 'somechannel',
     });
   });
 
-  it('returns null for pattern and malformed reasons', () => {
-    expect(ruleRefForReason('title filter "clickbait"')).toBeNull();
-    expect(ruleRefForReason('channel filter "drama"')).toBeNull();
-    expect(ruleRefForReason('comment filter "spam"')).toBeNull();
-    expect(ruleRefForReason('area shortsPage')).toBeNull();
-    expect(ruleRefForReason('channel handle @')).toBeNull();
+  it('returns null for pattern, area and empty-handle reasons', () => {
+    expect(ruleRefForReason({ kind: 'title', value: 'clickbait' })).toBeNull();
+    expect(ruleRefForReason({ kind: 'channelName', value: 'drama' })).toBeNull();
+    expect(ruleRefForReason({ kind: 'comment', value: 'spam' })).toBeNull();
+    expect(ruleRefForReason({ kind: 'area', value: 'shortsPage' })).toBeNull();
+    expect(ruleRefForReason({ kind: 'handle', value: '@' })).toBeNull();
   });
 });
 
@@ -56,41 +59,58 @@ describe('removeRule', () => {
 
 describe('reasonLabel', () => {
   it('labels known reason kinds and falls back otherwise', () => {
-    expect(reasonLabel('video id x', 'fallback')).toBe('This video is blocked.');
-    expect(reasonLabel('channel handle @x', 'fallback')).toBe('This channel is blocked.');
-    expect(reasonLabel('channel filter "x"', 'fallback')).toBe('This channel is blocked.');
-    expect(reasonLabel('area homePage', 'fallback')).toBe('This page is blocked.');
-    expect(reasonLabel('title filter "x"', 'fallback')).toBe('fallback');
-    expect(reasonLabel('', 'fallback')).toBe('fallback');
+    expect(reasonLabel({ kind: 'video', value: 'x' }, 'fallback')).toBe('This video is blocked.');
+    expect(reasonLabel({ kind: 'handle', value: 'x' }, 'fallback')).toBe(
+      'This channel is blocked.',
+    );
+    expect(reasonLabel({ kind: 'channelName', value: 'x' }, 'fallback')).toBe(
+      'This channel is blocked.',
+    );
+    expect(reasonLabel({ kind: 'area', value: 'homePage' }, 'fallback')).toBe(
+      'This page is blocked.',
+    );
+    expect(reasonLabel({ kind: 'title', value: 'x' }, 'fallback')).toBe('fallback');
   });
 });
 
 describe('reasonDetail', () => {
   it('describes entity and pattern matches', () => {
-    expect(reasonDetail('video id abc')).toBe('Blocked video ID: abc');
-    expect(reasonDetail('channel id UC1')).toBe('Blocked channel ID: UC1');
-    expect(reasonDetail('channel handle @foo')).toBe('Blocked channel: @foo');
-    expect(reasonDetail('channel handle @FooBar')).toBe('Blocked channel: @foobar');
-    expect(reasonDetail('title filter "x"')).toBe('Blocked title: x');
-    expect(reasonDetail('channel filter "x"')).toBe('Blocked channel name: x');
-    expect(reasonDetail('comment filter "x"')).toBe('Blocked comment: x');
+    expect(reasonDetail({ kind: 'video', value: 'abc' })).toBe('Blocked video ID: abc');
+    expect(reasonDetail({ kind: 'channel', value: 'UC1' })).toBe('Blocked channel ID: UC1');
+    expect(reasonDetail({ kind: 'handle', value: 'foo' })).toBe('Blocked channel: @foo');
+    expect(reasonDetail({ kind: 'handle', value: 'FooBar' })).toBe('Blocked channel: @foobar');
+    expect(reasonDetail({ kind: 'title', value: 'x' })).toBe('Blocked title: x');
+    expect(reasonDetail({ kind: 'channelName', value: 'x' })).toBe('Blocked channel name: x');
+    expect(reasonDetail({ kind: 'comment', value: 'x' })).toBe('Blocked comment: x');
+    expect(reasonDetail({ kind: 'area', value: 'shortsPage' })).toBe('Blocked page: shortsPage');
   });
 
-  it('falls back to the raw reason', () => {
-    expect(reasonDetail('area shortsPage')).toBe('area shortsPage');
-    expect(reasonDetail('comment filter ""')).toBe('comment filter ""');
+  it('falls back to a generic description for empty pattern values', () => {
+    expect(reasonDetail({ kind: 'handle', value: '@' })).toBe('Blocked channel.');
+    expect(reasonDetail({ kind: 'title', value: '' })).toBe('Blocked by a title filter.');
+    expect(reasonDetail({ kind: 'channelName', value: '' })).toBe('Blocked by a channel filter.');
+    expect(reasonDetail({ kind: 'comment', value: '' })).toBe('Blocked by a comment filter.');
   });
 });
 
 describe('entityUrlForReason', () => {
   it('builds YouTube URLs for exact matches', () => {
-    expect(entityUrlForReason('video id abc')).toBe('https://www.youtube.com/watch?v=abc');
-    expect(entityUrlForReason('channel id UC1')).toBe('https://www.youtube.com/channel/UC1');
-    expect(entityUrlForReason('channel handle @foo')).toBe('https://www.youtube.com/@foo');
+    expect(entityUrlForReason({ kind: 'video', value: 'abc' })).toBe(
+      'https://www.youtube.com/watch?v=abc',
+    );
+    expect(entityUrlForReason({ kind: 'channel', value: 'UC1' })).toBe(
+      'https://www.youtube.com/channel/UC1',
+    );
+    expect(entityUrlForReason({ kind: 'handle', value: 'foo' })).toBe(
+      'https://www.youtube.com/@foo',
+    );
+    expect(entityUrlForReason({ kind: 'handle', value: '@Foo' })).toBe(
+      'https://www.youtube.com/@foo',
+    );
   });
 
   it('returns null otherwise', () => {
-    expect(entityUrlForReason('title filter "x"')).toBeNull();
-    expect(entityUrlForReason('area homePage')).toBeNull();
+    expect(entityUrlForReason({ kind: 'title', value: 'x' })).toBeNull();
+    expect(entityUrlForReason({ kind: 'area', value: 'homePage' })).toBeNull();
   });
 });

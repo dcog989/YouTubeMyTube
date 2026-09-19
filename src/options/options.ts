@@ -26,8 +26,16 @@ import {
 import { loadState, saveState } from '../shared/state';
 import { defaultState, normalizeState } from '../shared/storage';
 import { applyTheme, isTheme } from '../shared/theme';
-import type { AreaKey, BlockerState, ChannelEntry, Entity, VideoEntry } from '../shared/types';
+import type {
+  AreaKey,
+  BlockerState,
+  ChannelEntry,
+  Entity,
+  MatchResult,
+  VideoEntry,
+} from '../shared/types';
 import { byId, h } from '../shared/ui';
+import { reasonDetail } from '../shared/unblock';
 
 const patternEditors = new Map<PatternFilterKey, HTMLTextAreaElement>();
 const areaInputs = new Map<AreaKey, HTMLInputElement>();
@@ -482,6 +490,11 @@ function showResult(blocked: boolean | null, message: string): void {
   setStatus('test-result', blocked === null ? '' : message, !blocked);
 }
 
+function blockedMessage(result: MatchResult): string {
+  if (!result.blocked) return 'Not blocked';
+  return result.reason ? reasonDetail(result.reason) : 'Blocked';
+}
+
 function pathnameOf(value: string): string {
   try {
     return new URL(value, YOUTUBE_ORIGIN).pathname;
@@ -499,7 +512,7 @@ function testUrl(): void {
   const parsed = parseYouTubeUrl(value);
   const compiled = compileRules(draft.rules);
   const result = matchDirectNavigation(parsed, pathnameOf(value), compiled, draft.areas);
-  showResult(result.blocked, result.blocked ? `Blocked — ${result.reason}` : 'Not blocked');
+  showResult(result.blocked, blockedMessage(result));
 }
 
 function testText(): void {
@@ -517,7 +530,7 @@ function testText(): void {
   else entity.commentContent = value;
 
   const result = matchEntity(entity, compileRules(draft.rules));
-  showResult(result.blocked, result.blocked ? `Blocked — ${result.reason}` : 'Not blocked');
+  showResult(result.blocked, blockedMessage(result));
 }
 
 function exportSettings(): void {

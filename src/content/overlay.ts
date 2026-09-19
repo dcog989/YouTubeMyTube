@@ -1,5 +1,6 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { getRuntimeUrl } from '../shared/ext';
+import type { Reason } from '../shared/reason';
 import { loadState, saveState } from '../shared/state';
 import { h } from '../shared/ui';
 import { reasonDetail, removeRule, ruleRefForReason } from '../shared/unblock';
@@ -23,7 +24,7 @@ const PLAYER_BOX_SELECTORS = [
 ];
 
 export interface ChannelOverlayInfo {
-  reason: string;
+  reason: Reason;
   name?: string;
   id?: string;
 }
@@ -34,6 +35,11 @@ let blankObserver: ResizeObserver | null = null;
 let placeFrame = 0;
 let playerBox: HTMLElement | null = null;
 let currentKey = '';
+let currentBlankKey: string | null = null;
+
+function reasonKey(reason: Reason): string {
+  return `${reason.kind}\u0000${reason.value}`;
+}
 
 function findPlayerBox(): HTMLElement | null {
   let fallback: HTMLElement | null = null;
@@ -103,6 +109,7 @@ function removeBlankCover(): void {
   blankObserver?.disconnect();
   blankObserver = null;
   playerBox = null;
+  currentBlankKey = null;
   blankCover?.remove();
   blankCover = null;
 }
@@ -118,7 +125,7 @@ function pauseAll(): void {
   });
 }
 
-export function setPlayerBlank(blanked: boolean, reason?: string): void {
+export function setPlayerBlank(blanked: boolean, reason?: Reason): void {
   document.documentElement.classList.toggle(VIDEO_BLANK_CLASS, blanked);
 
   if (!blanked) {
@@ -126,9 +133,8 @@ export function setPlayerBlank(blanked: boolean, reason?: string): void {
     return;
   }
 
-  if (blankCover?.isConnected && reason !== undefined && blankCover.dataset.reason === reason) {
-    return;
-  }
+  const key = reason ? reasonKey(reason) : null;
+  if (blankCover?.isConnected && key !== null && currentBlankKey === key) return;
 
   document.addEventListener('play', pauseVideo, true);
   pauseAll();
@@ -144,6 +150,7 @@ export function setPlayerBlank(blanked: boolean, reason?: string): void {
   }
 
   if (reason) renderBlankContent(blankCover, reason);
+  currentBlankKey = key;
   watchCoverBox();
   placeCover();
 }
@@ -171,7 +178,7 @@ function buildLogo(className: string): HTMLImageElement {
   return h('img', { className, src: getRuntimeUrl(LOGO_PATH), alt: '' });
 }
 
-function buildActions(reason: string): HTMLElement {
+function buildActions(reason: Reason): HTMLElement {
   const actions = h('div', { className: 'ytb-block-actions' });
 
   const ref = ruleRefForReason(reason);
@@ -205,7 +212,7 @@ function buildActions(reason: string): HTMLElement {
 }
 
 function buildOverlay(info: ChannelOverlayInfo): HTMLElement {
-  const root = h('div', { className: OVERLAY_CLASS, 'data-ytb-reason': info.reason });
+  const root = h('div', { className: OVERLAY_CLASS });
   const channel = channelLabel(info);
 
   root.append(buildLogo('ytb-block-logo'));
@@ -218,10 +225,7 @@ function buildOverlay(info: ChannelOverlayInfo): HTMLElement {
   return root;
 }
 
-function renderBlankContent(cover: HTMLElement, reason: string): void {
-  if (cover.dataset.reason === reason) return;
-  cover.dataset.reason = reason;
-
+function renderBlankContent(cover: HTMLElement, reason: Reason): void {
   cover.replaceChildren(
     buildLogo('ytb-blank-logo'),
     h('h2', { className: 'ytb-blank-title', text: 'Blocked by YouTubeMyTube' }),
@@ -234,7 +238,7 @@ export function showChannelOverlay(info: ChannelOverlayInfo): void {
   const host = document.body;
   if (!host) return;
 
-  const key = `${info.reason}|${info.name ?? ''}|${info.id ?? ''}`;
+  const key = `${reasonKey(info.reason)}|${info.name ?? ''}|${info.id ?? ''}`;
   if (overlay && currentKey === key && overlay.isConnected) return;
   clearChannelOverlay();
 

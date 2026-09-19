@@ -14,17 +14,19 @@ export interface Reason {
   value: string;
 }
 
+// Values may contain newlines (titles, comments), so capture with `[\s\S]`.
 const REASON_PATTERNS: ReadonlyArray<readonly [ReasonKind, RegExp]> = [
-  ['video', /^video id (.+)$/],
-  ['channel', /^channel id (.+)$/],
+  ['video', /^video id ([\s\S]+)$/],
+  ['channel', /^channel id ([\s\S]+)$/],
   ['handle', /^channel handle (.+)$/],
-  ['channelName', /^channel filter "(.*)"$/],
-  ['title', /^title filter "(.*)"$/],
-  ['comment', /^comment filter "(.*)"$/],
-  ['area', /^area (.+)$/],
+  ['channelName', /^channel filter "([\s\S]*)"$/],
+  ['title', /^title filter "([\s\S]*)"$/],
+  ['comment', /^comment filter "([\s\S]*)"$/],
+  ['area', /^area ([\s\S]+)$/],
 ];
 
-export function formatReason(kind: ReasonKind, value = ''): string {
+export function formatReason(reason: Reason): string {
+  const { kind, value } = reason;
   switch (kind) {
     case 'video':
       return `video id ${value}`;
@@ -45,8 +47,9 @@ export function formatReason(kind: ReasonKind, value = ''): string {
 
 export function parseReason(raw: string): Reason | null {
   for (const [kind, pattern] of REASON_PATTERNS) {
-    const match = pattern.exec(raw);
-    if (match?.[1] !== undefined) return { kind, value: match[1] };
+    const value = pattern.exec(raw)?.[1];
+    if (value === undefined) continue;
+    return { kind, value: kind === 'handle' ? value.replace(/^@/, '') : value };
   }
   return null;
 }

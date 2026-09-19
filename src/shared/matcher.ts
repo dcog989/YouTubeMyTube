@@ -1,6 +1,5 @@
 import { AREA_DEFINITIONS, REDIRECT_AREAS } from './areas';
 import { YOUTUBE_DOMAIN, YOUTUBE_HOSTS, YOUTUBE_ORIGIN } from './constants';
-import { formatReason } from './reason';
 import type {
   AreaFlags,
   AreaKey,
@@ -101,28 +100,29 @@ export function hasCommentRules(rules: CompiledRules): boolean {
 
 export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
   if (entity.videoId && rules.videoIds.has(entity.videoId)) {
-    return { blocked: true, reason: formatReason('video', entity.videoId) };
+    return { blocked: true, reason: { kind: 'video', value: entity.videoId } };
   }
   if (entity.channelId && rules.channelIds.has(entity.channelId)) {
-    return { blocked: true, reason: formatReason('channel', entity.channelId) };
+    return { blocked: true, reason: { kind: 'channel', value: entity.channelId } };
   }
   if (entity.handle && rules.handles.has(normalizeHandle(entity.handle))) {
-    return { blocked: true, reason: formatReason('handle', normalizeHandle(entity.handle)) };
+    const value = normalizeHandle(entity.handle);
+    return { blocked: true, reason: { kind: 'handle', value } };
   }
   if (entity.title && matchesAny(rules.titleFilters, entity.title)) {
-    return { blocked: true, reason: formatReason('title', entity.title) };
+    return { blocked: true, reason: { kind: 'title', value: entity.title } };
   }
   if (entity.channelName && matchesAny(rules.channelFilters, entity.channelName)) {
-    return { blocked: true, reason: formatReason('channelName', entity.channelName) };
+    return { blocked: true, reason: { kind: 'channelName', value: entity.channelName } };
   }
   if (entity.handle && matchesAny(rules.channelFilters, entity.handle)) {
-    return { blocked: true, reason: formatReason('channelName', entity.handle) };
+    return { blocked: true, reason: { kind: 'channelName', value: entity.handle } };
   }
   if (entity.commentAuthor && matchesAny(rules.commentFilters, entity.commentAuthor)) {
-    return { blocked: true, reason: formatReason('comment', entity.commentAuthor) };
+    return { blocked: true, reason: { kind: 'comment', value: entity.commentAuthor } };
   }
   if (entity.commentContent && matchesAny(rules.commentFilters, entity.commentContent)) {
-    return { blocked: true, reason: formatReason('comment', entity.commentContent) };
+    return { blocked: true, reason: { kind: 'comment', value: entity.commentContent } };
   }
   return { blocked: false };
 }
@@ -180,7 +180,7 @@ export function areaForPath(pathname: string): AreaKey | null {
 export function matchAreaRedirect(pathname: string, areas: AreaFlags): MatchResult {
   const area = areaForPath(pathname);
   if (area && REDIRECT_AREAS.has(area) && areas[area]) {
-    return { blocked: true, reason: formatReason('area', area) };
+    return { blocked: true, reason: { kind: 'area', value: area } };
   }
   return { blocked: false };
 }
@@ -192,13 +192,14 @@ export function matchDirectNavigation(
   areas: AreaFlags,
 ): MatchResult {
   if (parsed.videoId && rules.videoIds.has(parsed.videoId)) {
-    return { blocked: true, reason: formatReason('video', parsed.videoId) };
+    return { blocked: true, reason: { kind: 'video', value: parsed.videoId } };
   }
   if (parsed.channelId && rules.channelIds.has(parsed.channelId)) {
-    return { blocked: true, reason: formatReason('channel', parsed.channelId) };
+    return { blocked: true, reason: { kind: 'channel', value: parsed.channelId } };
   }
   if (parsed.handle && rules.handles.has(normalizeHandle(parsed.handle))) {
-    return { blocked: true, reason: formatReason('handle', normalizeHandle(parsed.handle)) };
+    const value = normalizeHandle(parsed.handle);
+    return { blocked: true, reason: { kind: 'handle', value } };
   }
   return matchAreaRedirect(pathname, areas);
 }
