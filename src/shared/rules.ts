@@ -1,4 +1,4 @@
-import { normalizeHandle } from './matcher';
+import { isActiveEntry, normalizeHandle } from './matcher';
 import type { ChannelEntry, FilterRules, VideoEntry } from './types';
 
 export interface ChannelLookup {
@@ -30,7 +30,7 @@ export function hasVideoId(rules: FilterRules, videoId: string): boolean {
 }
 
 export function addVideo(rules: FilterRules, entry: VideoEntry): boolean {
-  if (!entry.id.trim() || hasVideoId(rules, entry.id)) return false;
+  if (!isActiveEntry(entry.id) || hasVideoId(rules, entry.id)) return false;
   rules.videos.push(entry);
   return true;
 }
@@ -44,7 +44,7 @@ export function removeVideo(rules: FilterRules, videoId: string): boolean {
 }
 
 export function addChannel(rules: FilterRules, entry: ChannelEntry): boolean {
-  if (!entry.id.trim() && !normalizeHandle(entry.handle)) return false;
+  if (!isActiveEntry(entry.id) && !isActiveEntry(normalizeHandle(entry.handle))) return false;
   if (findChannel(rules, { id: entry.id, handle: entry.handle })) return false;
   rules.channels.push(entry);
   return true;

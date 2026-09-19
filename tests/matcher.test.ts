@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   areaForPath,
   compileRules,
+  countActiveEntries,
+  isActiveEntry,
   matchDirectNavigation,
   matchEntity,
   parseYouTubeUrl,
@@ -91,6 +93,16 @@ describe('matchEntity', () => {
     const rules = rulesWith({ commentFilters: ['needle'] });
     expect(matchEntity({ commentContent: 'needle' }, rules).blocked).toBe(true);
     expect(matchEntity({ commentContent: `${'x'.repeat(5000)}needle` }, rules).blocked).toBe(false);
+  });
+});
+
+describe('isActiveEntry / countActiveEntries', () => {
+  it('ignores blank and comment entries after trimming', () => {
+    expect(isActiveEntry(' hello ')).toBe(true);
+    expect(isActiveEntry('// note')).toBe(false);
+    expect(isActiveEntry('  // note')).toBe(false);
+    expect(isActiveEntry('   ')).toBe(false);
+    expect(countActiveEntries(['a', '// b', '  // c', '', ' d '])).toBe(2);
   });
 });
 
