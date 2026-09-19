@@ -191,15 +191,9 @@ export function matchDirectNavigation(
   rules: CompiledRules,
   areas: AreaFlags,
 ): MatchResult {
-  if (parsed.videoId && rules.videoIds.has(parsed.videoId)) {
-    return { blocked: true, reason: { kind: 'video', value: parsed.videoId } };
-  }
-  if (parsed.channelId && rules.channelIds.has(parsed.channelId)) {
-    return { blocked: true, reason: { kind: 'channel', value: parsed.channelId } };
-  }
-  if (parsed.handle && rules.handles.has(normalizeHandle(parsed.handle))) {
-    const value = normalizeHandle(parsed.handle);
-    return { blocked: true, reason: { kind: 'handle', value } };
-  }
-  return matchAreaRedirect(pathname, areas);
+  const result = matchEntity(
+    { videoId: parsed.videoId, channelId: parsed.channelId, handle: parsed.handle },
+    rules,
+  );
+  return result.blocked ? result : matchAreaRedirect(pathname, areas);
 }
