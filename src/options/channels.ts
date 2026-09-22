@@ -1,5 +1,5 @@
 import { t } from '../shared/i18n';
-import { parseBlockInput, resolveChannel } from '../shared/resolve';
+import { parseBlockInput, resolveChannel, resolveChannelByName } from '../shared/resolve';
 import {
   addChannel as addChannelRule,
   channelMatches,
@@ -123,15 +123,11 @@ export async function addChannel(): Promise<void> {
     return;
   }
 
-  if (!id && !handle) {
-    setStatus('channel-status', t('addedNamed', stored.name), true);
-    return;
-  }
-
   setStatus('channel-status', t('channelsLooking'), true);
 
   try {
-    const meta = await resolveChannel({ id, handle });
+    const meta =
+      id || handle ? await resolveChannel({ id, handle }) : await resolveChannelByName(name);
     if (handle && !meta.name && !meta.id) {
       const index = draft.rules.channels.indexOf(stored);
       if (index !== -1) draft.rules.channels.splice(index, 1);
@@ -156,7 +152,7 @@ export async function addChannel(): Promise<void> {
       return;
     }
     if (meta.id) stored.id = meta.id;
-    if (meta.name) stored.name = meta.name;
+    if (meta.name && !stored.name) stored.name = meta.name;
     if (meta.handle) stored.handle = meta.handle;
     renderChannels();
     setDirty(true);

@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   channelMetaFromHtml,
+  channelMetaFromSearch,
   channelRefFromOembed,
   parseBlockInput,
   resolveChannel,
+  resolveChannelByName,
   resolveVideoChannel,
   resolveVideoTitle,
   videoTitleFromOembed,
@@ -99,6 +101,22 @@ describe('channelMetaFromHtml', () => {
   });
 });
 
+const SEARCH_HTML = `<script>var ytInitialData = {"contents":{"channelRenderer":{"channelId":"UCCB1oLQY3XM86ACD05Lq4HQ","title":{"simpleText":"3 Minutes of Aviation"},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@3MinutesofAviation"}}}}};</script>`;
+
+describe('channelMetaFromSearch', () => {
+  it('extracts the first channel result', () => {
+    expect(channelMetaFromSearch(SEARCH_HTML)).toEqual({
+      id: 'UCCB1oLQY3XM86ACD05Lq4HQ',
+      name: '3 Minutes of Aviation',
+      handle: '3minutesofaviation',
+    });
+  });
+
+  it('returns empty fields when there is no channel result', () => {
+    expect(channelMetaFromSearch('<html></html>')).toEqual({ id: '', name: '', handle: '' });
+  });
+});
+
 describe('videoTitleFromOembed', () => {
   it('reads a title and tolerates other payloads', () => {
     expect(videoTitleFromOembed({ title: ' Cool Video ' })).toBe('Cool Video');
@@ -131,6 +149,19 @@ describe('resolveChannel / resolveVideoTitle', () => {
   it('returns an empty title when oEmbed fails', async () => {
     const title = await resolveVideoTitle('dQw4w9WgXcQ', { fetch: fetchStub('{}', false) });
     expect(title).toBe('');
+  });
+});
+
+describe('resolveChannelByName', () => {
+  it('resolves a channel name through the channel search', async () => {
+    const meta = await resolveChannelByName('3 Minutes of Aviation', {
+      fetch: fetchStub(SEARCH_HTML),
+    });
+    expect(meta).toEqual({
+      id: 'UCCB1oLQY3XM86ACD05Lq4HQ',
+      name: '3 Minutes of Aviation',
+      handle: '3minutesofaviation',
+    });
   });
 });
 

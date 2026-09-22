@@ -1,5 +1,10 @@
 import { normalizeState } from '../shared/normalize';
-import { type ChannelMeta, resolveChannel, resolveVideoTitle } from '../shared/resolve';
+import {
+  type ChannelMeta,
+  resolveChannel,
+  resolveChannelByName,
+  resolveVideoTitle,
+} from '../shared/resolve';
 import { saveState } from '../shared/state';
 import type { ChannelEntry, VideoEntry } from '../shared/types';
 import { commit, getDraft, isDirty, notify } from './state';
@@ -13,6 +18,7 @@ interface ChannelTarget {
   entry: ChannelEntry;
   id: string;
   handle: string;
+  name: string;
 }
 
 interface VideoTarget {
@@ -21,7 +27,9 @@ interface VideoTarget {
 }
 
 function needsChannelBackfill(channel: ChannelEntry): boolean {
-  return !channel.lookupFailed && !channel.name;
+  if (channel.lookupFailed) return false;
+  if (!channel.name) return true;
+  return !channel.id && !channel.handle;
 }
 
 function needsVideoBackfill(video: VideoEntry): boolean {
@@ -45,7 +53,7 @@ async function backfillBatch(): Promise<{ changed: boolean; definitive: number }
   const draft = getDraft();
   const channelTargets: ChannelTarget[] = draft.rules.channels
     .filter(needsChannelBackfill)
-    .map((entry) => ({ entry, id: entry.id, handle: entry.handle }));
+    .map((entry) => ({ entry, id: entry.id, handle: entry.handle, name: entry.name }));
   const videoTargets: VideoTarget[] = draft.rules.videos
     .filter(needsVideoBackfill)
     .map((entry) => ({ entry, id: entry.id }));
@@ -57,12 +65,21 @@ async function backfillBatch(): Promise<{ changed: boolean; definitive: number }
   for (const target of channelTargets) {
     if (lookups >= MAX_BACKFILL_LOOKUPS) break;
     if (!draft.rules.channels.includes(target.entry)) continue;
-    if (target.entry.id !== target.id || target.entry.handle !== target.handle) continue;
+    if (
+      target.entry.id !== target.id ||
+      target.entry.handle !== target.handle ||
+      target.entry.name !== target.name
+    ) {
+      continue;
+    }
     lookups += 1;
 
+    const nameOnly = !target.id && !target.handle;
     let meta: ChannelMeta | null = null;
     try {
-      meta = await resolveChannel({ id: target.id, handle: target.handle });
+      meta = nameOnly
+        ? await resolveChannelByName(target.name)
+        : await resolveChannel({ id: target.id, handle: target.handle });
     } catch {
       meta = null;
     }
@@ -73,7 +90,7 @@ async function backfillBatch(): Promise<{ changed: boolean; definitive: number }
       target.entry.id = meta.id;
       changed = true;
     }
-    if (meta.name && meta.name !== target.entry.name) {
+    if (meta.name && !nameOnly && meta.name !== target.entry.name) {
       target.entry.name = meta.name;
       changed = true;
     }
@@ -87,7 +104,7 @@ async function backfillBatch(): Promise<{ changed: boolean; definitive: number }
         delete target.entry.lookupFailed;
         changed = true;
       }
-    } else if (!target.entry.lookupFailed) {
+    } else if (!nameOnly && !target.entry.lookupFailed) {
       target.entry.lookupFailed = true;
       changed = true;
     }

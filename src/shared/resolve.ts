@@ -95,6 +95,20 @@ export function channelMetaFromHtml(html: string): ChannelMeta {
   return { id, name, handle };
 }
 
+const SEARCH_CHANNEL_FILTER = 'EgIQAg%3D%3D';
+
+export function channelMetaFromSearch(html: string): ChannelMeta {
+  const start = html.indexOf('"channelRenderer":');
+  if (start === -1) return { id: '', name: '', handle: '' };
+  const block = html.slice(start, start + 4096);
+  const id = firstGroup(block, /"channelId":"(UC[A-Za-z0-9_-]+)"/);
+  const name =
+    firstGroup(block, /"title":\{"simpleText":"([^"]*)"/) ||
+    firstGroup(block, /"title":\{"runs":\[\{"text":"([^"]*)"/);
+  const canonical = firstGroup(block, /"canonicalBaseUrl":"\/(@[^"]+)"/);
+  return { id, name, handle: canonical ? normalizeHandle(canonical) : '' };
+}
+
 export function videoTitleFromOembed(payload: unknown): string {
   if (!payload || typeof payload !== 'object') return '';
   const title = (payload as Record<string, unknown>).title;
@@ -166,4 +180,18 @@ export async function resolveChannel(
 
   const meta = channelMetaFromHtml(await response.text());
   return { id: meta.id || id, name: meta.name, handle: meta.handle || handle };
+}
+
+export async function resolveChannelByName(
+  name: string,
+  deps?: Partial<ResolveDeps>,
+): Promise<ChannelMeta> {
+  const query = name.trim();
+  if (!query) return { id: '', name: '', handle: '' };
+
+  const url = `${YOUTUBE_ORIGIN}/results?search_query=${encodeURIComponent(query)}&sp=${SEARCH_CHANNEL_FILTER}`;
+  const response = await fetchWith(deps)(url);
+  if (!response.ok) return { id: '', name: '', handle: '' };
+
+  return channelMetaFromSearch(await response.text());
 }
