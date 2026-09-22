@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.12.0 - 2026-09-22
+#### Features
+- (**options**) accept channel names in the block-channel field - (c904264) - dcog989
+
+- - -
+
 ## 0.11.0 - 2026-09-22
 #### Features
 - (**options**) label unresolved channels and videos as "Not found" - (a861024) - dcog989
