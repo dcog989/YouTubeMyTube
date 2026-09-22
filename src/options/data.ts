@@ -4,15 +4,25 @@ import { h } from '../shared/ui';
 import { setStatus } from './dom';
 import { getDraft, notify, setDirty, setDraft } from './state';
 
+let exportUrl: string | null = null;
+
+function releaseExportUrl(): void {
+  if (!exportUrl) return;
+  URL.revokeObjectURL(exportUrl);
+  exportUrl = null;
+}
+
 export function exportSettings(): void {
   const blob = new Blob([JSON.stringify(normalizeState(getDraft()), null, 2)], {
     type: 'application/json',
   });
+  releaseExportUrl();
   const url = URL.createObjectURL(blob);
-  const anchor = h('a', { href: url, download: 'YouTubeMyTube-settings.json' });
-  anchor.click();
-  setTimeout(() => URL.revokeObjectURL(url), 0);
+  exportUrl = url;
+  h('a', { href: url, download: 'YouTubeMyTube-settings.json' }).click();
 }
+
+window.addEventListener('pagehide', releaseExportUrl);
 
 function isBlockerState(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false;
