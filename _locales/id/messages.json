@@ -165,6 +165,7 @@
   "channelsPasteInvalid": { "message": "Tempel URL saluran, @handle, atau ID saluran UC." },
   "channelsAlready": { "message": "Saluran itu sudah diblokir." },
   "channelsNotFound": { "message": "Tidak ada saluran yang ditemukan untuk $1." },
+  "notFound": { "message": "Tidak ditemukan" },
   "channelsLooking": { "message": "Mengambil detail saluran…" },
   "channelsAdded": { "message": "Saluran ditambahkan." },
   "channelsFetchFailed": { "message": "Saluran ditambahkan. Tidak dapat mengambil detail." },

@@ -169,6 +169,7 @@
   },
   "channelsAlready": { "message": "Dieser Kanal ist bereits blockiert." },
   "channelsNotFound": { "message": "Kein Kanal für $1 gefunden." },
+  "notFound": { "message": "Nicht gefunden" },
   "channelsLooking": { "message": "Kanaldetails werden abgerufen…" },
   "channelsAdded": { "message": "Kanal hinzugefügt." },
   "channelsFetchFailed": {

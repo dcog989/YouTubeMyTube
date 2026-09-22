@@ -167,6 +167,7 @@
   "channelsPasteInvalid": { "message": "Paste a channel URL, @handle, or UC channel ID." },
   "channelsAlready": { "message": "That channel is already blocked." },
   "channelsNotFound": { "message": "No channel found for $1." },
+  "notFound": { "message": "Not found" },
   "channelsLooking": { "message": "Looking up channel details…" },
   "channelsAdded": { "message": "Channel added." },
   "channelsFetchFailed": { "message": "Channel added. Could not fetch details." },

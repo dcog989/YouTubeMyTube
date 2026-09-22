@@ -70,7 +70,10 @@ export function renderVideos(): void {
         'tr',
         {},
         h('td', {}, idInput),
-        h('td', { className: 'entity-readonly', text: video.title || '—' }),
+        h('td', {
+          className: 'entity-readonly',
+          text: video.title || (video.lookupFailed ? t('notFound') : '—'),
+        }),
         h('td', { className: 'col-action' }, remove),
       ),
     );

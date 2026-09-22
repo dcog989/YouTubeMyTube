@@ -165,6 +165,7 @@
   "channelsPasteInvalid": { "message": "粘贴频道 URL、@handle 或 UC 频道 ID。" },
   "channelsAlready": { "message": "该频道已被屏蔽。" },
   "channelsNotFound": { "message": "未找到 $1 的频道。" },
+  "notFound": { "message": "未找到" },
   "channelsLooking": { "message": "正在获取频道详情…" },
   "channelsAdded": { "message": "已添加频道。" },
   "channelsFetchFailed": { "message": "已添加频道。无法获取详情。" },

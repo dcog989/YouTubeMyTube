@@ -169,6 +169,7 @@
   "channelsPasteInvalid": { "message": "Pega la URL de un canal, un @handle o un ID de canal UC." },
   "channelsAlready": { "message": "Ese canal ya está bloqueado." },
   "channelsNotFound": { "message": "No se encontró ningún canal para $1." },
+  "notFound": { "message": "No encontrado" },
   "channelsLooking": { "message": "Buscando los detalles del canal…" },
   "channelsAdded": { "message": "Canal añadido." },
   "channelsFetchFailed": { "message": "Canal añadido. No se pudieron obtener los detalles." },

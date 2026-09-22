@@ -167,6 +167,7 @@
   },
   "channelsAlready": { "message": "そのチャンネルはすでにブロックされています。" },
   "channelsNotFound": { "message": "$1 のチャンネルが見つかりませんでした。" },
+  "notFound": { "message": "見つかりません" },
   "channelsLooking": { "message": "チャンネルの詳細を取得中…" },
   "channelsAdded": { "message": "チャンネルを追加しました。" },
   "channelsFetchFailed": { "message": "チャンネルを追加しました。詳細を取得できませんでした。" },

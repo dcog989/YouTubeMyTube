@@ -167,6 +167,7 @@
   },
   "channelsAlready": { "message": "Bu kanal zaten engelli." },
   "channelsNotFound": { "message": "$1 için kanal bulunamadı." },
+  "notFound": { "message": "Bulunamadı" },
   "channelsLooking": { "message": "Kanal ayrıntıları alınıyor…" },
   "channelsAdded": { "message": "Kanal eklendi." },
   "channelsFetchFailed": { "message": "Kanal eklendi. Ayrıntılar alınamadı." },

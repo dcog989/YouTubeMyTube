@@ -80,7 +80,10 @@ export function renderChannels(): void {
         'tr',
         {},
         h('td', {}, idInput),
-        h('td', { className: 'entity-readonly', text: channel.name || '—' }),
+        h('td', {
+          className: 'entity-readonly',
+          text: channel.name || (channel.lookupFailed ? t('notFound') : '—'),
+        }),
         h('td', {
           className: 'entity-readonly',
           text: channel.handle ? `@${channel.handle}` : '—',
