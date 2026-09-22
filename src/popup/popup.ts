@@ -40,29 +40,27 @@ function renderContext(): void {
   const channelButton = byId<HTMLButtonElement>('block-channel');
 
   const hasChannel = activeChannelId !== null || activeHandle !== null;
-  if (!activeVideoId && !hasChannel) {
-    context.hidden = true;
-    return;
-  }
-
-  context.hidden = false;
-  videoButton.hidden = activeVideoId === null;
-  channelButton.hidden = !hasChannel;
-  videoButton.disabled = activeVideoId !== null && hasVideoId(state.rules, activeVideoId);
+  context.hidden = !activeVideoId && !hasChannel;
+  videoButton.hidden = false;
+  channelButton.hidden = false;
+  videoButton.disabled = activeVideoId === null || hasVideoId(state.rules, activeVideoId);
   const channel = findChannel(state.rules, { id: activeChannelId, handle: activeHandle });
-  channelButton.disabled = hasChannel && channel !== undefined;
+  channelButton.disabled = !hasChannel || channel !== undefined;
 }
 
 async function detectActiveTab(): Promise<void> {
-  const tab = await queryActiveTab();
-  if (!tab?.url) return;
+  activeVideoId = null;
+  activeChannelId = null;
+  activeHandle = null;
+  activeChannelName = null;
 
-  const parsed = parseYouTubeUrl(tab.url);
+  const tab = await queryActiveTab();
+  const parsed = tab?.url ? parseYouTubeUrl(tab.url) : { kind: 'other' as const };
   if (parsed.videoId) activeVideoId = parsed.videoId;
   if (parsed.channelId) activeChannelId = parsed.channelId;
   if (parsed.handle) activeHandle = parsed.handle.toLowerCase();
 
-  if (tab.id !== undefined && parsed.videoId) {
+  if (tab?.id !== undefined && parsed.videoId) {
     const context = await sendTabMessage<Entity>(tab.id, { type: CONTEXT_REQUEST });
     if (context?.channelId && !activeChannelId) activeChannelId = context.channelId;
     if (context?.handle && !activeHandle) activeHandle = context.handle.toLowerCase();
@@ -127,6 +125,9 @@ async function init(): Promise<void> {
   renderCounts();
   registerHandlers();
   await detectActiveTab();
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') void detectActiveTab();
+  });
 }
 
 void init();
