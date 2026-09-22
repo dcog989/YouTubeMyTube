@@ -101,6 +101,12 @@ export function computeItemStyle(container: MenuContainer): MenuItemStyle {
   return style;
 }
 
+export function menuItemLabel(item: Element): string {
+  const label = findLabelElement(item);
+  const text = label?.textContent ?? item.textContent ?? '';
+  return text.replace(/\s+/g, ' ').trim();
+}
+
 export function applyItemStyle(item: HTMLElement, style: MenuItemStyle): void {
   item.style.display = 'flex';
   item.style.alignItems = 'center';

@@ -34,3 +34,9 @@ export const MENU_POPUP_SELECTOR = [
 
 export const INJECTED_ATTR = 'data-ytb-menu-item';
 export const MOBILE_HOST = 'm.youtube.com';
+
+export const DONT_RECOMMEND_LABELS = [
+  "don't recommend channel",
+  'do not recommend channel',
+  "don't recommend this channel",
+] as const;

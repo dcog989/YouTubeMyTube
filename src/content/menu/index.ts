@@ -20,6 +20,7 @@ import {
 } from './container';
 import { persistAction } from './persist';
 import {
+  DONT_RECOMMEND_LABELS,
   INJECTED_ATTR,
   MENU_HOST_SELECTOR,
   MENU_ITEM_SELECTOR,
@@ -28,7 +29,13 @@ import {
   NON_MENU_SELECTOR,
 } from './selectors';
 import { attachShadows, observeRoot, scanExisting } from './shadow';
-import { applyItemStyle, computeItemStyle, createIcon, type MenuItemStyle } from './style';
+import {
+  applyItemStyle,
+  computeItemStyle,
+  createIcon,
+  type MenuItemStyle,
+  menuItemLabel,
+} from './style';
 
 export interface MenuInjector {
   init(): void;
@@ -117,10 +124,25 @@ export function createMenuInjector(deps: {
     return match ?? null;
   }
 
+  function clickDontRecommend(item: Element): void {
+    const container = parentContainer(item);
+    if (!container) return;
+    const scope = popupOf(container) ?? container;
+    for (const candidate of scope.querySelectorAll(MENU_ITEM_SELECTOR)) {
+      if (candidate.hasAttribute(INJECTED_ATTR)) continue;
+      const label = menuItemLabel(candidate).toLowerCase();
+      if (!(DONT_RECOMMEND_LABELS as readonly string[]).includes(label)) continue;
+      (candidate as HTMLElement).click();
+      return;
+    }
+  }
+
   function activateItem(item: Element): void {
     const action = liveActionFor(item);
     if (!action) return;
-    void applyAction(action, ownerForItem(item) ?? undefined);
+    const owner = ownerForItem(item) ?? undefined;
+    if (action.kind === 'channel' && action.mode === 'block') clickDontRecommend(item);
+    void applyAction(action, owner);
   }
 
   function createItem(action: MenuAction, owner: Element, style: MenuItemStyle): HTMLElement {
