@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.9.0 - 2026-09-22
+#### Features
+- (**content/menu**) click native "Don't recommend channel" on channel block - (5cd15e4) - dcog989
+- (**i18n**) localize the extension across 16 locales - (3a9c559) - dcog989
+#### Bug Fixes
+- (**content**) let theater mode expand when live chat is hidden - (22f1bc3) - dcog989
+- (**options**) backfill all imported entries in chained batches - (f8330ac) - dcog989
+- (**rules**) stop addChannel mutating its argument - (bfa0a75) - dcog989
+- (**ui**) vertically center button labels - (fdfe164) - dcog989
+#### Refactoring
+- (**background**) drop redundant onInstalled DNR sync - (162e0fc) - dcog989
+- (**content/menu**) extract channel cache into its own module - (c2f272a) - dcog989
+- (**options**) revoke export object URL on pagehide - (c11209f) - dcog989
+- (**resolve**) extract shared oEmbed fetch helper - (fd706e0) - dcog989
+
+- - -
+
 ## 0.8.1 - 2026-09-19
 #### Bug Fixes
 - (**content**) hide the Explore more topics shelf under promo sections - (f57408b) - dcog989
