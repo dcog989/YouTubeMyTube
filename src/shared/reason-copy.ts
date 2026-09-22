@@ -1,33 +1,47 @@
+import { t } from './i18n';
 import type { Reason, ReasonKind } from './reason';
 import { normalizeHandle } from './url';
 
 const LABELS: Partial<Record<ReasonKind, string>> = {
-  video: 'This video is blocked.',
-  channel: 'This channel is blocked.',
-  handle: 'This channel is blocked.',
-  channelName: 'This channel is blocked.',
-  area: 'This page is blocked.',
+  video: 'reasonVideoBlocked',
+  channel: 'reasonChannelBlocked',
+  handle: 'reasonChannelBlocked',
+  channelName: 'reasonChannelBlocked',
+  area: 'reasonAreaBlocked',
 };
 
-const DETAILS: Record<ReasonKind, (value: string) => string> = {
-  video: (value) => `Blocked video ID: ${value}`,
-  channel: (value) => `Blocked channel ID: ${value}`,
-  handle: (value) => {
-    const handle = normalizeHandle(value);
-    return handle ? `Blocked channel: @${handle}` : 'Blocked channel.';
+type Detail = { key: string; substitute: (value: string) => string | undefined };
+
+const DETAILS: Record<ReasonKind, Detail> = {
+  video: { key: 'reasonDetailVideoId', substitute: (value) => value },
+  channel: { key: 'reasonDetailChannelId', substitute: (value) => value },
+  handle: { key: 'reasonDetailHandle', substitute: (value) => normalizeHandle(value) || undefined },
+  title: { key: 'reasonDetailTitle', substitute: (value) => value },
+  channelName: {
+    key: 'reasonDetailChannelName',
+    substitute: (value) => value,
   },
-  title: (value) => (value ? `Blocked title: ${value}` : 'Blocked by a title filter.'),
-  channelName: (value) =>
-    value ? `Blocked channel name: ${value}` : 'Blocked by a channel filter.',
-  comment: (value) => (value ? `Blocked comment: ${value}` : 'Blocked by a comment filter.'),
-  area: (value) => `Blocked page: ${value}`,
+  comment: { key: 'reasonDetailComment', substitute: (value) => value },
+  area: { key: 'reasonDetailArea', substitute: (value) => value },
+};
+
+const EMPTY_DETAILS: Partial<Record<ReasonKind, string>> = {
+  handle: 'reasonDetailHandleEmpty',
+  title: 'reasonDetailTitleEmpty',
+  channelName: 'reasonDetailChannelNameEmpty',
+  comment: 'reasonDetailCommentEmpty',
 };
 
 export function reasonLabel(reason: Reason | null, fallback: string): string {
   if (!reason) return fallback;
-  return LABELS[reason.kind] ?? fallback;
+  const key = LABELS[reason.kind];
+  return key ? t(key) : fallback;
 }
 
 export function reasonDetail(reason: Reason): string {
-  return DETAILS[reason.kind](reason.value);
+  const detail = DETAILS[reason.kind];
+  const substituted = detail.substitute(reason.value);
+  if (substituted) return t(detail.key, substituted);
+  const empty = EMPTY_DETAILS[reason.kind];
+  return empty ? t(empty) : t(detail.key);
 }

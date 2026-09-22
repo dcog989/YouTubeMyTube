@@ -1,4 +1,5 @@
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
+import { t } from '../shared/i18n';
 import { normalizeState } from '../shared/normalize';
 import { h } from '../shared/ui';
 import { backfillMissing } from './backfill';
@@ -44,7 +45,7 @@ export function importSettings(file: File): void {
     try {
       parsed = JSON.parse(String(reader.result));
     } catch {
-      setStatus('import-status', 'That file is not valid JSON.', false);
+      setStatus('import-status', t('importInvalidJson'), false);
       return;
     }
 
@@ -54,11 +55,11 @@ export function importSettings(file: File): void {
       setDraft(merged);
       notify();
       setDirty(true);
-      const filters = `${added} new filter${added === 1 ? '' : 's'}`;
+      const filters = t(added === 1 ? 'importFilterOne' : 'importFilterMany', String(added));
       const skipped = blocktube.data.skipped.length
-        ? ` Skipped: ${blocktube.data.skipped.join(', ')}.`
+        ? ` ${t('importSkipped', blocktube.data.skipped.join(', '))}`
         : '';
-      setStatus('import-status', `Imported ${filters} from a BlockTube backup.${skipped}`, true);
+      setStatus('import-status', `${t('importBlockTube', filters)}${skipped}`, true);
       scheduleBackfill();
       return;
     }
@@ -67,12 +68,12 @@ export function importSettings(file: File): void {
       setDraft(normalizeState(parsed));
       notify();
       setDirty(true);
-      setStatus('import-status', 'Imported YouTubeMyTube settings.', true);
+      setStatus('import-status', t('importNative'), true);
       scheduleBackfill();
       return;
     }
 
-    setStatus('import-status', 'That file is not a YouTubeMyTube or BlockTube backup.', false);
+    setStatus('import-status', t('importUnknown'), false);
   };
   reader.readAsText(file);
 }

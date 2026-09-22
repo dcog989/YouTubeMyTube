@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "YouTubeMyTube",
+  "name": "__MSG_extName__",
   "version": "__VERSION__",
-  "description": "Block videos, channels, users, Shorts and comments on YouTube.",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "minimum_chrome_version": "140",
   "permissions": ["storage", "declarativeNetRequest"],
   "host_permissions": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
@@ -19,7 +20,7 @@
     }
   ],
   "action": {
-    "default_title": "YouTubeMyTube",
+    "default_title": "__MSG_extName__",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "assets/icons/16.png",

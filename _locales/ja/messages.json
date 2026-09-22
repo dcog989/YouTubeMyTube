@@ -1,0 +1,191 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "YouTube の動画、チャンネル、ユーザー、Shorts、コメントをブロックします。"
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — 設定" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "ブロックされました — YouTubeMyTube" },
+
+  "blocking": { "message": "ブロック" },
+  "enableBlocking": { "message": "ブロックを有効にする" },
+  "theme": { "message": "テーマ" },
+  "themeSystem": { "message": "システムテーマ" },
+  "themeSystemShort": { "message": "システム" },
+  "themeLight": { "message": "ライトテーマ" },
+  "themeLightShort": { "message": "ライト" },
+  "themeDark": { "message": "ダークテーマ" },
+  "themeDarkShort": { "message": "ダーク" },
+
+  "settingsSections": { "message": "設定セクション" },
+  "navChannels": { "message": "チャンネルをブロック" },
+  "navVideos": { "message": "動画をブロック" },
+  "navComments": { "message": "コメントをブロック" },
+  "navAreas": { "message": "エリアをブロック" },
+  "navTester": { "message": "フィルターをテスト" },
+  "navData": { "message": "インポート / エクスポート / リセット" },
+
+  "unsavedChanges": { "message": "未保存の変更" },
+  "save": { "message": "保存" },
+  "reload": { "message": "再読み込み" },
+  "conflictWarning": {
+    "message": "別のタブまたは YouTube メニューで設定が変更されました。保持するには再読み込み、上書きするには保存してください。"
+  },
+  "confirmReset": { "message": "すべての設定とフィルターをリセットしますか？" },
+
+  "add": { "message": "追加" },
+  "remove": { "message": "削除" },
+  "goBack": { "message": "戻る" },
+
+  "channelBlockLabel": { "message": "チャンネルをブロック" },
+  "channelBlockHelp": {
+    "message": "チャンネルの URL、@handle、または UC チャンネル ID を貼り付けます。ID は完全一致、handle は大文字と小文字を区別せずに照合されます。"
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "チャンネル ID" },
+  "thName": { "message": "名前" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "チャンネル名 / handle フィルター" },
+  "channelFiltersHelp": {
+    "message": "キーワードまたは /regex/flags を 1 行に 1 つ。チャンネル名と handle に対して照合されます。"
+  },
+  "channelFiltersPlaceholder": { "message": "サンプルチャンネル\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "動画をブロック" },
+  "videoBlockHelp": { "message": "動画の URL または 11 文字の動画 ID を貼り付けます。" },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "動画 ID" },
+  "thTitle": { "message": "タイトル" },
+  "titleFiltersLabel": { "message": "動画タイトルフィルター" },
+  "titleFiltersHelp": {
+    "message": "キーワードまたは /regex/flags を 1 行に 1 つ。カードのタイトルに対して照合されます。"
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "コメントフィルター" },
+  "commentFiltersHelp": {
+    "message": "キーワードまたは /regex/flags を 1 行に 1 つ。コメントの投稿者と本文に対して照合されます。"
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "YouTube のセクション全体を非表示にします。ページのブロックはホームページにリダイレクトします。"
+  },
+  "testerSub": { "message": "保存する前に、URL またはテキストに対してルールを確認します。" },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "URL をテスト" },
+  "textLabel": { "message": "テキスト" },
+  "testTypeTitle": { "message": "動画タイトル" },
+  "testTypeChannelName": { "message": "チャンネル名" },
+  "testTypeHandle": { "message": "チャンネル handle" },
+  "testTypeCommentAuthor": { "message": "コメント投稿者" },
+  "testTypeCommentContent": { "message": "コメント本文" },
+  "testTextPlaceholder": { "message": "テキスト" },
+  "testTextBtn": { "message": "テキストをテスト" },
+  "notBlocked": { "message": "ブロックされていません" },
+
+  "importBtn": { "message": "設定をインポート" },
+  "exportBtn": { "message": "設定をエクスポート" },
+  "resetBtn": { "message": "すべてリセット" },
+  "dataHelp": {
+    "message": "設定はブラウザーにローカル保存されます。インポートは YouTubeMyTube 設定または BlockTube バックアップに対応しています。形式は自動的に判別され、BlockTube のエントリは既存のフィルターにマージされます。"
+  },
+
+  "areaHomePageTitle": { "message": "ホームページ" },
+  "areaHomePageSub": { "message": "YouTube のホームフィードを非表示にします。" },
+  "areaTrendingPageTitle": { "message": "トレンドページ" },
+  "areaTrendingPageSub": { "message": "/feed/trending にリダイレクトします。" },
+  "areaExplorePageTitle": { "message": "探索ページ" },
+  "areaExplorePageSub": { "message": "/feed/explore にリダイレクトします。" },
+  "areaSubscriptionsPageTitle": { "message": "登録チャンネルページ" },
+  "areaSubscriptionsPageSub": { "message": "/feed/subscriptions にリダイレクトします。" },
+  "areaShortsPageTitle": { "message": "Shorts ページ" },
+  "areaShortsPageSub": { "message": "/shorts と直接の Short リンクにリダイレクトします。" },
+  "areaShortsShelfTitle": { "message": "Shorts シェルフ" },
+  "areaShortsShelfSub": { "message": "サイト全体で Shorts のカルーセルを非表示にします。" },
+  "areaCommentsSectionTitle": { "message": "コメントセクション" },
+  "areaCommentsSectionSub": { "message": "視聴ページのコメント欄を非表示にします。" },
+  "areaLiveChatTitle": { "message": "ライブチャット" },
+  "areaLiveChatSub": { "message": "ライブチャットのフレームを非表示にします。" },
+  "areaRelatedVideosTitle": { "message": "関連動画" },
+  "areaRelatedVideosSub": { "message": "視聴ページのサイドバーを非表示にします。" },
+  "areaPromoSectionsTitle": { "message": "プロモバナー" },
+  "areaPromoSectionsSub": {
+    "message": "Premium、メンバーシップ、その他のトピックを探すなどのプロモバナーや発見シェルフを非表示にします。"
+  },
+
+  "reasonVideoBlocked": { "message": "この動画はブロックされています。" },
+  "reasonChannelBlocked": { "message": "このチャンネルはブロックされています。" },
+  "reasonAreaBlocked": { "message": "このページはブロックされています。" },
+  "reasonDetailVideoId": { "message": "ブロックされた動画 ID: $1" },
+  "reasonDetailChannelId": { "message": "ブロックされたチャンネル ID: $1" },
+  "reasonDetailHandle": { "message": "ブロックされたチャンネル: @$1" },
+  "reasonDetailHandleEmpty": { "message": "ブロックされたチャンネル。" },
+  "reasonDetailTitle": { "message": "ブロックされたタイトル: $1" },
+  "reasonDetailTitleEmpty": { "message": "タイトルフィルターによりブロック。" },
+  "reasonDetailChannelName": { "message": "ブロックされたチャンネル名: $1" },
+  "reasonDetailChannelNameEmpty": { "message": "チャンネルフィルターによりブロック。" },
+  "reasonDetailComment": { "message": "ブロックされたコメント: $1" },
+  "reasonDetailCommentEmpty": { "message": "コメントフィルターによりブロック。" },
+  "reasonDetailArea": { "message": "ブロックされたページ: $1" },
+  "blockedFallback": { "message": "このコンテンツはブロックされています。" },
+
+  "overlayTitle": { "message": "YouTubeMyTube によりブロック" },
+  "removeFromBlocklist": { "message": "ブロックリストから削除" },
+  "youtubeHome": { "message": "YouTube ホーム" },
+  "manageBlocklist": { "message": "ブロックリストを管理" },
+
+  "menuBlockVideo": { "message": "動画をブロック" },
+  "menuUnblockVideo": { "message": "動画のブロックを解除" },
+  "menuBlockChannel": { "message": "チャンネルをブロック" },
+  "menuUnblockChannel": { "message": "チャンネルのブロックを解除" },
+
+  "popupBlockVideo": { "message": "この動画をブロック" },
+  "popupBlockChannel": { "message": "このチャンネルをブロック" },
+  "popupSettings": { "message": "設定" },
+  "popupNoFilters": { "message": "フィルターはまだありません" },
+  "popupCountVideos": { "message": "動画 $1 件" },
+  "popupCountChannels": { "message": "チャンネル $1 件" },
+  "popupCountKeywords": { "message": "キーワードフィルター $1 件" },
+  "popupCountComments": { "message": "コメントフィルター $1 件" },
+  "popupTotal": { "message": "合計 $1" },
+  "contextVideo": { "message": "動画 $1" },
+  "contextChannel": { "message": "チャンネル $1" },
+  "contextChannelHandle": { "message": "チャンネル @$1" },
+
+  "countFilter": { "message": "1 件のフィルター" },
+  "countFilters": { "message": "$1 件のフィルター" },
+  "dnrWarningOne": {
+    "message": "1 件のフィルターがブラウザーの $1 ルール上限を超えているため、ページ内でのみ適用されます。"
+  },
+  "dnrWarningMany": {
+    "message": "$1 件のフィルターがブラウザーの $2 ルール上限を超えているため、ページ内でのみ適用されます。"
+  },
+
+  "channelsPasteInvalid": {
+    "message": "チャンネルの URL、@handle、または UC チャンネル ID を貼り付けてください。"
+  },
+  "channelsAlready": { "message": "そのチャンネルはすでにブロックされています。" },
+  "channelsLooking": { "message": "チャンネルの詳細を取得中…" },
+  "channelsAdded": { "message": "チャンネルを追加しました。" },
+  "channelsFetchFailed": { "message": "チャンネルを追加しました。詳細を取得できませんでした。" },
+  "addedNamed": { "message": "$1 を追加しました。" },
+
+  "videosPasteInvalid": {
+    "message": "動画の URL または 11 文字の動画 ID を貼り付けてください。"
+  },
+  "videosAlready": { "message": "その動画はすでにブロックされています。" },
+  "videosLooking": { "message": "タイトルを取得中…" },
+  "videosAdded": { "message": "動画を追加しました。" },
+  "videosFetchFailed": { "message": "動画を追加しました。タイトルを取得できませんでした。" },
+
+  "importInvalidJson": { "message": "そのファイルは有効な JSON ではありません。" },
+  "importFilterOne": { "message": "新しいフィルター $1 件" },
+  "importFilterMany": { "message": "新しいフィルター $1 件" },
+  "importBlockTube": { "message": "BlockTube バックアップから $1 件をインポートしました。" },
+  "importSkipped": { "message": "スキップ: $1。" },
+  "importNative": { "message": "YouTubeMyTube 設定をインポートしました。" },
+  "importUnknown": {
+    "message": "そのファイルは YouTubeMyTube または BlockTube のバックアップではありません。"
+  }
+}

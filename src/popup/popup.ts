@@ -1,4 +1,5 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
+import { localizeDocument, t } from '../shared/i18n';
 import { ruleCount } from '../shared/normalize';
 import { countActiveEntries } from '../shared/patterns';
 import { findChannel, hasVideoId } from '../shared/rules';
@@ -20,17 +21,17 @@ let activeChannelName: string | null = null;
 function renderCounts(): void {
   const { rules } = state;
   const parts: string[] = [];
-  if (rules.videos.length) parts.push(`${rules.videos.length} videos`);
-  if (rules.channels.length) parts.push(`${rules.channels.length} channels`);
+  if (rules.videos.length) parts.push(t('popupCountVideos', String(rules.videos.length)));
+  if (rules.channels.length) parts.push(t('popupCountChannels', String(rules.channels.length)));
   const keywords =
     countActiveEntries(rules.channelFilters) + countActiveEntries(rules.titleFilters);
-  if (keywords) parts.push(`${keywords} keyword filters`);
+  if (keywords) parts.push(t('popupCountKeywords', String(keywords)));
   const comments = countActiveEntries(rules.commentFilters);
-  if (comments) parts.push(`${comments} comment filters`);
+  if (comments) parts.push(t('popupCountComments', String(comments)));
 
   const counts = byId('counts');
-  counts.textContent = parts.length > 0 ? parts.join(' · ') : 'No filters yet';
-  counts.title = `${ruleCount(state)} total`;
+  counts.textContent = parts.length > 0 ? parts.join(' · ') : t('popupNoFilters');
+  counts.title = t('popupTotal', String(ruleCount(state)));
 }
 
 function renderContext(): void {
@@ -70,11 +71,11 @@ async function detectActiveTab(): Promise<void> {
 
   const label = byId('context-label');
   if (activeVideoId) {
-    label.textContent = `Video ${activeVideoId}`;
+    label.textContent = t('contextVideo', activeVideoId);
   } else if (activeChannelId) {
-    label.textContent = `Channel ${activeChannelId}`;
+    label.textContent = t('contextChannel', activeChannelId);
   } else if (activeHandle) {
-    label.textContent = `Channel @${activeHandle}`;
+    label.textContent = t('contextChannelHandle', activeHandle);
   }
 
   renderContext();
@@ -119,6 +120,7 @@ function registerHandlers(): void {
 }
 
 async function init(): Promise<void> {
+  localizeDocument();
   state = await loadState();
   applyTheme(state.settings.theme);
   byId<HTMLInputElement>('enabled').checked = state.settings.enabled;

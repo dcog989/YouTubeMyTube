@@ -1,4 +1,5 @@
 import { YOUTUBE_ORIGIN } from '../shared/constants';
+import { t } from '../shared/i18n';
 import { matchDirectNavigation, matchEntity } from '../shared/match';
 import { reasonDetail } from '../shared/reason-copy';
 import { compileRules } from '../shared/rules';
@@ -13,7 +14,7 @@ function showResult(blocked: boolean | null, message: string): void {
 }
 
 function blockedMessage(result: MatchResult): string {
-  return result.blocked ? reasonDetail(result.reason) : 'Not blocked';
+  return result.blocked ? reasonDetail(result.reason) : t('notBlocked');
 }
 
 function pathnameOf(value: string): string {

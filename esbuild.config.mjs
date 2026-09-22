@@ -73,6 +73,7 @@ function copyStaticAssets(browser) {
   }
 
   cpSync(resolve(ROOT, 'assets/icons'), resolve(outDir, 'assets/icons'), { recursive: true });
+  cpSync(resolve(ROOT, '_locales'), resolve(outDir, '_locales'), { recursive: true });
   writeFileSync(resolve(outDir, 'manifest.json'), resolveManifest(browser));
 }
 
@@ -96,6 +97,7 @@ function watchStaticAssets(targets) {
   ];
   const directories = new Set(sources.map((source) => dirname(source)));
   directories.add(resolve(ROOT, 'assets/icons'));
+  directories.add(resolve(ROOT, '_locales'));
 
   /** @type {ReturnType<typeof setTimeout> | null} */
   let pending = null;

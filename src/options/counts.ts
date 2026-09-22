@@ -1,6 +1,7 @@
 import { AREA_DEFINITIONS } from '../shared/areas';
 import { MAX_DNR_REGEX_RULES } from '../shared/constants';
 import { buildDnrRules } from '../shared/dnr';
+import { t } from '../shared/i18n';
 import { countActiveEntries } from '../shared/patterns';
 import { byId } from '../shared/ui';
 import { getDraft } from './state';
@@ -32,20 +33,19 @@ function panelFilterCount(panel: string): number {
 }
 
 function formatCount(count: number): string {
-  return count === 1 ? '1 filter' : `${count} filters`;
+  return count === 1 ? t('countFilter') : t('countFilters', String(count));
 }
 
 function updateDnrWarning(): void {
   const notice = byId('dnr-warning');
   const { dropped } = buildDnrRules(getDraft());
-  const noun = dropped === 1 ? 'filter' : 'filters';
-  const verb = dropped === 1 ? 'exceeds' : 'exceed';
   notice.hidden = dropped === 0;
-  const limit = `${MAX_DNR_REGEX_RULES}-rule limit`;
   notice.textContent =
     dropped === 0
       ? ''
-      : `${dropped} ${noun} ${verb} the browser's ${limit} and will be enforced in-page only.`;
+      : dropped === 1
+        ? t('dnrWarningOne', String(MAX_DNR_REGEX_RULES))
+        : t('dnrWarningMany', [String(dropped), String(MAX_DNR_REGEX_RULES)]);
 }
 
 export function updateCounts(): void {

@@ -1,0 +1,185 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "YouTube पर वीडियो, चैनल, उपयोगकर्ता, Shorts और टिप्पणियाँ ब्लॉक करें।"
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — सेटिंग्स" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "ब्लॉक किया गया — YouTubeMyTube" },
+
+  "blocking": { "message": "ब्लॉकिंग" },
+  "enableBlocking": { "message": "ब्लॉकिंग चालू करें" },
+  "theme": { "message": "थीम" },
+  "themeSystem": { "message": "सिस्टम थीम" },
+  "themeSystemShort": { "message": "सिस्टम" },
+  "themeLight": { "message": "लाइट थीम" },
+  "themeLightShort": { "message": "लाइट" },
+  "themeDark": { "message": "डार्क थीम" },
+  "themeDarkShort": { "message": "डार्क" },
+
+  "settingsSections": { "message": "सेटिंग्स अनुभाग" },
+  "navChannels": { "message": "चैनल ब्लॉक करें" },
+  "navVideos": { "message": "वीडियो ब्लॉक करें" },
+  "navComments": { "message": "टिप्पणियाँ ब्लॉक करें" },
+  "navAreas": { "message": "क्षेत्र ब्लॉक करें" },
+  "navTester": { "message": "फ़िल्टर जाँचें" },
+  "navData": { "message": "आयात / निर्यात / रीसेट" },
+
+  "unsavedChanges": { "message": "सहेजे नहीं गए बदलाव" },
+  "save": { "message": "सहेजें" },
+  "reload": { "message": "फिर लोड करें" },
+  "conflictWarning": {
+    "message": "सेटिंग्स किसी दूसरे टैब में या YouTube मेन्यू से बदल गई हैं। उन्हें रखने के लिए फिर लोड करें, या उन्हें बदलने के लिए सहेजें।"
+  },
+  "confirmReset": { "message": "सभी सेटिंग्स और फ़िल्टर रीसेट करें?" },
+
+  "add": { "message": "जोड़ें" },
+  "remove": { "message": "हटाएँ" },
+  "goBack": { "message": "वापस जाएँ" },
+
+  "channelBlockLabel": { "message": "चैनल ब्लॉक करें" },
+  "channelBlockHelp": {
+    "message": "चैनल URL, @handle या UC चैनल ID पेस्ट करें। ID का मिलान बिल्कुल वैसा ही होना चाहिए; handle का मिलान केस-असंवेदनशील है।"
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "चैनल ID" },
+  "thName": { "message": "नाम" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "चैनल नाम / handle फ़िल्टर" },
+  "channelFiltersHelp": {
+    "message": "कीवर्ड या /regex/flags, प्रति पंक्ति एक। चैनल नामों और handles से मिलान किया जाता है।"
+  },
+  "channelFiltersPlaceholder": { "message": "उदाहरण चैनल\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "वीडियो ब्लॉक करें" },
+  "videoBlockHelp": { "message": "वीडियो URL या 11 अक्षरों की वीडियो ID पेस्ट करें।" },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "वीडियो ID" },
+  "thTitle": { "message": "शीर्षक" },
+  "titleFiltersLabel": { "message": "वीडियो शीर्षक फ़िल्टर" },
+  "titleFiltersHelp": {
+    "message": "कीवर्ड या /regex/flags, प्रति पंक्ति एक। कार्ड शीर्षकों से मिलान किया जाता है।"
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "टिप्पणी फ़िल्टर" },
+  "commentFiltersHelp": {
+    "message": "कीवर्ड या /regex/flags, प्रति पंक्ति एक। टिप्पणी लेखकों और टेक्स्ट से मिलान किया जाता है।"
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "YouTube के पूरे अनुभाग छिपाएँ। पेज ब्लॉक होम पेज पर रीडायरेक्ट करते हैं।"
+  },
+  "testerSub": { "message": "सहेजने से पहले किसी नियम को URL या टेक्स्ट से जाँचें।" },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "URL जाँचें" },
+  "textLabel": { "message": "टेक्स्ट" },
+  "testTypeTitle": { "message": "वीडियो शीर्षक" },
+  "testTypeChannelName": { "message": "चैनल नाम" },
+  "testTypeHandle": { "message": "चैनल handle" },
+  "testTypeCommentAuthor": { "message": "टिप्पणी लेखक" },
+  "testTypeCommentContent": { "message": "टिप्पणी सामग्री" },
+  "testTextPlaceholder": { "message": "कुछ टेक्स्ट" },
+  "testTextBtn": { "message": "टेक्स्ट जाँचें" },
+  "notBlocked": { "message": "ब्लॉक नहीं है" },
+
+  "importBtn": { "message": "सेटिंग्स आयात करें" },
+  "exportBtn": { "message": "सेटिंग्स निर्यात करें" },
+  "resetBtn": { "message": "सब कुछ रीसेट करें" },
+  "dataHelp": {
+    "message": "सेटिंग्स आपके ब्राउज़र में स्थानीय रूप से संग्रहीत होती हैं। आयात YouTubeMyTube सेटिंग्स या BlockTube बैकअप स्वीकार करता है — प्रारूप स्वतः पहचाना जाता है, और BlockTube प्रविष्टियाँ आपके मौजूदा फ़िल्टर में मिला दी जाती हैं।"
+  },
+
+  "areaHomePageTitle": { "message": "होम पेज" },
+  "areaHomePageSub": { "message": "YouTube होम फ़ीड छिपाएँ।" },
+  "areaTrendingPageTitle": { "message": "ट्रेंडिंग पेज" },
+  "areaTrendingPageSub": { "message": "/feed/trending पर रीडायरेक्ट करें।" },
+  "areaExplorePageTitle": { "message": "एक्सप्लोर पेज" },
+  "areaExplorePageSub": { "message": "/feed/explore पर रीडायरेक्ट करें।" },
+  "areaSubscriptionsPageTitle": { "message": "सदस्यता पेज" },
+  "areaSubscriptionsPageSub": { "message": "/feed/subscriptions पर रीडायरेक्ट करें।" },
+  "areaShortsPageTitle": { "message": "Shorts पेज" },
+  "areaShortsPageSub": { "message": "/shorts और सीधे Short लिंक पर रीडायरेक्ट करें।" },
+  "areaShortsShelfTitle": { "message": "Shorts शेल्फ़" },
+  "areaShortsShelfSub": { "message": "पूरी साइट पर Shorts कैरोसेल छिपाएँ।" },
+  "areaCommentsSectionTitle": { "message": "टिप्पणी अनुभाग" },
+  "areaCommentsSectionSub": { "message": "वॉच पेजों पर टिप्पणी क्षेत्र छिपाएँ।" },
+  "areaLiveChatTitle": { "message": "लाइव चैट" },
+  "areaLiveChatSub": { "message": "लाइव चैट फ़्रेम छिपाएँ।" },
+  "areaRelatedVideosTitle": { "message": "संबंधित वीडियो" },
+  "areaRelatedVideosSub": { "message": "वॉच पेज का साइडबार छिपाएँ।" },
+  "areaPromoSectionsTitle": { "message": "प्रोमो बैनर" },
+  "areaPromoSectionsSub": {
+    "message": "प्रोमो बैनर और खोज शेल्फ़ जैसे Premium, सदस्यताएँ और और विषय एक्सप्लोर करें छिपाएँ।"
+  },
+
+  "reasonVideoBlocked": { "message": "यह वीडियो ब्लॉक है।" },
+  "reasonChannelBlocked": { "message": "यह चैनल ब्लॉक है।" },
+  "reasonAreaBlocked": { "message": "यह पेज ब्लॉक है।" },
+  "reasonDetailVideoId": { "message": "ब्लॉक की गई वीडियो ID: $1" },
+  "reasonDetailChannelId": { "message": "ब्लॉक की गई चैनल ID: $1" },
+  "reasonDetailHandle": { "message": "ब्लॉक किया गया चैनल: @$1" },
+  "reasonDetailHandleEmpty": { "message": "ब्लॉक किया गया चैनल।" },
+  "reasonDetailTitle": { "message": "ब्लॉक किया गया शीर्षक: $1" },
+  "reasonDetailTitleEmpty": { "message": "शीर्षक फ़िल्टर से ब्लॉक।" },
+  "reasonDetailChannelName": { "message": "ब्लॉक किया गया चैनल नाम: $1" },
+  "reasonDetailChannelNameEmpty": { "message": "चैनल फ़िल्टर से ब्लॉक।" },
+  "reasonDetailComment": { "message": "ब्लॉक की गई टिप्पणी: $1" },
+  "reasonDetailCommentEmpty": { "message": "टिप्पणी फ़िल्टर से ब्लॉक।" },
+  "reasonDetailArea": { "message": "ब्लॉक किया गया पेज: $1" },
+  "blockedFallback": { "message": "यह सामग्री ब्लॉक है।" },
+
+  "overlayTitle": { "message": "YouTubeMyTube द्वारा ब्लॉक" },
+  "removeFromBlocklist": { "message": "ब्लॉकलिस्ट से हटाएँ" },
+  "youtubeHome": { "message": "YouTube होम" },
+  "manageBlocklist": { "message": "ब्लॉकलिस्ट प्रबंधित करें" },
+
+  "menuBlockVideo": { "message": "वीडियो ब्लॉक करें" },
+  "menuUnblockVideo": { "message": "वीडियो अनब्लॉक करें" },
+  "menuBlockChannel": { "message": "चैनल ब्लॉक करें" },
+  "menuUnblockChannel": { "message": "चैनल अनब्लॉक करें" },
+
+  "popupBlockVideo": { "message": "यह वीडियो ब्लॉक करें" },
+  "popupBlockChannel": { "message": "यह चैनल ब्लॉक करें" },
+  "popupSettings": { "message": "सेटिंग्स" },
+  "popupNoFilters": { "message": "अभी कोई फ़िल्टर नहीं" },
+  "popupCountVideos": { "message": "$1 वीडियो" },
+  "popupCountChannels": { "message": "$1 चैनल" },
+  "popupCountKeywords": { "message": "$1 कीवर्ड फ़िल्टर" },
+  "popupCountComments": { "message": "$1 टिप्पणी फ़िल्टर" },
+  "popupTotal": { "message": "कुल $1" },
+  "contextVideo": { "message": "वीडियो $1" },
+  "contextChannel": { "message": "चैनल $1" },
+  "contextChannelHandle": { "message": "चैनल @$1" },
+
+  "countFilter": { "message": "1 फ़िल्टर" },
+  "countFilters": { "message": "$1 फ़िल्टर" },
+  "dnrWarningOne": {
+    "message": "1 फ़िल्टर ब्राउज़र की $1-नियम सीमा से अधिक है और केवल पेज में लागू किया जाएगा।"
+  },
+  "dnrWarningMany": {
+    "message": "$1 फ़िल्टर ब्राउज़र की $2-नियम सीमा से अधिक हैं और केवल पेज में लागू किए जाएँगे।"
+  },
+
+  "channelsPasteInvalid": { "message": "चैनल URL, @handle या UC चैनल ID पेस्ट करें।" },
+  "channelsAlready": { "message": "यह चैनल पहले से ब्लॉक है।" },
+  "channelsLooking": { "message": "चैनल विवरण देखा जा रहा है…" },
+  "channelsAdded": { "message": "चैनल जोड़ा गया।" },
+  "channelsFetchFailed": { "message": "चैनल जोड़ा गया। विवरण नहीं मिल सका।" },
+  "addedNamed": { "message": "$1 जोड़ा गया।" },
+
+  "videosPasteInvalid": { "message": "वीडियो URL या 11 अक्षरों की वीडियो ID पेस्ट करें।" },
+  "videosAlready": { "message": "यह वीडियो पहले से ब्लॉक है।" },
+  "videosLooking": { "message": "शीर्षक देखा जा रहा है…" },
+  "videosAdded": { "message": "वीडियो जोड़ा गया।" },
+  "videosFetchFailed": { "message": "वीडियो जोड़ा गया। शीर्षक नहीं मिल सका।" },
+
+  "importInvalidJson": { "message": "यह फ़ाइल मान्य JSON नहीं है।" },
+  "importFilterOne": { "message": "$1 नया फ़िल्टर" },
+  "importFilterMany": { "message": "$1 नए फ़िल्टर" },
+  "importBlockTube": { "message": "BlockTube बैकअप से $1 आयात किए गए।" },
+  "importSkipped": { "message": "छोड़े गए: $1।" },
+  "importNative": { "message": "YouTubeMyTube सेटिंग्स आयात की गईं।" },
+  "importUnknown": { "message": "यह फ़ाइल YouTubeMyTube या BlockTube बैकअप नहीं है।" }
+}

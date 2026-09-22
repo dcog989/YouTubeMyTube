@@ -1,0 +1,187 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "احظر الفيديوهات والقنوات والمستخدمين وShorts والتعليقات على YouTube."
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — الإعدادات" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "محظور — YouTubeMyTube" },
+
+  "blocking": { "message": "الحظر" },
+  "enableBlocking": { "message": "تفعيل الحظر" },
+  "theme": { "message": "المظهر" },
+  "themeSystem": { "message": "مظهر النظام" },
+  "themeSystemShort": { "message": "النظام" },
+  "themeLight": { "message": "المظهر الفاتح" },
+  "themeLightShort": { "message": "فاتح" },
+  "themeDark": { "message": "المظهر الداكن" },
+  "themeDarkShort": { "message": "داكن" },
+
+  "settingsSections": { "message": "أقسام الإعدادات" },
+  "navChannels": { "message": "حظر القنوات" },
+  "navVideos": { "message": "حظر الفيديوهات" },
+  "navComments": { "message": "حظر التعليقات" },
+  "navAreas": { "message": "حظر الأقسام" },
+  "navTester": { "message": "اختبار الفلاتر" },
+  "navData": { "message": "استيراد / تصدير / إعادة تعيين" },
+
+  "unsavedChanges": { "message": "تغييرات غير محفوظة" },
+  "save": { "message": "حفظ" },
+  "reload": { "message": "إعادة التحميل" },
+  "conflictWarning": {
+    "message": "تم تغيير الإعدادات في علامة تبويب أخرى أو من قائمة YouTube. أعد التحميل للاحتفاظ بها، أو احفظ لاستبدالها."
+  },
+  "confirmReset": { "message": "إعادة تعيين كل الإعدادات والفلاتر؟" },
+
+  "add": { "message": "إضافة" },
+  "remove": { "message": "إزالة" },
+  "goBack": { "message": "رجوع" },
+
+  "channelBlockLabel": { "message": "حظر قناة" },
+  "channelBlockHelp": {
+    "message": "الصق عنوان URL لقناة أو @handle أو معرّف قناة UC. يجب أن يطابق المعرّف تمامًا؛ ويُطابق handle دون مراعاة حالة الأحرف."
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "معرّف القناة" },
+  "thName": { "message": "الاسم" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "فلاتر اسم / handle القناة" },
+  "channelFiltersHelp": {
+    "message": "كلمات مفتاحية أو /regex/flags، واحد في كل سطر. تُطابَق مع أسماء القنوات وhandles."
+  },
+  "channelFiltersPlaceholder": { "message": "قناة مثال\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "حظر فيديو" },
+  "videoBlockHelp": { "message": "الصق عنوان URL لفيديو أو معرّف فيديو من 11 حرفًا." },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "معرّف الفيديو" },
+  "thTitle": { "message": "العنوان" },
+  "titleFiltersLabel": { "message": "فلاتر عنوان الفيديو" },
+  "titleFiltersHelp": {
+    "message": "كلمات مفتاحية أو /regex/flags، واحد في كل سطر. تُطابَق مع عناوين البطاقات."
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "فلاتر التعليقات" },
+  "commentFiltersHelp": {
+    "message": "كلمات مفتاحية أو /regex/flags، واحد في كل سطر. تُطابَق مع مؤلفي التعليقات ونصوصها."
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "أخفِ أقسامًا كاملة من YouTube. تؤدي عمليات حظر الصفحات إلى إعادة التوجيه إلى الصفحة الرئيسية."
+  },
+  "testerSub": { "message": "تحقق من قاعدة مقابل عنوان URL أو نص قبل الحفظ." },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "اختبار URL" },
+  "textLabel": { "message": "نص" },
+  "testTypeTitle": { "message": "عنوان الفيديو" },
+  "testTypeChannelName": { "message": "اسم القناة" },
+  "testTypeHandle": { "message": "handle القناة" },
+  "testTypeCommentAuthor": { "message": "مؤلف التعليق" },
+  "testTypeCommentContent": { "message": "محتوى التعليق" },
+  "testTextPlaceholder": { "message": "بعض النص" },
+  "testTextBtn": { "message": "اختبار النص" },
+  "notBlocked": { "message": "غير محظور" },
+
+  "importBtn": { "message": "استيراد الإعدادات" },
+  "exportBtn": { "message": "تصدير الإعدادات" },
+  "resetBtn": { "message": "إعادة تعيين الكل" },
+  "dataHelp": {
+    "message": "تُخزَّن الإعدادات محليًا في متصفحك. يقبل الاستيراد إعدادات YouTubeMyTube أو نسخة احتياطية من BlockTube — يتم اكتشاف التنسيق تلقائيًا، وتُدمج إدخالات BlockTube في فلاترك الحالية."
+  },
+
+  "areaHomePageTitle": { "message": "الصفحة الرئيسية" },
+  "areaHomePageSub": { "message": "إخفاء موجز الصفحة الرئيسية لـ YouTube." },
+  "areaTrendingPageTitle": { "message": "صفحة الرائج" },
+  "areaTrendingPageSub": { "message": "إعادة توجيه /feed/trending." },
+  "areaExplorePageTitle": { "message": "صفحة الاستكشاف" },
+  "areaExplorePageSub": { "message": "إعادة توجيه /feed/explore." },
+  "areaSubscriptionsPageTitle": { "message": "صفحة الاشتراكات" },
+  "areaSubscriptionsPageSub": { "message": "إعادة توجيه /feed/subscriptions." },
+  "areaShortsPageTitle": { "message": "صفحات Shorts" },
+  "areaShortsPageSub": { "message": "إعادة توجيه /shorts وروابط Shorts المباشرة." },
+  "areaShortsShelfTitle": { "message": "أرفف Shorts" },
+  "areaShortsShelfSub": { "message": "إخفاء دوارات Shorts في كل الموقع." },
+  "areaCommentsSectionTitle": { "message": "قسم التعليقات" },
+  "areaCommentsSectionSub": { "message": "إخفاء منطقة التعليقات في صفحات المشاهدة." },
+  "areaLiveChatTitle": { "message": "الدردشة المباشرة" },
+  "areaLiveChatSub": { "message": "إخفاء إطار الدردشة المباشرة." },
+  "areaRelatedVideosTitle": { "message": "فيديوهات ذات صلة" },
+  "areaRelatedVideosSub": { "message": "إخفاء الشريط الجانبي لصفحة المشاهدة." },
+  "areaPromoSectionsTitle": { "message": "لافتات ترويجية" },
+  "areaPromoSectionsSub": {
+    "message": "إخفاء اللافتات الترويجية وأرفف الاستكشاف مثل Premium والعضويات واستكشاف مزيد من الموضوعات."
+  },
+
+  "reasonVideoBlocked": { "message": "هذا الفيديو محظور." },
+  "reasonChannelBlocked": { "message": "هذه القناة محظورة." },
+  "reasonAreaBlocked": { "message": "هذه الصفحة محظورة." },
+  "reasonDetailVideoId": { "message": "معرّف الفيديو المحظور: $1" },
+  "reasonDetailChannelId": { "message": "معرّف القناة المحظور: $1" },
+  "reasonDetailHandle": { "message": "القناة المحظورة: @$1" },
+  "reasonDetailHandleEmpty": { "message": "قناة محظورة." },
+  "reasonDetailTitle": { "message": "العنوان المحظور: $1" },
+  "reasonDetailTitleEmpty": { "message": "محظور بواسطة فلتر عناوين." },
+  "reasonDetailChannelName": { "message": "اسم القناة المحظور: $1" },
+  "reasonDetailChannelNameEmpty": { "message": "محظور بواسطة فلتر قنوات." },
+  "reasonDetailComment": { "message": "التعليق المحظور: $1" },
+  "reasonDetailCommentEmpty": { "message": "محظور بواسطة فلتر تعليقات." },
+  "reasonDetailArea": { "message": "الصفحة المحظورة: $1" },
+  "blockedFallback": { "message": "هذا المحتوى محظور." },
+
+  "overlayTitle": { "message": "محظور بواسطة YouTubeMyTube" },
+  "removeFromBlocklist": { "message": "إزالة من قائمة الحظر" },
+  "youtubeHome": { "message": "الصفحة الرئيسية لـ YouTube" },
+  "manageBlocklist": { "message": "إدارة قائمة الحظر" },
+
+  "menuBlockVideo": { "message": "حظر الفيديو" },
+  "menuUnblockVideo": { "message": "إلغاء حظر الفيديو" },
+  "menuBlockChannel": { "message": "حظر القناة" },
+  "menuUnblockChannel": { "message": "إلغاء حظر القناة" },
+
+  "popupBlockVideo": { "message": "حظر هذا الفيديو" },
+  "popupBlockChannel": { "message": "حظر هذه القناة" },
+  "popupSettings": { "message": "الإعدادات" },
+  "popupNoFilters": { "message": "لا توجد فلاتر بعد" },
+  "popupCountVideos": { "message": "$1 فيديو" },
+  "popupCountChannels": { "message": "$1 قناة" },
+  "popupCountKeywords": { "message": "$1 فلتر كلمات مفتاحية" },
+  "popupCountComments": { "message": "$1 فلتر تعليقات" },
+  "popupTotal": { "message": "$1 إجمالاً" },
+  "contextVideo": { "message": "فيديو $1" },
+  "contextChannel": { "message": "قناة $1" },
+  "contextChannelHandle": { "message": "قناة @$1" },
+
+  "countFilter": { "message": "فلتر واحد" },
+  "countFilters": { "message": "$1 فلتر" },
+  "dnrWarningOne": {
+    "message": "فلتر واحد يتجاوز حد المتصفح البالغ $1 قاعدة ويُطبَّق في الصفحة فقط."
+  },
+  "dnrWarningMany": {
+    "message": "$1 فلتر تتجاوز حد المتصفح البالغ $2 قاعدة وتُطبَّق في الصفحة فقط."
+  },
+
+  "channelsPasteInvalid": { "message": "الصق عنوان URL لقناة أو @handle أو معرّف قناة UC." },
+  "channelsAlready": { "message": "هذه القناة محظورة بالفعل." },
+  "channelsLooking": { "message": "جارٍ جلب تفاصيل القناة…" },
+  "channelsAdded": { "message": "تمت إضافة القناة." },
+  "channelsFetchFailed": { "message": "تمت إضافة القناة. تعذّر جلب التفاصيل." },
+  "addedNamed": { "message": "تمت إضافة $1." },
+
+  "videosPasteInvalid": { "message": "الصق عنوان URL لفيديو أو معرّف فيديو من 11 حرفًا." },
+  "videosAlready": { "message": "هذا الفيديو محظور بالفعل." },
+  "videosLooking": { "message": "جارٍ جلب العنوان…" },
+  "videosAdded": { "message": "تمت إضافة الفيديو." },
+  "videosFetchFailed": { "message": "تمت إضافة الفيديو. تعذّر جلب العنوان." },
+
+  "importInvalidJson": { "message": "هذا الملف ليس JSON صالحًا." },
+  "importFilterOne": { "message": "$1 فلتر جديد" },
+  "importFilterMany": { "message": "$1 فلاتر جديدة" },
+  "importBlockTube": { "message": "تم استيراد $1 من نسخة احتياطية لـ BlockTube." },
+  "importSkipped": { "message": "تم التخطي: $1." },
+  "importNative": { "message": "تم استيراد إعدادات YouTubeMyTube." },
+  "importUnknown": {
+    "message": "هذا الملف ليس نسخة احتياطية لـ YouTubeMyTube أو BlockTube."
+  }
+}

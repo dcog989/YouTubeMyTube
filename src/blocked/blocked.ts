@@ -1,4 +1,5 @@
 import { YOUTUBE_HOME } from '../shared/constants';
+import { localizeDocument, t } from '../shared/i18n';
 import { entityUrlForReason } from '../shared/navigation';
 import { parseReason, type Reason } from '../shared/reason';
 import { reasonDetail, reasonLabel } from '../shared/reason-copy';
@@ -8,7 +9,7 @@ import { loadState } from '../shared/state';
 import { applyTheme } from '../shared/theme';
 import { ruleRefForReason } from '../shared/unblock';
 
-const FALLBACK_MESSAGE = 'This content is blocked.';
+const FALLBACK_MESSAGE = t('blockedFallback');
 
 function reasonFromQuery(): Reason | null {
   const params = new URLSearchParams(window.location.search);
@@ -17,6 +18,7 @@ function reasonFromQuery(): Reason | null {
 }
 
 async function render(): Promise<void> {
+  localizeDocument();
   const reason = reasonFromQuery();
   const state = await loadState();
 

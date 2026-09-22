@@ -1,0 +1,187 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "在 YouTube 上屏蔽视频、频道、用户、Shorts 和评论。"
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — 设置" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "已屏蔽 — YouTubeMyTube" },
+
+  "blocking": { "message": "屏蔽" },
+  "enableBlocking": { "message": "启用屏蔽" },
+  "theme": { "message": "主题" },
+  "themeSystem": { "message": "系统主题" },
+  "themeSystemShort": { "message": "系统" },
+  "themeLight": { "message": "浅色主题" },
+  "themeLightShort": { "message": "浅色" },
+  "themeDark": { "message": "深色主题" },
+  "themeDarkShort": { "message": "深色" },
+
+  "settingsSections": { "message": "设置部分" },
+  "navChannels": { "message": "屏蔽频道" },
+  "navVideos": { "message": "屏蔽视频" },
+  "navComments": { "message": "屏蔽评论" },
+  "navAreas": { "message": "屏蔽区域" },
+  "navTester": { "message": "测试过滤器" },
+  "navData": { "message": "导入 / 导出 / 重置" },
+
+  "unsavedChanges": { "message": "未保存的更改" },
+  "save": { "message": "保存" },
+  "reload": { "message": "重新加载" },
+  "conflictWarning": {
+    "message": "设置已在其他标签页或 YouTube 菜单中更改。重新加载以保留，或保存以覆盖。"
+  },
+  "confirmReset": { "message": "重置所有设置和过滤器？" },
+
+  "add": { "message": "添加" },
+  "remove": { "message": "移除" },
+  "goBack": { "message": "返回" },
+
+  "channelBlockLabel": { "message": "屏蔽频道" },
+  "channelBlockHelp": {
+    "message": "粘贴频道 URL、@handle 或 UC 频道 ID。ID 需完全匹配；handle 不区分大小写。"
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "频道 ID" },
+  "thName": { "message": "名称" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "频道名称 / handle 过滤器" },
+  "channelFiltersHelp": {
+    "message": "关键词或 /regex/flags，每行一个。与频道名称和 handle 匹配。"
+  },
+  "channelFiltersPlaceholder": { "message": "示例频道\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "屏蔽视频" },
+  "videoBlockHelp": { "message": "粘贴视频 URL 或 11 位视频 ID。" },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "视频 ID" },
+  "thTitle": { "message": "标题" },
+  "titleFiltersLabel": { "message": "视频标题过滤器" },
+  "titleFiltersHelp": {
+    "message": "关键词或 /regex/flags，每行一个。与卡片标题匹配。"
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "评论过滤器" },
+  "commentFiltersHelp": {
+    "message": "关键词或 /regex/flags，每行一个。与评论作者和内容匹配。"
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "隐藏 YouTube 的整个区域。页面屏蔽会重定向到首页。"
+  },
+  "testerSub": { "message": "在保存前对照 URL 或文本检查规则。" },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "测试 URL" },
+  "textLabel": { "message": "文本" },
+  "testTypeTitle": { "message": "视频标题" },
+  "testTypeChannelName": { "message": "频道名称" },
+  "testTypeHandle": { "message": "频道 handle" },
+  "testTypeCommentAuthor": { "message": "评论作者" },
+  "testTypeCommentContent": { "message": "评论内容" },
+  "testTextPlaceholder": { "message": "一些文本" },
+  "testTextBtn": { "message": "测试文本" },
+  "notBlocked": { "message": "未屏蔽" },
+
+  "importBtn": { "message": "导入设置" },
+  "exportBtn": { "message": "导出设置" },
+  "resetBtn": { "message": "全部重置" },
+  "dataHelp": {
+    "message": "设置存储在浏览器本地。导入支持 YouTubeMyTube 设置或 BlockTube 备份——格式会自动检测，BlockTube 条目会合并到现有过滤器中。"
+  },
+
+  "areaHomePageTitle": { "message": "首页" },
+  "areaHomePageSub": { "message": "隐藏 YouTube 首页信息流。" },
+  "areaTrendingPageTitle": { "message": "热门页面" },
+  "areaTrendingPageSub": { "message": "重定向 /feed/trending。" },
+  "areaExplorePageTitle": { "message": "探索页面" },
+  "areaExplorePageSub": { "message": "重定向 /feed/explore。" },
+  "areaSubscriptionsPageTitle": { "message": "订阅页面" },
+  "areaSubscriptionsPageSub": { "message": "重定向 /feed/subscriptions。" },
+  "areaShortsPageTitle": { "message": "Shorts 页面" },
+  "areaShortsPageSub": { "message": "重定向 /shorts 和直接 Short 链接。" },
+  "areaShortsShelfTitle": { "message": "Shorts 货架" },
+  "areaShortsShelfSub": { "message": "隐藏全站的 Shorts 轮播。" },
+  "areaCommentsSectionTitle": { "message": "评论区" },
+  "areaCommentsSectionSub": { "message": "隐藏观看页面的评论区。" },
+  "areaLiveChatTitle": { "message": "实时聊天" },
+  "areaLiveChatSub": { "message": "隐藏实时聊天框架。" },
+  "areaRelatedVideosTitle": { "message": "相关视频" },
+  "areaRelatedVideosSub": { "message": "隐藏观看页面的侧边栏。" },
+  "areaPromoSectionsTitle": { "message": "推广横幅" },
+  "areaPromoSectionsSub": {
+    "message": "隐藏推广横幅和推荐货架，如 Premium、会员和探索更多主题。"
+  },
+
+  "reasonVideoBlocked": { "message": "此视频已被屏蔽。" },
+  "reasonChannelBlocked": { "message": "此频道已被屏蔽。" },
+  "reasonAreaBlocked": { "message": "此页面已被屏蔽。" },
+  "reasonDetailVideoId": { "message": "已屏蔽的视频 ID：$1" },
+  "reasonDetailChannelId": { "message": "已屏蔽的频道 ID：$1" },
+  "reasonDetailHandle": { "message": "已屏蔽的频道：@$1" },
+  "reasonDetailHandleEmpty": { "message": "已屏蔽的频道。" },
+  "reasonDetailTitle": { "message": "已屏蔽的标题：$1" },
+  "reasonDetailTitleEmpty": { "message": "被标题过滤器屏蔽。" },
+  "reasonDetailChannelName": { "message": "已屏蔽的频道名称：$1" },
+  "reasonDetailChannelNameEmpty": { "message": "被频道过滤器屏蔽。" },
+  "reasonDetailComment": { "message": "已屏蔽的评论：$1" },
+  "reasonDetailCommentEmpty": { "message": "被评论过滤器屏蔽。" },
+  "reasonDetailArea": { "message": "已屏蔽的页面：$1" },
+  "blockedFallback": { "message": "此内容已被屏蔽。" },
+
+  "overlayTitle": { "message": "已被 YouTubeMyTube 屏蔽" },
+  "removeFromBlocklist": { "message": "从屏蔽列表中移除" },
+  "youtubeHome": { "message": "YouTube 首页" },
+  "manageBlocklist": { "message": "管理屏蔽列表" },
+
+  "menuBlockVideo": { "message": "屏蔽视频" },
+  "menuUnblockVideo": { "message": "解除屏蔽视频" },
+  "menuBlockChannel": { "message": "屏蔽频道" },
+  "menuUnblockChannel": { "message": "解除屏蔽频道" },
+
+  "popupBlockVideo": { "message": "屏蔽此视频" },
+  "popupBlockChannel": { "message": "屏蔽此频道" },
+  "popupSettings": { "message": "设置" },
+  "popupNoFilters": { "message": "暂无过滤器" },
+  "popupCountVideos": { "message": "$1 个视频" },
+  "popupCountChannels": { "message": "$1 个频道" },
+  "popupCountKeywords": { "message": "$1 个关键词过滤器" },
+  "popupCountComments": { "message": "$1 个评论过滤器" },
+  "popupTotal": { "message": "共 $1 个" },
+  "contextVideo": { "message": "视频 $1" },
+  "contextChannel": { "message": "频道 $1" },
+  "contextChannelHandle": { "message": "频道 @$1" },
+
+  "countFilter": { "message": "1 个过滤器" },
+  "countFilters": { "message": "$1 个过滤器" },
+  "dnrWarningOne": {
+    "message": "1 个过滤器超出浏览器的 $1 条规则限制，仅在页面内生效。"
+  },
+  "dnrWarningMany": {
+    "message": "$1 个过滤器超出浏览器的 $2 条规则限制，仅在页面内生效。"
+  },
+
+  "channelsPasteInvalid": { "message": "粘贴频道 URL、@handle 或 UC 频道 ID。" },
+  "channelsAlready": { "message": "该频道已被屏蔽。" },
+  "channelsLooking": { "message": "正在获取频道详情…" },
+  "channelsAdded": { "message": "已添加频道。" },
+  "channelsFetchFailed": { "message": "已添加频道。无法获取详情。" },
+  "addedNamed": { "message": "已添加 $1。" },
+
+  "videosPasteInvalid": { "message": "粘贴视频 URL 或 11 位视频 ID。" },
+  "videosAlready": { "message": "该视频已被屏蔽。" },
+  "videosLooking": { "message": "正在获取标题…" },
+  "videosAdded": { "message": "已添加视频。" },
+  "videosFetchFailed": { "message": "已添加视频。无法获取标题。" },
+
+  "importInvalidJson": { "message": "该文件不是有效的 JSON。" },
+  "importFilterOne": { "message": "$1 个新过滤器" },
+  "importFilterMany": { "message": "$1 个新过滤器" },
+  "importBlockTube": { "message": "已从 BlockTube 备份导入 $1。" },
+  "importSkipped": { "message": "已跳过：$1。" },
+  "importNative": { "message": "已导入 YouTubeMyTube 设置。" },
+  "importUnknown": {
+    "message": "该文件不是 YouTubeMyTube 或 BlockTube 备份。"
+  }
+}

@@ -1,3 +1,4 @@
+import { t } from '../shared/i18n';
 import { parseBlockInput, resolveChannel } from '../shared/resolve';
 import { addChannel as addChannelRule, findChannel, removeChannel } from '../shared/rules';
 import type { ChannelEntry } from '../shared/types';
@@ -26,7 +27,7 @@ export function renderChannels(): void {
     const remove = h('button', {
       type: 'button',
       className: 'btn btn-danger',
-      text: 'Remove',
+      text: t('remove'),
     });
     remove.addEventListener('click', () => {
       removeChannel(draft.rules, { id: channel.id, handle: channel.handle, name: channel.name });
@@ -56,7 +57,7 @@ export async function addChannel(): Promise<void> {
   const input = byId<HTMLInputElement>('channel-add');
   const parsed = parseBlockInput(input.value, 'channel');
   if (parsed?.kind !== 'channel') {
-    setStatus('channel-status', 'Paste a channel URL, @handle, or UC channel ID.', false);
+    setStatus('channel-status', t('channelsPasteInvalid'), false);
     return;
   }
 
@@ -64,20 +65,20 @@ export async function addChannel(): Promise<void> {
   const handle = parsed.handle ?? '';
   const entry: ChannelEntry = { id, name: '', handle };
   if (!addChannelRule(draft.rules, entry)) {
-    setStatus('channel-status', 'That channel is already blocked.', false);
+    setStatus('channel-status', t('channelsAlready'), false);
     return;
   }
 
   const stored = findChannel(draft.rules, entry);
   if (!stored) {
-    setStatus('channel-status', 'Channel added.', false);
+    setStatus('channel-status', t('channelsAdded'), false);
     return;
   }
 
   input.value = '';
   renderChannels();
   setDirty(true);
-  setStatus('channel-status', 'Looking up channel details…', true);
+  setStatus('channel-status', t('channelsLooking'), true);
 
   try {
     const meta = await resolveChannel({ id, handle });
@@ -86,8 +87,12 @@ export async function addChannel(): Promise<void> {
     if (meta.handle) stored.handle = meta.handle;
     renderChannels();
     setDirty(true);
-    setStatus('channel-status', stored.name ? `Added ${stored.name}.` : 'Channel added.', true);
+    setStatus(
+      'channel-status',
+      stored.name ? t('addedNamed', stored.name) : t('channelsAdded'),
+      true,
+    );
   } catch {
-    setStatus('channel-status', 'Channel added. Could not fetch details.', false);
+    setStatus('channel-status', t('channelsFetchFailed'), false);
   }
 }

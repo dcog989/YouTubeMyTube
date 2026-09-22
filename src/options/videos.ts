@@ -1,3 +1,4 @@
+import { t } from '../shared/i18n';
 import { parseBlockInput, resolveVideoTitle } from '../shared/resolve';
 import { addVideo as addVideoRule, removeVideo } from '../shared/rules';
 import type { VideoEntry } from '../shared/types';
@@ -26,7 +27,7 @@ export function renderVideos(): void {
     const remove = h('button', {
       type: 'button',
       className: 'btn btn-danger',
-      text: 'Remove',
+      text: t('remove'),
     });
     remove.addEventListener('click', () => {
       removeVideo(draft.rules, video.id);
@@ -52,28 +53,28 @@ export async function addVideo(): Promise<void> {
   const input = byId<HTMLInputElement>('video-add');
   const parsed = parseBlockInput(input.value, 'video');
   if (parsed?.kind !== 'video') {
-    setStatus('video-status', 'Paste a video URL or an 11-character video ID.', false);
+    setStatus('video-status', t('videosPasteInvalid'), false);
     return;
   }
 
   const entry: VideoEntry = { id: parsed.videoId, title: '' };
   if (!addVideoRule(draft.rules, entry)) {
-    setStatus('video-status', 'That video is already blocked.', false);
+    setStatus('video-status', t('videosAlready'), false);
     return;
   }
 
   input.value = '';
   renderVideos();
   setDirty(true);
-  setStatus('video-status', 'Looking up title…', true);
+  setStatus('video-status', t('videosLooking'), true);
 
   try {
     const title = await resolveVideoTitle(entry.id);
     if (title) entry.title = title;
     renderVideos();
     setDirty(true);
-    setStatus('video-status', entry.title ? `Added ${entry.title}.` : 'Video added.', true);
+    setStatus('video-status', entry.title ? t('addedNamed', entry.title) : t('videosAdded'), true);
   } catch {
-    setStatus('video-status', 'Video added. Could not fetch title.', false);
+    setStatus('video-status', t('videosFetchFailed'), false);
   }
 }

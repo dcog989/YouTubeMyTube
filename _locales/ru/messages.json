@@ -1,0 +1,187 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "Блокируйте видео, каналы, пользователей, Shorts и комментарии на YouTube."
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — Настройки" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "Заблокировано — YouTubeMyTube" },
+
+  "blocking": { "message": "Блокировка" },
+  "enableBlocking": { "message": "Включить блокировку" },
+  "theme": { "message": "Тема" },
+  "themeSystem": { "message": "Системная тема" },
+  "themeSystemShort": { "message": "Системная" },
+  "themeLight": { "message": "Светлая тема" },
+  "themeLightShort": { "message": "Светлая" },
+  "themeDark": { "message": "Тёмная тема" },
+  "themeDarkShort": { "message": "Тёмная" },
+
+  "settingsSections": { "message": "Разделы настроек" },
+  "navChannels": { "message": "Блокировать каналы" },
+  "navVideos": { "message": "Блокировать видео" },
+  "navComments": { "message": "Блокировать комментарии" },
+  "navAreas": { "message": "Блокировать разделы" },
+  "navTester": { "message": "Проверить фильтры" },
+  "navData": { "message": "Импорт / Экспорт / Сброс" },
+
+  "unsavedChanges": { "message": "Несохранённые изменения" },
+  "save": { "message": "Сохранить" },
+  "reload": { "message": "Перезагрузить" },
+  "conflictWarning": {
+    "message": "Настройки изменены в другой вкладке или через меню YouTube. Перезагрузите, чтобы сохранить их, или сохраните, чтобы перезаписать."
+  },
+  "confirmReset": { "message": "Сбросить все настройки и фильтры?" },
+
+  "add": { "message": "Добавить" },
+  "remove": { "message": "Удалить" },
+  "goBack": { "message": "Назад" },
+
+  "channelBlockLabel": { "message": "Заблокировать канал" },
+  "channelBlockHelp": {
+    "message": "Вставьте URL канала, @handle или ID канала UC. ID должен совпадать точно; handle сравнивается без учёта регистра."
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "ID канала" },
+  "thName": { "message": "Название" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "Фильтры названия / handle канала" },
+  "channelFiltersHelp": {
+    "message": "Ключевые слова или /regex/flags, по одному в строке. Сравниваются с названиями и handle каналов."
+  },
+  "channelFiltersPlaceholder": { "message": "Пример канала\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "Заблокировать видео" },
+  "videoBlockHelp": { "message": "Вставьте URL видео или 11-символьный ID видео." },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "ID видео" },
+  "thTitle": { "message": "Название" },
+  "titleFiltersLabel": { "message": "Фильтры названия видео" },
+  "titleFiltersHelp": {
+    "message": "Ключевые слова или /regex/flags, по одному в строке. Сравниваются с названиями карточек."
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "Фильтры комментариев" },
+  "commentFiltersHelp": {
+    "message": "Ключевые слова или /regex/flags, по одному в строке. Сравниваются с авторами и текстом комментариев."
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "Скрывайте целые разделы YouTube. Блокировка страниц перенаправляет на главную."
+  },
+  "testerSub": { "message": "Проверьте правило по URL или тексту перед сохранением." },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "Проверить URL" },
+  "textLabel": { "message": "Текст" },
+  "testTypeTitle": { "message": "Название видео" },
+  "testTypeChannelName": { "message": "Название канала" },
+  "testTypeHandle": { "message": "Handle канала" },
+  "testTypeCommentAuthor": { "message": "Автор комментария" },
+  "testTypeCommentContent": { "message": "Текст комментария" },
+  "testTextPlaceholder": { "message": "Какой-то текст" },
+  "testTextBtn": { "message": "Проверить текст" },
+  "notBlocked": { "message": "Не заблокировано" },
+
+  "importBtn": { "message": "Импортировать настройки" },
+  "exportBtn": { "message": "Экспортировать настройки" },
+  "resetBtn": { "message": "Сбросить всё" },
+  "dataHelp": {
+    "message": "Настройки хранятся локально в браузере. Импорт принимает настройки YouTubeMyTube или резервную копию BlockTube — формат определяется автоматически, а записи BlockTube объединяются с вашими существующими фильтрами."
+  },
+
+  "areaHomePageTitle": { "message": "Главная страница" },
+  "areaHomePageSub": { "message": "Скрывает ленту на главной странице YouTube." },
+  "areaTrendingPageTitle": { "message": "Страница «В тренде»" },
+  "areaTrendingPageSub": { "message": "Перенаправляет на /feed/trending." },
+  "areaExplorePageTitle": { "message": "Страница «Обзор»" },
+  "areaExplorePageSub": { "message": "Перенаправляет на /feed/explore." },
+  "areaSubscriptionsPageTitle": { "message": "Страница подписок" },
+  "areaSubscriptionsPageSub": { "message": "Перенаправляет на /feed/subscriptions." },
+  "areaShortsPageTitle": { "message": "Страницы Shorts" },
+  "areaShortsPageSub": { "message": "Перенаправляет на /shorts и прямые ссылки Shorts." },
+  "areaShortsShelfTitle": { "message": "Полки Shorts" },
+  "areaShortsShelfSub": { "message": "Скрывает карусели Shorts по всему сайту." },
+  "areaCommentsSectionTitle": { "message": "Раздел комментариев" },
+  "areaCommentsSectionSub": { "message": "Скрывает область комментариев на страницах просмотра." },
+  "areaLiveChatTitle": { "message": "Прямой эфир" },
+  "areaLiveChatSub": { "message": "Скрывает рамку чата прямого эфира." },
+  "areaRelatedVideosTitle": { "message": "Похожие видео" },
+  "areaRelatedVideosSub": { "message": "Скрывает боковую панель страницы просмотра." },
+  "areaPromoSectionsTitle": { "message": "Рекламные баннеры" },
+  "areaPromoSectionsSub": {
+    "message": "Скрывает рекламные баннеры и полки рекомендаций, такие как Premium, спонсорство и «Обзор других тем»."
+  },
+
+  "reasonVideoBlocked": { "message": "Это видео заблокировано." },
+  "reasonChannelBlocked": { "message": "Этот канал заблокирован." },
+  "reasonAreaBlocked": { "message": "Эта страница заблокирована." },
+  "reasonDetailVideoId": { "message": "Заблокированный ID видео: $1" },
+  "reasonDetailChannelId": { "message": "Заблокированный ID канала: $1" },
+  "reasonDetailHandle": { "message": "Заблокированный канал: @$1" },
+  "reasonDetailHandleEmpty": { "message": "Заблокированный канал." },
+  "reasonDetailTitle": { "message": "Заблокированное название: $1" },
+  "reasonDetailTitleEmpty": { "message": "Заблокировано фильтром названий." },
+  "reasonDetailChannelName": { "message": "Заблокированное название канала: $1" },
+  "reasonDetailChannelNameEmpty": { "message": "Заблокировано фильтром каналов." },
+  "reasonDetailComment": { "message": "Заблокированный комментарий: $1" },
+  "reasonDetailCommentEmpty": { "message": "Заблокировано фильтром комментариев." },
+  "reasonDetailArea": { "message": "Заблокированная страница: $1" },
+  "blockedFallback": { "message": "Этот контент заблокирован." },
+
+  "overlayTitle": { "message": "Заблокировано YouTubeMyTube" },
+  "removeFromBlocklist": { "message": "Удалить из списка блокировки" },
+  "youtubeHome": { "message": "Главная YouTube" },
+  "manageBlocklist": { "message": "Управлять списком блокировки" },
+
+  "menuBlockVideo": { "message": "Заблокировать видео" },
+  "menuUnblockVideo": { "message": "Разблокировать видео" },
+  "menuBlockChannel": { "message": "Заблокировать канал" },
+  "menuUnblockChannel": { "message": "Разблокировать канал" },
+
+  "popupBlockVideo": { "message": "Заблокировать это видео" },
+  "popupBlockChannel": { "message": "Заблокировать этот канал" },
+  "popupSettings": { "message": "Настройки" },
+  "popupNoFilters": { "message": "Фильтров пока нет" },
+  "popupCountVideos": { "message": "Видео: $1" },
+  "popupCountChannels": { "message": "Каналы: $1" },
+  "popupCountKeywords": { "message": "Фильтры по словам: $1" },
+  "popupCountComments": { "message": "Фильтры комментариев: $1" },
+  "popupTotal": { "message": "Всего: $1" },
+  "contextVideo": { "message": "Видео $1" },
+  "contextChannel": { "message": "Канал $1" },
+  "contextChannelHandle": { "message": "Канал @$1" },
+
+  "countFilter": { "message": "1 фильтр" },
+  "countFilters": { "message": "Фильтры: $1" },
+  "dnrWarningOne": {
+    "message": "1 фильтр превышает лимит браузера в $1 правил и применяется только на странице."
+  },
+  "dnrWarningMany": {
+    "message": "$1 фильтров превышают лимит браузера в $2 правил и применяются только на странице."
+  },
+
+  "channelsPasteInvalid": { "message": "Вставьте URL канала, @handle или ID канала UC." },
+  "channelsAlready": { "message": "Этот канал уже заблокирован." },
+  "channelsLooking": { "message": "Получение сведений о канале…" },
+  "channelsAdded": { "message": "Канал добавлен." },
+  "channelsFetchFailed": { "message": "Канал добавлен. Не удалось получить сведения." },
+  "addedNamed": { "message": "$1 добавлен." },
+
+  "videosPasteInvalid": { "message": "Вставьте URL видео или 11-символьный ID видео." },
+  "videosAlready": { "message": "Это видео уже заблокировано." },
+  "videosLooking": { "message": "Получение названия…" },
+  "videosAdded": { "message": "Видео добавлено." },
+  "videosFetchFailed": { "message": "Видео добавлено. Не удалось получить название." },
+
+  "importInvalidJson": { "message": "Этот файл не является допустимым JSON." },
+  "importFilterOne": { "message": "$1 новый фильтр" },
+  "importFilterMany": { "message": "$1 новых фильтров" },
+  "importBlockTube": { "message": "Импортировано $1 из резервной копии BlockTube." },
+  "importSkipped": { "message": "Пропущено: $1." },
+  "importNative": { "message": "Настройки YouTubeMyTube импортированы." },
+  "importUnknown": {
+    "message": "Этот файл не является резервной копией YouTubeMyTube или BlockTube."
+  }
+}

@@ -1,3 +1,4 @@
+import { t } from '../../shared/i18n';
 import { findChannel, hasVideoId } from '../../shared/rules';
 import type { ChannelEntry, Entity, FilterRules, VideoEntry } from '../../shared/types';
 import { normalizeHandle } from '../../shared/url';
@@ -26,7 +27,7 @@ export function actionsFor(entity: Entity, rules: FilterRules): MenuAction[] {
   if (entity.videoId) {
     const blocked = hasVideoId(rules, entity.videoId);
     actions.push({
-      label: `${blocked ? 'Unblock' : 'Block'} video`,
+      label: t(blocked ? 'menuUnblockVideo' : 'menuBlockVideo'),
       kind: 'video',
       mode: blocked ? 'unblock' : 'block',
       value: entity.videoId,
@@ -40,7 +41,7 @@ export function actionsFor(entity: Entity, rules: FilterRules): MenuAction[] {
     const name = entity.channelName ?? '';
     const blocked = findChannel(rules, { id, handle, name }) !== undefined;
     actions.push({
-      label: `${blocked ? 'Unblock' : 'Block'} channel`,
+      label: t(blocked ? 'menuUnblockChannel' : 'menuBlockChannel'),
       kind: 'channel',
       mode: blocked ? 'unblock' : 'block',
       value: id || handle || name,

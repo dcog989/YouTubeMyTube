@@ -1,4 +1,5 @@
 import { YOUTUBE_HOME } from '../shared/constants';
+import { t } from '../shared/i18n';
 import type { Reason } from '../shared/reason';
 import { reasonDetail } from '../shared/reason-copy';
 import { unblockReason } from '../shared/rules-service';
@@ -73,7 +74,7 @@ function buildActions(reason: Reason, feedback: Feedback): HTMLElement {
   const remove = h('button', {
     type: 'button',
     className: 'ytb-block-btn ytb-block-btn-primary ytb-block-remove',
-    text: 'Remove from blocklist',
+    text: t('removeFromBlocklist'),
     hidden: ref === null,
   });
   remove.addEventListener('click', () => {
@@ -87,7 +88,7 @@ function buildActions(reason: Reason, feedback: Feedback): HTMLElement {
   const home = h('button', {
     type: 'button',
     className: 'ytb-block-btn ytb-block-home',
-    text: 'YouTube home',
+    text: t('youtubeHome'),
   });
   home.addEventListener('click', () => {
     window.location.href = YOUTUBE_HOME;
@@ -207,7 +208,7 @@ export function createBlankCover(options: {
   function renderContent(reason: Reason): void {
     cover?.replaceChildren(
       buildLogo('ytb-blank-logo'),
-      h('h2', { className: 'ytb-blank-title', text: 'Blocked by YouTubeMyTube' }),
+      h('h2', { className: 'ytb-blank-title', text: t('overlayTitle') }),
       h('p', { className: 'ytb-blank-detail', text: reasonDetail(reason) }),
       buildActions(reason, feedback),
     );
@@ -274,7 +275,7 @@ export function createChannelOverlay(options: {
     const channel = channelLabel(info);
 
     root.append(buildLogo('ytb-block-logo'));
-    root.append(h('h2', { className: 'ytb-block-title', text: 'Blocked by YouTubeMyTube' }));
+    root.append(h('h2', { className: 'ytb-block-title', text: t('overlayTitle') }));
     if (channel) root.append(h('p', { className: 'ytb-block-channel', text: channel }));
     root.append(
       h('p', { className: 'ytb-block-detail', text: reasonDetail(info.reason) }),

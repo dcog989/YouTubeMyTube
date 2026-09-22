@@ -1,0 +1,187 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "YouTube에서 동영상, 채널, 사용자, Shorts, 댓글을 차단합니다."
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — 설정" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "차단됨 — YouTubeMyTube" },
+
+  "blocking": { "message": "차단" },
+  "enableBlocking": { "message": "차단 사용" },
+  "theme": { "message": "테마" },
+  "themeSystem": { "message": "시스템 테마" },
+  "themeSystemShort": { "message": "시스템" },
+  "themeLight": { "message": "라이트 테마" },
+  "themeLightShort": { "message": "라이트" },
+  "themeDark": { "message": "다크 테마" },
+  "themeDarkShort": { "message": "다크" },
+
+  "settingsSections": { "message": "설정 섹션" },
+  "navChannels": { "message": "채널 차단" },
+  "navVideos": { "message": "동영상 차단" },
+  "navComments": { "message": "댓글 차단" },
+  "navAreas": { "message": "영역 차단" },
+  "navTester": { "message": "필터 테스트" },
+  "navData": { "message": "가져오기 / 내보내기 / 초기화" },
+
+  "unsavedChanges": { "message": "저장되지 않은 변경 사항" },
+  "save": { "message": "저장" },
+  "reload": { "message": "새로고침" },
+  "conflictWarning": {
+    "message": "다른 탭이나 YouTube 메뉴에서 설정이 변경되었습니다. 유지하려면 새로고침하고, 덮어쓰려면 저장하세요."
+  },
+  "confirmReset": { "message": "모든 설정과 필터를 초기화할까요?" },
+
+  "add": { "message": "추가" },
+  "remove": { "message": "삭제" },
+  "goBack": { "message": "뒤로" },
+
+  "channelBlockLabel": { "message": "채널 차단" },
+  "channelBlockHelp": {
+    "message": "채널 URL, @handle 또는 UC 채널 ID를 붙여넣으세요. ID는 정확히 일치해야 하며, handle은 대소문자를 구분하지 않습니다."
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "채널 ID" },
+  "thName": { "message": "이름" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "채널 이름 / handle 필터" },
+  "channelFiltersHelp": {
+    "message": "키워드 또는 /regex/flags, 한 줄에 하나. 채널 이름과 handle과 비교합니다."
+  },
+  "channelFiltersPlaceholder": { "message": "예시 채널\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "동영상 차단" },
+  "videoBlockHelp": { "message": "동영상 URL 또는 11자 동영상 ID를 붙여넣으세요." },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "동영상 ID" },
+  "thTitle": { "message": "제목" },
+  "titleFiltersLabel": { "message": "동영상 제목 필터" },
+  "titleFiltersHelp": {
+    "message": "키워드 또는 /regex/flags, 한 줄에 하나. 카드 제목과 비교합니다."
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "댓글 필터" },
+  "commentFiltersHelp": {
+    "message": "키워드 또는 /regex/flags, 한 줄에 하나. 댓글 작성자와 텍스트와 비교합니다."
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "YouTube의 전체 섹션을 숨깁니다. 페이지 차단은 홈페이지로 리디렉션합니다."
+  },
+  "testerSub": { "message": "저장하기 전에 URL 또는 텍스트에 대해 규칙을 확인합니다." },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "URL 테스트" },
+  "textLabel": { "message": "텍스트" },
+  "testTypeTitle": { "message": "동영상 제목" },
+  "testTypeChannelName": { "message": "채널 이름" },
+  "testTypeHandle": { "message": "채널 handle" },
+  "testTypeCommentAuthor": { "message": "댓글 작성자" },
+  "testTypeCommentContent": { "message": "댓글 내용" },
+  "testTextPlaceholder": { "message": "텍스트" },
+  "testTextBtn": { "message": "텍스트 테스트" },
+  "notBlocked": { "message": "차단되지 않음" },
+
+  "importBtn": { "message": "설정 가져오기" },
+  "exportBtn": { "message": "설정 내보내기" },
+  "resetBtn": { "message": "모두 초기화" },
+  "dataHelp": {
+    "message": "설정은 브라우저에 로컬로 저장됩니다. 가져오기는 YouTubeMyTube 설정 또는 BlockTube 백업을 지원하며, 형식이 자동으로 감지되고 BlockTube 항목이 기존 필터에 병합됩니다."
+  },
+
+  "areaHomePageTitle": { "message": "홈페이지" },
+  "areaHomePageSub": { "message": "YouTube 홈 피드를 숨깁니다." },
+  "areaTrendingPageTitle": { "message": "인기 페이지" },
+  "areaTrendingPageSub": { "message": "/feed/trending으로 리디렉션합니다." },
+  "areaExplorePageTitle": { "message": "탐색 페이지" },
+  "areaExplorePageSub": { "message": "/feed/explore로 리디렉션합니다." },
+  "areaSubscriptionsPageTitle": { "message": "구독 페이지" },
+  "areaSubscriptionsPageSub": { "message": "/feed/subscriptions로 리디렉션합니다." },
+  "areaShortsPageTitle": { "message": "Shorts 페이지" },
+  "areaShortsPageSub": { "message": "/shorts 및 직접 Short 링크로 리디렉션합니다." },
+  "areaShortsShelfTitle": { "message": "Shorts 선반" },
+  "areaShortsShelfSub": { "message": "사이트 전체에서 Shorts 캐러셀을 숨깁니다." },
+  "areaCommentsSectionTitle": { "message": "댓글 섹션" },
+  "areaCommentsSectionSub": { "message": "시청 페이지의 댓글 영역을 숨깁니다." },
+  "areaLiveChatTitle": { "message": "실시간 채팅" },
+  "areaLiveChatSub": { "message": "실시간 채팅 프레임을 숨깁니다." },
+  "areaRelatedVideosTitle": { "message": "관련 동영상" },
+  "areaRelatedVideosSub": { "message": "시청 페이지 사이드바를 숨깁니다." },
+  "areaPromoSectionsTitle": { "message": "프로모 배너" },
+  "areaPromoSectionsSub": {
+    "message": "Premium, 멤버십, 더 많은 주제 탐색과 같은 프로모 배너와 탐색 선반을 숨깁니다."
+  },
+
+  "reasonVideoBlocked": { "message": "이 동영상은 차단되었습니다." },
+  "reasonChannelBlocked": { "message": "이 채널은 차단되었습니다." },
+  "reasonAreaBlocked": { "message": "이 페이지는 차단되었습니다." },
+  "reasonDetailVideoId": { "message": "차단된 동영상 ID: $1" },
+  "reasonDetailChannelId": { "message": "차단된 채널 ID: $1" },
+  "reasonDetailHandle": { "message": "차단된 채널: @$1" },
+  "reasonDetailHandleEmpty": { "message": "차단된 채널." },
+  "reasonDetailTitle": { "message": "차단된 제목: $1" },
+  "reasonDetailTitleEmpty": { "message": "제목 필터로 차단됨." },
+  "reasonDetailChannelName": { "message": "차단된 채널 이름: $1" },
+  "reasonDetailChannelNameEmpty": { "message": "채널 필터로 차단됨." },
+  "reasonDetailComment": { "message": "차단된 댓글: $1" },
+  "reasonDetailCommentEmpty": { "message": "댓글 필터로 차단됨." },
+  "reasonDetailArea": { "message": "차단된 페이지: $1" },
+  "blockedFallback": { "message": "이 콘텐츠는 차단되었습니다." },
+
+  "overlayTitle": { "message": "YouTubeMyTube에 의해 차단됨" },
+  "removeFromBlocklist": { "message": "차단 목록에서 제거" },
+  "youtubeHome": { "message": "YouTube 홈" },
+  "manageBlocklist": { "message": "차단 목록 관리" },
+
+  "menuBlockVideo": { "message": "동영상 차단" },
+  "menuUnblockVideo": { "message": "동영상 차단 해제" },
+  "menuBlockChannel": { "message": "채널 차단" },
+  "menuUnblockChannel": { "message": "채널 차단 해제" },
+
+  "popupBlockVideo": { "message": "이 동영상 차단" },
+  "popupBlockChannel": { "message": "이 채널 차단" },
+  "popupSettings": { "message": "설정" },
+  "popupNoFilters": { "message": "아직 필터 없음" },
+  "popupCountVideos": { "message": "동영상 $1개" },
+  "popupCountChannels": { "message": "채널 $1개" },
+  "popupCountKeywords": { "message": "키워드 필터 $1개" },
+  "popupCountComments": { "message": "댓글 필터 $1개" },
+  "popupTotal": { "message": "총 $1개" },
+  "contextVideo": { "message": "동영상 $1" },
+  "contextChannel": { "message": "채널 $1" },
+  "contextChannelHandle": { "message": "채널 @$1" },
+
+  "countFilter": { "message": "필터 1개" },
+  "countFilters": { "message": "필터 $1개" },
+  "dnrWarningOne": {
+    "message": "필터 1개가 브라우저의 규칙 $1개 한도를 초과하여 페이지 내에서만 적용됩니다."
+  },
+  "dnrWarningMany": {
+    "message": "필터 $1개가 브라우저의 규칙 $2개 한도를 초과하여 페이지 내에서만 적용됩니다."
+  },
+
+  "channelsPasteInvalid": { "message": "채널 URL, @handle 또는 UC 채널 ID를 붙여넣으세요." },
+  "channelsAlready": { "message": "해당 채널은 이미 차단되었습니다." },
+  "channelsLooking": { "message": "채널 세부정보를 가져오는 중…" },
+  "channelsAdded": { "message": "채널이 추가되었습니다." },
+  "channelsFetchFailed": { "message": "채널이 추가되었습니다. 세부정보를 가져오지 못했습니다." },
+  "addedNamed": { "message": "$1을(를) 추가했습니다." },
+
+  "videosPasteInvalid": { "message": "동영상 URL 또는 11자 동영상 ID를 붙여넣으세요." },
+  "videosAlready": { "message": "해당 동영상은 이미 차단되었습니다." },
+  "videosLooking": { "message": "제목을 가져오는 중…" },
+  "videosAdded": { "message": "동영상이 추가되었습니다." },
+  "videosFetchFailed": { "message": "동영상이 추가되었습니다. 제목을 가져오지 못했습니다." },
+
+  "importInvalidJson": { "message": "해당 파일은 유효한 JSON이 아닙니다." },
+  "importFilterOne": { "message": "새 필터 $1개" },
+  "importFilterMany": { "message": "새 필터 $1개" },
+  "importBlockTube": { "message": "BlockTube 백업에서 $1개를 가져왔습니다." },
+  "importSkipped": { "message": "건너뜀: $1." },
+  "importNative": { "message": "YouTubeMyTube 설정을 가져왔습니다." },
+  "importUnknown": {
+    "message": "해당 파일은 YouTubeMyTube 또는 BlockTube 백업이 아닙니다."
+  }
+}

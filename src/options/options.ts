@@ -1,4 +1,5 @@
 import { defaultState } from '../shared/defaults';
+import { localizeDocument, t } from '../shared/i18n';
 import { normalizeState } from '../shared/normalize';
 import { loadState, onLocalStorageChanged, saveState } from '../shared/state';
 import { applyTheme, isTheme } from '../shared/theme';
@@ -105,7 +106,7 @@ function wireStatic(): void {
   });
 
   byId('reset').addEventListener('click', () => {
-    if (!confirm('Reset all settings and filters?')) return;
+    if (!confirm(t('confirmReset'))) return;
     setDraft(defaultState());
     notify();
     setDirty(true);
@@ -117,6 +118,7 @@ function wireStatic(): void {
 }
 
 async function init(): Promise<void> {
+  localizeDocument();
   setDraft(await loadState());
   buildAreas();
   wirePatternEditors();

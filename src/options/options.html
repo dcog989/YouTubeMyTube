@@ -17,19 +17,25 @@
         </div>
         <div class="header-actions">
           <div class="blocking-row">
-            <span class="theme-label">Blocking</span>
-            <label class="switch" for="enabled" aria-label="Enable blocking">
+            <span class="theme-label" data-i18n="blocking">Blocking</span>
+            <label
+              class="switch"
+              for="enabled"
+              aria-label="Enable blocking"
+              data-i18n-attr="aria-label:enableBlocking"
+            >
               <input type="checkbox" id="enabled">
               <span class="slider"></span>
             </label>
             <span id="total-count" class="count"></span>
           </div>
-          <fieldset class="theme-switch" aria-label="Theme">
+          <fieldset class="theme-switch" aria-label="Theme" data-i18n-attr="aria-label:theme">
             <button
               type="button"
               class="theme-btn"
               data-theme="system"
               aria-label="System theme"
+              data-i18n-attr="aria-label:themeSystem"
               title="System"
             >
               <svg
@@ -55,6 +61,7 @@
               class="theme-btn"
               data-theme="light"
               aria-label="Light theme"
+              data-i18n-attr="aria-label:themeLight"
               title="Light"
             >
               <svg
@@ -86,6 +93,7 @@
               class="theme-btn"
               data-theme="dark"
               aria-label="Dark theme"
+              data-i18n-attr="aria-label:themeDark"
               title="Dark"
             >
               <svg
@@ -110,43 +118,66 @@
     </header>
 
     <div class="layout">
-      <nav class="sidebar" aria-label="Settings sections">
-        <button type="button" class="nav-item is-active" data-panel="channels">
+      <nav
+        class="sidebar"
+        aria-label="Settings sections"
+        data-i18n-attr="aria-label:settingsSections"
+      >
+        <button
+          type="button"
+          class="nav-item is-active"
+          data-panel="channels"
+          data-i18n="navChannels"
+        >
           Block Channels
         </button>
-        <button type="button" class="nav-item" data-panel="videos">Block Videos</button>
-        <button type="button" class="nav-item" data-panel="comments">Block Comments</button>
-        <button type="button" class="nav-item" data-panel="areas">Block Areas</button>
-        <button type="button" class="nav-item" data-panel="tester">Test Filters</button>
-        <button type="button" class="nav-item" data-panel="data">Import / Export / Reset</button>
+        <button type="button" class="nav-item" data-panel="videos" data-i18n="navVideos">
+          Block Videos
+        </button>
+        <button type="button" class="nav-item" data-panel="comments" data-i18n="navComments">
+          Block Comments
+        </button>
+        <button type="button" class="nav-item" data-panel="areas" data-i18n="navAreas">
+          Block Areas
+        </button>
+        <button type="button" class="nav-item" data-panel="tester" data-i18n="navTester">
+          Test Filters
+        </button>
+        <button type="button" class="nav-item" data-panel="data" data-i18n="navData">
+          Import / Export / Reset
+        </button>
       </nav>
 
       <main class="content">
         <div class="panel-head">
           <div class="panel-title-group">
-            <h2 id="panel-title">Block Channels</h2>
+            <h2 id="panel-title" data-i18n="navChannels">Block Channels</h2>
             <span id="panel-count" class="count"></span>
           </div>
           <div class="panel-actions">
-            <span id="dirty" class="dirty" hidden>Unsaved changes</span>
-            <button type="button" id="save" class="btn btn-primary" disabled>Save</button>
+            <span id="dirty" class="dirty" hidden data-i18n="unsavedChanges">Unsaved changes</span>
+            <button type="button" id="save" class="btn btn-primary" disabled data-i18n="save">
+              Save
+            </button>
           </div>
         </div>
 
         <div id="dnr-warning" class="notice" hidden></div>
 
         <div id="conflict-warning" class="notice" hidden>
-          <span>
+          <span data-i18n="conflictWarning">
             Settings changed in another tab or from the YouTube menu. Reload to keep them, or Save
             to overwrite.
           </span>
-          <button type="button" id="conflict-reload" class="btn">Reload</button>
+          <button type="button" id="conflict-reload" class="btn" data-i18n="reload">Reload</button>
         </div>
 
         <section class="panel is-active" id="panel-channels">
           <div class="card card-scroll">
-            <label class="row-title" for="channel-add">Block a channel</label>
-            <p class="help">
+            <label class="row-title" for="channel-add" data-i18n="channelBlockLabel"
+              >Block a channel</label
+            >
+            <p class="help" data-i18n="channelBlockHelp">
               Paste a channel URL, @handle, or UC channel ID. The ID is matched exactly; the handle
               is matched case-insensitively.
             </p>
@@ -157,17 +188,20 @@
                 type="text"
                 autocomplete="off"
                 placeholder="https://www.youtube.com/@handle"
+                data-i18n-attr="placeholder:channelAddPlaceholder"
               >
-              <button type="button" id="channel-add-btn" class="btn btn-primary">Add</button>
+              <button type="button" id="channel-add-btn" class="btn btn-primary" data-i18n="add">
+                Add
+              </button>
             </div>
             <div id="channel-status" class="row-sub" hidden></div>
             <div class="table-scroll">
               <table class="entity-table">
                 <thead>
                   <tr>
-                    <th>Channel ID</th>
-                    <th>Name</th>
-                    <th>Handle</th>
+                    <th data-i18n="thChannelId">Channel ID</th>
+                    <th data-i18n="thName">Name</th>
+                    <th data-i18n="thHandle">Handle</th>
                     <th class="col-action"></th>
                   </tr>
                 </thead>
@@ -176,17 +210,18 @@
             </div>
             <div class="field">
               <div class="editor-head">
-                <label class="row-title" for="input-channelFilters">
+                <label class="row-title" for="input-channelFilters" data-i18n="channelFiltersLabel">
                   Channel name / handle filters
                 </label>
               </div>
-              <p class="help">
+              <p class="help" data-i18n="channelFiltersHelp">
                 Keywords or /regex/flags, one per line. Matched against channel names and handles.
               </p>
               <textarea
                 id="input-channelFilters"
                 spellcheck="false"
                 placeholder="Example Channel&#10;/\bdrama\b/i"
+                data-i18n-attr="placeholder:channelFiltersPlaceholder"
               ></textarea>
             </div>
           </div>
@@ -194,8 +229,12 @@
 
         <section class="panel" id="panel-videos">
           <div class="card card-scroll">
-            <label class="row-title" for="video-add">Block a video</label>
-            <p class="help">Paste a video URL or an 11-character video ID.</p>
+            <label class="row-title" for="video-add" data-i18n="videoBlockLabel"
+              >Block a video</label
+            >
+            <p class="help" data-i18n="videoBlockHelp">
+              Paste a video URL or an 11-character video ID.
+            </p>
             <div class="test-row">
               <input
                 id="video-add"
@@ -203,16 +242,19 @@
                 type="text"
                 autocomplete="off"
                 placeholder="https://www.youtube.com/watch?v=..."
+                data-i18n-attr="placeholder:videoAddPlaceholder"
               >
-              <button type="button" id="video-add-btn" class="btn btn-primary">Add</button>
+              <button type="button" id="video-add-btn" class="btn btn-primary" data-i18n="add">
+                Add
+              </button>
             </div>
             <div id="video-status" class="row-sub" hidden></div>
             <div class="table-scroll">
               <table class="entity-table">
                 <thead>
                   <tr>
-                    <th>Video ID</th>
-                    <th>Title</th>
+                    <th data-i18n="thVideoId">Video ID</th>
+                    <th data-i18n="thTitle">Title</th>
                     <th class="col-action"></th>
                   </tr>
                 </thead>
@@ -221,15 +263,18 @@
             </div>
             <div class="field">
               <div class="editor-head">
-                <label class="row-title" for="input-titleFilters">Video title filters</label>
+                <label class="row-title" for="input-titleFilters" data-i18n="titleFiltersLabel"
+                  >Video title filters</label
+                >
               </div>
-              <p class="help">
+              <p class="help" data-i18n="titleFiltersHelp">
                 Keywords or /regex/flags, one per line. Matched against card titles.
               </p>
               <textarea
                 id="input-titleFilters"
                 spellcheck="false"
                 placeholder="clickbait&#10;/\bspoilers?\b/i"
+                data-i18n-attr="placeholder:titleFiltersPlaceholder"
               ></textarea>
             </div>
           </div>
@@ -238,9 +283,11 @@
         <section class="panel" id="panel-comments">
           <div class="card">
             <div class="editor-head">
-              <label class="row-title" for="input-commentFilters">Comment filters</label>
+              <label class="row-title" for="input-commentFilters" data-i18n="commentFiltersLabel"
+                >Comment filters</label
+              >
             </div>
-            <p class="help">
+            <p class="help" data-i18n="commentFiltersHelp">
               Keywords or /regex/flags, one per line. Matched against comment authors and text.
             </p>
             <textarea
@@ -248,43 +295,61 @@
               class="textarea-fit"
               spellcheck="false"
               placeholder="spammer&#10;/free\s+crypto/i"
+              data-i18n-attr="placeholder:commentFiltersPlaceholder"
             ></textarea>
           </div>
         </section>
 
         <section class="panel" id="panel-areas">
-          <p class="panel-sub">
+          <p class="panel-sub" data-i18n="areasSub">
             Hide entire sections of YouTube. Page blocks redirect to the home page.
           </p>
           <div class="card" id="areas"></div>
         </section>
 
         <section class="panel" id="panel-tester">
-          <p class="panel-sub">Check a rule against a URL or a piece of text before saving.</p>
+          <p class="panel-sub" data-i18n="testerSub">
+            Check a rule against a URL or a piece of text before saving.
+          </p>
           <div class="card">
-            <label class="row-title" for="test-url">URL</label>
+            <label class="row-title" for="test-url" data-i18n="urlLabel">URL</label>
             <div class="test-row">
               <input
                 id="test-url"
                 class="input"
                 type="text"
                 placeholder="https://www.youtube.com/watch?v=..."
+                data-i18n-attr="placeholder:videoAddPlaceholder"
               >
-              <button type="button" id="test-url-btn" class="btn">Test URL</button>
+              <button type="button" id="test-url-btn" class="btn" data-i18n="testUrlBtn">
+                Test URL
+              </button>
             </div>
           </div>
           <div class="card">
-            <label class="row-title" for="test-text">Text</label>
+            <label class="row-title" for="test-text" data-i18n="textLabel">Text</label>
             <div class="test-row">
               <select id="test-type" class="select">
-                <option value="title">Video title</option>
-                <option value="channelName">Channel name</option>
-                <option value="handle">Channel handle</option>
-                <option value="commentAuthor">Comment author</option>
-                <option value="commentContent">Comment content</option>
+                <option value="title" data-i18n="testTypeTitle">Video title</option>
+                <option value="channelName" data-i18n="testTypeChannelName">Channel name</option>
+                <option value="handle" data-i18n="testTypeHandle">Channel handle</option>
+                <option value="commentAuthor" data-i18n="testTypeCommentAuthor">
+                  Comment author
+                </option>
+                <option value="commentContent" data-i18n="testTypeCommentContent">
+                  Comment content
+                </option>
               </select>
-              <input id="test-text" class="input" type="text" placeholder="Some text">
-              <button type="button" id="test-text-btn" class="btn">Test text</button>
+              <input
+                id="test-text"
+                class="input"
+                type="text"
+                placeholder="Some text"
+                data-i18n-attr="placeholder:testTextPlaceholder"
+              >
+              <button type="button" id="test-text-btn" class="btn" data-i18n="testTextBtn">
+                Test text
+              </button>
             </div>
           </div>
           <div id="test-result" class="test-result" hidden></div>
@@ -293,12 +358,18 @@
         <section class="panel" id="panel-data">
           <div class="card">
             <div class="data-actions">
-              <button type="button" id="import" class="btn">Import settings</button>
-              <button type="button" id="export" class="btn">Export settings</button>
-              <button type="button" id="reset" class="btn btn-danger">Reset all</button>
+              <button type="button" id="import" class="btn" data-i18n="importBtn">
+                Import settings
+              </button>
+              <button type="button" id="export" class="btn" data-i18n="exportBtn">
+                Export settings
+              </button>
+              <button type="button" id="reset" class="btn btn-danger" data-i18n="resetBtn">
+                Reset all
+              </button>
               <input id="import-file" type="file" accept="application/json" hidden>
             </div>
-            <div class="row-sub">
+            <div class="row-sub" data-i18n="dataHelp">
               Settings are stored locally in your browser. Import accepts YouTubeMyTube settings or
               a BlockTube backup — the format is detected automatically, and BlockTube entries are
               merged into your existing filters.

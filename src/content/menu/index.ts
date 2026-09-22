@@ -130,7 +130,9 @@ export function createMenuInjector(deps: {
     const scope = popupOf(container) ?? container;
     for (const candidate of scope.querySelectorAll(MENU_ITEM_SELECTOR)) {
       if (candidate.hasAttribute(INJECTED_ATTR)) continue;
-      const label = menuItemLabel(candidate).toLowerCase();
+      const label = menuItemLabel(candidate)
+        .replace(/[\u2018\u2019]/g, "'")
+        .toLowerCase();
       if (!(DONT_RECOMMEND_LABELS as readonly string[]).includes(label)) continue;
       (candidate as HTMLElement).click();
       return;

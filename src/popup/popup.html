@@ -15,8 +15,13 @@
       </header>
 
       <div class="row row-between">
-        <span class="row-title">Blocking</span>
-        <label class="switch" for="enabled" aria-label="Blocking">
+        <span class="row-title" data-i18n="blocking">Blocking</span>
+        <label
+          class="switch"
+          for="enabled"
+          aria-label="Blocking"
+          data-i18n-attr="aria-label:blocking"
+        >
           <input type="checkbox" id="enabled">
           <span class="slider"></span>
         </label>
@@ -25,10 +30,22 @@
       <div class="context" id="context" hidden>
         <div class="row-sub" id="context-label">On this page</div>
         <div class="context-actions">
-          <button type="button" id="block-video" class="btn btn-primary" hidden>
+          <button
+            type="button"
+            id="block-video"
+            class="btn btn-primary"
+            hidden
+            data-i18n="popupBlockVideo"
+          >
             Block this video
           </button>
-          <button type="button" id="block-channel" class="btn btn-primary" hidden>
+          <button
+            type="button"
+            id="block-channel"
+            class="btn btn-primary"
+            hidden
+            data-i18n="popupBlockChannel"
+          >
             Block this channel
           </button>
         </div>
@@ -36,7 +53,9 @@
 
       <div class="counts" id="counts"></div>
 
-      <button type="button" id="options" class="btn btn-block">Settings</button>
+      <button type="button" id="options" class="btn btn-block" data-i18n="popupSettings">
+        Settings
+      </button>
     </div>
     <script type="module" src="popup.js"></script>
   </body>

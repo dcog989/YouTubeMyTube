@@ -1,0 +1,189 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "Blokkeer video's, kanalen, gebruikers, Shorts en reacties op YouTube."
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — Instellingen" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "Geblokkeerd — YouTubeMyTube" },
+
+  "blocking": { "message": "Blokkering" },
+  "enableBlocking": { "message": "Blokkering inschakelen" },
+  "theme": { "message": "Thema" },
+  "themeSystem": { "message": "Systeemthema" },
+  "themeSystemShort": { "message": "Systeem" },
+  "themeLight": { "message": "Licht thema" },
+  "themeLightShort": { "message": "Licht" },
+  "themeDark": { "message": "Donker thema" },
+  "themeDarkShort": { "message": "Donker" },
+
+  "settingsSections": { "message": "Instellingensecties" },
+  "navChannels": { "message": "Kanalen blokkeren" },
+  "navVideos": { "message": "Video's blokkeren" },
+  "navComments": { "message": "Reacties blokkeren" },
+  "navAreas": { "message": "Gebieden blokkeren" },
+  "navTester": { "message": "Filters testen" },
+  "navData": { "message": "Importeren / Exporteren / Resetten" },
+
+  "unsavedChanges": { "message": "Niet-opgeslagen wijzigingen" },
+  "save": { "message": "Opslaan" },
+  "reload": { "message": "Herladen" },
+  "conflictWarning": {
+    "message": "De instellingen zijn gewijzigd in een ander tabblad of via het YouTube-menu. Herlaad om ze te behouden, of sla op om ze te overschrijven."
+  },
+  "confirmReset": { "message": "Alle instellingen en filters resetten?" },
+
+  "add": { "message": "Toevoegen" },
+  "remove": { "message": "Verwijderen" },
+  "goBack": { "message": "Terug" },
+
+  "channelBlockLabel": { "message": "Een kanaal blokkeren" },
+  "channelBlockHelp": {
+    "message": "Plak een kanaal-URL, @handle of UC-kanaal-ID. De ID moet exact overeenkomen; de handle wordt hoofdletterongevoelig vergeleken."
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "Kanaal-ID" },
+  "thName": { "message": "Naam" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "Kanaalnaam-/handlefilters" },
+  "channelFiltersHelp": {
+    "message": "Trefwoorden of /regex/flags, één per regel. Vergeleken met kanaalnamen en handles."
+  },
+  "channelFiltersPlaceholder": { "message": "Voorbeeldkanaal\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "Een video blokkeren" },
+  "videoBlockHelp": { "message": "Plak een video-URL of een video-ID van 11 tekens." },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "Video-ID" },
+  "thTitle": { "message": "Titel" },
+  "titleFiltersLabel": { "message": "Videotitelfilters" },
+  "titleFiltersHelp": {
+    "message": "Trefwoorden of /regex/flags, één per regel. Vergeleken met kaarttitels."
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "Reactiefilters" },
+  "commentFiltersHelp": {
+    "message": "Trefwoorden of /regex/flags, één per regel. Vergeleken met auteurs en tekst van reacties."
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "Verberg hele secties van YouTube. Paginablokkeringen verwijzen door naar de startpagina."
+  },
+  "testerSub": { "message": "Controleer een regel tegen een URL of tekst voordat je opslaat." },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "URL testen" },
+  "textLabel": { "message": "Tekst" },
+  "testTypeTitle": { "message": "Videotitel" },
+  "testTypeChannelName": { "message": "Kanaalnaam" },
+  "testTypeHandle": { "message": "Kanaalhandle" },
+  "testTypeCommentAuthor": { "message": "Reactieauteur" },
+  "testTypeCommentContent": { "message": "Reactie-inhoud" },
+  "testTextPlaceholder": { "message": "Wat tekst" },
+  "testTextBtn": { "message": "Tekst testen" },
+  "notBlocked": { "message": "Niet geblokkeerd" },
+
+  "importBtn": { "message": "Instellingen importeren" },
+  "exportBtn": { "message": "Instellingen exporteren" },
+  "resetBtn": { "message": "Alles resetten" },
+  "dataHelp": {
+    "message": "Instellingen worden lokaal in je browser opgeslagen. Importeren accepteert YouTubeMyTube-instellingen of een BlockTube-back-up — het formaat wordt automatisch herkend en BlockTube-items worden samengevoegd met je bestaande filters."
+  },
+
+  "areaHomePageTitle": { "message": "Startpagina" },
+  "areaHomePageSub": { "message": "Verberg de YouTube-startfeed." },
+  "areaTrendingPageTitle": { "message": "Trendingpagina" },
+  "areaTrendingPageSub": { "message": "Verwijs door naar /feed/trending." },
+  "areaExplorePageTitle": { "message": "Verkennen-pagina" },
+  "areaExplorePageSub": { "message": "Verwijs door naar /feed/explore." },
+  "areaSubscriptionsPageTitle": { "message": "Abonnementenpagina" },
+  "areaSubscriptionsPageSub": { "message": "Verwijs door naar /feed/subscriptions." },
+  "areaShortsPageTitle": { "message": "Shorts-pagina's" },
+  "areaShortsPageSub": { "message": "Verwijs door naar /shorts en directe Short-links." },
+  "areaShortsShelfTitle": { "message": "Shorts-schappen" },
+  "areaShortsShelfSub": { "message": "Verberg Shorts-carrousels op de hele site." },
+  "areaCommentsSectionTitle": { "message": "Reactiesectie" },
+  "areaCommentsSectionSub": { "message": "Verberg het reactiegebied op watchpagina's." },
+  "areaLiveChatTitle": { "message": "Livechat" },
+  "areaLiveChatSub": { "message": "Verberg het livechatkader." },
+  "areaRelatedVideosTitle": { "message": "Gerelateerde video's" },
+  "areaRelatedVideosSub": { "message": "Verberg de zijbalk van de watchpagina." },
+  "areaPromoSectionsTitle": { "message": "Promobanners" },
+  "areaPromoSectionsSub": {
+    "message": "Verberg promobanners en ontdekkingsschappen zoals Premium, lidmaatschappen en Meer onderwerpen verkennen."
+  },
+
+  "reasonVideoBlocked": { "message": "Deze video is geblokkeerd." },
+  "reasonChannelBlocked": { "message": "Dit kanaal is geblokkeerd." },
+  "reasonAreaBlocked": { "message": "Deze pagina is geblokkeerd." },
+  "reasonDetailVideoId": { "message": "Geblokkeerde video-ID: $1" },
+  "reasonDetailChannelId": { "message": "Geblokkeerde kanaal-ID: $1" },
+  "reasonDetailHandle": { "message": "Geblokkeerd kanaal: @$1" },
+  "reasonDetailHandleEmpty": { "message": "Geblokkeerd kanaal." },
+  "reasonDetailTitle": { "message": "Geblokkeerde titel: $1" },
+  "reasonDetailTitleEmpty": { "message": "Geblokkeerd door een titelfilter." },
+  "reasonDetailChannelName": { "message": "Geblokkeerde kanaalnaam: $1" },
+  "reasonDetailChannelNameEmpty": { "message": "Geblokkeerd door een kanaalfilter." },
+  "reasonDetailComment": { "message": "Geblokkeerde reactie: $1" },
+  "reasonDetailCommentEmpty": { "message": "Geblokkeerd door een reactiefilter." },
+  "reasonDetailArea": { "message": "Geblokkeerde pagina: $1" },
+  "blockedFallback": { "message": "Deze inhoud is geblokkeerd." },
+
+  "overlayTitle": { "message": "Geblokkeerd door YouTubeMyTube" },
+  "removeFromBlocklist": { "message": "Uit blokkeerlijst verwijderen" },
+  "youtubeHome": { "message": "YouTube-startpagina" },
+  "manageBlocklist": { "message": "Blokkeerlijst beheren" },
+
+  "menuBlockVideo": { "message": "Video blokkeren" },
+  "menuUnblockVideo": { "message": "Video deblokkeren" },
+  "menuBlockChannel": { "message": "Kanaal blokkeren" },
+  "menuUnblockChannel": { "message": "Kanaal deblokkeren" },
+
+  "popupBlockVideo": { "message": "Deze video blokkeren" },
+  "popupBlockChannel": { "message": "Dit kanaal blokkeren" },
+  "popupSettings": { "message": "Instellingen" },
+  "popupNoFilters": { "message": "Nog geen filters" },
+  "popupCountVideos": { "message": "$1 video's" },
+  "popupCountChannels": { "message": "$1 kanalen" },
+  "popupCountKeywords": { "message": "$1 trefwoordfilters" },
+  "popupCountComments": { "message": "$1 reactiefilters" },
+  "popupTotal": { "message": "$1 totaal" },
+  "contextVideo": { "message": "Video $1" },
+  "contextChannel": { "message": "Kanaal $1" },
+  "contextChannelHandle": { "message": "Kanaal @$1" },
+
+  "countFilter": { "message": "1 filter" },
+  "countFilters": { "message": "$1 filters" },
+  "dnrWarningOne": {
+    "message": "1 filter overschrijdt de limiet van $1 regels van de browser en wordt alleen op de pagina toegepast."
+  },
+  "dnrWarningMany": {
+    "message": "$1 filters overschrijden de limiet van $2 regels van de browser en worden alleen op de pagina toegepast."
+  },
+
+  "channelsPasteInvalid": {
+    "message": "Plak een kanaal-URL, @handle of UC-kanaal-ID."
+  },
+  "channelsAlready": { "message": "Dat kanaal is al geblokkeerd." },
+  "channelsLooking": { "message": "Kanaalgegevens ophalen…" },
+  "channelsAdded": { "message": "Kanaal toegevoegd." },
+  "channelsFetchFailed": { "message": "Kanaal toegevoegd. Gegevens ophalen mislukt." },
+  "addedNamed": { "message": "$1 toegevoegd." },
+
+  "videosPasteInvalid": { "message": "Plak een video-URL of een video-ID van 11 tekens." },
+  "videosAlready": { "message": "Die video is al geblokkeerd." },
+  "videosLooking": { "message": "Titel ophalen…" },
+  "videosAdded": { "message": "Video toegevoegd." },
+  "videosFetchFailed": { "message": "Video toegevoegd. Titel ophalen mislukt." },
+
+  "importInvalidJson": { "message": "Dat bestand is geen geldige JSON." },
+  "importFilterOne": { "message": "$1 nieuw filter" },
+  "importFilterMany": { "message": "$1 nieuwe filters" },
+  "importBlockTube": { "message": "$1 geïmporteerd uit een BlockTube-back-up." },
+  "importSkipped": { "message": "Overgeslagen: $1." },
+  "importNative": { "message": "YouTubeMyTube-instellingen geïmporteerd." },
+  "importUnknown": {
+    "message": "Dat bestand is geen YouTubeMyTube- of BlockTube-back-up."
+  }
+}

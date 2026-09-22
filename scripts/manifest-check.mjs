@@ -13,6 +13,7 @@ const SHARED_KEYS = [
   'name',
   'version',
   'description',
+  'default_locale',
   'permissions',
   'host_permissions',
   'icons',

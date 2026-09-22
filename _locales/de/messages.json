@@ -1,0 +1,193 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "Blockiere Videos, Kanäle, Nutzer, Shorts und Kommentare auf YouTube."
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — Einstellungen" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "Blockiert — YouTubeMyTube" },
+
+  "blocking": { "message": "Blockierung" },
+  "enableBlocking": { "message": "Blockierung aktivieren" },
+  "theme": { "message": "Design" },
+  "themeSystem": { "message": "Systemdesign" },
+  "themeSystemShort": { "message": "System" },
+  "themeLight": { "message": "Helles Design" },
+  "themeLightShort": { "message": "Hell" },
+  "themeDark": { "message": "Dunkles Design" },
+  "themeDarkShort": { "message": "Dunkel" },
+
+  "settingsSections": { "message": "Einstellungsbereiche" },
+  "navChannels": { "message": "Kanäle blockieren" },
+  "navVideos": { "message": "Videos blockieren" },
+  "navComments": { "message": "Kommentare blockieren" },
+  "navAreas": { "message": "Bereiche blockieren" },
+  "navTester": { "message": "Filter testen" },
+  "navData": { "message": "Importieren / Exportieren / Zurücksetzen" },
+
+  "unsavedChanges": { "message": "Nicht gespeicherte Änderungen" },
+  "save": { "message": "Speichern" },
+  "reload": { "message": "Neu laden" },
+  "conflictWarning": {
+    "message": "Die Einstellungen wurden in einem anderen Tab oder über das YouTube-Menü geändert. Lade neu, um sie zu behalten, oder speichere, um sie zu überschreiben."
+  },
+  "confirmReset": { "message": "Alle Einstellungen und Filter zurücksetzen?" },
+
+  "add": { "message": "Hinzufügen" },
+  "remove": { "message": "Entfernen" },
+  "goBack": { "message": "Zurück" },
+
+  "channelBlockLabel": { "message": "Kanal blockieren" },
+  "channelBlockHelp": {
+    "message": "Füge eine Kanal-URL, ein @Handle oder eine UC-Kanal-ID ein. Die ID muss exakt übereinstimmen; beim Handle wird die Groß-/Kleinschreibung ignoriert."
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "Kanal-ID" },
+  "thName": { "message": "Name" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "Kanalnamen-/Handle-Filter" },
+  "channelFiltersHelp": {
+    "message": "Schlüsselwörter oder /regex/flags, eines pro Zeile. Abgleich mit Kanalnamen und Handles."
+  },
+  "channelFiltersPlaceholder": { "message": "Beispielkanal\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "Video blockieren" },
+  "videoBlockHelp": { "message": "Füge eine Video-URL oder eine 11-stellige Video-ID ein." },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "Video-ID" },
+  "thTitle": { "message": "Titel" },
+  "titleFiltersLabel": { "message": "Videotitel-Filter" },
+  "titleFiltersHelp": {
+    "message": "Schlüsselwörter oder /regex/flags, eines pro Zeile. Abgleich mit Kartentiteln."
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "Kommentarfilter" },
+  "commentFiltersHelp": {
+    "message": "Schlüsselwörter oder /regex/flags, eines pro Zeile. Abgleich mit Kommentarautoren und -text."
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "Blende ganze Bereiche von YouTube aus. Seitenblockierungen leiten auf die Startseite um."
+  },
+  "testerSub": {
+    "message": "Prüfe eine Regel anhand einer URL oder eines Textes, bevor du speicherst."
+  },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "URL testen" },
+  "textLabel": { "message": "Text" },
+  "testTypeTitle": { "message": "Videotitel" },
+  "testTypeChannelName": { "message": "Kanalname" },
+  "testTypeHandle": { "message": "Kanal-Handle" },
+  "testTypeCommentAuthor": { "message": "Kommentarautor" },
+  "testTypeCommentContent": { "message": "Kommentarinhalt" },
+  "testTextPlaceholder": { "message": "Etwas Text" },
+  "testTextBtn": { "message": "Text testen" },
+  "notBlocked": { "message": "Nicht blockiert" },
+
+  "importBtn": { "message": "Einstellungen importieren" },
+  "exportBtn": { "message": "Einstellungen exportieren" },
+  "resetBtn": { "message": "Alles zurücksetzen" },
+  "dataHelp": {
+    "message": "Die Einstellungen werden lokal in deinem Browser gespeichert. Der Import akzeptiert YouTubeMyTube-Einstellungen oder ein BlockTube-Backup – das Format wird automatisch erkannt, und BlockTube-Einträge werden in deine vorhandenen Filter eingefügt."
+  },
+
+  "areaHomePageTitle": { "message": "Startseite" },
+  "areaHomePageSub": { "message": "Blendet den YouTube-Startfeed aus." },
+  "areaTrendingPageTitle": { "message": "Trending-Seite" },
+  "areaTrendingPageSub": { "message": "Leitet /feed/trending um." },
+  "areaExplorePageTitle": { "message": "Entdecken-Seite" },
+  "areaExplorePageSub": { "message": "Leitet /feed/explore um." },
+  "areaSubscriptionsPageTitle": { "message": "Abos-Seite" },
+  "areaSubscriptionsPageSub": { "message": "Leitet /feed/subscriptions um." },
+  "areaShortsPageTitle": { "message": "Shorts-Seiten" },
+  "areaShortsPageSub": { "message": "Leitet /shorts und direkte Short-Links um." },
+  "areaShortsShelfTitle": { "message": "Shorts-Regale" },
+  "areaShortsShelfSub": { "message": "Blendet Shorts-Karussells auf der ganzen Website aus." },
+  "areaCommentsSectionTitle": { "message": "Kommentarbereich" },
+  "areaCommentsSectionSub": { "message": "Blendet den Kommentarbereich auf Watch-Seiten aus." },
+  "areaLiveChatTitle": { "message": "Livechat" },
+  "areaLiveChatSub": { "message": "Blendet den Livechat-Rahmen aus." },
+  "areaRelatedVideosTitle": { "message": "Ähnliche Videos" },
+  "areaRelatedVideosSub": { "message": "Blendet die Seitenleiste der Watch-Seite aus." },
+  "areaPromoSectionsTitle": { "message": "Werbebanner" },
+  "areaPromoSectionsSub": {
+    "message": "Blendet Werbebanner und Entdecken-Regale wie Premium, Mitgliedschaften und Weitere Themen entdecken aus."
+  },
+
+  "reasonVideoBlocked": { "message": "Dieses Video ist blockiert." },
+  "reasonChannelBlocked": { "message": "Dieser Kanal ist blockiert." },
+  "reasonAreaBlocked": { "message": "Diese Seite ist blockiert." },
+  "reasonDetailVideoId": { "message": "Blockierte Video-ID: $1" },
+  "reasonDetailChannelId": { "message": "Blockierte Kanal-ID: $1" },
+  "reasonDetailHandle": { "message": "Blockierter Kanal: @$1" },
+  "reasonDetailHandleEmpty": { "message": "Blockierter Kanal." },
+  "reasonDetailTitle": { "message": "Blockierter Titel: $1" },
+  "reasonDetailTitleEmpty": { "message": "Durch einen Titelfilter blockiert." },
+  "reasonDetailChannelName": { "message": "Blockierter Kanalname: $1" },
+  "reasonDetailChannelNameEmpty": { "message": "Durch einen Kanalfilter blockiert." },
+  "reasonDetailComment": { "message": "Blockierter Kommentar: $1" },
+  "reasonDetailCommentEmpty": { "message": "Durch einen Kommentarfilter blockiert." },
+  "reasonDetailArea": { "message": "Blockierte Seite: $1" },
+  "blockedFallback": { "message": "Dieser Inhalt ist blockiert." },
+
+  "overlayTitle": { "message": "Von YouTubeMyTube blockiert" },
+  "removeFromBlocklist": { "message": "Aus der Blockliste entfernen" },
+  "youtubeHome": { "message": "YouTube-Startseite" },
+  "manageBlocklist": { "message": "Blockliste verwalten" },
+
+  "menuBlockVideo": { "message": "Video blockieren" },
+  "menuUnblockVideo": { "message": "Video entsperren" },
+  "menuBlockChannel": { "message": "Kanal blockieren" },
+  "menuUnblockChannel": { "message": "Kanal entsperren" },
+
+  "popupBlockVideo": { "message": "Dieses Video blockieren" },
+  "popupBlockChannel": { "message": "Diesen Kanal blockieren" },
+  "popupSettings": { "message": "Einstellungen" },
+  "popupNoFilters": { "message": "Noch keine Filter" },
+  "popupCountVideos": { "message": "$1 Videos" },
+  "popupCountChannels": { "message": "$1 Kanäle" },
+  "popupCountKeywords": { "message": "$1 Schlüsselwortfilter" },
+  "popupCountComments": { "message": "$1 Kommentarfilter" },
+  "popupTotal": { "message": "$1 insgesamt" },
+  "contextVideo": { "message": "Video $1" },
+  "contextChannel": { "message": "Kanal $1" },
+  "contextChannelHandle": { "message": "Kanal @$1" },
+
+  "countFilter": { "message": "1 Filter" },
+  "countFilters": { "message": "$1 Filter" },
+  "dnrWarningOne": {
+    "message": "1 Filter überschreitet das Limit von $1 Regeln des Browsers und wird nur auf der Seite angewendet."
+  },
+  "dnrWarningMany": {
+    "message": "$1 Filter überschreiten das Limit von $2 Regeln des Browsers und werden nur auf der Seite angewendet."
+  },
+
+  "channelsPasteInvalid": {
+    "message": "Füge eine Kanal-URL, ein @Handle oder eine UC-Kanal-ID ein."
+  },
+  "channelsAlready": { "message": "Dieser Kanal ist bereits blockiert." },
+  "channelsLooking": { "message": "Kanaldetails werden abgerufen…" },
+  "channelsAdded": { "message": "Kanal hinzugefügt." },
+  "channelsFetchFailed": {
+    "message": "Kanal hinzugefügt. Details konnten nicht abgerufen werden."
+  },
+  "addedNamed": { "message": "$1 hinzugefügt." },
+
+  "videosPasteInvalid": { "message": "Füge eine Video-URL oder eine 11-stellige Video-ID ein." },
+  "videosAlready": { "message": "Dieses Video ist bereits blockiert." },
+  "videosLooking": { "message": "Titel wird abgerufen…" },
+  "videosAdded": { "message": "Video hinzugefügt." },
+  "videosFetchFailed": { "message": "Video hinzugefügt. Titel konnte nicht abgerufen werden." },
+
+  "importInvalidJson": { "message": "Diese Datei ist kein gültiges JSON." },
+  "importFilterOne": { "message": "$1 neuer Filter" },
+  "importFilterMany": { "message": "$1 neue Filter" },
+  "importBlockTube": { "message": "$1 aus einem BlockTube-Backup importiert." },
+  "importSkipped": { "message": "Übersprungen: $1." },
+  "importNative": { "message": "YouTubeMyTube-Einstellungen importiert." },
+  "importUnknown": {
+    "message": "Diese Datei ist kein YouTubeMyTube- oder BlockTube-Backup."
+  }
+}

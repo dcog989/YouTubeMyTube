@@ -1,0 +1,191 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "YouTube'da videoları, kanalları, kullanıcıları, Shorts'ları ve yorumları engelleyin."
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — Ayarlar" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "Engellendi — YouTubeMyTube" },
+
+  "blocking": { "message": "Engelleme" },
+  "enableBlocking": { "message": "Engellemeyi etkinleştir" },
+  "theme": { "message": "Tema" },
+  "themeSystem": { "message": "Sistem teması" },
+  "themeSystemShort": { "message": "Sistem" },
+  "themeLight": { "message": "Açık tema" },
+  "themeLightShort": { "message": "Açık" },
+  "themeDark": { "message": "Koyu tema" },
+  "themeDarkShort": { "message": "Koyu" },
+
+  "settingsSections": { "message": "Ayar bölümleri" },
+  "navChannels": { "message": "Kanalları engelle" },
+  "navVideos": { "message": "Videoları engelle" },
+  "navComments": { "message": "Yorumları engelle" },
+  "navAreas": { "message": "Alanları engelle" },
+  "navTester": { "message": "Filtreleri test et" },
+  "navData": { "message": "İçe / Dışa Aktar / Sıfırla" },
+
+  "unsavedChanges": { "message": "Kaydedilmemiş değişiklikler" },
+  "save": { "message": "Kaydet" },
+  "reload": { "message": "Yeniden yükle" },
+  "conflictWarning": {
+    "message": "Ayarlar başka bir sekmede veya YouTube menüsünden değiştirildi. Korumak için yeniden yükleyin, üzerine yazmak için kaydedin."
+  },
+  "confirmReset": { "message": "Tüm ayarlar ve filtreler sıfırlansın mı?" },
+
+  "add": { "message": "Ekle" },
+  "remove": { "message": "Kaldır" },
+  "goBack": { "message": "Geri" },
+
+  "channelBlockLabel": { "message": "Kanal engelle" },
+  "channelBlockHelp": {
+    "message": "Bir kanal URL'si, @handle veya UC kanal kimliği yapıştırın. Kimlik tam olarak eşleşmelidir; handle büyük/küçük harf ayrımı olmadan eşleştirilir."
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "Kanal kimliği" },
+  "thName": { "message": "Ad" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "Kanal adı / handle filtreleri" },
+  "channelFiltersHelp": {
+    "message": "Anahtar sözcükler veya /regex/flags, satır başına bir tane. Kanal adları ve handle'larıyla eşleştirilir."
+  },
+  "channelFiltersPlaceholder": { "message": "Örnek Kanal\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "Video engelle" },
+  "videoBlockHelp": { "message": "Bir video URL'si veya 11 karakterlik video kimliği yapıştırın." },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "Video kimliği" },
+  "thTitle": { "message": "Başlık" },
+  "titleFiltersLabel": { "message": "Video başlığı filtreleri" },
+  "titleFiltersHelp": {
+    "message": "Anahtar sözcükler veya /regex/flags, satır başına bir tane. Kart başlıklarıyla eşleştirilir."
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "Yorum filtreleri" },
+  "commentFiltersHelp": {
+    "message": "Anahtar sözcükler veya /regex/flags, satır başına bir tane. Yorum yazarları ve metniyle eşleştirilir."
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "YouTube'un tüm bölümlerini gizleyin. Sayfa engellemeleri ana sayfaya yönlendirir."
+  },
+  "testerSub": { "message": "Kaydetmeden önce bir kuralı URL veya metinle test edin." },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "URL'yi test et" },
+  "textLabel": { "message": "Metin" },
+  "testTypeTitle": { "message": "Video başlığı" },
+  "testTypeChannelName": { "message": "Kanal adı" },
+  "testTypeHandle": { "message": "Kanal handle" },
+  "testTypeCommentAuthor": { "message": "Yorum yazarı" },
+  "testTypeCommentContent": { "message": "Yorum içeriği" },
+  "testTextPlaceholder": { "message": "Bir miktar metin" },
+  "testTextBtn": { "message": "Metni test et" },
+  "notBlocked": { "message": "Engellenmedi" },
+
+  "importBtn": { "message": "Ayarları içe aktar" },
+  "exportBtn": { "message": "Ayarları dışa aktar" },
+  "resetBtn": { "message": "Tümünü sıfırla" },
+  "dataHelp": {
+    "message": "Ayarlar tarayıcınızda yerel olarak saklanır. İçe aktarma, YouTubeMyTube ayarlarını veya bir BlockTube yedeğini kabul eder — biçim otomatik algılanır ve BlockTube girdileri mevcut filtrelerinizle birleştirilir."
+  },
+
+  "areaHomePageTitle": { "message": "Ana sayfa" },
+  "areaHomePageSub": { "message": "YouTube ana akışını gizle." },
+  "areaTrendingPageTitle": { "message": "Trendler sayfası" },
+  "areaTrendingPageSub": { "message": "/feed/trending'e yönlendir." },
+  "areaExplorePageTitle": { "message": "Keşfet sayfası" },
+  "areaExplorePageSub": { "message": "/feed/explore'a yönlendir." },
+  "areaSubscriptionsPageTitle": { "message": "Abonelikler sayfası" },
+  "areaSubscriptionsPageSub": { "message": "/feed/subscriptions'a yönlendir." },
+  "areaShortsPageTitle": { "message": "Shorts sayfaları" },
+  "areaShortsPageSub": { "message": "/shorts ve doğrudan Short bağlantılarına yönlendir." },
+  "areaShortsShelfTitle": { "message": "Shorts rafları" },
+  "areaShortsShelfSub": { "message": "Site genelinde Shorts karusellerini gizle." },
+  "areaCommentsSectionTitle": { "message": "Yorumlar bölümü" },
+  "areaCommentsSectionSub": { "message": "İzleme sayfalarındaki yorum alanını gizle." },
+  "areaLiveChatTitle": { "message": "Canlı sohbet" },
+  "areaLiveChatSub": { "message": "Canlı sohbet çerçevesini gizle." },
+  "areaRelatedVideosTitle": { "message": "İlgili videolar" },
+  "areaRelatedVideosSub": { "message": "İzleme sayfası kenar çubuğunu gizle." },
+  "areaPromoSectionsTitle": { "message": "Promosyon banner'ları" },
+  "areaPromoSectionsSub": {
+    "message": "Premium, üyelikler ve Daha fazla konu keşfet gibi promosyon banner'larını ve keşif raflarını gizle."
+  },
+
+  "reasonVideoBlocked": { "message": "Bu video engellendi." },
+  "reasonChannelBlocked": { "message": "Bu kanal engellendi." },
+  "reasonAreaBlocked": { "message": "Bu sayfa engellendi." },
+  "reasonDetailVideoId": { "message": "Engellenen video kimliği: $1" },
+  "reasonDetailChannelId": { "message": "Engellenen kanal kimliği: $1" },
+  "reasonDetailHandle": { "message": "Engellenen kanal: @$1" },
+  "reasonDetailHandleEmpty": { "message": "Engellenen kanal." },
+  "reasonDetailTitle": { "message": "Engellenen başlık: $1" },
+  "reasonDetailTitleEmpty": { "message": "Bir başlık filtresiyle engellendi." },
+  "reasonDetailChannelName": { "message": "Engellenen kanal adı: $1" },
+  "reasonDetailChannelNameEmpty": { "message": "Bir kanal filtresiyle engellendi." },
+  "reasonDetailComment": { "message": "Engellenen yorum: $1" },
+  "reasonDetailCommentEmpty": { "message": "Bir yorum filtresiyle engellendi." },
+  "reasonDetailArea": { "message": "Engellenen sayfa: $1" },
+  "blockedFallback": { "message": "Bu içerik engellendi." },
+
+  "overlayTitle": { "message": "YouTubeMyTube tarafından engellendi" },
+  "removeFromBlocklist": { "message": "Engel listesinden kaldır" },
+  "youtubeHome": { "message": "YouTube ana sayfası" },
+  "manageBlocklist": { "message": "Engel listesini yönet" },
+
+  "menuBlockVideo": { "message": "Videoyu engelle" },
+  "menuUnblockVideo": { "message": "Video engelini kaldır" },
+  "menuBlockChannel": { "message": "Kanalı engelle" },
+  "menuUnblockChannel": { "message": "Kanal engelini kaldır" },
+
+  "popupBlockVideo": { "message": "Bu videoyu engelle" },
+  "popupBlockChannel": { "message": "Bu kanalı engelle" },
+  "popupSettings": { "message": "Ayarlar" },
+  "popupNoFilters": { "message": "Henüz filtre yok" },
+  "popupCountVideos": { "message": "$1 video" },
+  "popupCountChannels": { "message": "$1 kanal" },
+  "popupCountKeywords": { "message": "$1 anahtar sözcük filtresi" },
+  "popupCountComments": { "message": "$1 yorum filtresi" },
+  "popupTotal": { "message": "toplam $1" },
+  "contextVideo": { "message": "Video $1" },
+  "contextChannel": { "message": "Kanal $1" },
+  "contextChannelHandle": { "message": "Kanal @$1" },
+
+  "countFilter": { "message": "1 filtre" },
+  "countFilters": { "message": "$1 filtre" },
+  "dnrWarningOne": {
+    "message": "1 filtre tarayıcının $1 kural sınırını aşıyor ve yalnızca sayfa içinde uygulanıyor."
+  },
+  "dnrWarningMany": {
+    "message": "$1 filtre tarayıcının $2 kural sınırını aşıyor ve yalnızca sayfa içinde uygulanıyor."
+  },
+
+  "channelsPasteInvalid": {
+    "message": "Bir kanal URL'si, @handle veya UC kanal kimliği yapıştırın."
+  },
+  "channelsAlready": { "message": "Bu kanal zaten engelli." },
+  "channelsLooking": { "message": "Kanal ayrıntıları alınıyor…" },
+  "channelsAdded": { "message": "Kanal eklendi." },
+  "channelsFetchFailed": { "message": "Kanal eklendi. Ayrıntılar alınamadı." },
+  "addedNamed": { "message": "$1 eklendi." },
+
+  "videosPasteInvalid": {
+    "message": "Bir video URL'si veya 11 karakterlik video kimliği yapıştırın."
+  },
+  "videosAlready": { "message": "Bu video zaten engelli." },
+  "videosLooking": { "message": "Başlık alınıyor…" },
+  "videosAdded": { "message": "Video eklendi." },
+  "videosFetchFailed": { "message": "Video eklendi. Başlık alınamadı." },
+
+  "importInvalidJson": { "message": "Bu dosya geçerli bir JSON değil." },
+  "importFilterOne": { "message": "$1 yeni filtre" },
+  "importFilterMany": { "message": "$1 yeni filtre" },
+  "importBlockTube": { "message": "Bir BlockTube yedeğinden $1 içe aktarıldı." },
+  "importSkipped": { "message": "Atlandı: $1." },
+  "importNative": { "message": "YouTubeMyTube ayarları içe aktarıldı." },
+  "importUnknown": {
+    "message": "Bu dosya bir YouTubeMyTube veya BlockTube yedeği değil."
+  }
+}

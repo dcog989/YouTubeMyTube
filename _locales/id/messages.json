@@ -1,0 +1,187 @@
+{
+  "extName": { "message": "YouTubeMyTube" },
+  "extDescription": {
+    "message": "Blokir video, saluran, pengguna, Shorts, dan komentar di YouTube."
+  },
+  "optionsTitle": { "message": "YouTubeMyTube — Pengaturan" },
+  "popupTitle": { "message": "YouTubeMyTube" },
+  "blockedTitle": { "message": "Diblokir — YouTubeMyTube" },
+
+  "blocking": { "message": "Pemblokiran" },
+  "enableBlocking": { "message": "Aktifkan pemblokiran" },
+  "theme": { "message": "Tema" },
+  "themeSystem": { "message": "Tema sistem" },
+  "themeSystemShort": { "message": "Sistem" },
+  "themeLight": { "message": "Tema terang" },
+  "themeLightShort": { "message": "Terang" },
+  "themeDark": { "message": "Tema gelap" },
+  "themeDarkShort": { "message": "Gelap" },
+
+  "settingsSections": { "message": "Bagian pengaturan" },
+  "navChannels": { "message": "Blokir saluran" },
+  "navVideos": { "message": "Blokir video" },
+  "navComments": { "message": "Blokir komentar" },
+  "navAreas": { "message": "Blokir area" },
+  "navTester": { "message": "Uji filter" },
+  "navData": { "message": "Impor / Ekspor / Reset" },
+
+  "unsavedChanges": { "message": "Perubahan belum disimpan" },
+  "save": { "message": "Simpan" },
+  "reload": { "message": "Muat ulang" },
+  "conflictWarning": {
+    "message": "Pengaturan berubah di tab lain atau dari menu YouTube. Muat ulang untuk mempertahankannya, atau simpan untuk menimpanya."
+  },
+  "confirmReset": { "message": "Reset semua pengaturan dan filter?" },
+
+  "add": { "message": "Tambah" },
+  "remove": { "message": "Hapus" },
+  "goBack": { "message": "Kembali" },
+
+  "channelBlockLabel": { "message": "Blokir saluran" },
+  "channelBlockHelp": {
+    "message": "Tempel URL saluran, @handle, atau ID saluran UC. ID harus cocok persis; handle dicocokkan tanpa membedakan huruf besar/kecil."
+  },
+  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "thChannelId": { "message": "ID saluran" },
+  "thName": { "message": "Nama" },
+  "thHandle": { "message": "Handle" },
+  "channelFiltersLabel": { "message": "Filter nama / handle saluran" },
+  "channelFiltersHelp": {
+    "message": "Kata kunci atau /regex/flags, satu per baris. Dicocokkan dengan nama dan handle saluran."
+  },
+  "channelFiltersPlaceholder": { "message": "Contoh Saluran\n/\\bdrama\\b/i" },
+
+  "videoBlockLabel": { "message": "Blokir video" },
+  "videoBlockHelp": { "message": "Tempel URL video atau ID video 11 karakter." },
+  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "thVideoId": { "message": "ID video" },
+  "thTitle": { "message": "Judul" },
+  "titleFiltersLabel": { "message": "Filter judul video" },
+  "titleFiltersHelp": {
+    "message": "Kata kunci atau /regex/flags, satu per baris. Dicocokkan dengan judul kartu."
+  },
+  "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
+
+  "commentFiltersLabel": { "message": "Filter komentar" },
+  "commentFiltersHelp": {
+    "message": "Kata kunci atau /regex/flags, satu per baris. Dicocokkan dengan penulis dan teks komentar."
+  },
+  "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
+
+  "areasSub": {
+    "message": "Sembunyikan seluruh bagian YouTube. Pemblokiran halaman mengalihkan ke halaman beranda."
+  },
+  "testerSub": { "message": "Periksa aturan terhadap URL atau teks sebelum menyimpan." },
+  "urlLabel": { "message": "URL" },
+  "testUrlBtn": { "message": "Uji URL" },
+  "textLabel": { "message": "Teks" },
+  "testTypeTitle": { "message": "Judul video" },
+  "testTypeChannelName": { "message": "Nama saluran" },
+  "testTypeHandle": { "message": "Handle saluran" },
+  "testTypeCommentAuthor": { "message": "Penulis komentar" },
+  "testTypeCommentContent": { "message": "Isi komentar" },
+  "testTextPlaceholder": { "message": "Sedikit teks" },
+  "testTextBtn": { "message": "Uji teks" },
+  "notBlocked": { "message": "Tidak diblokir" },
+
+  "importBtn": { "message": "Impor pengaturan" },
+  "exportBtn": { "message": "Ekspor pengaturan" },
+  "resetBtn": { "message": "Reset semua" },
+  "dataHelp": {
+    "message": "Pengaturan disimpan secara lokal di browser Anda. Impor menerima pengaturan YouTubeMyTube atau cadangan BlockTube — formatnya dideteksi secara otomatis, dan entri BlockTube digabungkan ke filter yang sudah ada."
+  },
+
+  "areaHomePageTitle": { "message": "Halaman beranda" },
+  "areaHomePageSub": { "message": "Sembunyikan feed beranda YouTube." },
+  "areaTrendingPageTitle": { "message": "Halaman trending" },
+  "areaTrendingPageSub": { "message": "Alihkan /feed/trending." },
+  "areaExplorePageTitle": { "message": "Halaman jelajahi" },
+  "areaExplorePageSub": { "message": "Alihkan /feed/explore." },
+  "areaSubscriptionsPageTitle": { "message": "Halaman langganan" },
+  "areaSubscriptionsPageSub": { "message": "Alihkan /feed/subscriptions." },
+  "areaShortsPageTitle": { "message": "Halaman Shorts" },
+  "areaShortsPageSub": { "message": "Alihkan /shorts dan tautan Short langsung." },
+  "areaShortsShelfTitle": { "message": "Rak Shorts" },
+  "areaShortsShelfSub": { "message": "Sembunyikan korsel Shorts di seluruh situs." },
+  "areaCommentsSectionTitle": { "message": "Bagian komentar" },
+  "areaCommentsSectionSub": { "message": "Sembunyikan area komentar di halaman tonton." },
+  "areaLiveChatTitle": { "message": "Obrolan langsung" },
+  "areaLiveChatSub": { "message": "Sembunyikan bingkai obrolan langsung." },
+  "areaRelatedVideosTitle": { "message": "Video terkait" },
+  "areaRelatedVideosSub": { "message": "Sembunyikan bilah samping halaman tonton." },
+  "areaPromoSectionsTitle": { "message": "Spanduk promosi" },
+  "areaPromoSectionsSub": {
+    "message": "Sembunyikan spanduk promosi dan rak penemuan seperti Premium, keanggotaan, dan Jelajahi topik lainnya."
+  },
+
+  "reasonVideoBlocked": { "message": "Video ini diblokir." },
+  "reasonChannelBlocked": { "message": "Saluran ini diblokir." },
+  "reasonAreaBlocked": { "message": "Halaman ini diblokir." },
+  "reasonDetailVideoId": { "message": "ID video yang diblokir: $1" },
+  "reasonDetailChannelId": { "message": "ID saluran yang diblokir: $1" },
+  "reasonDetailHandle": { "message": "Saluran yang diblokir: @$1" },
+  "reasonDetailHandleEmpty": { "message": "Saluran yang diblokir." },
+  "reasonDetailTitle": { "message": "Judul yang diblokir: $1" },
+  "reasonDetailTitleEmpty": { "message": "Diblokir oleh filter judul." },
+  "reasonDetailChannelName": { "message": "Nama saluran yang diblokir: $1" },
+  "reasonDetailChannelNameEmpty": { "message": "Diblokir oleh filter saluran." },
+  "reasonDetailComment": { "message": "Komentar yang diblokir: $1" },
+  "reasonDetailCommentEmpty": { "message": "Diblokir oleh filter komentar." },
+  "reasonDetailArea": { "message": "Halaman yang diblokir: $1" },
+  "blockedFallback": { "message": "Konten ini diblokir." },
+
+  "overlayTitle": { "message": "Diblokir oleh YouTubeMyTube" },
+  "removeFromBlocklist": { "message": "Hapus dari daftar blokir" },
+  "youtubeHome": { "message": "Beranda YouTube" },
+  "manageBlocklist": { "message": "Kelola daftar blokir" },
+
+  "menuBlockVideo": { "message": "Blokir video" },
+  "menuUnblockVideo": { "message": "Buka blokir video" },
+  "menuBlockChannel": { "message": "Blokir saluran" },
+  "menuUnblockChannel": { "message": "Buka blokir saluran" },
+
+  "popupBlockVideo": { "message": "Blokir video ini" },
+  "popupBlockChannel": { "message": "Blokir saluran ini" },
+  "popupSettings": { "message": "Pengaturan" },
+  "popupNoFilters": { "message": "Belum ada filter" },
+  "popupCountVideos": { "message": "$1 video" },
+  "popupCountChannels": { "message": "$1 saluran" },
+  "popupCountKeywords": { "message": "$1 filter kata kunci" },
+  "popupCountComments": { "message": "$1 filter komentar" },
+  "popupTotal": { "message": "$1 total" },
+  "contextVideo": { "message": "Video $1" },
+  "contextChannel": { "message": "Saluran $1" },
+  "contextChannelHandle": { "message": "Saluran @$1" },
+
+  "countFilter": { "message": "1 filter" },
+  "countFilters": { "message": "$1 filter" },
+  "dnrWarningOne": {
+    "message": "1 filter melebihi batas $1 aturan browser dan hanya diterapkan di halaman."
+  },
+  "dnrWarningMany": {
+    "message": "$1 filter melebihi batas $2 aturan browser dan hanya diterapkan di halaman."
+  },
+
+  "channelsPasteInvalid": { "message": "Tempel URL saluran, @handle, atau ID saluran UC." },
+  "channelsAlready": { "message": "Saluran itu sudah diblokir." },
+  "channelsLooking": { "message": "Mengambil detail saluran…" },
+  "channelsAdded": { "message": "Saluran ditambahkan." },
+  "channelsFetchFailed": { "message": "Saluran ditambahkan. Tidak dapat mengambil detail." },
+  "addedNamed": { "message": "$1 ditambahkan." },
+
+  "videosPasteInvalid": { "message": "Tempel URL video atau ID video 11 karakter." },
+  "videosAlready": { "message": "Video itu sudah diblokir." },
+  "videosLooking": { "message": "Mengambil judul…" },
+  "videosAdded": { "message": "Video ditambahkan." },
+  "videosFetchFailed": { "message": "Video ditambahkan. Tidak dapat mengambil judul." },
+
+  "importInvalidJson": { "message": "File itu bukan JSON yang valid." },
+  "importFilterOne": { "message": "$1 filter baru" },
+  "importFilterMany": { "message": "$1 filter baru" },
+  "importBlockTube": { "message": "$1 diimpor dari cadangan BlockTube." },
+  "importSkipped": { "message": "Dilewati: $1." },
+  "importNative": { "message": "Pengaturan YouTubeMyTube diimpor." },
+  "importUnknown": {
+    "message": "File itu bukan cadangan YouTubeMyTube atau BlockTube."
+  }
+}
