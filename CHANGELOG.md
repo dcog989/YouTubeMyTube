@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.14.2 - 2026-09-22
+#### Miscellaneous Chores
+- (**version**) 0.14.1 - (950c3aa) - dcog989
+
+- - -
+
 ## 0.14.1 - 2026-09-22
 #### Documentation
 - add privacy policy + screenshot - (fc74cab) - dcog989
