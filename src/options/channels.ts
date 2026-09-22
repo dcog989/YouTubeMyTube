@@ -1,5 +1,5 @@
 import { parseBlockInput, resolveChannel } from '../shared/resolve';
-import { addChannel as addChannelRule, removeChannel } from '../shared/rules';
+import { addChannel as addChannelRule, findChannel, removeChannel } from '../shared/rules';
 import type { ChannelEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
 import { updateCounts } from './counts';
@@ -68,6 +68,12 @@ export async function addChannel(): Promise<void> {
     return;
   }
 
+  const stored = findChannel(draft.rules, entry);
+  if (!stored) {
+    setStatus('channel-status', 'Channel added.', false);
+    return;
+  }
+
   input.value = '';
   renderChannels();
   setDirty(true);
@@ -75,12 +81,12 @@ export async function addChannel(): Promise<void> {
 
   try {
     const meta = await resolveChannel({ id, handle });
-    if (meta.id) entry.id = meta.id;
-    if (meta.name) entry.name = meta.name;
-    if (meta.handle) entry.handle = meta.handle;
+    if (meta.id) stored.id = meta.id;
+    if (meta.name) stored.name = meta.name;
+    if (meta.handle) stored.handle = meta.handle;
     renderChannels();
     setDirty(true);
-    setStatus('channel-status', entry.name ? `Added ${entry.name}.` : 'Channel added.', true);
+    setStatus('channel-status', stored.name ? `Added ${stored.name}.` : 'Channel added.', true);
   } catch {
     setStatus('channel-status', 'Channel added. Could not fetch details.', false);
   }

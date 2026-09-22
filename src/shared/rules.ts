@@ -81,12 +81,16 @@ export function removeVideo(rules: FilterRules, videoId: string): boolean {
 }
 
 export function addChannel(rules: FilterRules, entry: ChannelEntry): boolean {
-  entry.handle = normalizeHandle(entry.handle);
-  if (!isActiveEntry(entry.id) && !isActiveEntry(entry.handle) && !isActiveEntry(entry.name)) {
+  const channel: ChannelEntry = { ...entry, handle: normalizeHandle(entry.handle) };
+  if (
+    !isActiveEntry(channel.id) &&
+    !isActiveEntry(channel.handle) &&
+    !isActiveEntry(channel.name)
+  ) {
     return false;
   }
-  if (findChannel(rules, { id: entry.id, handle: entry.handle, name: entry.name })) return false;
-  rules.channels.push(entry);
+  if (findChannel(rules, channel)) return false;
+  rules.channels.push(channel);
   return true;
 }
 

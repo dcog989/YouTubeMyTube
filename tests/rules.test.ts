@@ -104,7 +104,10 @@ describe('add / remove', () => {
 
   it('adds unique channels and removes by id or handle', () => {
     const rules = defaultRules();
-    expect(addChannel(rules, { id: 'UC1', name: '', handle: 'somechannel' })).toBe(true);
+    const entry = { id: 'UC1', name: '', handle: 'SomeChannel' };
+    expect(addChannel(rules, entry)).toBe(true);
+    expect(entry.handle).toBe('SomeChannel');
+    expect(rules.channels[0]?.handle).toBe('somechannel');
     expect(addChannel(rules, { id: 'UC1', name: '', handle: '' })).toBe(false);
     expect(addChannel(rules, { id: '', name: '', handle: '@somechannel' })).toBe(false);
     expect(addChannel(rules, { id: '', name: '', handle: '' })).toBe(false);
