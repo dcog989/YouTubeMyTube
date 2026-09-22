@@ -39,7 +39,7 @@
 
   "channelBlockLabel": { "message": "Block a channel" },
   "channelBlockHelp": {
-    "message": "Paste a channel URL, @handle, or UC channel ID. The ID is matched exactly; the handle is matched case-insensitively."
+    "message": "Paste a channel URL, @handle, UC channel ID, or a channel name. IDs and names are matched exactly; the handle is matched case-insensitively."
   },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "Channel ID" },
@@ -164,7 +164,9 @@
     "message": "$1 filters exceed the browser's $2-rule limit and are enforced in-page only."
   },
 
-  "channelsPasteInvalid": { "message": "Paste a channel URL, @handle, or UC channel ID." },
+  "channelsPasteInvalid": {
+    "message": "Paste a channel URL, @handle, UC channel ID, or a channel name."
+  },
   "channelsAlready": { "message": "That channel is already blocked." },
   "channelsNotFound": { "message": "No channel found for $1." },
   "notFound": { "message": "Not found" },

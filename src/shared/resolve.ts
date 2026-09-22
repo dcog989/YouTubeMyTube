@@ -3,7 +3,7 @@ import { normalizeHandle, parseYouTubeUrl } from './url';
 
 export type BlockInput =
   | { kind: 'video'; videoId: string }
-  | { kind: 'channel'; channelId?: string; handle?: string };
+  | { kind: 'channel'; channelId?: string; handle?: string; name?: string };
 
 export type BlockInputKind = BlockInput['kind'];
 
@@ -48,6 +48,11 @@ export function parseBlockInput(input: string, kind?: BlockInputKind): BlockInpu
   if (parsed.videoId) return { kind: 'video', videoId: parsed.videoId };
   if (parsed.channelId) return { kind: 'channel', channelId: parsed.channelId };
   if (parsed.handle) return { kind: 'channel', handle: normalizeHandle(parsed.handle) };
+
+  // Any other plain text (e.g. a multi-word channel name) blocks that name.
+  if (kind === 'channel' && !value.includes('/') && !value.includes(':')) {
+    return { kind: 'channel', name: value };
+  }
   return null;
 }
 

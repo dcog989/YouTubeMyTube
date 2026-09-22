@@ -106,7 +106,8 @@ export async function addChannel(): Promise<void> {
 
   const id = parsed.channelId ?? '';
   const handle = parsed.handle ?? '';
-  const entry: ChannelEntry = { id, name: '', handle };
+  const name = parsed.name ?? '';
+  const entry: ChannelEntry = { id, name, handle };
   if (!addChannelRule(draft.rules, entry)) {
     setStatus('channel-status', t('channelsAlready'), false);
     return;
@@ -119,6 +120,11 @@ export async function addChannel(): Promise<void> {
   const stored = findChannel(draft.rules, entry);
   if (!stored) {
     setStatus('channel-status', t('channelsAdded'), true);
+    return;
+  }
+
+  if (!id && !handle) {
+    setStatus('channel-status', t('addedNamed', stored.name), true);
     return;
   }
 

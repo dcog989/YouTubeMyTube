@@ -66,6 +66,14 @@ describe('parseBlockInput', () => {
       videoId: 'MrBeastGame',
     });
   });
+
+  it('parses a plain channel name for the channel field', () => {
+    expect(parseBlockInput('3 Minutes of Aviation', 'channel')).toEqual({
+      kind: 'channel',
+      name: '3 Minutes of Aviation',
+    });
+    expect(parseBlockInput('3 Minutes of Aviation')).toBeNull();
+  });
 });
 
 describe('channelMetaFromHtml', () => {
