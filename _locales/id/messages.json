@@ -45,7 +45,7 @@
   "thChannelId": { "message": "ID saluran" },
   "thName": { "message": "Nama" },
   "thHandle": { "message": "Handle" },
-  "channelFiltersLabel": { "message": "Filter nama / handle saluran" },
+  "channelFiltersLabel": { "message": "Filter saluran fuzzy" },
   "channelFiltersHelp": {
     "message": "Kata kunci atau /regex/flags, satu per baris. Dicocokkan dengan nama dan handle saluran."
   },
@@ -56,7 +56,7 @@
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "ID video" },
   "thTitle": { "message": "Judul" },
-  "titleFiltersLabel": { "message": "Filter judul video" },
+  "titleFiltersLabel": { "message": "Filter video fuzzy" },
   "titleFiltersHelp": {
     "message": "Kata kunci atau /regex/flags, satu per baris. Dicocokkan dengan judul kartu."
   },

@@ -45,7 +45,7 @@
   "thChannelId": { "message": "채널 ID" },
   "thName": { "message": "이름" },
   "thHandle": { "message": "Handle" },
-  "channelFiltersLabel": { "message": "채널 이름 / handle 필터" },
+  "channelFiltersLabel": { "message": "채널 퍼지 필터" },
   "channelFiltersHelp": {
     "message": "키워드 또는 /regex/flags, 한 줄에 하나. 채널 이름과 handle과 비교합니다."
   },
@@ -56,7 +56,7 @@
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "동영상 ID" },
   "thTitle": { "message": "제목" },
-  "titleFiltersLabel": { "message": "동영상 제목 필터" },
+  "titleFiltersLabel": { "message": "동영상 퍼지 필터" },
   "titleFiltersHelp": {
     "message": "키워드 또는 /regex/flags, 한 줄에 하나. 카드 제목과 비교합니다."
   },

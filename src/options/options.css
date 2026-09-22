@@ -246,13 +246,6 @@ h2 {
   margin-top: 16px;
 }
 
-.card-scroll {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
 .textarea-fit {
   min-height: 0;
 }
@@ -471,8 +464,28 @@ textarea:focus {
   margin: 4px 0 10px;
 }
 
-.field {
-  margin-top: 16px;
+.fieldset {
+  min-inline-size: 0;
+  margin: 16px 0 0;
+  padding: 12px 18px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.fieldset legend {
+  padding: 0 6px;
+}
+
+.fieldset .help {
+  margin-top: 4px;
+}
+
+.fieldset-scroll {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
 }
 
 .table-scroll {
@@ -480,6 +493,12 @@ textarea:focus {
   min-height: 0;
   margin-top: 12px;
   overflow-y: auto;
+}
+
+.fieldset-scroll .table-scroll,
+.fieldset-scroll textarea {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .entity-table {

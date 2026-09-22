@@ -45,7 +45,7 @@
   "thChannelId": { "message": "频道 ID" },
   "thName": { "message": "名称" },
   "thHandle": { "message": "Handle" },
-  "channelFiltersLabel": { "message": "频道名称 / handle 过滤器" },
+  "channelFiltersLabel": { "message": "模糊筛选频道" },
   "channelFiltersHelp": {
     "message": "关键词或 /regex/flags，每行一个。与频道名称和 handle 匹配。"
   },
@@ -56,7 +56,7 @@
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "视频 ID" },
   "thTitle": { "message": "标题" },
-  "titleFiltersLabel": { "message": "视频标题过滤器" },
+  "titleFiltersLabel": { "message": "模糊筛选视频" },
   "titleFiltersHelp": {
     "message": "关键词或 /regex/flags，每行一个。与卡片标题匹配。"
   },

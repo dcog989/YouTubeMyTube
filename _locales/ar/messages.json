@@ -45,7 +45,7 @@
   "thChannelId": { "message": "معرّف القناة" },
   "thName": { "message": "الاسم" },
   "thHandle": { "message": "Handle" },
-  "channelFiltersLabel": { "message": "فلاتر اسم / handle القناة" },
+  "channelFiltersLabel": { "message": "تصفية القنوات الضبابية" },
   "channelFiltersHelp": {
     "message": "كلمات مفتاحية أو /regex/flags، واحد في كل سطر. تُطابَق مع أسماء القنوات وhandles."
   },
@@ -56,7 +56,7 @@
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "معرّف الفيديو" },
   "thTitle": { "message": "العنوان" },
-  "titleFiltersLabel": { "message": "فلاتر عنوان الفيديو" },
+  "titleFiltersLabel": { "message": "تصفية الفيديوهات الضبابية" },
   "titleFiltersHelp": {
     "message": "كلمات مفتاحية أو /regex/flags، واحد في كل سطر. تُطابَق مع عناوين البطاقات."
   },

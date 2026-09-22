@@ -45,7 +45,7 @@
   "thChannelId": { "message": "チャンネル ID" },
   "thName": { "message": "名前" },
   "thHandle": { "message": "Handle" },
-  "channelFiltersLabel": { "message": "チャンネル名 / handle フィルター" },
+  "channelFiltersLabel": { "message": "チャンネルをあいまいフィルター" },
   "channelFiltersHelp": {
     "message": "キーワードまたは /regex/flags を 1 行に 1 つ。チャンネル名と handle に対して照合されます。"
   },
@@ -56,7 +56,7 @@
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "動画 ID" },
   "thTitle": { "message": "タイトル" },
-  "titleFiltersLabel": { "message": "動画タイトルフィルター" },
+  "titleFiltersLabel": { "message": "動画をあいまいフィルター" },
   "titleFiltersHelp": {
     "message": "キーワードまたは /regex/flags を 1 行に 1 つ。カードのタイトルに対して照合されます。"
   },

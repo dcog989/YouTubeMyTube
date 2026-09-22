@@ -45,7 +45,7 @@
   "thChannelId": { "message": "ID канала" },
   "thName": { "message": "Название" },
   "thHandle": { "message": "Handle" },
-  "channelFiltersLabel": { "message": "Фильтры названия / handle канала" },
+  "channelFiltersLabel": { "message": "Нечёткий фильтр каналов" },
   "channelFiltersHelp": {
     "message": "Ключевые слова или /regex/flags, по одному в строке. Сравниваются с названиями и handle каналов."
   },
@@ -56,7 +56,7 @@
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "ID видео" },
   "thTitle": { "message": "Название" },
-  "titleFiltersLabel": { "message": "Фильтры названия видео" },
+  "titleFiltersLabel": { "message": "Нечёткий фильтр видео" },
   "titleFiltersHelp": {
     "message": "Ключевые слова или /regex/flags, по одному в строке. Сравниваются с названиями карточек."
   },

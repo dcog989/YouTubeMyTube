@@ -173,10 +173,8 @@
         </div>
 
         <section class="panel is-active" id="panel-channels">
-          <div class="card card-scroll">
-            <label class="row-title" for="channel-add" data-i18n="channelBlockLabel"
-              >Block a channel</label
-            >
+          <fieldset class="fieldset fieldset-scroll">
+            <legend class="row-title" data-i18n="channelBlockLabel">Block a channel</legend>
             <p class="help" data-i18n="channelBlockHelp">
               Paste a channel URL, @handle, or UC channel ID. The ID is matched exactly; the handle
               is matched case-insensitively.
@@ -208,30 +206,24 @@
                 <tbody id="channel-rows"></tbody>
               </table>
             </div>
-            <div class="field">
-              <div class="editor-head">
-                <label class="row-title" for="input-channelFilters" data-i18n="channelFiltersLabel">
-                  Channel name / handle filters
-                </label>
-              </div>
-              <p class="help" data-i18n="channelFiltersHelp">
-                Keywords or /regex/flags, one per line. Matched against channel names and handles.
-              </p>
-              <textarea
-                id="input-channelFilters"
-                spellcheck="false"
-                placeholder="Example Channel&#10;/\bdrama\b/i"
-                data-i18n-attr="placeholder:channelFiltersPlaceholder"
-              ></textarea>
-            </div>
-          </div>
+          </fieldset>
+          <fieldset class="fieldset fieldset-scroll" id="channel-fuzzy">
+            <legend class="row-title" data-i18n="channelFiltersLabel">Fuzzy filter channels</legend>
+            <p class="help" data-i18n="channelFiltersHelp">
+              Keywords or /regex/flags, one per line. Matched against channel names and handles.
+            </p>
+            <textarea
+              id="input-channelFilters"
+              spellcheck="false"
+              placeholder="Example Channel&#10;/\bdrama\b/i"
+              data-i18n-attr="placeholder:channelFiltersPlaceholder"
+            ></textarea>
+          </fieldset>
         </section>
 
         <section class="panel" id="panel-videos">
-          <div class="card card-scroll">
-            <label class="row-title" for="video-add" data-i18n="videoBlockLabel"
-              >Block a video</label
-            >
+          <fieldset class="fieldset fieldset-scroll">
+            <legend class="row-title" data-i18n="videoBlockLabel">Block a video</legend>
             <p class="help" data-i18n="videoBlockHelp">
               Paste a video URL or an 11-character video ID.
             </p>
@@ -261,32 +253,24 @@
                 <tbody id="video-rows"></tbody>
               </table>
             </div>
-            <div class="field">
-              <div class="editor-head">
-                <label class="row-title" for="input-titleFilters" data-i18n="titleFiltersLabel"
-                  >Video title filters</label
-                >
-              </div>
-              <p class="help" data-i18n="titleFiltersHelp">
-                Keywords or /regex/flags, one per line. Matched against card titles.
-              </p>
-              <textarea
-                id="input-titleFilters"
-                spellcheck="false"
-                placeholder="clickbait&#10;/\bspoilers?\b/i"
-                data-i18n-attr="placeholder:titleFiltersPlaceholder"
-              ></textarea>
-            </div>
-          </div>
+          </fieldset>
+          <fieldset class="fieldset fieldset-scroll" id="video-fuzzy">
+            <legend class="row-title" data-i18n="titleFiltersLabel">Fuzzy filter videos</legend>
+            <p class="help" data-i18n="titleFiltersHelp">
+              Keywords or /regex/flags, one per line. Matched against card titles.
+            </p>
+            <textarea
+              id="input-titleFilters"
+              spellcheck="false"
+              placeholder="clickbait&#10;/\bspoilers?\b/i"
+              data-i18n-attr="placeholder:titleFiltersPlaceholder"
+            ></textarea>
+          </fieldset>
         </section>
 
         <section class="panel" id="panel-comments">
-          <div class="card">
-            <div class="editor-head">
-              <label class="row-title" for="input-commentFilters" data-i18n="commentFiltersLabel"
-                >Comment filters</label
-              >
-            </div>
+          <fieldset class="fieldset">
+            <legend class="row-title" data-i18n="commentFiltersLabel">Comment filters</legend>
             <p class="help" data-i18n="commentFiltersHelp">
               Keywords or /regex/flags, one per line. Matched against comment authors and text.
             </p>
@@ -297,7 +281,7 @@
               placeholder="spammer&#10;/free\s+crypto/i"
               data-i18n-attr="placeholder:commentFiltersPlaceholder"
             ></textarea>
-          </div>
+          </fieldset>
         </section>
 
         <section class="panel" id="panel-areas">
