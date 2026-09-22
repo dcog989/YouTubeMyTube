@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.13.0 - 2026-09-22
+#### Features
+- (**options**) resolve channel names to id and handle - (591685b) - dcog989
+
+- - -
+
 ## 0.12.0 - 2026-09-22
 #### Features
 - (**options**) accept channel names in the block-channel field - (c904264) - dcog989
