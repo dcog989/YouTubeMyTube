@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.10.0 - 2026-09-22
+#### Features
+- (**import**) import BlockTube channelName handles as channel rows - (830c507) - dcog989
+- (**options**) rename comments filter and alphabetize fuzzy filters - (e20fa76) - dcog989
+- (**options**) separate fuzzy filter editors into fieldsets - (477fc7e) - dcog989
+- (**options**) sortable channel and video table columns - (790c8c3) - dcog989
+#### Bug Fixes
+- (**popup**) disable block buttons when the active tab is not YouTube - (0e93818) - dcog989
+
+- - -
+
 ## 0.9.0 - 2026-09-22
 #### Features
 - (**content/menu**) click native "Don't recommend channel" on channel block - (5cd15e4) - dcog989
