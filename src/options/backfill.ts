@@ -5,6 +5,9 @@ import type { ChannelEntry, VideoEntry } from '../shared/types';
 import { commit, getDraft, isDirty, notify } from './state';
 
 const MAX_BACKFILL_LOOKUPS = 25;
+const BACKFILL_BATCH_DELAY = 250;
+
+let inFlight: Promise<void> | null = null;
 
 interface ChannelTarget {
   entry: ChannelEntry;
@@ -25,7 +28,20 @@ function needsVideoBackfill(video: VideoEntry): boolean {
   return !video.lookupFailed && !video.title;
 }
 
-export async function backfillMissing(): Promise<void> {
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function persistChanges(): Promise<void> {
+  if (!isDirty()) {
+    const normalized = normalizeState(getDraft());
+    commit(normalized);
+    await saveState(normalized);
+  }
+  notify();
+}
+
+async function backfillBatch(): Promise<{ changed: boolean; definitive: number }> {
   const draft = getDraft();
   const channelTargets: ChannelTarget[] = draft.rules.channels
     .filter(needsChannelBackfill)
@@ -35,6 +51,7 @@ export async function backfillMissing(): Promise<void> {
     .map((entry) => ({ entry, id: entry.id }));
 
   let changed = false;
+  let definitive = 0;
   let lookups = 0;
 
   for (const target of channelTargets) {
@@ -50,6 +67,7 @@ export async function backfillMissing(): Promise<void> {
       meta = null;
     }
     if (!meta) continue;
+    definitive += 1;
 
     if (meta.id && meta.id !== target.entry.id) {
       target.entry.id = meta.id;
@@ -88,6 +106,7 @@ export async function backfillMissing(): Promise<void> {
       title = null;
     }
     if (title === null) continue;
+    definitive += 1;
 
     if (title && title !== target.entry.title) {
       target.entry.title = title;
@@ -105,12 +124,22 @@ export async function backfillMissing(): Promise<void> {
     }
   }
 
-  if (!changed) return;
+  return { changed, definitive };
+}
 
-  if (!isDirty()) {
-    const normalized = normalizeState(getDraft());
-    commit(normalized);
-    await saveState(normalized);
+export function backfillMissing(): Promise<void> {
+  if (inFlight) return inFlight;
+  inFlight = runBackfill().finally(() => {
+    inFlight = null;
+  });
+  return inFlight;
+}
+
+async function runBackfill(): Promise<void> {
+  for (;;) {
+    const { changed, definitive } = await backfillBatch();
+    if (changed) await persistChanges();
+    if (definitive === 0) return;
+    await delay(BACKFILL_BATCH_DELAY);
   }
-  notify();
 }

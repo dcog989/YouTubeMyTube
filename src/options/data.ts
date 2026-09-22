@@ -1,6 +1,7 @@
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
 import { normalizeState } from '../shared/normalize';
 import { h } from '../shared/ui';
+import { backfillMissing } from './backfill';
 import { setStatus } from './dom';
 import { getDraft, notify, setDirty, setDraft } from './state';
 
@@ -30,6 +31,12 @@ function isBlockerState(value: unknown): boolean {
   return 'rules' in record || 'areas' in record || 'settings' in record;
 }
 
+function scheduleBackfill(): void {
+  void backfillMissing().catch((error) => {
+    console.error('Backfill failed', error);
+  });
+}
+
 export function importSettings(file: File): void {
   const reader = new FileReader();
   reader.onload = () => {
@@ -52,6 +59,7 @@ export function importSettings(file: File): void {
         ? ` Skipped: ${blocktube.data.skipped.join(', ')}.`
         : '';
       setStatus('import-status', `Imported ${filters} from a BlockTube backup.${skipped}`, true);
+      scheduleBackfill();
       return;
     }
 
@@ -60,6 +68,7 @@ export function importSettings(file: File): void {
       notify();
       setDirty(true);
       setStatus('import-status', 'Imported YouTubeMyTube settings.', true);
+      scheduleBackfill();
       return;
     }
 
