@@ -1,6 +1,6 @@
 import { SYNC_REQUEST } from '../shared/constants';
 import { buildDnrRules, type DnrRule, getDynamicRules, updateDynamicRules } from '../shared/dnr';
-import { onInstalled, onRuntimeMessage } from '../shared/runtime';
+import { onRuntimeMessage } from '../shared/runtime';
 import { ensureState, loadState, onLocalStorageChanged } from '../shared/state';
 
 function ruleKey(rule: DnrRule): string {
@@ -42,10 +42,6 @@ function syncDynamicRules(): Promise<void> {
   });
   return queue;
 }
-
-onInstalled(() => {
-  void ensureState().then(syncDynamicRules);
-});
 
 onLocalStorageChanged(() => {
   void syncDynamicRules();
