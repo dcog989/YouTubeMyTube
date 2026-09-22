@@ -169,9 +169,17 @@ html.ytb-hide-comments ytm-comments {
 }
 
 html.ytb-hide-live-chat #chat,
+html.ytb-hide-live-chat #chat-container,
 html.ytb-hide-live-chat ytd-live-chat-frame,
-html.ytb-hide-live-chat ytm-live-chat {
+html.ytb-hide-live-chat ytm-live-chat,
+html.ytb-hide-live-chat
+  ytd-watch-flexy[live-chat-present-and-expanded]
+  #panels-full-bleed-container {
   display: none !important;
+}
+
+html.ytb-hide-live-chat ytd-watch-flexy[live-chat-present-and-expanded] #columns {
+  padding-right: 0 !important;
 }
 
 html.ytb-hide-related #secondary,
