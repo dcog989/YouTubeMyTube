@@ -6,7 +6,7 @@ import { applyTheme, isTheme } from '../shared/theme';
 import { byId } from '../shared/ui';
 import { buildAreas, syncAreas } from './areas';
 import { backfillMissing } from './backfill';
-import { addChannel, renderChannels } from './channels';
+import { addChannel, renderChannels, wireChannelSort } from './channels';
 import { setActivePanel, updateCounts } from './counts';
 import { exportSettings, importSettings } from './data';
 import { selectPanel } from './dom';
@@ -22,7 +22,7 @@ import {
   subscribe,
 } from './state';
 import { testText, testUrl } from './tester';
-import { addVideo, renderVideos } from './videos';
+import { addVideo, renderVideos, wireVideoSort } from './videos';
 
 function syncThemeButtons(): void {
   const theme = getDraft().settings.theme;
@@ -78,6 +78,9 @@ function wireStatic(): void {
   byId<HTMLInputElement>('video-add').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') void addVideo();
   });
+
+  wireChannelSort(renderChannels);
+  wireVideoSort(renderVideos);
 
   byId('save').addEventListener('click', () => {
     void (async () => {

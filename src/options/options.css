@@ -507,6 +507,42 @@ textarea:focus {
   z-index: 1;
 }
 
+.th-sort {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.th-sort-icons {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  line-height: 0;
+}
+
+.th-sort-caret {
+  width: 10px;
+  height: 10px;
+  opacity: 0.3;
+}
+
+.th-sort-caret.is-active {
+  opacity: 1;
+}
+
+th.is-sorted {
+  color: var(--text);
+}
+
 .entity-readonly {
   color: var(--muted);
 }

@@ -5,13 +5,48 @@ import type { ChannelEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
 import { updateCounts } from './counts';
 import { setStatus } from './dom';
+import { compareValues, createSorter, type SortState } from './sort';
 import { getDraft, setDirty } from './state';
+
+const sorter = createSorter('id');
+
+type ChannelSortKey = 'id' | 'name' | 'handle';
+
+function channelValue(channel: ChannelEntry, key: ChannelSortKey): string {
+  if (key === 'name') return channel.name;
+  if (key === 'handle') return channel.handle;
+  return channel.id;
+}
+
+function sortedChannels(channels: ChannelEntry[], sort: SortState): ChannelEntry[] {
+  const key = sort.key as ChannelSortKey;
+  const factor = sort.direction === 'asc' ? 1 : -1;
+  return [...channels].sort(
+    (a, b) => factor * compareValues(channelValue(a, key), channelValue(b, key)),
+  );
+}
+
+export function wireChannelSort(onSort: () => void): void {
+  const headers = byId('channel-rows').closest('table')?.querySelectorAll('thead th');
+  const columns: Array<[ChannelSortKey, number]> = [
+    ['id', 0],
+    ['name', 1],
+    ['handle', 2],
+  ];
+  for (const [key, index] of columns) {
+    const cell = headers?.[index];
+    if (!cell) continue;
+    const text = cell.textContent ?? '';
+    const replacement = sorter.header(key, text, onSort);
+    cell.replaceWith(replacement);
+  }
+}
 
 export function renderChannels(): void {
   const body = byId('channel-rows');
   const draft = getDraft();
   body.replaceChildren();
-  draft.rules.channels.forEach((channel) => {
+  sortedChannels(draft.rules.channels, sorter.state()).forEach((channel) => {
     const idInput = h('input', {
       className: 'input entity-input',
       value: channel.id,

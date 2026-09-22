@@ -5,13 +5,43 @@ import type { VideoEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
 import { updateCounts } from './counts';
 import { setStatus } from './dom';
+import { compareValues, createSorter, type SortState } from './sort';
 import { getDraft, setDirty } from './state';
+
+const sorter = createSorter('id');
+
+type VideoSortKey = 'id' | 'title';
+
+function videoValue(video: VideoEntry, key: VideoSortKey): string {
+  return key === 'title' ? video.title : video.id;
+}
+
+function sortedVideos(videos: VideoEntry[], sort: SortState): VideoEntry[] {
+  const key = sort.key as VideoSortKey;
+  const factor = sort.direction === 'asc' ? 1 : -1;
+  return [...videos].sort((a, b) => factor * compareValues(videoValue(a, key), videoValue(b, key)));
+}
+
+export function wireVideoSort(onSort: () => void): void {
+  const headers = byId('video-rows').closest('table')?.querySelectorAll('thead th');
+  const columns: Array<[VideoSortKey, number]> = [
+    ['id', 0],
+    ['title', 1],
+  ];
+  for (const [key, index] of columns) {
+    const cell = headers?.[index];
+    if (!cell) continue;
+    const text = cell.textContent ?? '';
+    const replacement = sorter.header(key, text, onSort);
+    cell.replaceWith(replacement);
+  }
+}
 
 export function renderVideos(): void {
   const body = byId('video-rows');
   const draft = getDraft();
   body.replaceChildren();
-  draft.rules.videos.forEach((video) => {
+  sortedVideos(draft.rules.videos, sorter.state()).forEach((video) => {
     const idInput = h('input', {
       className: 'input entity-input',
       value: video.id,
