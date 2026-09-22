@@ -1,4 +1,3 @@
-import { type ChannelMeta, resolveVideoChannel } from '../../shared/resolve';
 import type { BlockerState, Entity } from '../../shared/types';
 import { h } from '../../shared/ui';
 import { parseYouTubeUrl } from '../../shared/url';
@@ -10,6 +9,7 @@ import type { FilterEngine } from '../filter';
 import type { OverlayFeedback } from '../overlay';
 import type { Store } from '../store';
 import { actionsFor, type MenuAction } from './actions';
+import { createChannelCache } from './channel-cache';
 import {
   containerStart,
   type MenuContainer,
@@ -41,7 +41,7 @@ export function createMenuInjector(deps: {
 }): MenuInjector {
   let lastMenuTarget: Element | null = null;
   const itemState = new WeakMap<Element, { action: MenuAction; owner: Element }>();
-  const channelCache = new Map<string, ChannelMeta>();
+  const channelCache = createChannelCache();
 
   function currentState(): BlockerState | null {
     return deps.store.getSnapshot()?.state ?? null;
@@ -89,14 +89,11 @@ export function createMenuInjector(deps: {
   }
 
   function requestChannel(videoId: string, container: MenuContainer): void {
-    if (channelCache.has(videoId)) return;
-    channelCache.set(videoId, { id: '', name: '', handle: '' });
-    void resolveVideoChannel(videoId)
-      .then((meta) => channelCache.set(videoId, meta))
-      .catch(() => undefined)
-      .finally(() => {
-        if (container.isConnected) inject(container);
-      });
+    const pending = channelCache.request(videoId);
+    if (!pending) return;
+    void pending.finally(() => {
+      if (container.isConnected) inject(container);
+    });
   }
 
   function ownerForItem(item: Element): Element | null {
