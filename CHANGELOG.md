@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.11.0 - 2026-09-22
+#### Features
+- (**options**) label unresolved channels and videos as "Not found" - (a861024) - dcog989
+#### Bug Fixes
+- (**options**) reject unresolved channel handles - (23ff4ea) - dcog989
+
+- - -
+
 ## 0.10.0 - 2026-09-22
 #### Features
 - (**import**) import BlockTube channelName handles as channel rows - (830c507) - dcog989
