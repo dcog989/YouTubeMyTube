@@ -164,6 +164,7 @@
 
   "channelsPasteInvalid": { "message": "Вставьте URL канала, @handle или ID канала UC." },
   "channelsAlready": { "message": "Этот канал уже заблокирован." },
+  "channelsNotFound": { "message": "Канал для $1 не найден." },
   "channelsLooking": { "message": "Получение сведений о канале…" },
   "channelsAdded": { "message": "Канал добавлен." },
   "channelsFetchFailed": { "message": "Канал добавлен. Не удалось получить сведения." },

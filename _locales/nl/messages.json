@@ -166,6 +166,7 @@
     "message": "Plak een kanaal-URL, @handle of UC-kanaal-ID."
   },
   "channelsAlready": { "message": "Dat kanaal is al geblokkeerd." },
+  "channelsNotFound": { "message": "Geen kanaal gevonden voor $1." },
   "channelsLooking": { "message": "Kanaalgegevens ophalen…" },
   "channelsAdded": { "message": "Kanaal toegevoegd." },
   "channelsFetchFailed": { "message": "Kanaal toegevoegd. Gegevens ophalen mislukt." },

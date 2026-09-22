@@ -168,6 +168,7 @@
     "message": "Füge eine Kanal-URL, ein @Handle oder eine UC-Kanal-ID ein."
   },
   "channelsAlready": { "message": "Dieser Kanal ist bereits blockiert." },
+  "channelsNotFound": { "message": "Kein Kanal für $1 gefunden." },
   "channelsLooking": { "message": "Kanaldetails werden abgerufen…" },
   "channelsAdded": { "message": "Kanal hinzugefügt." },
   "channelsFetchFailed": {

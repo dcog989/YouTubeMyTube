@@ -1,6 +1,11 @@
 import { t } from '../shared/i18n';
 import { parseBlockInput, resolveChannel } from '../shared/resolve';
-import { addChannel as addChannelRule, findChannel, removeChannel } from '../shared/rules';
+import {
+  addChannel as addChannelRule,
+  channelMatches,
+  findChannel,
+  removeChannel,
+} from '../shared/rules';
 import type { ChannelEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
 import { updateCounts } from './counts';
@@ -104,19 +109,43 @@ export async function addChannel(): Promise<void> {
     return;
   }
 
-  const stored = findChannel(draft.rules, entry);
-  if (!stored) {
-    setStatus('channel-status', t('channelsAdded'), false);
-    return;
-  }
-
   input.value = '';
   renderChannels();
   setDirty(true);
+
+  const stored = findChannel(draft.rules, entry);
+  if (!stored) {
+    setStatus('channel-status', t('channelsAdded'), true);
+    return;
+  }
+
   setStatus('channel-status', t('channelsLooking'), true);
 
   try {
     const meta = await resolveChannel({ id, handle });
+    if (handle && !meta.name && !meta.id) {
+      const index = draft.rules.channels.indexOf(stored);
+      if (index !== -1) draft.rules.channels.splice(index, 1);
+      renderChannels();
+      setDirty(true);
+      setStatus('channel-status', t('channelsNotFound', `@${handle}`), false);
+      return;
+    }
+    const conflict = draft.rules.channels.find(
+      (channel) =>
+        channel !== stored && channelMatches(channel, { id: meta.id, handle: meta.handle }),
+    );
+    if (conflict) {
+      const index = draft.rules.channels.indexOf(stored);
+      if (index !== -1) draft.rules.channels.splice(index, 1);
+      if (meta.id && !conflict.id) conflict.id = meta.id;
+      if (meta.name && !conflict.name) conflict.name = meta.name;
+      if (meta.handle && !conflict.handle) conflict.handle = meta.handle;
+      renderChannels();
+      setDirty(true);
+      setStatus('channel-status', t('channelsAlready'), false);
+      return;
+    }
     if (meta.id) stored.id = meta.id;
     if (meta.name) stored.name = meta.name;
     if (meta.handle) stored.handle = meta.handle;

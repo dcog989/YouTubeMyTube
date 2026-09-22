@@ -164,6 +164,7 @@
 
   "channelsPasteInvalid": { "message": "चैनल URL, @handle या UC चैनल ID पेस्ट करें।" },
   "channelsAlready": { "message": "यह चैनल पहले से ब्लॉक है।" },
+  "channelsNotFound": { "message": "$1 के लिए कोई चैनल नहीं मिला।" },
   "channelsLooking": { "message": "चैनल विवरण देखा जा रहा है…" },
   "channelsAdded": { "message": "चैनल जोड़ा गया।" },
   "channelsFetchFailed": { "message": "चैनल जोड़ा गया। विवरण नहीं मिल सका।" },

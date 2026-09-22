@@ -164,6 +164,7 @@
 
   "channelsPasteInvalid": { "message": "الصق عنوان URL لقناة أو @handle أو معرّف قناة UC." },
   "channelsAlready": { "message": "هذه القناة محظورة بالفعل." },
+  "channelsNotFound": { "message": "لم يتم العثور على قناة لـ $1." },
   "channelsLooking": { "message": "جارٍ جلب تفاصيل القناة…" },
   "channelsAdded": { "message": "تمت إضافة القناة." },
   "channelsFetchFailed": { "message": "تمت إضافة القناة. تعذّر جلب التفاصيل." },

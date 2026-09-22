@@ -172,6 +172,7 @@
     "message": "Incolla l'URL di un canale, un @handle o un ID canale UC."
   },
   "channelsAlready": { "message": "Questo canale è già bloccato." },
+  "channelsNotFound": { "message": "Nessun canale trovato per $1." },
   "channelsLooking": { "message": "Recupero dei dettagli del canale…" },
   "channelsAdded": { "message": "Canale aggiunto." },
   "channelsFetchFailed": { "message": "Canale aggiunto. Impossibile recuperare i dettagli." },

@@ -166,6 +166,7 @@
     "message": "Bir kanal URL'si, @handle veya UC kanal kimliği yapıştırın."
   },
   "channelsAlready": { "message": "Bu kanal zaten engelli." },
+  "channelsNotFound": { "message": "$1 için kanal bulunamadı." },
   "channelsLooking": { "message": "Kanal ayrıntıları alınıyor…" },
   "channelsAdded": { "message": "Kanal eklendi." },
   "channelsFetchFailed": { "message": "Kanal eklendi. Ayrıntılar alınamadı." },

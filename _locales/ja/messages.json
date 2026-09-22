@@ -166,6 +166,7 @@
     "message": "チャンネルの URL、@handle、または UC チャンネル ID を貼り付けてください。"
   },
   "channelsAlready": { "message": "そのチャンネルはすでにブロックされています。" },
+  "channelsNotFound": { "message": "$1 のチャンネルが見つかりませんでした。" },
   "channelsLooking": { "message": "チャンネルの詳細を取得中…" },
   "channelsAdded": { "message": "チャンネルを追加しました。" },
   "channelsFetchFailed": { "message": "チャンネルを追加しました。詳細を取得できませんでした。" },
