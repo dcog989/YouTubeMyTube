@@ -94,6 +94,12 @@ Required repository secrets: `AMO_JWT_ISSUER`, `AMO_JWT_SECRET`, `CHROME_EXTENSI
 
 Both stores require the extension to already exist: AMO needs the `browser_specific_settings.gecko.id` from `manifests/firefox.json` registered, and Chrome needs the extension created in the developer dashboard.
 
+## Privacy
+
+YouTubeMyTube collects no personal data and sends nothing to the developer; settings are stored
+locally and the only network requests go directly to YouTube to resolve public metadata. See
+[PRIVACY.md](PRIVACY.md) for the full policy.
+
 ## License
 
 [GNU GPL-3.0](LICENSE).
