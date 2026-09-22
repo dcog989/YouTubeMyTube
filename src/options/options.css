@@ -501,6 +501,10 @@ textarea:focus {
   min-height: 0;
 }
 
+.fieldset-scroll:has(textarea:placeholder-shown):not(:focus-within) {
+  flex: 0 0 auto;
+}
+
 .entity-table {
   width: 100%;
   border-collapse: collapse;
