@@ -18,6 +18,7 @@ const UNSUPPORTED_OPTIONS: ReadonlyArray<readonly [string, string]> = [
 export interface BlockTubeImport {
   videoIds: string[];
   channelIds: string[];
+  channelHandles: string[];
   channelFilters: string[];
   titleFilters: string[];
   commentFilters: string[];
@@ -47,6 +48,20 @@ function sanitizeList(value: unknown): string[] {
     result.push(entry);
   }
   return result;
+}
+
+function isHandleEntry(entry: string): boolean {
+  return entry.startsWith('@') && entry.length > 1;
+}
+
+function splitChannelName(entries: string[]): { handles: string[]; filters: string[] } {
+  const handles: string[] = [];
+  const filters: string[] = [];
+  for (const entry of entries) {
+    if (isHandleEntry(entry)) handles.push(entry);
+    else filters.push(entry);
+  }
+  return { handles, filters };
 }
 
 function hasAdvancedJavaScript(value: unknown): boolean {
@@ -108,12 +123,15 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
     skipped.add('block message');
   }
 
+  const channelName = splitChannelName(sanitizeList(filterData.channelName));
+
   return {
     ok: true,
     data: {
       videoIds: sanitizeList(filterData.videoId),
       channelIds: sanitizeList(filterData.channelId),
-      channelFilters: sanitizeList(filterData.channelName),
+      channelHandles: channelName.handles,
+      channelFilters: channelName.filters,
       titleFilters: sanitizeList(filterData.title),
       commentFilters: sanitizeList(filterData.comment),
       areas,
@@ -151,6 +169,10 @@ export function mergeBlockTubeImport(
 
   for (const id of data.channelIds) {
     if (addChannel(rules, { id, name: '', handle: '' })) added += 1;
+  }
+
+  for (const handle of data.channelHandles) {
+    if (addChannel(rules, { id: '', name: '', handle })) added += 1;
   }
 
   const channelFilters = mergePatternList(rules.channelFilters, data.channelFilters);
