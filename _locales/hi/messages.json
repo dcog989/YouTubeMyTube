@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "टिप्पणी फ़िल्टर" },
+  "commentFiltersLabel": { "message": "फ़ज़ी टिप्पणी फ़िल्टर" },
   "commentFiltersHelp": {
     "message": "कीवर्ड या /regex/flags, प्रति पंक्ति एक। टिप्पणी लेखकों और टेक्स्ट से मिलान किया जाता है।"
   },

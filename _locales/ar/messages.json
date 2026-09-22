@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "فلاتر التعليقات" },
+  "commentFiltersLabel": { "message": "تصفية التعليقات الضبابية" },
   "commentFiltersHelp": {
     "message": "كلمات مفتاحية أو /regex/flags، واحد في كل سطر. تُطابَق مع مؤلفي التعليقات ونصوصها."
   },

@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "评论过滤器" },
+  "commentFiltersLabel": { "message": "模糊筛选评论" },
   "commentFiltersHelp": {
     "message": "关键词或 /regex/flags，每行一个。与评论作者和内容匹配。"
   },

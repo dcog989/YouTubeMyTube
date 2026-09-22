@@ -1,6 +1,6 @@
 import type { AreaFlags } from './areas';
 import { defaultAreas, defaultRules, defaultSettings, defaultState } from './defaults';
-import { countActiveEntries } from './patterns';
+import { countActiveEntries, sortEntries } from './patterns';
 import { isTheme } from './theme';
 import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
 import { normalizeChannelName, normalizeHandle } from './url';
@@ -60,10 +60,10 @@ function mergeRules(value: unknown): FilterRules {
   const record = value as Record<string, unknown>;
   return {
     channels: pickChannels(record.channels),
-    channelFilters: pickStringArray(record.channelFilters),
+    channelFilters: sortEntries(pickStringArray(record.channelFilters)),
     videos: pickVideos(record.videos),
-    titleFilters: pickStringArray(record.titleFilters),
-    commentFilters: pickStringArray(record.commentFilters),
+    titleFilters: sortEntries(pickStringArray(record.titleFilters)),
+    commentFilters: sortEntries(pickStringArray(record.commentFilters)),
   };
 }
 

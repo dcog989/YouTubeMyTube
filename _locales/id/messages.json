@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "Filter komentar" },
+  "commentFiltersLabel": { "message": "Filter komentar fuzzy" },
   "commentFiltersHelp": {
     "message": "Kata kunci atau /regex/flags, satu per baris. Dicocokkan dengan penulis dan teks komentar."
   },

@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "댓글 필터" },
+  "commentFiltersLabel": { "message": "댓글 퍼지 필터" },
   "commentFiltersHelp": {
     "message": "키워드 또는 /regex/flags, 한 줄에 하나. 댓글 작성자와 텍스트와 비교합니다."
   },

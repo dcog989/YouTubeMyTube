@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "コメントフィルター" },
+  "commentFiltersLabel": { "message": "コメントをあいまいフィルター" },
   "commentFiltersHelp": {
     "message": "キーワードまたは /regex/flags を 1 行に 1 つ。コメントの投稿者と本文に対して照合されます。"
   },

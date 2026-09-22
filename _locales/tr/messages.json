@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "Yorum filtreleri" },
+  "commentFiltersLabel": { "message": "Yorumları bulanık filtrele" },
   "commentFiltersHelp": {
     "message": "Anahtar sözcükler veya /regex/flags, satır başına bir tane. Yorum yazarları ve metniyle eşleştirilir."
   },

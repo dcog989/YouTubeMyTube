@@ -4,6 +4,7 @@ import {
   countActiveEntries,
   isActiveEntry,
   parsePattern,
+  sortEntries,
 } from '../src/shared/patterns';
 
 describe('isActiveEntry / countActiveEntries', () => {
@@ -13,6 +14,14 @@ describe('isActiveEntry / countActiveEntries', () => {
     expect(isActiveEntry('  // note')).toBe(false);
     expect(isActiveEntry('   ')).toBe(false);
     expect(countActiveEntries(['a', '// b', '  // c', '', ' d '])).toBe(2);
+  });
+});
+
+describe('sortEntries', () => {
+  it('sorts case-insensitively without mutating the input', () => {
+    const input = ['Banana', 'apple', 'cherry'];
+    expect(sortEntries(input)).toEqual(['apple', 'Banana', 'cherry']);
+    expect(input).toEqual(['Banana', 'apple', 'cherry']);
   });
 });
 

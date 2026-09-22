@@ -11,6 +11,18 @@ export function countActiveEntries(entries: string[]): number {
   return entries.filter((entry) => isActiveEntry(entry)).length;
 }
 
+export function sortEntries(entries: string[]): string[] {
+  return [...entries].sort((a, b) => {
+    const lowerA = a.toLowerCase();
+    const lowerB = b.toLowerCase();
+    if (lowerA < lowerB) return -1;
+    if (lowerA > lowerB) return 1;
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+  });
+}
+
 export function parsePattern(raw: string): RegExp | null {
   const trimmed = raw.trim();
   if (!isActiveEntry(trimmed)) return null;

@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "Фильтры комментариев" },
+  "commentFiltersLabel": { "message": "Нечёткий фильтр комментариев" },
   "commentFiltersHelp": {
     "message": "Ключевые слова или /regex/flags, по одному в строке. Сравниваются с авторами и текстом комментариев."
   },

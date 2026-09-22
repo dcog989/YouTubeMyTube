@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "Reactiefilters" },
+  "commentFiltersLabel": { "message": "Reacties fuzzy filteren" },
   "commentFiltersHelp": {
     "message": "Trefwoorden of /regex/flags, één per regel. Vergeleken met auteurs en tekst van reacties."
   },

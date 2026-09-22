@@ -62,7 +62,7 @@
   },
   "titleFiltersPlaceholder": { "message": "clickbait\n/\\bspoilers?\\b/i" },
 
-  "commentFiltersLabel": { "message": "Filtros de comentarios" },
+  "commentFiltersLabel": { "message": "Filtrado difuso de comentarios" },
   "commentFiltersHelp": {
     "message": "Palabras clave o /regex/flags, una por línea. Se comparan con los autores y el texto de los comentarios."
   },
