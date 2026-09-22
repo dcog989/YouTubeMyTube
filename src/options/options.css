@@ -142,6 +142,8 @@ body {
 .nav-item,
 .filter-nav-item {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
   border: 0;
   background: transparent;
   color: var(--muted);
@@ -302,6 +304,9 @@ textarea:focus {
 
 .btn {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--border);
   background: var(--panel-alt);
   color: var(--text);
