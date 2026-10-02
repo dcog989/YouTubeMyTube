@@ -90,9 +90,11 @@ async function applyMutation(mutation: Promise<BlockerState | null>): Promise<vo
 function registerHandlers(): void {
   byId<HTMLInputElement>('enabled').addEventListener('change', (event) => {
     const enabled = (event.target as HTMLInputElement).checked;
-    void mutateState((current) => {
-      current.settings.enabled = enabled;
-    });
+    void applyMutation(
+      mutateState((current) => {
+        current.settings.enabled = enabled;
+      }),
+    );
   });
 
   byId('block-video').addEventListener('click', () => {
