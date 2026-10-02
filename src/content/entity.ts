@@ -77,15 +77,15 @@ function applyAnchor(entity: Entity, anchor: HTMLAnchorElement): void {
   applyParsed(entity, parseYouTubeUrl(anchor.getAttribute('href') ?? ''));
 }
 
+function hasChannelIdentity(entity: Entity): boolean {
+  return Boolean(entity.channelId || entity.handle);
+}
+
 function applyAnchors(entity: Entity, anchors: ArrayLike<HTMLAnchorElement>): void {
   for (const anchor of Array.from(anchors)) {
     applyAnchor(entity, anchor);
-    if (hasIdentity(entity)) return;
+    if (hasChannelIdentity(entity)) return;
   }
-}
-
-function hasIdentity(entity: Entity): boolean {
-  return Boolean(entity.videoId) && Boolean(entity.channelId || entity.handle);
 }
 
 function applyShadowAnchors(entity: Entity, root: ParentNode): void {
@@ -95,9 +95,9 @@ function applyShadowAnchors(entity: Entity, root: ParentNode): void {
     shadow.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((anchor) => {
       applyAnchor(entity, anchor);
     });
-    if (hasIdentity(entity)) return;
+    if (hasChannelIdentity(entity)) return;
     applyShadowAnchors(entity, shadow);
-    if (hasIdentity(entity)) return;
+    if (hasChannelIdentity(entity)) return;
   }
 }
 
@@ -105,7 +105,7 @@ export function cardEntity(card: Element): Entity {
   const entity: Entity = {};
   applyAnchors(entity, card.querySelectorAll<HTMLAnchorElement>('a[href]'));
 
-  if (!hasIdentity(entity)) applyShadowAnchors(entity, card);
+  if (!hasChannelIdentity(entity)) applyShadowAnchors(entity, card);
 
   entity.title = titleOf(card);
   const channelName =
