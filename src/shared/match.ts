@@ -15,9 +15,11 @@ export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
   if (entity.channelId && rules.channelIds.has(entity.channelId)) {
     return { blocked: true, reason: { kind: 'channel', value: entity.channelId } };
   }
-  if (entity.handle && rules.handles.has(normalizeHandle(entity.handle))) {
+  if (entity.handle) {
     const value = normalizeHandle(entity.handle);
-    return { blocked: true, reason: { kind: 'handle', value } };
+    if (rules.handles.has(value)) {
+      return { blocked: true, reason: { kind: 'handle', value } };
+    }
   }
   if (entity.channelName) {
     const name = normalizeChannelName(entity.channelName);
