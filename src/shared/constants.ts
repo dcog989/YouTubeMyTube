@@ -21,3 +21,4 @@ export const MAX_DNR_REGEX_RULES = 1000;
 
 export const CONTEXT_REQUEST = 'ytb:context';
 export const SYNC_REQUEST = 'ytb:sync';
+export const MUTATE_REQUEST = 'ytb:mutate';

@@ -5,7 +5,7 @@ import {
   resolveChannelByName,
   resolveVideoTitle,
 } from '../shared/resolve';
-import { saveState } from '../shared/state';
+import { requestMutation } from '../shared/runtime';
 import type { ChannelEntry, VideoEntry } from '../shared/types';
 import { commit, getDraft, isDirty, notify } from './state';
 
@@ -44,7 +44,7 @@ async function persistChanges(): Promise<void> {
   if (!isDirty()) {
     const normalized = normalizeState(getDraft());
     commit(normalized);
-    await saveState(normalized);
+    await requestMutation({ kind: 'replaceState', state: normalized });
   }
   notify();
 }

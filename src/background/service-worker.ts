@@ -1,7 +1,10 @@
-import { SYNC_REQUEST } from '../shared/constants';
+import { MUTATE_REQUEST, SYNC_REQUEST } from '../shared/constants';
 import { buildDnrRules, type DnrRule, getDynamicRules, updateDynamicRules } from '../shared/dnr';
+import { applyMutation, isMutation } from '../shared/mutations';
+import { normalizeState } from '../shared/normalize';
 import { onInstalled, onRuntimeMessage } from '../shared/runtime';
-import { onLocalStorageChanged, readState, seedState } from '../shared/state';
+import { onLocalStorageChanged, readState, saveState, seedState } from '../shared/state';
+import type { BlockerState } from '../shared/types';
 
 function ruleKey(rule: DnrRule): string {
   const redirect = rule.action.redirect;
@@ -36,13 +39,44 @@ async function doSync(): Promise<void> {
   await updateDynamicRules({ removeRuleIds, addRules });
 }
 
-let queue: Promise<void> = Promise.resolve();
+let syncQueue: Promise<void> = Promise.resolve();
 
 function syncDynamicRules(): Promise<void> {
-  queue = queue.then(doSync).catch((error) => {
+  syncQueue = syncQueue.then(doSync).catch((error) => {
     console.error('DNR sync failed', error);
   });
-  return queue;
+  return syncQueue;
+}
+
+// All stored-state writes funnel through this queue, making the worker the
+// single serialized writer across contexts.
+let writeQueue: Promise<unknown> = Promise.resolve();
+
+function queueWrite<T>(task: () => Promise<T>): Promise<T> {
+  const run = writeQueue.then(task, task);
+  writeQueue = run.catch(() => undefined);
+  return run;
+}
+
+async function handleMutation(mutation: unknown): Promise<BlockerState | null> {
+  if (!isMutation(mutation)) return null;
+  try {
+    return await queueWrite(async () => {
+      const current = await readState();
+      // Abort on a missing key: a transient empty read must not replace the
+      // user's real rules with defaults plus this mutation.
+      if (!current) return null;
+      const next = applyMutation(current, mutation);
+      if (!next) return null;
+      const normalized = normalizeState(next);
+      await saveState(normalized);
+      await syncDynamicRules();
+      return normalized;
+    });
+  } catch (error) {
+    console.error('Mutation failed', error);
+    return null;
+  }
 }
 
 onLocalStorageChanged(() => {
@@ -51,9 +85,17 @@ onLocalStorageChanged(() => {
 
 onRuntimeMessage((message, _sender, sendResponse) => {
   if (!message || typeof message !== 'object') return;
-  if ((message as { type?: unknown }).type !== SYNC_REQUEST) return;
-  void syncDynamicRules().then(() => sendResponse());
-  return true;
+  const type = (message as { type?: unknown }).type;
+  if (type === SYNC_REQUEST) {
+    void syncDynamicRules().then(() => sendResponse());
+    return true;
+  }
+  if (type === MUTATE_REQUEST) {
+    void handleMutation((message as { mutation?: unknown }).mutation).then((state) =>
+      sendResponse(state),
+    );
+    return true;
+  }
 });
 
 onInstalled(() => {

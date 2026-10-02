@@ -1,7 +1,8 @@
 import { defaultState } from '../shared/defaults';
 import { localizeDocument, t } from '../shared/i18n';
 import { normalizeState } from '../shared/normalize';
-import { loadState, onLocalStorageChanged, saveState } from '../shared/state';
+import { requestMutation } from '../shared/runtime';
+import { loadState, onLocalStorageChanged } from '../shared/state';
 import { applyTheme, isTheme } from '../shared/theme';
 import { byId } from '../shared/ui';
 import { buildAreas, syncAreas } from './areas';
@@ -86,7 +87,7 @@ function wireStatic(): void {
     void (async () => {
       const normalized = normalizeState(getDraft());
       commit(normalized);
-      await saveState(normalized);
+      await requestMutation({ kind: 'replaceState', state: normalized });
       setDirty(false);
       populate();
     })();

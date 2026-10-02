@@ -31,9 +31,10 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/defaults.ts` — default rules, areas, settings and state.
 - `src/shared/normalize.ts` — state normalization and `ruleCount` (entity rows + pattern lists, deduplicated).
 - `src/shared/storage-ext.ts` — thin `browser.storage.local` get/set wrappers.
-- `src/shared/state.ts` — load/save/ensure the blocker state, serialized `mutateState` and `onLocalStorageChanged`.
+- `src/shared/mutations.ts` — serializable `Mutation` union and the pure `applyMutation` reducer (single-writer protocol).
+- `src/shared/state.ts` — load/save/ensure the blocker state and `onLocalStorageChanged`; only the service worker writes.
 - `src/shared/rules-service.ts` — transactional block/unblock operations (`blockVideo`/`blockChannel`/`unblockReason`) used by the UI surfaces.
-- `src/shared/runtime.ts` — `browser.runtime` wrappers (extension URL, sync request, options page).
+- `src/shared/runtime.ts` — `browser.runtime` wrappers (extension URL, sync request, mutation request, options page).
 - `src/shared/tabs.ts` — `browser.tabs` wrappers (active tab, tab messaging).
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
 - `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata, video titles and a video's channel (oEmbed).
@@ -49,7 +50,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/content/evaluate.ts` — `createEvaluator`: block routing and overlay/blank decisions.
 - `src/content/overlay.ts` — `createBlankCover` / `createChannelOverlay` / `createOverlayFeedback`.
 - `src/content/menu/index.ts` + `src/content/menu/` — `createMenuInjector`: in-page menu injection.
-- `src/background/service-worker.ts` — keeps DNR rules in sync with storage.
+- `src/background/service-worker.ts` — the single writer: applies `MUTATE_REQUEST` mutations to storage and keeps DNR rules in sync.
 - `src/options/options.ts` + `src/options/` — settings UI, split into entry point, state store, panel modules (channels/videos/areas/patterns), tester, import/export and metadata backfill.
 - `esbuild.config.mjs` — build/packaging for Firefox (bundles entries, copies HTML/CSS/manifests and `_locales/`).
 - `scripts/zip.mjs` — dependency-free ZIP writer for the store archives (`createZip`).
@@ -81,7 +82,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - Add a UI string / locale: add the key to `_locales/en/messages.json`, mirror it in every other `_locales/<lang>/messages.json` (the `tests/i18n.test.ts` key/placeholder parity check enforces this), and resolve it via `t()` or `data-i18n`. Manifest name/description/title use `__MSG_*__`; the wire format in `src/shared/reason.ts` stays English.
 - Display copy vs behavior: domain modules (`areas.ts`, `filters.ts`, `reason.ts`) hold behavior; user-facing strings are message keys resolved via `t()` from `_locales/<lang>/messages.json` (English is `default_locale`). Options markup uses `data-i18n` / `data-i18n-attr`; `src/options/copy.ts` and `src/shared/reason-copy.ts` map events/reasons to message keys.
 - Add a browser: add `manifests/<browser>.json` and add the name to `SUPPORTED` in `esbuild.config.mjs`.
-- State access: load via `loadState()` in `src/shared/state.ts`; mutate via `mutateState()` or the `src/shared/rules-service.ts` operations; never write `browser.storage` directly.
+- State access: load via `loadState()` in `src/shared/state.ts`; mutate via `requestMutation()` (`src/shared/runtime.ts`) or the `src/shared/rules-service.ts` operations; the worker applies them with `applyMutation` (`src/shared/mutations.ts`). Never write `browser.storage` directly (only the service worker calls `saveState`).
 
 ### Filter Syntax
 
