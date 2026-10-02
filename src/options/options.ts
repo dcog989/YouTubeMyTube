@@ -19,7 +19,6 @@ import {
   notify,
   reloadExternal,
   setDirty,
-  setDraft,
   subscribe,
 } from './state';
 import { testText, testUrl } from './tester';
@@ -111,7 +110,7 @@ function wireStatic(): void {
 
   byId('reset').addEventListener('click', () => {
     if (!confirm(t('confirmReset'))) return;
-    setDraft(defaultState());
+    commit(defaultState());
     notify();
     setDirty(true);
   });
@@ -123,7 +122,7 @@ function wireStatic(): void {
 
 async function init(): Promise<void> {
   localizeDocument();
-  setDraft(await loadState());
+  commit(await loadState());
   buildAreas();
   wirePatternEditors();
   wireStatic();
