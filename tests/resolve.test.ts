@@ -163,6 +163,13 @@ describe('resolveChannelByName', () => {
       handle: '3minutesofaviation',
     });
   });
+
+  it('stays name-only when the first search hit has a different name', async () => {
+    const meta = await resolveChannelByName('Someone Else', {
+      fetch: fetchStub(SEARCH_HTML),
+    });
+    expect(meta).toEqual({ id: '', name: '', handle: '' });
+  });
 });
 
 describe('channelRefFromOembed', () => {

@@ -1,5 +1,5 @@
 import { YOUTUBE_ORIGIN } from './constants';
-import { normalizeHandle, parseYouTubeUrl } from './url';
+import { normalizeChannelName, normalizeHandle, parseYouTubeUrl } from './url';
 
 export type BlockInput =
   | { kind: 'video'; videoId: string }
@@ -193,5 +193,9 @@ export async function resolveChannelByName(
   const response = await fetchWith(deps)(url);
   if (!response.ok) return { id: '', name: '', handle: '' };
 
-  return channelMetaFromSearch(await response.text());
+  const meta = channelMetaFromSearch(await response.text());
+  if (normalizeChannelName(meta.name) !== normalizeChannelName(query)) {
+    return { id: '', name: '', handle: '' };
+  }
+  return meta;
 }
