@@ -50,6 +50,17 @@ describe('compileRules', () => {
     expect(rules.channelNames.has('rick astley')).toBe(true);
     expect(rules.channelNames.size).toBe(1);
   });
+
+  it('ignores names on channels that have an id or handle', () => {
+    const rules = compileRules({
+      ...defaultRules(),
+      channels: [
+        { id: 'UC1', name: 'Music', handle: '' },
+        { id: '', name: 'Music', handle: 'somehandle' },
+      ],
+    });
+    expect(rules.channelNames.size).toBe(0);
+  });
 });
 
 describe('channelMatches', () => {
@@ -71,6 +82,13 @@ describe('channelMatches', () => {
     expect(channelMatches(named, { name: 'rick astley' })).toBe(true);
     expect(channelMatches(named, { name: '  Rick   Astley ' })).toBe(true);
     expect(channelMatches(named, { name: 'Someone Else' })).toBe(false);
+  });
+
+  it('does not match by name when the entry has an id or handle', () => {
+    expect(channelMatches({ id: 'UC1', name: 'Music', handle: '' }, { name: 'Music' })).toBe(false);
+    expect(channelMatches({ id: '', name: 'Music', handle: 'music' }, { name: 'Music' })).toBe(
+      false,
+    );
   });
 });
 

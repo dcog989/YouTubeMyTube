@@ -14,11 +14,13 @@ export function compileRules(rules: FilterRules): CompiledRules {
   const channelNames = new Set<string>();
   for (const { id, handle, name } of rules.channels) {
     const channelId = id.trim();
-    if (isActiveEntry(channelId)) channelIds.add(channelId);
     const channelHandle = normalizeHandle(handle);
+    if (isActiveEntry(channelId)) channelIds.add(channelId);
     if (isActiveEntry(channelHandle)) handles.add(channelHandle);
-    const channelName = normalizeChannelName(name);
-    if (channelName) channelNames.add(channelName);
+    if (!isActiveEntry(channelId) && !isActiveEntry(channelHandle)) {
+      const channelName = normalizeChannelName(name);
+      if (channelName) channelNames.add(channelName);
+    }
   }
 
   return {
@@ -53,6 +55,7 @@ function channelMatchRank(entry: ChannelEntry, lookup: ChannelLookup): number {
   if (id !== '' && entry.id.trim() === id) return MATCH_ID;
   const handle = lookup.handle ? normalizeHandle(lookup.handle) : '';
   if (handle !== '' && entry.handle === handle) return MATCH_HANDLE;
+  if (entry.id.trim() !== '' || entry.handle.trim() !== '') return NO_MATCH;
   const name = lookup.name ? normalizeChannelName(lookup.name) : '';
   if (name !== '' && normalizeChannelName(entry.name) === name) return MATCH_NAME;
   return NO_MATCH;
