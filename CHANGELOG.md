@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.15.1 - 2026-10-02
+#### Bug Fixes
+- (**normalize**) normalize channel handles on state load - (e34d84e) - dcog989
+
+- - -
+
 ## 0.15.0 - 2026-10-02
 #### Features
 - (**options**) add one-time first-run onboarding callout - (1fb380b) - dcog989
