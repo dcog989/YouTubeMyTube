@@ -106,6 +106,31 @@ export function addChannel(rules: FilterRules, entry: ChannelEntry): boolean {
   return true;
 }
 
+export type ResolvedMetaOutcome = 'merged' | 'conflict';
+
+export function applyResolvedMeta(
+  rules: FilterRules,
+  stored: ChannelEntry,
+  meta: ChannelLookup,
+): ResolvedMetaOutcome {
+  const conflict = rules.channels.find(
+    (channel) =>
+      channel !== stored && channelMatches(channel, { id: meta.id, handle: meta.handle }),
+  );
+  if (!conflict) {
+    if (meta.id) stored.id = meta.id;
+    if (meta.name && !stored.name) stored.name = meta.name;
+    if (meta.handle) stored.handle = meta.handle;
+    return 'merged';
+  }
+  const index = rules.channels.indexOf(stored);
+  if (index !== -1) rules.channels.splice(index, 1);
+  if (meta.id && !conflict.id) conflict.id = meta.id;
+  if (meta.name && !conflict.name) conflict.name = meta.name;
+  if (meta.handle && !conflict.handle) conflict.handle = meta.handle;
+  return 'conflict';
+}
+
 export function removeChannel(rules: FilterRules, lookup: ChannelLookup): boolean {
   let bestIndex = -1;
   let bestRank = Number.POSITIVE_INFINITY;

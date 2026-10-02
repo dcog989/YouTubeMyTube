@@ -1,6 +1,6 @@
 import { t } from '../shared/i18n';
 import { parseBlockInput, resolveChannel, resolveChannelByName } from '../shared/resolve';
-import { addChannel as addChannelRule, channelMatches, findChannel } from '../shared/rules';
+import { addChannel as addChannelRule, applyResolvedMeta, findChannel } from '../shared/rules';
 import type { ChannelEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
 import { updateCounts } from './counts';
@@ -135,26 +135,13 @@ export async function addChannel(): Promise<void> {
       setStatus('channel-status', t('channelsNotFound', bareHandle ? raw : `@${handle}`), false);
       return;
     }
-    const conflict = channels.find(
-      (channel) =>
-        channel !== stored && channelMatches(channel, { id: meta.id, handle: meta.handle }),
-    );
-    if (conflict) {
-      const index = channels.indexOf(stored);
-      if (index !== -1) channels.splice(index, 1);
-      if (meta.id && !conflict.id) conflict.id = meta.id;
-      if (meta.name && !conflict.name) conflict.name = meta.name;
-      if (meta.handle && !conflict.handle) conflict.handle = meta.handle;
-      renderChannels();
-      setDirty(true);
+    const outcome = applyResolvedMeta(getDraft().rules, stored, meta);
+    renderChannels();
+    setDirty(true);
+    if (outcome === 'conflict') {
       setStatus('channel-status', t('channelsAlready'), false);
       return;
     }
-    if (meta.id) stored.id = meta.id;
-    if (meta.name && !stored.name) stored.name = meta.name;
-    if (meta.handle) stored.handle = meta.handle;
-    renderChannels();
-    setDirty(true);
     setStatus(
       'channel-status',
       stored.name ? t('addedNamed', stored.name) : t('channelsAdded'),

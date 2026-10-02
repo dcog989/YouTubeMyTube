@@ -3,6 +3,7 @@ import { defaultRules } from '../src/shared/defaults';
 import {
   addChannel,
   addVideo,
+  applyResolvedMeta,
   channelMatches,
   compileRules,
   findChannel,
@@ -164,5 +165,46 @@ describe('add / remove', () => {
     ];
     expect(removeChannel(rules, { handle: '@beta', name: 'Same Name' })).toBe(true);
     expect(rules.channels.map((channel) => channel.handle)).toEqual(['alpha']);
+  });
+});
+
+describe('applyResolvedMeta', () => {
+  it('merges resolved fields into the stored entry', () => {
+    const rules = defaultRules();
+    const stored = { id: '', name: '', handle: 'somechannel' };
+    rules.channels = [stored];
+    expect(
+      applyResolvedMeta(rules, stored, { id: 'UC1', name: 'Music', handle: 'somechannel' }),
+    ).toBe('merged');
+    expect(stored).toEqual({ id: 'UC1', name: 'Music', handle: 'somechannel' });
+  });
+
+  it('keeps an existing name but overrides id and handle', () => {
+    const rules = defaultRules();
+    const stored = { id: '', name: 'Original', handle: 'old' };
+    rules.channels = [stored];
+    expect(applyResolvedMeta(rules, stored, { id: 'UC1', name: 'Resolved', handle: 'new' })).toBe(
+      'merged',
+    );
+    expect(stored).toEqual({ id: 'UC1', name: 'Original', handle: 'new' });
+  });
+
+  it('merges into an existing channel and drops the duplicate on conflict', () => {
+    const rules = defaultRules();
+    const conflict = { id: 'UC1', name: '', handle: '' };
+    const stored = { id: '', name: '', handle: 'somechannel' };
+    rules.channels = [conflict, stored];
+    expect(
+      applyResolvedMeta(rules, stored, { id: 'UC1', name: 'Music', handle: 'somechannel' }),
+    ).toBe('conflict');
+    expect(rules.channels).toEqual([{ id: 'UC1', name: 'Music', handle: 'somechannel' }]);
+  });
+
+  it('does not treat a name-only match as a conflict', () => {
+    const rules = defaultRules();
+    const stored = { id: '', name: '', handle: 'somechannel' };
+    rules.channels = [stored, { id: '', name: 'Music', handle: '' }];
+    expect(applyResolvedMeta(rules, stored, { id: '', name: 'Music', handle: '' })).toBe('merged');
+    expect(rules.channels).toHaveLength(2);
   });
 });
