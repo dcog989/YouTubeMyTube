@@ -6,19 +6,26 @@ import { onInstalled, onRuntimeMessage } from '../shared/runtime';
 import { onLocalStorageChanged, readState, saveState, seedState } from '../shared/state';
 import type { BlockerState } from '../shared/types';
 
+function canonicalize(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value !== null && typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .filter(([, entry]) => entry !== undefined)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+    return Object.fromEntries(entries.map(([key, entry]) => [key, canonicalize(entry)]));
+  }
+  return value;
+}
+
 function ruleKey(rule: DnrRule): string {
-  const redirect = rule.action.redirect;
-  return [
-    rule.id,
-    rule.condition.regexFilter ?? '',
-    redirect?.extensionPath ?? redirect?.url ?? '',
-  ].join('\u0000');
+  return JSON.stringify(canonicalize(rule));
 }
 
 function sameRules(existing: DnrRule[], next: DnrRule[]): boolean {
   if (existing.length !== next.length) return false;
-  return existing.every((rule, index) => {
-    const other = next[index];
+  const existingById = new Map(existing.map((rule) => [rule.id, rule]));
+  return next.every((rule) => {
+    const other = existingById.get(rule.id);
     return other !== undefined && ruleKey(rule) === ruleKey(other);
   });
 }
