@@ -5,6 +5,18 @@ import { isTheme } from './theme';
 import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
 import { normalizeChannelName, normalizeHandle } from './url';
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function pickString(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function pickBoolean(value: unknown): boolean | undefined {
+  return typeof value === 'boolean' ? value : undefined;
+}
+
 function pickStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return value.filter((item): item is string => typeof item === 'string');
@@ -17,11 +29,10 @@ function pickChannels(value: unknown): ChannelEntry[] {
   const handles = new Set<string>();
   const names = new Set<string>();
   for (const item of value) {
-    if (!item || typeof item !== 'object') continue;
-    const record = item as Record<string, unknown>;
-    const id = typeof record.id === 'string' ? record.id.trim() : '';
-    const name = typeof record.name === 'string' ? record.name.trim() : '';
-    const handle = typeof record.handle === 'string' ? normalizeHandle(record.handle) : '';
+    if (!isRecord(item)) continue;
+    const id = pickString(item.id);
+    const name = pickString(item.name);
+    const handle = pickString(item.handle);
     if (!id && !handle && !name) continue;
     if (id && ids.has(id)) continue;
     if (handle && handles.has(handle)) continue;
@@ -31,7 +42,7 @@ function pickChannels(value: unknown): ChannelEntry[] {
     if (handle) handles.add(handle);
     if (normalizedName) names.add(normalizedName);
     const entry: ChannelEntry = { id, name, handle };
-    if (record.lookupFailed === true) entry.lookupFailed = true;
+    if (item.lookupFailed === true) entry.lookupFailed = true;
     result.push(entry);
   }
   return result;
@@ -42,60 +53,57 @@ function pickVideos(value: unknown): VideoEntry[] {
   const result: VideoEntry[] = [];
   const ids = new Set<string>();
   for (const item of value) {
-    if (!item || typeof item !== 'object') continue;
-    const record = item as Record<string, unknown>;
-    const id = typeof record.id === 'string' ? record.id.trim() : '';
-    const title = typeof record.title === 'string' ? record.title.trim() : '';
+    if (!isRecord(item)) continue;
+    const id = pickString(item.id);
+    const title = pickString(item.title);
     if (!id || ids.has(id)) continue;
     ids.add(id);
     const entry: VideoEntry = { id, title };
-    if (record.lookupFailed === true) entry.lookupFailed = true;
+    if (item.lookupFailed === true) entry.lookupFailed = true;
     result.push(entry);
   }
   return result;
 }
 
 function mergeRules(value: unknown): FilterRules {
-  if (!value || typeof value !== 'object') return defaultRules();
-  const record = value as Record<string, unknown>;
+  if (!isRecord(value)) return defaultRules();
   return {
-    channels: pickChannels(record.channels),
-    channelFilters: sortEntries(pickStringArray(record.channelFilters)),
-    videos: pickVideos(record.videos),
-    titleFilters: sortEntries(pickStringArray(record.titleFilters)),
-    commentFilters: sortEntries(pickStringArray(record.commentFilters)),
+    channels: pickChannels(value.channels),
+    channelFilters: sortEntries(pickStringArray(value.channelFilters)),
+    videos: pickVideos(value.videos),
+    titleFilters: sortEntries(pickStringArray(value.titleFilters)),
+    commentFilters: sortEntries(pickStringArray(value.commentFilters)),
   };
 }
 
 function mergeAreas(value: unknown): AreaFlags {
   const base = defaultAreas();
-  if (!value || typeof value !== 'object') return base;
-  const record = value as Record<string, unknown>;
+  if (!isRecord(value)) return base;
   const result = { ...base };
   for (const key of Object.keys(base) as (keyof AreaFlags)[]) {
-    if (typeof record[key] === 'boolean') result[key] = record[key] as boolean;
+    const flag = pickBoolean(value[key]);
+    if (flag !== undefined) result[key] = flag;
   }
   return result;
 }
 
 function mergeSettings(value: unknown): Settings {
   const base = defaultSettings();
-  if (!value || typeof value !== 'object') return base;
-  const record = value as Record<string, unknown>;
-  const theme = record.theme;
+  if (!isRecord(value)) return base;
+  const theme = value.theme;
+  const enabled = pickBoolean(value.enabled);
   return {
-    enabled: typeof record.enabled === 'boolean' ? record.enabled : base.enabled,
+    enabled: enabled ?? base.enabled,
     theme: isTheme(theme) ? theme : base.theme,
   };
 }
 
 export function normalizeState(value: unknown): BlockerState {
-  if (!value || typeof value !== 'object') return defaultState();
-  const record = value as Record<string, unknown>;
+  if (!isRecord(value)) return defaultState();
   return {
-    rules: mergeRules(record.rules),
-    areas: mergeAreas(record.areas),
-    settings: mergeSettings(record.settings),
+    rules: mergeRules(value.rules),
+    areas: mergeAreas(value.areas),
+    settings: mergeSettings(value.settings),
   };
 }
 
