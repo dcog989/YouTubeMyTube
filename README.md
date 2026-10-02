@@ -4,6 +4,8 @@ Firefox extension to block videos, channels, users, Shorts and comments on YouTu
 
 Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarativeNetRequest` for direct navigation. It does not depend on YouTube's internal renderer schemas or inject into the page's JavaScript, keeping it resilient to YouTube UI changes.
 
+![screenshot](assets/screen-1.webp)
+
 ## Features
 
 - Block channels by ID or handle, falling back to the exact channel name where YouTube exposes no channel link (e.g. related-video cards); channel names/handles can also be matched by keyword/regex.
