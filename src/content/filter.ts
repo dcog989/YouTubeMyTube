@@ -74,7 +74,6 @@ export function createFilterEngine(deps: { store: Store; evaluate(): void }): Fi
     const comment = root.closest(COMMENT_SELECTOR);
     if (comment) processNode(comment, state, compiled);
 
-    processNode(root, state, compiled);
     root.querySelectorAll(CARD_SELECTOR).forEach((node) => {
       processNode(node, state, compiled);
     });
