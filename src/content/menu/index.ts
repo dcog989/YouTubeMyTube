@@ -50,6 +50,7 @@ export function createMenuInjector(deps: {
     if (window.top !== window) return;
     if (window.location.hostname === MOBILE_HOST) return;
 
+    owners.init();
     window.addEventListener('click', handleInjectedClick, true);
     window.addEventListener(
       'pointerdown',
