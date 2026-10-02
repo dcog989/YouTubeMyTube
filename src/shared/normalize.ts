@@ -1,6 +1,6 @@
-import type { AreaFlags } from './areas';
+import { AREA_DEFINITIONS, type AreaFlags } from './areas';
 import { defaultAreas, defaultRules, defaultSettings, defaultState } from './defaults';
-import { countActiveEntries, sortEntries } from './patterns';
+import { countActiveEntries, isActiveEntry, sortEntries } from './patterns';
 import { isTheme } from './theme';
 import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
 import { normalizeChannelName, normalizeHandle } from './url';
@@ -99,13 +99,51 @@ export function normalizeState(value: unknown): BlockerState {
   };
 }
 
-export function ruleCount(state: BlockerState): number {
+export interface RuleSummary {
+  videos: number;
+  channels: number;
+  channelFilters: number;
+  titleFilters: number;
+  commentFilters: number;
+  areas: number;
+  redirectAreas: number;
+  activeVideoIds: number;
+  activeChannelIds: number;
+  handles: number;
+  enabled: boolean;
+}
+
+export function summarizeRules(state: BlockerState): RuleSummary {
   const { channels, channelFilters, videos, titleFilters, commentFilters } = state.rules;
+  let areas = 0;
+  let redirectAreas = 0;
+  for (const area of AREA_DEFINITIONS) {
+    if (!state.areas[area.key]) continue;
+    areas += 1;
+    if (area.mode === 'redirect') redirectAreas += 1;
+  }
+  return {
+    videos: videos.length,
+    channels: channels.length,
+    channelFilters: countActiveEntries(channelFilters),
+    titleFilters: countActiveEntries(titleFilters),
+    commentFilters: countActiveEntries(commentFilters),
+    areas,
+    redirectAreas,
+    activeVideoIds: videos.filter(({ id }) => isActiveEntry(id)).length,
+    activeChannelIds: channels.filter(({ id }) => isActiveEntry(id)).length,
+    handles: channels.filter(({ handle }) => isActiveEntry(handle)).length,
+    enabled: state.settings.enabled,
+  };
+}
+
+export function ruleCount(state: BlockerState): number {
+  const summary = summarizeRules(state);
   return (
-    channels.length +
-    videos.length +
-    countActiveEntries(channelFilters) +
-    countActiveEntries(titleFilters) +
-    countActiveEntries(commentFilters)
+    summary.videos +
+    summary.channels +
+    summary.channelFilters +
+    summary.titleFilters +
+    summary.commentFilters
   );
 }

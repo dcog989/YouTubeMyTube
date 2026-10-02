@@ -1,8 +1,7 @@
-import { AREA_DEFINITIONS } from '../shared/areas';
 import { MAX_DNR_REGEX_RULES } from '../shared/constants';
 import { countDnrRules } from '../shared/dnr';
 import { t } from '../shared/i18n';
-import { countActiveEntries } from '../shared/patterns';
+import { type RuleSummary, summarizeRules } from '../shared/normalize';
 import { byId } from '../shared/ui';
 import { getDraft } from './state';
 
@@ -15,18 +14,16 @@ export function setActivePanel(name: string): void {
   activePanel = name;
 }
 
-function panelFilterCount(panel: string): number {
-  const draft = getDraft();
-  const rules = draft.rules;
+function panelFilterCount(summary: RuleSummary, panel: string): number {
   switch (panel) {
     case 'channels':
-      return rules.channels.length + countActiveEntries(rules.channelFilters);
+      return summary.channels + summary.channelFilters;
     case 'videos':
-      return rules.videos.length + countActiveEntries(rules.titleFilters);
+      return summary.videos + summary.titleFilters;
     case 'comments':
-      return countActiveEntries(rules.commentFilters);
+      return summary.commentFilters;
     case 'areas':
-      return AREA_DEFINITIONS.filter((area) => draft.areas[area.key]).length;
+      return summary.areas;
     default:
       return 0;
   }
@@ -49,9 +46,12 @@ function updateDnrWarning(): void {
 }
 
 export function updateCounts(): void {
+  const summary = summarizeRules(getDraft());
   const isCounted = COUNTED_PANEL_SET.has(activePanel);
-  byId('panel-count').textContent = isCounted ? formatCount(panelFilterCount(activePanel)) : '';
-  const total = COUNTED_PANELS.reduce((sum, panel) => sum + panelFilterCount(panel), 0);
+  byId('panel-count').textContent = isCounted
+    ? formatCount(panelFilterCount(summary, activePanel))
+    : '';
+  const total = COUNTED_PANELS.reduce((sum, panel) => sum + panelFilterCount(summary, panel), 0);
   byId('total-count').textContent = formatCount(total);
   updateDnrWarning();
 }

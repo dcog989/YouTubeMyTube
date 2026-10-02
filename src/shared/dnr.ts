@@ -1,5 +1,6 @@
 import { AREA_DEFINITIONS } from './areas';
 import { MAX_DNR_REGEX_RULES, YOUTUBE_HOME, YOUTUBE_HOST_PATTERN } from './constants';
+import { summarizeRules } from './normalize';
 import { escapeRegExp, isActiveEntry } from './patterns';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
@@ -99,19 +100,11 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
 }
 
 export function countDnrRules(state: BlockerState): number {
-  if (!state.settings.enabled) return 0;
-  let count = 0;
-  for (const area of AREA_DEFINITIONS) {
-    if (area.mode === 'redirect' && state.areas[area.key]) count += 1;
-  }
-  for (const { id } of state.rules.videos) {
-    if (isActiveEntry(id)) count += 1;
-  }
-  for (const { id, handle } of state.rules.channels) {
-    if (isActiveEntry(id)) count += 1;
-    if (isActiveEntry(handle)) count += 1;
-  }
-  return count;
+  const summary = summarizeRules(state);
+  if (!summary.enabled) return 0;
+  return (
+    summary.activeVideoIds + summary.activeChannelIds + summary.handles + summary.redirectAreas
+  );
 }
 
 export function getDynamicRules(): Promise<DnrRule[]> {

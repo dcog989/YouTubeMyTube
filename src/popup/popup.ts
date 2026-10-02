@@ -1,7 +1,6 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
 import { localizeDocument, t } from '../shared/i18n';
-import { ruleCount } from '../shared/normalize';
-import { countActiveEntries } from '../shared/patterns';
+import { ruleCount, summarizeRules } from '../shared/normalize';
 import { findChannel, hasVideoId } from '../shared/rules';
 import { blockChannel, blockVideo } from '../shared/rules-service';
 import { openOptionsPage, requestMutation } from '../shared/runtime';
@@ -19,15 +18,13 @@ let activeHandle: string | null = null;
 let activeChannelName: string | null = null;
 
 function renderCounts(): void {
-  const { rules } = state;
+  const summary = summarizeRules(state);
   const parts: string[] = [];
-  if (rules.videos.length) parts.push(t('popupCountVideos', String(rules.videos.length)));
-  if (rules.channels.length) parts.push(t('popupCountChannels', String(rules.channels.length)));
-  const keywords =
-    countActiveEntries(rules.channelFilters) + countActiveEntries(rules.titleFilters);
+  if (summary.videos) parts.push(t('popupCountVideos', String(summary.videos)));
+  if (summary.channels) parts.push(t('popupCountChannels', String(summary.channels)));
+  const keywords = summary.channelFilters + summary.titleFilters;
   if (keywords) parts.push(t('popupCountKeywords', String(keywords)));
-  const comments = countActiveEntries(rules.commentFilters);
-  if (comments) parts.push(t('popupCountComments', String(comments)));
+  if (summary.commentFilters) parts.push(t('popupCountComments', String(summary.commentFilters)));
 
   const counts = byId('counts');
   counts.textContent = parts.length > 0 ? parts.join(' · ') : t('popupNoFilters');
