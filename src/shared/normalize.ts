@@ -32,7 +32,7 @@ function pickChannels(value: unknown): ChannelEntry[] {
     if (!isRecord(item)) continue;
     const id = pickString(item.id);
     const name = pickString(item.name);
-    const handle = pickString(item.handle);
+    const handle = normalizeHandle(pickString(item.handle));
     if (!id && !handle && !name) continue;
     if (id && ids.has(id)) continue;
     if (handle && handles.has(handle)) continue;
