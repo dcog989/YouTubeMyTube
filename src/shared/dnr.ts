@@ -49,7 +49,7 @@ function channelIdPattern(channelId: string): string {
 }
 
 function handlePattern(handle: string): string {
-  return `${YOUTUBE_HOST_PATTERN}/${escapeRegExp(`@${handle}`)}(?:[/?#]|$)`;
+  return `${YOUTUBE_HOST_PATTERN}/${escapeRegExp(`@${encodeURIComponent(handle)}`)}(?:[/?#]|$)`;
 }
 
 function blockedPage(reason: string): DnrRedirect {

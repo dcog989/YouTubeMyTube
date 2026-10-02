@@ -76,6 +76,14 @@ describe('buildDnrRules', () => {
     expect(new RegExp(filter, 'i').test('https://www.youtube.com/@another')).toBe(false);
   });
 
+  it('percent-encodes non-ASCII handles to match the URL path', () => {
+    const { rules } = buildDnrRules(stateWith({ channels: [channel('', 'カナル')] }));
+    const filter = rules[0]?.condition.regexFilter ?? '';
+    const url = `https://www.youtube.com/@${encodeURIComponent('カナル')}`;
+    expect(new RegExp(filter, 'i').test(url)).toBe(true);
+    expect(new RegExp(filter, 'i').test('https://www.youtube.com/@somechannel')).toBe(false);
+  });
+
   it('skips channels without an id or handle', () => {
     const { rules } = buildDnrRules(stateWith({ channels: [channel('', '')] }));
     expect(rules).toHaveLength(0);
