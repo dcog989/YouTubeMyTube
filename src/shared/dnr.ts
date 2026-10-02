@@ -98,6 +98,22 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
   return { rules, dropped };
 }
 
+export function countDnrRules(state: BlockerState): number {
+  if (!state.settings.enabled) return 0;
+  let count = 0;
+  for (const area of AREA_DEFINITIONS) {
+    if (area.mode === 'redirect' && state.areas[area.key]) count += 1;
+  }
+  for (const { id } of state.rules.videos) {
+    if (isActiveEntry(id)) count += 1;
+  }
+  for (const { id, handle } of state.rules.channels) {
+    if (isActiveEntry(id)) count += 1;
+    if (isActiveEntry(handle)) count += 1;
+  }
+  return count;
+}
+
 export function getDynamicRules(): Promise<DnrRule[]> {
   return browser.declarativeNetRequest.getDynamicRules();
 }

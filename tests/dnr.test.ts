@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { MAX_DNR_REGEX_RULES } from '../src/shared/constants';
 import { defaultState } from '../src/shared/defaults';
-import { buildDnrRules } from '../src/shared/dnr';
+import { buildDnrRules, countDnrRules } from '../src/shared/dnr';
 import type { ChannelEntry, VideoEntry } from '../src/shared/types';
 
 function stateWith(overrides: {
@@ -126,5 +126,28 @@ describe('buildDnrRules', () => {
     const { rules, dropped } = buildDnrRules(stateWith({ videos }));
     expect(rules).toHaveLength(MAX_DNR_REGEX_RULES);
     expect(dropped).toBe(1);
+  });
+});
+
+describe('countDnrRules', () => {
+  it('matches the generated rule and overflow counts', () => {
+    const state = stateWith({
+      videos: [video('abc'), video('')],
+      channels: [channel('UC1', 'somechannel'), channel('', '')],
+      trendingPage: true,
+    });
+    const { rules, dropped } = buildDnrRules(state);
+    expect(countDnrRules(state)).toBe(rules.length + dropped);
+  });
+
+  it('reports the total past the regex cap', () => {
+    const videos = Array.from({ length: MAX_DNR_REGEX_RULES + 5 }, (_, index) =>
+      video(`v${index}`),
+    );
+    expect(countDnrRules(stateWith({ videos }))).toBe(MAX_DNR_REGEX_RULES + 5);
+  });
+
+  it('counts nothing when disabled', () => {
+    expect(countDnrRules(stateWith({ videos: [video('abc')], enabled: false }))).toBe(0);
   });
 });
