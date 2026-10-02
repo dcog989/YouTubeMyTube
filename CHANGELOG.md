@@ -2,6 +2,32 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.14.4 - 2026-10-02
+#### Bug Fixes
+- (**options**) fall back to name search for bare channel tokens - (591b333) - dcog989
+- (**options**) stop backfill loop on unresolvable entries - (4f0f1e5) - dcog989
+- (**popup**) refresh local state after toggling enabled - (df6b8ae) - dcog989
+- (**rules**) remove the strongest channel match by id, handle, then name - (f16c624) - dcog989
+- (**rules**) normalize handles when compiling rules - (58835aa) - dcog989
+- (**theme**) default palette follows the OS to avoid a light flash - (d99ce02) - dcog989
+#### Performance Improvements
+- (**content**) fast-path menu label lookup before full subtree scan - (ef4d7d4) - dcog989
+- (**match**) normalize entity handles once per match - (82e227d) - dcog989
+- (**options**) count DNR rules without building them on each keystroke - (fe69d9d) - dcog989
+#### Refactoring
+- (**blocktube**) merge pattern lists by iterating filter keys - (114512e) - dcog989
+- (**content**) split menu injector into owner and inject modules - (0d0fba1) - dcog989
+- (**content**) pass the store into applyAreas - (1394830) - dcog989
+- <span style="background-color: #d73a49; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 0.85em;">BREAKING</span>(**firefox**) drop Chrome target and migrate to browser.* API - (5dc17fd) - dcog989
+- (**options**) share a generic entity table sorter - (e0239e8) - dcog989
+- (**scripts**) share the CRC32 helper between zip writers - (d10e28e) - dcog989
+#### Miscellaneous Chores
+- (**options**) un-export internal adoptState helper - (9337dce) - dcog989
+- (**runtime**) remove unused onInstalled wrapper - (5aef06e) - dcog989
+- updates - (93721fb) - dcog989
+
+- - -
+
 ## 0.14.3 - 2026-10-02
 #### Bug Fixes
 - (**content**) extract card titles from the current YouTube DOM - (175d5f9) - dcog989
