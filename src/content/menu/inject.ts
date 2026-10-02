@@ -190,7 +190,7 @@ export function createInjector(deps: {
     }
 
     const entity = entityFor(owner);
-    if (entity.videoId && !entity.channelId) {
+    if (entity.videoId && !entity.channelId && !entity.handle) {
       requestChannel(entity.videoId, container);
     }
 
