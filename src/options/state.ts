@@ -46,7 +46,7 @@ function hideConflict(): void {
   byId('conflict-warning').hidden = true;
 }
 
-export function adoptState(next: BlockerState): void {
+function adoptState(next: BlockerState): void {
   draft = next;
   savedSnapshot = JSON.stringify(draft);
   external = null;
