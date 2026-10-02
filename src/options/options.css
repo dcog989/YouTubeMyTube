@@ -200,6 +200,36 @@ body {
   display: none;
 }
 
+.onboarding {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 14px 18px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.onboarding[hidden] {
+  display: none;
+}
+
+.onboarding-heading {
+  margin: 0;
+  font-size: 16px;
+}
+
+.onboarding .help {
+  margin: 4px 0 0;
+}
+
+.onboarding .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .panel-actions {
   display: flex;
   align-items: center;

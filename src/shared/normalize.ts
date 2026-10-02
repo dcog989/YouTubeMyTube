@@ -92,9 +92,11 @@ function mergeSettings(value: unknown): Settings {
   if (!isRecord(value)) return base;
   const theme = value.theme;
   const enabled = pickBoolean(value.enabled);
+  const onboardingComplete = pickBoolean(value.onboardingComplete);
   return {
     enabled: enabled ?? base.enabled,
     theme: isTheme(theme) ? theme : base.theme,
+    onboardingComplete: onboardingComplete ?? base.onboardingComplete,
   };
 }
 

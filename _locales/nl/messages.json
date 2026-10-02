@@ -32,6 +32,11 @@
     "message": "De instellingen zijn gewijzigd in een ander tabblad of via het YouTube-menu. Herlaad om ze te behouden, of sla op om ze te overschrijven."
   },
   "confirmReset": { "message": "Alle instellingen en filters resetten?" },
+  "onboardingHeading": { "message": "Welkom bij YouTubeMyTube" },
+  "onboardingBody": {
+    "message": "Kies links een sectie om kanalen, video's, reacties of hele gebieden te blokkeren. Je kunt ook direct op YouTube blokkeren via het spelermenu of de pop-up in de werkbalk. Wijzigingen worden toegepast wanneer je op Opslaan klikt."
+  },
+  "onboardingDismiss": { "message": "Begrepen" },
 
   "add": { "message": "Toevoegen" },
   "remove": { "message": "Verwijderen" },

@@ -1,6 +1,7 @@
 import { defaultState } from '../shared/defaults';
 import { localizeDocument, t } from '../shared/i18n';
 import { normalizeState } from '../shared/normalize';
+import { completeOnboarding } from '../shared/rules-service';
 import { requestMutation } from '../shared/runtime';
 import { loadState, onLocalStorageChanged } from '../shared/state';
 import { applyTheme, isTheme } from '../shared/theme';
@@ -34,12 +35,23 @@ function syncThemeButtons(): void {
 
 function populate(): void {
   syncThemeButtons();
+  syncOnboarding();
   byId<HTMLInputElement>('enabled').checked = getDraft().settings.enabled;
   syncPatternEditors();
   syncAreas();
   renderChannels();
   renderVideos();
   updateCounts();
+}
+
+function syncOnboarding(): void {
+  byId('onboarding').hidden = getDraft().settings.onboardingComplete;
+}
+
+function dismissOnboarding(): void {
+  getDraft().settings.onboardingComplete = true;
+  syncOnboarding();
+  void completeOnboarding();
 }
 
 function selectPanelWithCounts(name: string): void {
@@ -69,6 +81,8 @@ function wireStatic(): void {
     getDraft().settings.enabled = (event.target as HTMLInputElement).checked;
     setDirty(true);
   });
+
+  byId('onboarding-dismiss').addEventListener('click', dismissOnboarding);
 
   byId('channel-add-btn').addEventListener('click', () => void addChannel());
   byId<HTMLInputElement>('channel-add').addEventListener('keydown', (event) => {

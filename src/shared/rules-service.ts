@@ -7,6 +7,10 @@ export function setEnabled(enabled: boolean): Promise<BlockerState | null> {
   return requestMutation({ kind: 'setEnabled', enabled });
 }
 
+export function completeOnboarding(): Promise<BlockerState | null> {
+  return requestMutation({ kind: 'completeOnboarding' });
+}
+
 export function blockVideo(entry: VideoEntry): Promise<BlockerState | null> {
   return requestMutation({ kind: 'blockVideo', entry });
 }

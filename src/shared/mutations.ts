@@ -5,6 +5,7 @@ import { removeRule, ruleRefForReason } from './unblock';
 
 export type Mutation =
   | { kind: 'setEnabled'; enabled: boolean }
+  | { kind: 'completeOnboarding' }
   | { kind: 'blockVideo'; entry: VideoEntry }
   | { kind: 'unblockVideo'; videoId: string }
   | { kind: 'blockChannel'; entry: ChannelEntry }
@@ -14,6 +15,7 @@ export type Mutation =
 
 const MUTATION_KINDS = new Set<string>([
   'setEnabled',
+  'completeOnboarding',
   'blockVideo',
   'unblockVideo',
   'blockChannel',
@@ -35,6 +37,10 @@ function applyInPlace(state: BlockerState, mutation: InPlaceMutation): boolean {
     case 'setEnabled':
       if (state.settings.enabled === mutation.enabled) return false;
       state.settings.enabled = mutation.enabled;
+      return true;
+    case 'completeOnboarding':
+      if (state.settings.onboardingComplete) return false;
+      state.settings.onboardingComplete = true;
       return true;
     case 'blockVideo':
       return addVideo(state.rules, mutation.entry);

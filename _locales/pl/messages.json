@@ -32,6 +32,11 @@
     "message": "Ustawienia zmieniono w innej karcie lub z menu YouTube. Odśwież, aby je zachować, albo zapisz, aby je nadpisać."
   },
   "confirmReset": { "message": "Zresetować wszystkie ustawienia i filtry?" },
+  "onboardingHeading": { "message": "Witamy w YouTubeMyTube" },
+  "onboardingBody": {
+    "message": "Wybierz sekcję po lewej, aby blokować kanały, filmy, komentarze lub całe obszary. Możesz też blokować bezpośrednio na YouTube, korzystając z menu odtwarzacza lub wyskakującego okienka na pasku narzędzi. Zmiany są stosowane po kliknięciu Zapisz."
+  },
+  "onboardingDismiss": { "message": "Rozumiem" },
 
   "add": { "message": "Dodaj" },
   "remove": { "message": "Usuń" },

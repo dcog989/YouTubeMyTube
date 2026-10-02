@@ -32,6 +32,11 @@
     "message": "设置已在其他标签页或 YouTube 菜单中更改。重新加载以保留，或保存以覆盖。"
   },
   "confirmReset": { "message": "重置所有设置和过滤器？" },
+  "onboardingHeading": { "message": "欢迎使用 YouTubeMyTube" },
+  "onboardingBody": {
+    "message": "在左侧选择一个版块，即可屏蔽频道、视频、评论或整个区域。你也可以通过播放器菜单或工具栏弹窗直接在 YouTube 上屏蔽。点击“保存”后更改才会生效。"
+  },
+  "onboardingDismiss": { "message": "知道了" },
 
   "add": { "message": "添加" },
   "remove": { "message": "移除" },

@@ -29,6 +29,7 @@ export type Theme = 'system' | 'light' | 'dark';
 export interface Settings {
   enabled: boolean;
   theme: Theme;
+  onboardingComplete: boolean;
 }
 
 export interface BlockerState {

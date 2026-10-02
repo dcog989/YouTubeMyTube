@@ -32,6 +32,11 @@
     "message": "Les paramètres ont été modifiés dans un autre onglet ou depuis le menu YouTube. Rechargez pour les conserver ou enregistrez pour les écraser."
   },
   "confirmReset": { "message": "Réinitialiser tous les paramètres et filtres ?" },
+  "onboardingHeading": { "message": "Bienvenue dans YouTubeMyTube" },
+  "onboardingBody": {
+    "message": "Choisissez une section à gauche pour bloquer des chaînes, des vidéos, des commentaires ou des zones entières. Vous pouvez aussi bloquer directement depuis YouTube via le menu du lecteur ou le popup de la barre d'outils. Les modifications sont appliquées lorsque vous cliquez sur Enregistrer."
+  },
+  "onboardingDismiss": { "message": "Compris" },
 
   "add": { "message": "Ajouter" },
   "remove": { "message": "Supprimer" },

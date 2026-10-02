@@ -61,9 +61,27 @@ export function commit(next: BlockerState): void {
   hideConflict();
 }
 
+function differsOnlyByOnboarding(incoming: BlockerState): boolean {
+  if (savedSnapshot === '') return false;
+  const baseline = JSON.parse(savedSnapshot) as BlockerState;
+  if (incoming.settings.onboardingComplete === baseline.settings.onboardingComplete) return false;
+  const withoutOnboarding: BlockerState = {
+    ...incoming,
+    settings: {
+      ...incoming.settings,
+      onboardingComplete: baseline.settings.onboardingComplete,
+    },
+  };
+  return JSON.stringify(withoutOnboarding) === savedSnapshot;
+}
+
 export function handleExternalChange(value: unknown): void {
   const incoming = normalizeState(value);
   if (JSON.stringify(incoming) === savedSnapshot) return;
+  if (differsOnlyByOnboarding(incoming)) {
+    savedSnapshot = JSON.stringify(incoming);
+    return;
+  }
   external = incoming;
   if (dirty) showConflict();
   else adoptState(incoming);

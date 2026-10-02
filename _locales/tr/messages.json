@@ -32,6 +32,11 @@
     "message": "Ayarlar başka bir sekmede veya YouTube menüsünden değiştirildi. Korumak için yeniden yükleyin, üzerine yazmak için kaydedin."
   },
   "confirmReset": { "message": "Tüm ayarlar ve filtreler sıfırlansın mı?" },
+  "onboardingHeading": { "message": "YouTubeMyTube'a hoş geldiniz" },
+  "onboardingBody": {
+    "message": "Kanalları, videoları, yorumları veya tüm alanları engellemek için soldan bir bölüm seçin. Ayrıca oynatıcı menüsünü veya araç çubuğu açılır penceresini kullanarak doğrudan YouTube'da da engelleyebilirsiniz. Değişiklikler Kaydet'e bastığınızda uygulanır."
+  },
+  "onboardingDismiss": { "message": "Anladım" },
 
   "add": { "message": "Ekle" },
   "remove": { "message": "Kaldır" },

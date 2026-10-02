@@ -32,6 +32,11 @@
     "message": "Die Einstellungen wurden in einem anderen Tab oder über das YouTube-Menü geändert. Lade neu, um sie zu behalten, oder speichere, um sie zu überschreiben."
   },
   "confirmReset": { "message": "Alle Einstellungen und Filter zurücksetzen?" },
+  "onboardingHeading": { "message": "Willkommen bei YouTubeMyTube" },
+  "onboardingBody": {
+    "message": "Wähle links einen Bereich, um Kanäle, Videos, Kommentare oder ganze Seiten zu blockieren. Du kannst auch direkt auf YouTube über das Player-Menü oder das Symbol in der Symbolleiste blockieren. Änderungen werden mit „Speichern“ übernommen."
+  },
+  "onboardingDismiss": { "message": "Verstanden" },
 
   "add": { "message": "Hinzufügen" },
   "remove": { "message": "Entfernen" },

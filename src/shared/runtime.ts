@@ -31,6 +31,8 @@ export function onRuntimeMessage(handler: MessageHandler): void {
   browser.runtime.onMessage.addListener(handler);
 }
 
-export function onInstalled(listener: () => void): void {
+export function onInstalled(
+  listener: (details: { reason: browser.runtime.OnInstalledReason }) => void,
+): void {
   browser.runtime.onInstalled.addListener(listener);
 }

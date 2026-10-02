@@ -32,6 +32,11 @@
     "message": "As configurações foram alteradas em outra aba ou pelo menu do YouTube. Recarregue para mantê-las ou salve para substituí-las."
   },
   "confirmReset": { "message": "Redefinir todas as configurações e filtros?" },
+  "onboardingHeading": { "message": "Bem-vindo ao YouTubeMyTube" },
+  "onboardingBody": {
+    "message": "Escolha uma seção à esquerda para bloquear canais, vídeos, comentários ou áreas inteiras. Você também pode bloquear diretamente no YouTube pelo menu do player ou pelo popup da barra de ferramentas. As alterações são aplicadas ao clicar em Salvar."
+  },
+  "onboardingDismiss": { "message": "Entendi" },
 
   "add": { "message": "Adicionar" },
   "remove": { "message": "Remover" },

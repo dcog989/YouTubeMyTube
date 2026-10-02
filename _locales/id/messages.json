@@ -32,6 +32,11 @@
     "message": "Pengaturan berubah di tab lain atau dari menu YouTube. Muat ulang untuk mempertahankannya, atau simpan untuk menimpanya."
   },
   "confirmReset": { "message": "Reset semua pengaturan dan filter?" },
+  "onboardingHeading": { "message": "Selamat datang di YouTubeMyTube" },
+  "onboardingBody": {
+    "message": "Pilih bagian di kiri untuk memblokir kanal, video, komentar, atau seluruh area. Anda juga dapat memblokir langsung di YouTube melalui menu pemutar atau popup toolbar. Perubahan diterapkan saat Anda menekan Simpan."
+  },
+  "onboardingDismiss": { "message": "Mengerti" },
 
   "add": { "message": "Tambah" },
   "remove": { "message": "Hapus" },

@@ -32,6 +32,11 @@
     "message": "다른 탭이나 YouTube 메뉴에서 설정이 변경되었습니다. 유지하려면 새로고침하고, 덮어쓰려면 저장하세요."
   },
   "confirmReset": { "message": "모든 설정과 필터를 초기화할까요?" },
+  "onboardingHeading": { "message": "YouTubeMyTube에 오신 것을 환영합니다" },
+  "onboardingBody": {
+    "message": "왼쪽에서 섹션을 선택해 채널, 동영상, 댓글 또는 전체 영역을 차단하세요. 플레이어 메뉴나 도구 모음 팝업에서 YouTube에서 바로 차단할 수도 있습니다. 변경 사항은 저장을 누르면 적용됩니다."
+  },
+  "onboardingDismiss": { "message": "확인" },
 
   "add": { "message": "추가" },
   "remove": { "message": "삭제" },

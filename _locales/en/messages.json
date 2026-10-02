@@ -32,6 +32,11 @@
     "message": "Settings changed in another tab or from the YouTube menu. Reload to keep them, or Save to overwrite."
   },
   "confirmReset": { "message": "Reset all settings and filters?" },
+  "onboardingHeading": { "message": "Welcome to YouTubeMyTube" },
+  "onboardingBody": {
+    "message": "Choose a section on the left to block channels, videos, comments or whole areas. You can also block directly from YouTube using the player menu or the toolbar popup. Changes are applied when you press Save."
+  },
+  "onboardingDismiss": { "message": "Got it" },
 
   "add": { "message": "Add" },
   "remove": { "message": "Remove" },

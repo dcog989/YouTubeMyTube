@@ -2,7 +2,7 @@ import { MUTATE_REQUEST, SYNC_REQUEST } from '../shared/constants';
 import { buildDnrRules, type DnrRule, getDynamicRules, updateDynamicRules } from '../shared/dnr';
 import { applyMutation, isMutation } from '../shared/mutations';
 import { normalizeState } from '../shared/normalize';
-import { onInstalled, onRuntimeMessage } from '../shared/runtime';
+import { onInstalled, onRuntimeMessage, openOptionsPage } from '../shared/runtime';
 import { onLocalStorageChanged, readState, saveState, seedState } from '../shared/state';
 import type { BlockerState } from '../shared/types';
 
@@ -105,8 +105,9 @@ onRuntimeMessage((message, _sender, sendResponse) => {
   }
 });
 
-onInstalled(() => {
+onInstalled((details) => {
   void seedState().then(syncDynamicRules);
+  if (details.reason === 'install') openOptionsPage();
 });
 
 void syncDynamicRules();

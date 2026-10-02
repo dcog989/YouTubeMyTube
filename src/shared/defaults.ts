@@ -23,6 +23,7 @@ export function defaultSettings(): Settings {
   return {
     enabled: true,
     theme: 'system',
+    onboardingComplete: false,
   };
 }
 
