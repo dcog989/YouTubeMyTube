@@ -8,7 +8,7 @@ import { byId } from '../shared/ui';
 import { buildAreas, syncAreas } from './areas';
 import { backfillMissing } from './backfill';
 import { addChannel, renderChannels, wireChannelSort } from './channels';
-import { setActivePanel, updateCounts } from './counts';
+import { updateCounts } from './counts';
 import { exportSettings, importSettings } from './data';
 import { selectPanel } from './dom';
 import { syncPatternEditors, wirePatternEditors } from './patterns';
@@ -42,7 +42,6 @@ function populate(): void {
 }
 
 function selectPanelWithCounts(name: string): void {
-  setActivePanel(name);
   selectPanel(name);
   updateCounts();
 }

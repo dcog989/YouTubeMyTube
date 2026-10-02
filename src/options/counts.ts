@@ -3,16 +3,11 @@ import { countDnrRules } from '../shared/dnr';
 import { t } from '../shared/i18n';
 import { type RuleSummary, summarizeRules } from '../shared/normalize';
 import { byId } from '../shared/ui';
+import { getActivePanel } from './dom';
 import { getDraft } from './state';
 
 const COUNTED_PANELS = ['channels', 'videos', 'comments', 'areas'] as const;
 const COUNTED_PANEL_SET = new Set<string>(COUNTED_PANELS);
-
-let activePanel = 'channels';
-
-export function setActivePanel(name: string): void {
-  activePanel = name;
-}
 
 function panelFilterCount(summary: RuleSummary, panel: string): number {
   switch (panel) {
@@ -47,6 +42,7 @@ function updateDnrWarning(): void {
 
 export function updateCounts(): void {
   const summary = summarizeRules(getDraft());
+  const activePanel = getActivePanel();
   const isCounted = COUNTED_PANEL_SET.has(activePanel);
   byId('panel-count').textContent = isCounted
     ? formatCount(panelFilterCount(summary, activePanel))

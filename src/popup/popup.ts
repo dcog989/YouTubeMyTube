@@ -11,11 +11,20 @@ import type { BlockerState, Entity } from '../shared/types';
 import { byId } from '../shared/ui';
 import { parseYouTubeUrl } from '../shared/url';
 
+interface ActiveContext {
+  videoId: string | null;
+  channelId: string | null;
+  handle: string | null;
+  channelName: string | null;
+}
+
 let state: BlockerState;
-let activeVideoId: string | null = null;
-let activeChannelId: string | null = null;
-let activeHandle: string | null = null;
-let activeChannelName: string | null = null;
+let activeContext: ActiveContext = {
+  videoId: null,
+  channelId: null,
+  handle: null,
+  channelName: null,
+};
 
 function renderCounts(): void {
   const summary = summarizeRules(state);
@@ -36,39 +45,42 @@ function renderContext(): void {
   const videoButton = byId<HTMLButtonElement>('block-video');
   const channelButton = byId<HTMLButtonElement>('block-channel');
 
-  const hasChannel = activeChannelId !== null || activeHandle !== null;
-  context.hidden = !activeVideoId && !hasChannel;
-  videoButton.disabled = activeVideoId === null || hasVideoId(state.rules, activeVideoId);
-  const channel = findChannel(state.rules, { id: activeChannelId, handle: activeHandle });
+  const { videoId, channelId, handle } = activeContext;
+  const hasChannel = channelId !== null || handle !== null;
+  context.hidden = !videoId && !hasChannel;
+  videoButton.disabled = videoId === null || hasVideoId(state.rules, videoId);
+  const channel = findChannel(state.rules, { id: channelId, handle });
   channelButton.disabled = !hasChannel || channel !== undefined;
 }
 
 async function detectActiveTab(): Promise<void> {
-  activeVideoId = null;
-  activeChannelId = null;
-  activeHandle = null;
-  activeChannelName = null;
+  activeContext = { videoId: null, channelId: null, handle: null, channelName: null };
 
   const tab = await queryActiveTab();
   const parsed = tab?.url ? parseYouTubeUrl(tab.url) : { kind: 'other' as const };
-  if (parsed.videoId) activeVideoId = parsed.videoId;
-  if (parsed.channelId) activeChannelId = parsed.channelId;
-  if (parsed.handle) activeHandle = parsed.handle.toLowerCase();
+  if (parsed.videoId) activeContext.videoId = parsed.videoId;
+  if (parsed.channelId) activeContext.channelId = parsed.channelId;
+  if (parsed.handle) activeContext.handle = parsed.handle.toLowerCase();
 
   if (tab?.id !== undefined && parsed.videoId) {
     const context = await sendTabMessage<Entity>(tab.id, { type: CONTEXT_REQUEST });
-    if (context?.channelId && !activeChannelId) activeChannelId = context.channelId;
-    if (context?.handle && !activeHandle) activeHandle = context.handle.toLowerCase();
-    if (context?.channelName) activeChannelName = context.channelName;
+    if (context?.channelId && !activeContext.channelId) {
+      activeContext.channelId = context.channelId;
+    }
+    if (context?.handle && !activeContext.handle) {
+      activeContext.handle = context.handle.toLowerCase();
+    }
+    if (context?.channelName) activeContext.channelName = context.channelName;
   }
 
+  const { videoId, channelId, handle } = activeContext;
   const label = byId('context-label');
-  if (activeVideoId) {
-    label.textContent = t('contextVideo', activeVideoId);
-  } else if (activeChannelId) {
-    label.textContent = t('contextChannel', activeChannelId);
-  } else if (activeHandle) {
-    label.textContent = t('contextChannelHandle', activeHandle);
+  if (videoId) {
+    label.textContent = t('contextVideo', videoId);
+  } else if (channelId) {
+    label.textContent = t('contextChannel', channelId);
+  } else if (handle) {
+    label.textContent = t('contextChannelHandle', handle);
   }
 
   renderContext();
@@ -89,18 +101,15 @@ function registerHandlers(): void {
   });
 
   byId('block-video').addEventListener('click', () => {
-    if (!activeVideoId) return;
-    void applyMutation(blockVideo({ id: activeVideoId, title: '' }));
+    if (!activeContext.videoId) return;
+    void applyMutation(blockVideo({ id: activeContext.videoId, title: '' }));
   });
 
   byId('block-channel').addEventListener('click', () => {
-    if (!activeChannelId && !activeHandle) return;
+    const { channelId, handle, channelName } = activeContext;
+    if (!channelId && !handle) return;
     void applyMutation(
-      blockChannel({
-        id: activeChannelId ?? '',
-        name: activeChannelName ?? '',
-        handle: activeHandle ?? '',
-      }),
+      blockChannel({ id: channelId ?? '', name: channelName ?? '', handle: handle ?? '' }),
     );
   });
 

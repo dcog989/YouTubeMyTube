@@ -25,7 +25,14 @@ export function setStatus(id: string, message: string, ok: boolean): void {
   target.classList.toggle('is-blocked', !ok);
 }
 
+let activePanel = 'channels';
+
+export function getActivePanel(): string {
+  return activePanel;
+}
+
 export function selectPanel(name: string): void {
+  activePanel = name;
   document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
     button.classList.toggle('is-active', button.dataset.panel === name);
   });
