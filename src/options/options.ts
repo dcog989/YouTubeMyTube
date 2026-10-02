@@ -16,6 +16,7 @@ import {
   commit,
   getDraft,
   handleExternalChange,
+  isDirty,
   notify,
   reloadExternal,
   setDirty,
@@ -116,6 +117,12 @@ function wireStatic(): void {
 
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (getDraft().settings.theme === 'system') applyTheme('system');
+  });
+
+  window.addEventListener('beforeunload', (event) => {
+    if (!isDirty()) return;
+    event.preventDefault();
+    event.returnValue = '';
   });
 }
 
