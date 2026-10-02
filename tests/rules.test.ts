@@ -28,7 +28,8 @@ describe('compileRules', () => {
     expect(rules.videoIds.has('abc')).toBe(true);
     expect(rules.videoIds.size).toBe(1);
     expect(rules.channelIds.has('UC1')).toBe(true);
-    expect(rules.handles.has('@SomeHandle')).toBe(true);
+    expect(rules.handles.has('somehandle')).toBe(true);
+    expect(rules.handles.has('@SomeHandle')).toBe(false);
     expect(rules.titleFilters).toHaveLength(1);
     expect(rules.commentFilters).toHaveLength(1);
   });
