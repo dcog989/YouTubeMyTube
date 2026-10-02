@@ -1,7 +1,7 @@
 import { SYNC_REQUEST } from '../shared/constants';
 import { buildDnrRules, type DnrRule, getDynamicRules, updateDynamicRules } from '../shared/dnr';
-import { onRuntimeMessage } from '../shared/runtime';
-import { ensureState, loadState, onLocalStorageChanged } from '../shared/state';
+import { onInstalled, onRuntimeMessage } from '../shared/runtime';
+import { onLocalStorageChanged, readState, seedState } from '../shared/state';
 
 function ruleKey(rule: DnrRule): string {
   const redirect = rule.action.redirect;
@@ -21,7 +21,9 @@ function sameRules(existing: DnrRule[], next: DnrRule[]): boolean {
 }
 
 async function doSync(): Promise<void> {
-  const state = await loadState();
+  const state = await readState();
+  // Abort on a missing key: a transient empty read must not remove every rule.
+  if (!state) return;
   const { rules: addRules, dropped } = buildDnrRules(state);
   const existing = await getDynamicRules();
   if (sameRules(existing, addRules)) return;
@@ -54,4 +56,8 @@ onRuntimeMessage((message, _sender, sendResponse) => {
   return true;
 });
 
-void ensureState().then(syncDynamicRules);
+onInstalled(() => {
+  void seedState().then(syncDynamicRules);
+});
+
+void syncDynamicRules();
