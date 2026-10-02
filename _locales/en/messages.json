@@ -38,10 +38,7 @@
   "goBack": { "message": "Go back" },
 
   "channelBlockLabel": { "message": "Block a channel" },
-  "channelBlockHelp": {
-    "message": "Paste a channel URL, @handle, UC channel ID, or a channel name. IDs and names are matched exactly; the handle is matched case-insensitively."
-  },
-  "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "channelAddPlaceholder": { "message": "Add channel name, URL, @handle, or ID..." },
   "thChannelId": { "message": "Channel ID" },
   "thName": { "message": "Name" },
   "thHandle": { "message": "Handle" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "Example Channel\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "Block a video" },
-  "videoBlockHelp": { "message": "Paste a video URL or an 11-character video ID." },
-  "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "videoAddPlaceholder": { "message": "Add video URL or ID..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "Video ID" },
   "thTitle": { "message": "Title" },
   "titleFiltersLabel": { "message": "Fuzzy filter videos" },

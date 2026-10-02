@@ -38,9 +38,6 @@
   "goBack": { "message": "رجوع" },
 
   "channelBlockLabel": { "message": "حظر قناة" },
-  "channelBlockHelp": {
-    "message": "الصق عنوان URL لقناة أو @handle أو معرّف قناة UC. يجب أن يطابق المعرّف تمامًا؛ ويُطابق handle دون مراعاة حالة الأحرف."
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "معرّف القناة" },
   "thName": { "message": "الاسم" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "قناة مثال\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "حظر فيديو" },
-  "videoBlockHelp": { "message": "الصق عنوان URL لفيديو أو معرّف فيديو من 11 حرفًا." },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "معرّف الفيديو" },
   "thTitle": { "message": "العنوان" },
   "titleFiltersLabel": { "message": "تصفية الفيديوهات الضبابية" },

@@ -38,9 +38,6 @@
   "goBack": { "message": "वापस जाएँ" },
 
   "channelBlockLabel": { "message": "चैनल ब्लॉक करें" },
-  "channelBlockHelp": {
-    "message": "चैनल URL, @handle या UC चैनल ID पेस्ट करें। ID का मिलान बिल्कुल वैसा ही होना चाहिए; handle का मिलान केस-असंवेदनशील है।"
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "चैनल ID" },
   "thName": { "message": "नाम" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "उदाहरण चैनल\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "वीडियो ब्लॉक करें" },
-  "videoBlockHelp": { "message": "वीडियो URL या 11 अक्षरों की वीडियो ID पेस्ट करें।" },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "वीडियो ID" },
   "thTitle": { "message": "शीर्षक" },
   "titleFiltersLabel": { "message": "फ़ज़ी वीडियो फ़िल्टर" },

@@ -38,9 +38,6 @@
   "goBack": { "message": "Назад" },
 
   "channelBlockLabel": { "message": "Заблокировать канал" },
-  "channelBlockHelp": {
-    "message": "Вставьте URL канала, @handle или ID канала UC. ID должен совпадать точно; handle сравнивается без учёта регистра."
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "ID канала" },
   "thName": { "message": "Название" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "Пример канала\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "Заблокировать видео" },
-  "videoBlockHelp": { "message": "Вставьте URL видео или 11-символьный ID видео." },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "ID видео" },
   "thTitle": { "message": "Название" },
   "titleFiltersLabel": { "message": "Нечёткий фильтр видео" },

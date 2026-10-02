@@ -38,9 +38,6 @@
   "goBack": { "message": "Geri" },
 
   "channelBlockLabel": { "message": "Kanal engelle" },
-  "channelBlockHelp": {
-    "message": "Bir kanal URL'si, @handle veya UC kanal kimliği yapıştırın. Kimlik tam olarak eşleşmelidir; handle büyük/küçük harf ayrımı olmadan eşleştirilir."
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "Kanal kimliği" },
   "thName": { "message": "Ad" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "Örnek Kanal\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "Video engelle" },
-  "videoBlockHelp": { "message": "Bir video URL'si veya 11 karakterlik video kimliği yapıştırın." },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "Video kimliği" },
   "thTitle": { "message": "Başlık" },
   "titleFiltersLabel": { "message": "Videoları bulanık filtrele" },

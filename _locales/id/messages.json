@@ -38,9 +38,6 @@
   "goBack": { "message": "Kembali" },
 
   "channelBlockLabel": { "message": "Blokir saluran" },
-  "channelBlockHelp": {
-    "message": "Tempel URL saluran, @handle, atau ID saluran UC. ID harus cocok persis; handle dicocokkan tanpa membedakan huruf besar/kecil."
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "ID saluran" },
   "thName": { "message": "Nama" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "Contoh Saluran\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "Blokir video" },
-  "videoBlockHelp": { "message": "Tempel URL video atau ID video 11 karakter." },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "ID video" },
   "thTitle": { "message": "Judul" },
   "titleFiltersLabel": { "message": "Filter video fuzzy" },

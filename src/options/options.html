@@ -175,17 +175,13 @@
         <section class="panel is-active" id="panel-channels">
           <fieldset class="fieldset fieldset-scroll">
             <legend class="row-title" data-i18n="channelBlockLabel">Block a channel</legend>
-            <p class="help" data-i18n="channelBlockHelp">
-              Paste a channel URL, @handle, or UC channel ID. The ID is matched exactly; the handle
-              is matched case-insensitively.
-            </p>
             <div class="test-row">
               <input
                 id="channel-add"
                 class="input"
                 type="text"
                 autocomplete="off"
-                placeholder="https://www.youtube.com/@handle"
+                placeholder="Add channel name, URL, @handle, or ID..."
                 data-i18n-attr="placeholder:channelAddPlaceholder"
               >
               <button type="button" id="channel-add-btn" class="btn btn-primary" data-i18n="add">
@@ -224,16 +220,13 @@
         <section class="panel" id="panel-videos">
           <fieldset class="fieldset fieldset-scroll">
             <legend class="row-title" data-i18n="videoBlockLabel">Block a video</legend>
-            <p class="help" data-i18n="videoBlockHelp">
-              Paste a video URL or an 11-character video ID.
-            </p>
             <div class="test-row">
               <input
                 id="video-add"
                 class="input"
                 type="text"
                 autocomplete="off"
-                placeholder="https://www.youtube.com/watch?v=..."
+                placeholder="Add video URL or ID..."
                 data-i18n-attr="placeholder:videoAddPlaceholder"
               >
               <button type="button" id="video-add-btn" class="btn btn-primary" data-i18n="add">
@@ -303,7 +296,7 @@
                 class="input"
                 type="text"
                 placeholder="https://www.youtube.com/watch?v=..."
-                data-i18n-attr="placeholder:videoAddPlaceholder"
+                data-i18n-attr="placeholder:testUrlPlaceholder"
               >
               <button type="button" id="test-url-btn" class="btn" data-i18n="testUrlBtn">
                 Test URL

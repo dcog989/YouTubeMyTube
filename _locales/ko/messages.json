@@ -38,9 +38,6 @@
   "goBack": { "message": "뒤로" },
 
   "channelBlockLabel": { "message": "채널 차단" },
-  "channelBlockHelp": {
-    "message": "채널 URL, @handle 또는 UC 채널 ID를 붙여넣으세요. ID는 정확히 일치해야 하며, handle은 대소문자를 구분하지 않습니다."
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "채널 ID" },
   "thName": { "message": "이름" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "예시 채널\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "동영상 차단" },
-  "videoBlockHelp": { "message": "동영상 URL 또는 11자 동영상 ID를 붙여넣으세요." },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "동영상 ID" },
   "thTitle": { "message": "제목" },
   "titleFiltersLabel": { "message": "동영상 퍼지 필터" },

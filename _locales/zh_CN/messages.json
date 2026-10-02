@@ -38,9 +38,6 @@
   "goBack": { "message": "返回" },
 
   "channelBlockLabel": { "message": "屏蔽频道" },
-  "channelBlockHelp": {
-    "message": "粘贴频道 URL、@handle 或 UC 频道 ID。ID 需完全匹配；handle 不区分大小写。"
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "频道 ID" },
   "thName": { "message": "名称" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "示例频道\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "屏蔽视频" },
-  "videoBlockHelp": { "message": "粘贴视频 URL 或 11 位视频 ID。" },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "视频 ID" },
   "thTitle": { "message": "标题" },
   "titleFiltersLabel": { "message": "模糊筛选视频" },

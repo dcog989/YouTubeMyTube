@@ -38,9 +38,6 @@
   "goBack": { "message": "戻る" },
 
   "channelBlockLabel": { "message": "チャンネルをブロック" },
-  "channelBlockHelp": {
-    "message": "チャンネルの URL、@handle、または UC チャンネル ID を貼り付けます。ID は完全一致、handle は大文字と小文字を区別せずに照合されます。"
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "チャンネル ID" },
   "thName": { "message": "名前" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "サンプルチャンネル\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "動画をブロック" },
-  "videoBlockHelp": { "message": "動画の URL または 11 文字の動画 ID を貼り付けます。" },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "動画 ID" },
   "thTitle": { "message": "タイトル" },
   "titleFiltersLabel": { "message": "動画をあいまいフィルター" },

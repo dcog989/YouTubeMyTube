@@ -38,9 +38,6 @@
   "goBack": { "message": "Wstecz" },
 
   "channelBlockLabel": { "message": "Zablokuj kanał" },
-  "channelBlockHelp": {
-    "message": "Wklej URL kanału, @handle lub identyfikator kanału UC. Identyfikator musi być zgodny dokładnie; handle jest dopasowywany bez rozróżniania wielkości liter."
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "Identyfikator kanału" },
   "thName": { "message": "Nazwa" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "Przykładowy kanał\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "Zablokuj film" },
-  "videoBlockHelp": { "message": "Wklej URL filmu lub 11-znakowy identyfikator filmu." },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "Identyfikator filmu" },
   "thTitle": { "message": "Tytuł" },
   "titleFiltersLabel": { "message": "Filtrowanie filmów rozmyte" },

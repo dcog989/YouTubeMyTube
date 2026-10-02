@@ -38,9 +38,6 @@
   "goBack": { "message": "Retour" },
 
   "channelBlockLabel": { "message": "Bloquer une chaîne" },
-  "channelBlockHelp": {
-    "message": "Collez l'URL d'une chaîne, un @handle ou un ID de chaîne UC. L'ID est mis en correspondance exactement ; le handle est mis en correspondance sans tenir compte de la casse."
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "ID de la chaîne" },
   "thName": { "message": "Nom" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "Chaîne d'exemple\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "Bloquer une vidéo" },
-  "videoBlockHelp": { "message": "Collez l'URL d'une vidéo ou un ID de vidéo de 11 caractères." },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "ID de la vidéo" },
   "thTitle": { "message": "Titre" },
   "titleFiltersLabel": { "message": "Filtrage flou des vidéos" },

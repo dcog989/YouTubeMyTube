@@ -38,9 +38,6 @@
   "goBack": { "message": "Terug" },
 
   "channelBlockLabel": { "message": "Een kanaal blokkeren" },
-  "channelBlockHelp": {
-    "message": "Plak een kanaal-URL, @handle of UC-kanaal-ID. De ID moet exact overeenkomen; de handle wordt hoofdletterongevoelig vergeleken."
-  },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
   "thChannelId": { "message": "Kanaal-ID" },
   "thName": { "message": "Naam" },
@@ -52,8 +49,8 @@
   "channelFiltersPlaceholder": { "message": "Voorbeeldkanaal\n/\\bdrama\\b/i" },
 
   "videoBlockLabel": { "message": "Een video blokkeren" },
-  "videoBlockHelp": { "message": "Plak een video-URL of een video-ID van 11 tekens." },
   "videoAddPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
+  "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "Video-ID" },
   "thTitle": { "message": "Titel" },
   "titleFiltersLabel": { "message": "Video's fuzzy filteren" },
