@@ -5,8 +5,7 @@ import { getStored, setStored } from './storage-ext';
 import type { BlockerState } from './types';
 
 export async function loadState(): Promise<BlockerState> {
-  const stored = await getStored<unknown>(STATE_KEY);
-  return normalizeState(stored);
+  return normalizeState(await getStored<unknown>(STATE_KEY));
 }
 
 export async function saveState(state: BlockerState): Promise<void> {
@@ -35,12 +34,9 @@ export function mutateState(
 
 export async function ensureState(): Promise<BlockerState> {
   const stored = await getStored<unknown>(STATE_KEY);
-  if (stored === undefined) {
-    const initial = defaultState();
-    await saveState(initial);
-    return initial;
-  }
-  return normalizeState(stored);
+  // Never seed defaults by overwriting storage here: a transient empty read in
+  // the service worker must not clobber the user's real rules.
+  return normalizeState(stored === undefined ? defaultState() : stored);
 }
 
 export function onLocalStorageChanged(listener: (newValue: unknown) => void): void {
