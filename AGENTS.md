@@ -20,7 +20,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/url.ts` — YouTube URL/host parsing and handle normalization (pure, unit-tested).
 - `src/shared/patterns.ts` — filter-pattern parsing/compilation and active-entry helpers (pure, unit-tested).
 - `src/shared/match.ts` — entity matching and area-redirect routing (pure, unit-tested).
-- `src/shared/rules.ts` — rule lookups, mutations (`add`/`remove` video/channel, `channelMatches`) and `compileRules` shared by the UI surfaces (pure, unit-tested).
+- `src/shared/rules.ts` — rule lookups, mutations (`add`/`remove` video/channel, `channelMatches`), the `isChannelComplete` entry-completion predicate and `compileRules` shared by the UI surfaces (pure, unit-tested).
 - `src/shared/filters.ts` — pattern-filter keys (`channelFilters` / `titleFilters` / `commentFilters`); display copy lives in `src/options/copy.ts`.
 - `src/shared/areas.ts` — content-area behavior as a `mode: 'redirect' | 'hide'` union (redirect paths vs hide CSS classes); display copy lives in `src/options/copy.ts`.
 - `src/shared/reason.ts` — per-kind reason registry (`REASONS`): wire format (format/parse), rule refs and entity URLs.
@@ -37,7 +37,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/runtime.ts` — `browser.runtime` wrappers (extension URL, sync request, mutation request, options page).
 - `src/shared/tabs.ts` — `browser.tabs` wrappers (active tab, tab messaging).
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
-- `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata, video titles and a video's channel (oEmbed).
+- `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata, video titles and a video's channel (oEmbed); `resolveChannelMeta` is the unified channel-completion strategy (`id` → `handle` → name).
 - `src/shared/unblock.ts` — maps exact block reasons back to removals.
 - `src/shared/navigation.ts` — builds YouTube entity URLs from block reasons.
 - `src/content/content.ts` — content-script wiring; owns the factory instances (playback guard, overlay feedback, evaluator, filter engine, menu injector) and threads their dependencies.

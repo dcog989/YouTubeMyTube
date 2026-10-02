@@ -10,6 +10,7 @@ import {
   findVideo,
   hasCommentRules,
   hasVideoId,
+  isChannelComplete,
   removeChannel,
   removeVideo,
 } from '../src/shared/rules';
@@ -206,5 +207,23 @@ describe('applyResolvedMeta', () => {
     rules.channels = [stored, { id: '', name: 'Music', handle: '' }];
     expect(applyResolvedMeta(rules, stored, { id: '', name: 'Music', handle: '' })).toBe('merged');
     expect(rules.channels).toHaveLength(2);
+  });
+});
+
+describe('isChannelComplete', () => {
+  it('requires both a canonical id and a display name', () => {
+    expect(isChannelComplete({ id: 'UC1', name: 'Music', handle: '' })).toBe(true);
+    expect(isChannelComplete({ id: 'UC1', name: '', handle: 'music' })).toBe(false);
+    expect(isChannelComplete({ id: '', name: 'Music', handle: 'music' })).toBe(false);
+  });
+
+  it('treats a handle and name without an id as incomplete', () => {
+    expect(isChannelComplete({ id: '', name: 'Music', handle: 'music' })).toBe(false);
+  });
+
+  it('excludes entries that already failed lookup', () => {
+    expect(isChannelComplete({ id: 'UC1', name: 'Music', handle: '', lookupFailed: true })).toBe(
+      false,
+    );
   });
 });

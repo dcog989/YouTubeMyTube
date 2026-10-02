@@ -1,10 +1,6 @@
 import { normalizeState } from '../shared/normalize';
-import {
-  type ChannelMeta,
-  resolveChannel,
-  resolveChannelByName,
-  resolveVideoTitle,
-} from '../shared/resolve';
+import { type ChannelMeta, resolveChannelMeta, resolveVideoTitle } from '../shared/resolve';
+import { isChannelComplete } from '../shared/rules';
 import { requestMutation } from '../shared/runtime';
 import type { ChannelEntry, VideoEntry } from '../shared/types';
 import { commit, getDraft, isDirty, notify } from './state';
@@ -24,12 +20,6 @@ interface ChannelTarget {
 interface VideoTarget {
   entry: VideoEntry;
   id: string;
-}
-
-function needsChannelBackfill(channel: ChannelEntry): boolean {
-  if (channel.lookupFailed) return false;
-  if (!channel.name) return true;
-  return !channel.id && !channel.handle;
 }
 
 function needsVideoBackfill(video: VideoEntry): boolean {
@@ -52,7 +42,7 @@ async function persistChanges(): Promise<void> {
 async function backfillBatch(): Promise<{ changed: boolean }> {
   const draft = getDraft();
   const channelTargets: ChannelTarget[] = draft.rules.channels
-    .filter(needsChannelBackfill)
+    .filter((channel) => !isChannelComplete(channel))
     .map((entry) => ({ entry, id: entry.id, handle: entry.handle, name: entry.name }));
   const videoTargets: VideoTarget[] = draft.rules.videos
     .filter(needsVideoBackfill)
@@ -73,12 +63,9 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
     }
     lookups += 1;
 
-    const nameOnly = !target.id && !target.handle;
     let meta: ChannelMeta | null = null;
     try {
-      meta = nameOnly
-        ? await resolveChannelByName(target.name)
-        : await resolveChannel({ id: target.id, handle: target.handle });
+      meta = await resolveChannelMeta(target.entry);
     } catch {
       meta = null;
     }
@@ -89,11 +76,11 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
       target.entry.id = meta.id;
       changed = true;
     }
-    if (meta.name && !nameOnly && meta.name !== target.entry.name) {
+    if (meta.name && meta.name !== target.entry.name) {
       target.entry.name = meta.name;
       changed = true;
     }
-    if (meta.handle && meta.handle !== target.entry.handle) {
+    if (meta.handle !== target.entry.handle) {
       target.entry.handle = meta.handle;
       changed = true;
     }
@@ -103,7 +90,7 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
         delete target.entry.lookupFailed;
         changed = true;
       }
-    } else if (!nameOnly && !target.entry.lookupFailed) {
+    } else if (!target.entry.lookupFailed) {
       target.entry.lookupFailed = true;
       changed = true;
     }

@@ -10,6 +10,7 @@ export type BlockInputKind = BlockInput['kind'];
 export interface ChannelRef {
   id?: string;
   handle?: string;
+  name?: string;
 }
 
 export interface ChannelMeta {
@@ -222,4 +223,25 @@ export async function resolveChannelByName(
     return { id: '', name: '', handle: '' };
   }
   return meta;
+}
+
+export async function resolveChannelMeta(
+  ref: ChannelRef,
+  deps?: Partial<ResolveDeps>,
+): Promise<ChannelMeta> {
+  const id = ref.id?.trim() ?? '';
+  const handle = ref.handle?.trim() ?? '';
+  const name = ref.name?.trim() ?? '';
+
+  if (id || handle) {
+    const byRef = await resolveChannel({ id, handle }, deps);
+    if (byRef.id || byRef.name) return byRef;
+    if (handle) {
+      const byName = await resolveChannelByName(handle, deps);
+      if (byName.id || byName.name) return byName;
+    }
+    return byRef;
+  }
+  if (name) return resolveChannelByName(name, deps);
+  return { id: '', name: '', handle: '' };
 }

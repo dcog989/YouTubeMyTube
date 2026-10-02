@@ -6,6 +6,7 @@ import {
   parseBlockInput,
   resolveChannel,
   resolveChannelByName,
+  resolveChannelMeta,
   resolveVideoChannel,
   resolveVideoTitle,
   videoTitleFromOembed,
@@ -105,6 +106,8 @@ describe('channelMetaFromHtml', () => {
 const SEARCH_HTML = `<script>var ytInitialData = {"contents":{"channelRenderer":{"channelId":"UCCB1oLQY3XM86ACD05Lq4HQ","title":{"simpleText":"3 Minutes of Aviation"},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@3MinutesofAviation"}}}}};</script>`;
 
 const SEARCH_HTML_ESCAPED = `<script>var ytInitialData = {"contents":{"channelRenderer":{"channelId":"UCCB1oLQY3XM86ACD05Lq4HQ","title":{"simpleText":"Tom \\u0026 Jerry"},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@TomJerry"}}}}};</script>`;
+
+const SEARCH_HTML_AVIATION = `<script>var ytInitialData = {"contents":{"channelRenderer":{"channelId":"UCCB1oLQY3XM86ACD05Lq4HQ","title":{"simpleText":"Aviation"},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@Aviation"}}}}};</script>`;
 
 describe('channelMetaFromSearch', () => {
   it('extracts the first channel result', () => {
@@ -227,5 +230,52 @@ describe('resolveVideoChannel', () => {
   it('returns empty identity when oEmbed fails', async () => {
     const meta = await resolveVideoChannel('dQw4w9WgXcQ', { fetch: fetchStub('{}', 500) });
     expect(meta).toEqual({ id: '', name: '', handle: '' });
+  });
+});
+
+describe('resolveChannelMeta', () => {
+  it('prefers a channel id and fills the display fields', async () => {
+    const meta = await resolveChannelMeta({ id: 'UCabc' }, { fetch: fetchStub(CHANNEL_HTML) });
+    expect(meta).toEqual({ id: 'UCabc123', name: 'My Channel', handle: 'mychannel' });
+  });
+
+  it('resolves a handle through the channel page', async () => {
+    const meta = await resolveChannelMeta(
+      { handle: 'mychannel' },
+      { fetch: fetchStub(CHANNEL_HTML) },
+    );
+    expect(meta).toEqual({ id: 'UCabc123', name: 'My Channel', handle: 'mychannel' });
+  });
+
+  it('falls back to a name search when a bare handle has no channel page', async () => {
+    const fetchImpl = (async (input: unknown) => {
+      const isHandlePage = String(input).includes('/@aviation');
+      const body = isHandlePage ? '' : SEARCH_HTML_AVIATION;
+      return {
+        ok: !isHandlePage,
+        status: isHandlePage ? 404 : 200,
+        text: async () => body,
+        json: async () => JSON.parse(body || '{}'),
+      } as Response;
+    }) as unknown as typeof fetch;
+
+    const meta = await resolveChannelMeta({ handle: 'aviation' }, { fetch: fetchImpl });
+    expect(meta).toEqual({ id: 'UCCB1oLQY3XM86ACD05Lq4HQ', name: 'Aviation', handle: 'aviation' });
+  });
+
+  it('resolves a name-only entry through the channel search', async () => {
+    const meta = await resolveChannelMeta(
+      { name: '3 Minutes of Aviation' },
+      { fetch: fetchStub(SEARCH_HTML) },
+    );
+    expect(meta).toEqual({
+      id: 'UCCB1oLQY3XM86ACD05Lq4HQ',
+      name: '3 Minutes of Aviation',
+      handle: '3minutesofaviation',
+    });
+  });
+
+  it('returns empty fields for an empty reference', async () => {
+    expect(await resolveChannelMeta({})).toEqual({ id: '', name: '', handle: '' });
   });
 });

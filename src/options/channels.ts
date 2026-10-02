@@ -1,5 +1,5 @@
 import { t } from '../shared/i18n';
-import { parseBlockInput, resolveChannel, resolveChannelByName } from '../shared/resolve';
+import { parseBlockInput, resolveChannelMeta } from '../shared/resolve';
 import { addChannel as addChannelRule, applyResolvedMeta, findChannel } from '../shared/rules';
 import type { ChannelEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
@@ -114,17 +114,7 @@ export async function addChannel(): Promise<void> {
   try {
     const bareHandle =
       Boolean(handle) && !raw.startsWith('@') && !raw.includes('/') && !raw.includes(':');
-    let meta =
-      id || handle ? await resolveChannel({ id, handle }) : await resolveChannelByName(name);
-    if (!liveChannels()) return;
-    if (bareHandle && !meta.name && !meta.id) {
-      const byName = await resolveChannelByName(handle);
-      if (!liveChannels()) return;
-      if (byName.name || byName.id) {
-        meta = byName;
-        if (!meta.handle) stored.handle = '';
-      }
-    }
+    const meta = await resolveChannelMeta({ id, handle, name });
     const channels = liveChannels();
     if (!channels) return;
     if (handle && !meta.name && !meta.id) {
@@ -136,6 +126,7 @@ export async function addChannel(): Promise<void> {
       return;
     }
     const outcome = applyResolvedMeta(getDraft().rules, stored, meta);
+    if (outcome === 'merged' && !meta.handle) stored.handle = '';
     renderChannels();
     setDirty(true);
     if (outcome === 'conflict') {

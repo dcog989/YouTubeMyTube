@@ -106,6 +106,10 @@ export function addChannel(rules: FilterRules, entry: ChannelEntry): boolean {
   return true;
 }
 
+export function isChannelComplete(channel: ChannelEntry): boolean {
+  return !channel.lookupFailed && Boolean(channel.id && channel.name);
+}
+
 export type ResolvedMetaOutcome = 'merged' | 'conflict';
 
 export function applyResolvedMeta(
