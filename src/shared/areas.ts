@@ -29,7 +29,3 @@ export const AREA_DEFINITIONS = [
 
 export type AreaKey = (typeof AREA_DEFINITIONS)[number]['key'];
 export type AreaFlags = Record<AreaKey, boolean>;
-
-export const REDIRECT_AREAS: ReadonlySet<AreaKey> = new Set(
-  AREA_DEFINITIONS.filter((area) => area.mode === 'redirect').map((area) => area.key),
-);

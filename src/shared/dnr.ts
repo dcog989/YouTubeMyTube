@@ -1,5 +1,5 @@
 import { AREA_DEFINITIONS } from './areas';
-import { MAX_DNR_REGEX_RULES, YOUTUBE_HOME, YOUTUBE_HOST_PATTERN } from './constants';
+import { BLOCKED_PAGE, MAX_DNR_REGEX_RULES, YOUTUBE_HOME, YOUTUBE_HOST_PATTERN } from './constants';
 import { escapeRegExp, isActiveEntry } from './patterns';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
@@ -54,7 +54,7 @@ function handlePattern(handle: string): string {
 }
 
 function blockedPage(reason: string): DnrRedirect {
-  return { extensionPath: `/blocked.html?reason=${encodeURIComponent(reason)}` };
+  return { extensionPath: `/${BLOCKED_PAGE}?reason=${encodeURIComponent(reason)}` };
 }
 
 function planDnrRules(state: BlockerState): DnrPlanEntry[] {

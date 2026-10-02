@@ -1,4 +1,4 @@
-import { AREA_DEFINITIONS, REDIRECT_AREAS } from './areas';
+import { AREA_DEFINITIONS } from './areas';
 import type { AreaFlags, AreaKey, CompiledRules, Entity, MatchResult, ParsedUrl } from './types';
 import { normalizeChannelName, normalizeHandle } from './url';
 
@@ -56,7 +56,7 @@ export function areaForPath(pathname: string): AreaKey | null {
 
 export function matchAreaRedirect(pathname: string, areas: AreaFlags): MatchResult {
   const area = areaForPath(pathname);
-  if (area && REDIRECT_AREAS.has(area) && areas[area]) {
+  if (area && areas[area]) {
     return { blocked: true, reason: { kind: 'area', value: area } };
   }
   return { blocked: false };

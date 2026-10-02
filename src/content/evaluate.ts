@@ -1,7 +1,5 @@
-import { BLOCKED_PAGE, YOUTUBE_HOME } from '../shared/constants';
+import { YOUTUBE_HOME } from '../shared/constants';
 import { matchAreaRedirect, matchEntity } from '../shared/match';
-import { formatReason, type Reason } from '../shared/reason';
-import { getRuntimeUrl } from '../shared/runtime';
 import type { ParsedUrl } from '../shared/types';
 import { parseYouTubeUrl } from '../shared/url';
 import { createCoalescer } from './batch';
@@ -22,16 +20,6 @@ const SUPPORTED_KINDS: ReadonlySet<ParsedUrl['kind']> = new Set([
 
 function isSupportedPage(parsed: ParsedUrl): boolean {
   return SUPPORTED_KINDS.has(parsed.kind);
-}
-
-function redirectFor(reason: Reason): void {
-  if (reason.kind === 'area') {
-    window.location.replace(YOUTUBE_HOME);
-    return;
-  }
-  const url = new URL(getRuntimeUrl(BLOCKED_PAGE));
-  url.searchParams.set('reason', formatReason(reason));
-  window.location.replace(url.toString());
 }
 
 export interface Evaluator {
@@ -55,7 +43,7 @@ export function createEvaluator(deps: { store: Store; overlay: OverlayFeedback }
 
     const area = matchAreaRedirect(path, state.areas);
     if (area.blocked) {
-      redirectFor(area.reason);
+      window.location.replace(YOUTUBE_HOME);
       return;
     }
 

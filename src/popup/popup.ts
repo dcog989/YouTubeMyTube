@@ -38,8 +38,6 @@ function renderContext(): void {
 
   const hasChannel = activeChannelId !== null || activeHandle !== null;
   context.hidden = !activeVideoId && !hasChannel;
-  videoButton.hidden = false;
-  channelButton.hidden = false;
   videoButton.disabled = activeVideoId === null || hasVideoId(state.rules, activeVideoId);
   const channel = findChannel(state.rules, { id: activeChannelId, handle: activeHandle });
   channelButton.disabled = !hasChannel || channel !== undefined;
