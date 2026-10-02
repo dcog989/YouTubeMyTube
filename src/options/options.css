@@ -481,6 +481,16 @@ textarea:focus {
   margin-top: 4px;
 }
 
+textarea {
+  min-height: 160px;
+  resize: none;
+  overflow-y: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre;
+}
+
 .fieldset-scroll {
   display: flex;
   flex-direction: column;
@@ -578,16 +588,6 @@ th.is-sorted {
   width: 1%;
   white-space: nowrap;
   text-align: right;
-}
-
-textarea {
-  min-height: 160px;
-  resize: none;
-  overflow-y: auto;
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.55;
-  white-space: pre;
 }
 
 .test-row {
