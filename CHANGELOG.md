@@ -2,6 +2,48 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.15.0 - 2026-10-02
+#### Features
+- (**options**) add one-time first-run onboarding callout - (1fb380b) - dcog989
+- (**options**) warn before closing with unsaved changes - (b9db66e) - dcog989
+- (**options**) warn when invalid regex patterns are ignored - (1d7d6cf) - dcog989
+- (**options**) replace channel/video help text with instructional placeholders - (dc0f4e6) - dcog989
+#### Bug Fixes
+- (**backfill**) resolve id-less channel entries via shared completion - (22dae36) - dcog989
+- (**background**) compare full DNR rules keyed by id - (149dd44) - dcog989
+- (**content**) bound channel cache and skip lookups for known handles - (0fa94e2) - dcog989
+- (**dnr**) percent-encode handles in redirect patterns - (4800cc6) - dcog989
+- (**menu**) prefer the expanded trigger as the menu owner - (19f02ce) - dcog989
+- (**menu**) resolve channel id for cards that expose a handle - (6288039) - dcog989
+- (**options**) seed savedSnapshot when loading the initial state - (d707995) - dcog989
+- (**options**) keep async lookups on the live draft - (31ae164) - dcog989
+- (**options**) remove entity rows by identity, not fuzzy lookup - (7c3679e) - dcog989
+- (**resolve**) retry transient lookups and unescape search names - (0db30ae) - dcog989
+- (**resolve**) only trust channel search hits whose name matches - (c01d98f) - dcog989
+- (**rules**) stop treating channel display names as identifiers - (77711f7) - dcog989
+- (**state**) route mutations through the service worker as single writer - (e135d0d) - dcog989
+- (**state**) abort writes and DNR sync on a missing storage key - (988d089) - dcog989
+- (**url**) accept youtu.be short links in parseYouTubeUrl - (a4bf082) - dcog989
+#### Performance Improvements
+- (**content**) drop duplicate root handling in processSubtree - (7e3c43c) - dcog989
+- (**content**) attach menu shadow observers only on trigger presses - (065f3f5) - dcog989
+- (**content**) stop card anchor scan once channel identity is known - (7430449) - dcog989
+- (**content**) resolve card title with a single shadow walk - (4cbe740) - dcog989
+#### Documentation
+- add screenshot to readme - (0bb1afb) - dcog989
+#### Refactoring
+- (**content**) lazily resolve card channel name fallback - (6408f67) - dcog989
+- (**dnr**) derive build and count from one rule plan - (ea97ffb) - dcog989
+- (**normalize**) extract isRecord/pickString/pickBoolean helpers - (4fa6f2b) - dcog989
+- (**options**) extract pure applyResolvedMeta from addChannel - (ee5214b) - dcog989
+- (**popup**) route enabled toggle through rules-service setEnabled - (3faac70) - dcog989
+- (**shared**) unify rule counting in summarizeRules - (ddc491e) - dcog989
+- relocate activePanel to dom and consolidate popup context state - (bb5dd21) - dcog989
+- simplify content plumbing, batching and i18n typing - (a49ada3) - dcog989
+- remove dead branches in evaluate, match and popup - (9503787) - dcog989
+
+- - -
+
 ## 0.14.4 - 2026-10-02
 #### Bug Fixes
 - (**options**) fall back to name search for bare channel tokens - (591b333) - dcog989
