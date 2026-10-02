@@ -1,3 +1,4 @@
+import { PATTERN_FILTER_KEYS } from './filters';
 import { isActiveEntry } from './patterns';
 import { addChannel, addVideo } from './rules';
 import type { AreaFlags, AreaKey, BlockerState } from './types';
@@ -175,13 +176,11 @@ export function mergeBlockTubeImport(
     if (addChannel(rules, { id: '', name: '', handle })) added += 1;
   }
 
-  const channelFilters = mergePatternList(rules.channelFilters, data.channelFilters);
-  rules.channelFilters = channelFilters.list;
-  const titleFilters = mergePatternList(rules.titleFilters, data.titleFilters);
-  rules.titleFilters = titleFilters.list;
-  const commentFilters = mergePatternList(rules.commentFilters, data.commentFilters);
-  rules.commentFilters = commentFilters.list;
-  added += channelFilters.added + titleFilters.added + commentFilters.added;
+  for (const key of PATTERN_FILTER_KEYS) {
+    const merged = mergePatternList(rules[key], data[key]);
+    rules[key] = merged.list;
+    added += merged.added;
+  }
 
   const areas: AreaFlags = { ...state.areas };
   for (const key of Object.keys(data.areas) as AreaKey[]) {
