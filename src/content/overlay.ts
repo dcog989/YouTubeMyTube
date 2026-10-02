@@ -105,26 +105,24 @@ export interface OverlayFeedback extends Feedback {
 }
 
 // The cover and overlay need `feedback.clear` for their remove buttons, while
-// feedback needs both to clear them; a shared holder breaks the cycle.
+// feedback needs both to clear them; the consts close over each other, which is
+// safe because clear only runs after both are initialized.
 export function createOverlayFeedback(guard: PlaybackGuard): OverlayFeedback {
-  let blank: BlankCover | null = null;
-  let overlay: ChannelOverlay | null = null;
-
   const feedback: Feedback = {
     clear() {
-      overlay?.clear();
-      blank?.clear();
+      blank.clear();
+      overlay.clear();
     },
   };
 
-  blank = createBlankCover({ guard, feedback });
-  overlay = createChannelOverlay({ guard, feedback });
+  const blank = createBlankCover({ guard, feedback });
+  const overlay = createChannelOverlay({ guard, feedback });
 
   return {
     clear: feedback.clear,
-    requestBlank: (blanked, reason) => blank?.set(blanked, reason),
-    clearChannel: () => overlay?.clear(),
-    showChannel: (info) => overlay?.show(info),
+    requestBlank: (blanked, reason) => blank.set(blanked, reason),
+    clearChannel: () => overlay.clear(),
+    showChannel: (info) => overlay.show(info),
   };
 }
 

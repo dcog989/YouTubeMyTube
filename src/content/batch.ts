@@ -51,17 +51,6 @@ export interface Coalescer {
 }
 
 export function createCoalescer(flush: () => void, options: BatchOptions = {}): Coalescer {
-  const schedule = scheduler(options);
-  let scheduled = false;
-
-  return {
-    schedule() {
-      if (scheduled) return;
-      scheduled = true;
-      schedule(() => {
-        scheduled = false;
-        flush();
-      });
-    },
-  };
+  const batcher = createBatcher<undefined>(() => flush(), options);
+  return { schedule: () => batcher.add(undefined) };
 }

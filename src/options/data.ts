@@ -38,42 +38,38 @@ function scheduleBackfill(): void {
   });
 }
 
-export function importSettings(file: File): void {
-  const reader = new FileReader();
-  reader.onload = () => {
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(String(reader.result));
-    } catch {
-      setStatus('import-status', t('importInvalidJson'), false);
-      return;
-    }
+export async function importSettings(file: File): Promise<void> {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(await file.text());
+  } catch {
+    setStatus('import-status', t('importInvalidJson'), false);
+    return;
+  }
 
-    const blocktube = parseBlockTubeBackup(parsed);
-    if (blocktube.ok) {
-      const { state: merged, added } = mergeBlockTubeImport(getDraft(), blocktube.data);
-      setDraft(merged);
-      notify();
-      setDirty(true);
-      const filters = t(added === 1 ? 'importFilterOne' : 'importFilterMany', String(added));
-      const skipped = blocktube.data.skipped.length
-        ? ` ${t('importSkipped', blocktube.data.skipped.join(', '))}`
-        : '';
-      setStatus('import-status', `${t('importBlockTube', filters)}${skipped}`, true);
-      scheduleBackfill();
-      return;
-    }
+  const blocktube = parseBlockTubeBackup(parsed);
+  if (blocktube.ok) {
+    const { state: merged, added } = mergeBlockTubeImport(getDraft(), blocktube.data);
+    setDraft(merged);
+    notify();
+    setDirty(true);
+    const filters = t(added === 1 ? 'importFilterOne' : 'importFilterMany', String(added));
+    const skipped = blocktube.data.skipped.length
+      ? ` ${t('importSkipped', blocktube.data.skipped.join(', '))}`
+      : '';
+    setStatus('import-status', `${t('importBlockTube', filters)}${skipped}`, true);
+    scheduleBackfill();
+    return;
+  }
 
-    if (isBlockerState(parsed)) {
-      setDraft(normalizeState(parsed));
-      notify();
-      setDirty(true);
-      setStatus('import-status', t('importNative'), true);
-      scheduleBackfill();
-      return;
-    }
+  if (isBlockerState(parsed)) {
+    setDraft(normalizeState(parsed));
+    notify();
+    setDirty(true);
+    setStatus('import-status', t('importNative'), true);
+    scheduleBackfill();
+    return;
+  }
 
-    setStatus('import-status', t('importUnknown'), false);
-  };
-  reader.readAsText(file);
+  setStatus('import-status', t('importUnknown'), false);
 }

@@ -14,7 +14,7 @@ function applySubstitutions(message: string, substitutions?: string[]): string {
   });
 }
 
-export function t(key: MessageKey | string, substitutions?: string | string[]): string {
+export function t(key: MessageKey, substitutions?: string | string[]): string {
   const subs =
     substitutions === undefined
       ? undefined
@@ -31,14 +31,14 @@ export function t(key: MessageKey | string, substitutions?: string | string[]): 
 export function localizeDocument(root: ParentNode = document): void {
   for (const element of root.querySelectorAll<HTMLElement>('[data-i18n]')) {
     const key = element.dataset.i18n;
-    if (key) element.textContent = t(key);
+    if (key) element.textContent = t(key as MessageKey);
   }
   for (const element of root.querySelectorAll<HTMLElement>('[data-i18n-attr]')) {
     const spec = element.dataset.i18nAttr ?? '';
     for (const pair of spec.split(';')) {
       const [attribute, key] = pair.split(':');
       if (!attribute || !key) continue;
-      element.setAttribute(attribute, t(key));
+      element.setAttribute(attribute, t(key as MessageKey));
     }
   }
 }

@@ -1,19 +1,8 @@
 type AddedElementsListener = (nodes: Element[]) => void;
 
 const listeners = new WeakMap<Node, Set<AddedElementsListener>>();
-const observers = new WeakMap<Node, MutationObserver>();
 
-export function onAddedElements(root: Node, listener: AddedElementsListener): void {
-  let rootListeners = listeners.get(root);
-  if (!rootListeners) {
-    rootListeners = new Set();
-    listeners.set(root, rootListeners);
-  }
-  if (rootListeners.has(listener)) return;
-  rootListeners.add(listener);
-
-  if (observers.has(root)) return;
-
+function observe(root: Node, rootListeners: Set<AddedElementsListener>): void {
   const observer = new MutationObserver((mutations) => {
     const added: Element[] = [];
     for (const mutation of mutations) {
@@ -22,8 +11,17 @@ export function onAddedElements(root: Node, listener: AddedElementsListener): vo
       });
     }
     if (added.length === 0) return;
-    for (const subscriber of listeners.get(root) ?? []) subscriber(added);
+    for (const subscriber of rootListeners) subscriber(added);
   });
   observer.observe(root, { childList: true, subtree: true });
-  observers.set(root, observer);
+}
+
+export function onAddedElements(root: Node, listener: AddedElementsListener): void {
+  let rootListeners = listeners.get(root);
+  if (!rootListeners) {
+    rootListeners = new Set();
+    listeners.set(root, rootListeners);
+    observe(root, rootListeners);
+  }
+  rootListeners.add(listener);
 }

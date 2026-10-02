@@ -104,7 +104,7 @@ function wireStatic(): void {
   byId('import').addEventListener('click', () => importFile.click());
   importFile.addEventListener('change', () => {
     const file = importFile.files?.[0];
-    if (file) importSettings(file);
+    if (file) void importSettings(file);
     importFile.value = '';
   });
 

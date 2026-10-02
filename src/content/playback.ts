@@ -21,7 +21,7 @@ export interface PlaybackGuard {
 }
 
 export function createPlaybackGuard(): PlaybackGuard {
-  const leases = new Set<PlaybackLease>();
+  let active = 0;
   let engaged = false;
 
   function engage(): void {
@@ -39,18 +39,17 @@ export function createPlaybackGuard(): PlaybackGuard {
 
   return {
     acquire(): PlaybackLease {
+      active += 1;
+      engage();
       let released = false;
-      const lease: PlaybackLease = {
+      return {
         release() {
           if (released) return;
           released = true;
-          leases.delete(lease);
-          if (leases.size === 0) disengage();
+          active -= 1;
+          if (active === 0) disengage();
         },
       };
-      leases.add(lease);
-      engage();
-      return lease;
     },
   };
 }

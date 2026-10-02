@@ -1,12 +1,12 @@
 import type { AreaKey } from '../shared/areas';
-import { t } from '../shared/i18n';
+import { type MessageKey, t } from '../shared/i18n';
 
 export interface AreaCopy {
   title: string;
   sub: string;
 }
 
-function areaCopy(title: string, sub: string): AreaCopy {
+function areaCopy(title: MessageKey, sub: MessageKey): AreaCopy {
   return { title: t(title), sub: t(sub) };
 }
 

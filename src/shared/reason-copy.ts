@@ -1,8 +1,8 @@
-import { t } from './i18n';
+import { type MessageKey, t } from './i18n';
 import type { Reason, ReasonKind } from './reason';
 import { normalizeHandle } from './url';
 
-const LABELS: Partial<Record<ReasonKind, string>> = {
+const LABELS: Partial<Record<ReasonKind, MessageKey>> = {
   video: 'reasonVideoBlocked',
   channel: 'reasonChannelBlocked',
   handle: 'reasonChannelBlocked',
@@ -10,7 +10,7 @@ const LABELS: Partial<Record<ReasonKind, string>> = {
   area: 'reasonAreaBlocked',
 };
 
-type Detail = { key: string; substitute: (value: string) => string | undefined };
+type Detail = { key: MessageKey; substitute: (value: string) => string | undefined };
 
 const DETAILS: Record<ReasonKind, Detail> = {
   video: { key: 'reasonDetailVideoId', substitute: (value) => value },
@@ -25,7 +25,7 @@ const DETAILS: Record<ReasonKind, Detail> = {
   area: { key: 'reasonDetailArea', substitute: (value) => value },
 };
 
-const EMPTY_DETAILS: Partial<Record<ReasonKind, string>> = {
+const EMPTY_DETAILS: Partial<Record<ReasonKind, MessageKey>> = {
   handle: 'reasonDetailHandleEmpty',
   title: 'reasonDetailTitleEmpty',
   channelName: 'reasonDetailChannelNameEmpty',

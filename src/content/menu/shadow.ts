@@ -5,12 +5,13 @@ export type ElementListener = (element: Element) => void;
 
 const observedRoots = new WeakSet<Node>();
 
-export function observeRoot(root: Node, onElement: ElementListener): void {
-  if (observedRoots.has(root)) return;
+export function observeRoot(root: Node, onElement: ElementListener): boolean {
+  if (observedRoots.has(root)) return false;
   observedRoots.add(root);
   onAddedElements(root, (nodes) => {
     for (const node of nodes) onElement(node);
   });
+  return true;
 }
 
 export function scanExisting(root: ParentNode, selector: string, onElement: ElementListener): void {
@@ -19,16 +20,14 @@ export function scanExisting(root: ParentNode, selector: string, onElement: Elem
 
 function observeShadowTree(root: ParentNode, selector: string, onElement: ElementListener): void {
   walkShadowRoots(root, (_element, shadow) => {
-    if (!shadow || observedRoots.has(shadow)) return;
-    observeRoot(shadow, onElement);
-    scanExisting(shadow, selector, onElement);
+    if (!shadow) return;
+    if (observeRoot(shadow, onElement)) scanExisting(shadow, selector, onElement);
   });
 }
 
 export function attachShadows(owner: Element, selector: string, onElement: ElementListener): void {
   const root = owner.getRootNode();
-  if (root instanceof ShadowRoot && !observedRoots.has(root)) {
-    observeRoot(root, onElement);
+  if (root instanceof ShadowRoot && observeRoot(root, onElement)) {
     scanExisting(root, selector, onElement);
   }
   observeShadowTree(owner, selector, onElement);
