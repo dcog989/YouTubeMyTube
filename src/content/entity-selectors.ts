@@ -18,6 +18,8 @@ const ITEM_SELECTORS = [
   'ytm-compact-video-renderer',
   'ytm-video-renderer',
   'ytm-reel-item-renderer',
+  'ytm-shorts-lockup-view-model',
+  'ytm-shorts-lockup-view-model-v2',
   'ytm-channel-renderer',
   'ytm-compact-channel-renderer',
 ];
@@ -34,6 +36,9 @@ export const TITLE_SELECTORS = [
   '#video-title-link',
   'a#video-title',
   '.yt-lockup-metadata-view-model__title',
+  '.ytLockupMetadataViewModelTitle',
+  '.shortsLockupViewModelHostMetadataTitle',
+  'a[href*="/watch"]',
   'h3 a',
 ];
 

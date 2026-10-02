@@ -1,6 +1,6 @@
 import type { Entity, ParsedUrl } from '../shared/types';
 import { normalizeHandle, parseYouTubeUrl } from '../shared/url';
-import { forEachShadowRoot } from './dom';
+import { deepQuery, forEachShadowRoot } from './dom';
 import {
   CHANNEL_HEADER_SELECTORS,
   CHANNEL_LINK_SELECTORS,
@@ -63,8 +63,11 @@ function titleOf(card: Element): string {
   const titled = card.querySelector('a[title]');
   const attr = titled?.getAttribute('title')?.trim();
   if (attr) return attr;
-  const bySelector = firstText(card, TITLE_SELECTORS);
-  if (bySelector) return bySelector;
+  for (const selector of TITLE_SELECTORS) {
+    const found = card.querySelector(selector) ?? deepQuery(selector, card);
+    const value = textOf(found);
+    if (value) return value;
+  }
   return textOf(card).slice(0, 300);
 }
 
