@@ -112,8 +112,8 @@ export function cardEntity(card: Element): Entity {
   if (!hasIdentity(entity)) applyShadowAnchors(entity, card);
 
   entity.title = titleOf(card);
-  const fallbackName = channelAvatarLabel(card) || lockupChannelName(card);
-  const channelName = firstText(card, CHANNEL_TEXT_SELECTORS) || fallbackName;
+  const channelName =
+    firstText(card, CHANNEL_TEXT_SELECTORS) || channelAvatarLabel(card) || lockupChannelName(card);
   if (channelName) entity.channelName = channelName;
 
   return entity;
