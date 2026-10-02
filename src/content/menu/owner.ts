@@ -58,7 +58,7 @@ export function createOwnerTracker(): OwnerTracker {
     if (!owner) return;
     lastTarget = owner;
 
-    attachShadows(owner, MENU_ITEM_SELECTOR, onItem);
+    if (trigger) attachShadows(owner, MENU_ITEM_SELECTOR, onItem);
   }
 
   function init(): void {
