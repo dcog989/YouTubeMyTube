@@ -158,6 +158,7 @@
   "dnrWarningMany": {
     "message": "$1 个过滤器超出浏览器的 $2 条规则限制，仅在页面内生效。"
   },
+  "invalidPatterns": { "message": "已忽略无效模式：$1" },
 
   "channelsPasteInvalid": { "message": "粘贴频道 URL、@handle 或 UC 频道 ID。" },
   "channelsAlready": { "message": "该频道已被屏蔽。" },

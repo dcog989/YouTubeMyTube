@@ -162,6 +162,7 @@
   "dnrWarningMany": {
     "message": "$1 filtros excedem o limite de $2 regras do navegador e são aplicados apenas na página."
   },
+  "invalidPatterns": { "message": "Padrões inválidos ignorados: $1" },
 
   "channelsPasteInvalid": { "message": "Cole a URL de um canal, um @handle ou um ID de canal UC." },
   "channelsAlready": { "message": "Esse canal já está bloqueado." },

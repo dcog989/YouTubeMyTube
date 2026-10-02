@@ -158,6 +158,7 @@
   "dnrWarningMany": {
     "message": "$1 filters overschrijden de limiet van $2 regels van de browser en worden alleen op de pagina toegepast."
   },
+  "invalidPatterns": { "message": "Ongeldige patronen genegeerd: $1" },
 
   "channelsPasteInvalid": {
     "message": "Plak een kanaal-URL, @handle of UC-kanaal-ID."

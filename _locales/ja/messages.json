@@ -158,6 +158,7 @@
   "dnrWarningMany": {
     "message": "$1 件のフィルターがブラウザーの $2 ルール上限を超えているため、ページ内でのみ適用されます。"
   },
+  "invalidPatterns": { "message": "無効なパターンは無視されました: $1" },
 
   "channelsPasteInvalid": {
     "message": "チャンネルの URL、@handle、または UC チャンネル ID を貼り付けてください。"

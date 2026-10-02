@@ -42,6 +42,10 @@ export function parsePattern(raw: string): RegExp | null {
   return new RegExp(escapeRegExp(trimmed), 'i');
 }
 
+export function invalidPatterns(entries: string[]): string[] {
+  return entries.filter((entry) => isActiveEntry(entry) && parsePattern(entry) === null);
+}
+
 export function compilePatterns(entries: string[]): RegExp[] {
   const compiled: RegExp[] = [];
   for (const raw of entries) {

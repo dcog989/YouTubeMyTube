@@ -158,6 +158,7 @@
   "dnrWarningMany": {
     "message": "$1 фильтров превышают лимит браузера в $2 правил и применяются только на странице."
   },
+  "invalidPatterns": { "message": "Недопустимые шаблоны проигнорированы: $1" },
 
   "channelsPasteInvalid": { "message": "Вставьте URL канала, @handle или ID канала UC." },
   "channelsAlready": { "message": "Этот канал уже заблокирован." },

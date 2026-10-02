@@ -158,6 +158,7 @@
   "dnrWarningMany": {
     "message": "$1 filtre tarayıcının $2 kural sınırını aşıyor ve yalnızca sayfa içinde uygulanıyor."
   },
+  "invalidPatterns": { "message": "Geçersiz desenler yok sayıldı: $1" },
 
   "channelsPasteInvalid": {
     "message": "Bir kanal URL'si, @handle veya UC kanal kimliği yapıştırın."

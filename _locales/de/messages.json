@@ -160,6 +160,7 @@
   "dnrWarningMany": {
     "message": "$1 Filter überschreiten das Limit von $2 Regeln des Browsers und werden nur auf der Seite angewendet."
   },
+  "invalidPatterns": { "message": "Ungültige Muster ignoriert: $1" },
 
   "channelsPasteInvalid": {
     "message": "Füge eine Kanal-URL, ein @Handle oder eine UC-Kanal-ID ein."

@@ -158,6 +158,7 @@
   "dnrWarningMany": {
     "message": "$1 فلتر تتجاوز حد المتصفح البالغ $2 قاعدة وتُطبَّق في الصفحة فقط."
   },
+  "invalidPatterns": { "message": "تم تجاهل الأنماط غير الصالحة: $1" },
 
   "channelsPasteInvalid": { "message": "الصق عنوان URL لقناة أو @handle أو معرّف قناة UC." },
   "channelsAlready": { "message": "هذه القناة محظورة بالفعل." },

@@ -160,6 +160,7 @@
   "dnrWarningMany": {
     "message": "$1 filters exceed the browser's $2-rule limit and are enforced in-page only."
   },
+  "invalidPatterns": { "message": "Invalid patterns ignored: $1" },
 
   "channelsPasteInvalid": {
     "message": "Paste a channel URL, @handle, UC channel ID, or a channel name."

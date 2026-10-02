@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   compilePatterns,
   countActiveEntries,
+  invalidPatterns,
   isActiveEntry,
   parsePattern,
   sortEntries,
@@ -52,5 +53,11 @@ describe('parsePattern', () => {
 describe('compilePatterns', () => {
   it('drops malformed patterns', () => {
     expect(compilePatterns(['/[unclosed/', 'ok'])).toHaveLength(1);
+  });
+});
+
+describe('invalidPatterns', () => {
+  it('reports active regex entries that fail to compile', () => {
+    expect(invalidPatterns(['/[unclosed/', 'ok', '// note', '/fine/i'])).toEqual(['/[unclosed/']);
   });
 });

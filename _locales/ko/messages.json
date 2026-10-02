@@ -158,6 +158,7 @@
   "dnrWarningMany": {
     "message": "필터 $1개가 브라우저의 규칙 $2개 한도를 초과하여 페이지 내에서만 적용됩니다."
   },
+  "invalidPatterns": { "message": "잘못된 패턴이 무시되었습니다: $1" },
 
   "channelsPasteInvalid": { "message": "채널 URL, @handle 또는 UC 채널 ID를 붙여넣으세요." },
   "channelsAlready": { "message": "해당 채널은 이미 차단되었습니다." },

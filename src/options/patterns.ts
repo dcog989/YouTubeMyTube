@@ -1,11 +1,22 @@
 import { PATTERN_FILTER_KEYS, type PatternFilterKey } from '../shared/filters';
-import { sortEntries } from '../shared/patterns';
+import { t } from '../shared/i18n';
+import { invalidPatterns, sortEntries } from '../shared/patterns';
 import { byId } from '../shared/ui';
 import { updateCounts } from './counts';
 import { arrayToLines, autoGrowTextarea, linesToArray } from './dom';
 import { getDraft, setDirty } from './state';
 
 const patternEditors = new Map<PatternFilterKey, HTMLTextAreaElement>();
+
+function updatePatternWarnings(): void {
+  const draft = getDraft();
+  for (const key of PATTERN_FILTER_KEYS) {
+    const warning = byId(`warning-${key}`);
+    const invalid = invalidPatterns(draft.rules[key]);
+    warning.hidden = invalid.length === 0;
+    warning.textContent = invalid.length > 0 ? t('invalidPatterns', invalid.join(', ')) : '';
+  }
+}
 
 function alphabetize(key: PatternFilterKey, textarea: HTMLTextAreaElement): boolean {
   const draft = getDraft();
@@ -22,6 +33,7 @@ export function wirePatternEditors(): void {
     textarea.addEventListener('input', () => {
       getDraft().rules[key] = linesToArray(textarea.value);
       updateCounts();
+      updatePatternWarnings();
       setDirty(true);
       autoGrowTextarea(textarea);
     });
@@ -30,6 +42,7 @@ export function wirePatternEditors(): void {
         updateCounts();
         setDirty(true);
       }
+      updatePatternWarnings();
       autoGrowTextarea(textarea);
     });
     patternEditors.set(key, textarea);
@@ -45,4 +58,5 @@ export function syncPatternEditors(): void {
       if (editor.offsetParent) autoGrowTextarea(editor);
     }
   }
+  updatePatternWarnings();
 }

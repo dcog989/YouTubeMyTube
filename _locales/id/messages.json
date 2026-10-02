@@ -158,6 +158,7 @@
   "dnrWarningMany": {
     "message": "$1 filter melebihi batas $2 aturan browser dan hanya diterapkan di halaman."
   },
+  "invalidPatterns": { "message": "Pola tidak valid diabaikan: $1" },
 
   "channelsPasteInvalid": { "message": "Tempel URL saluran, @handle, atau ID saluran UC." },
   "channelsAlready": { "message": "Saluran itu sudah diblokir." },

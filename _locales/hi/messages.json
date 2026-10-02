@@ -158,6 +158,7 @@
   "dnrWarningMany": {
     "message": "$1 फ़िल्टर ब्राउज़र की $2-नियम सीमा से अधिक हैं और केवल पेज में लागू किए जाएँगे।"
   },
+  "invalidPatterns": { "message": "अमान्य पैटर्न अनदेखे किए गए: $1" },
 
   "channelsPasteInvalid": { "message": "चैनल URL, @handle या UC चैनल ID पेस्ट करें।" },
   "channelsAlready": { "message": "यह चैनल पहले से ब्लॉक है।" },
