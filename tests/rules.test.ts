@@ -127,4 +127,24 @@ describe('add / remove', () => {
     expect(removeChannel(rules, { name: 'rick astley' })).toBe(true);
     expect(rules.channels).toHaveLength(0);
   });
+
+  it('removes the channel matching the most specific field', () => {
+    const rules = defaultRules();
+    rules.channels = [
+      { id: 'UC1', name: 'Same Name', handle: '' },
+      { id: 'UC2', name: 'Same Name', handle: '' },
+    ];
+    expect(removeChannel(rules, { id: 'UC2', name: 'Same Name' })).toBe(true);
+    expect(rules.channels.map((channel) => channel.id)).toEqual(['UC1']);
+  });
+
+  it('prefers a handle match over a shared name', () => {
+    const rules = defaultRules();
+    rules.channels = [
+      { id: '', name: 'Same Name', handle: 'alpha' },
+      { id: '', name: 'Same Name', handle: 'beta' },
+    ];
+    expect(removeChannel(rules, { handle: '@beta', name: 'Same Name' })).toBe(true);
+    expect(rules.channels.map((channel) => channel.handle)).toEqual(['alpha']);
+  });
 });

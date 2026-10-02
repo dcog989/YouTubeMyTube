@@ -42,16 +42,24 @@ export interface ChannelLookup {
   name?: string | null;
 }
 
-export function channelMatches(entry: ChannelEntry, lookup: ChannelLookup): boolean {
+const NO_MATCH = -1;
+const MATCH_ID = 0;
+const MATCH_HANDLE = 1;
+const MATCH_NAME = 2;
+
+// Lower ranks are stronger matches; NO_MATCH means the entry is unrelated.
+function channelMatchRank(entry: ChannelEntry, lookup: ChannelLookup): number {
   const id = lookup.id?.trim() ?? '';
+  if (id !== '' && entry.id.trim() === id) return MATCH_ID;
   const handle = lookup.handle ? normalizeHandle(lookup.handle) : '';
+  if (handle !== '' && entry.handle === handle) return MATCH_HANDLE;
   const name = lookup.name ? normalizeChannelName(lookup.name) : '';
-  if (!id && !handle && !name) return false;
-  return (
-    (id !== '' && entry.id.trim() === id) ||
-    (handle !== '' && entry.handle === handle) ||
-    (name !== '' && normalizeChannelName(entry.name) === name)
-  );
+  if (name !== '' && normalizeChannelName(entry.name) === name) return MATCH_NAME;
+  return NO_MATCH;
+}
+
+export function channelMatches(entry: ChannelEntry, lookup: ChannelLookup): boolean {
+  return channelMatchRank(entry, lookup) !== NO_MATCH;
 }
 
 export function findChannel(rules: FilterRules, lookup: ChannelLookup): ChannelEntry | undefined {
@@ -96,8 +104,16 @@ export function addChannel(rules: FilterRules, entry: ChannelEntry): boolean {
 }
 
 export function removeChannel(rules: FilterRules, lookup: ChannelLookup): boolean {
-  const index = rules.channels.findIndex((channel) => channelMatches(channel, lookup));
-  if (index === -1) return false;
-  rules.channels.splice(index, 1);
+  let bestIndex = -1;
+  let bestRank = Number.POSITIVE_INFINITY;
+  rules.channels.forEach((channel, index) => {
+    const rank = channelMatchRank(channel, lookup);
+    if (rank !== NO_MATCH && rank < bestRank) {
+      bestRank = rank;
+      bestIndex = index;
+    }
+  });
+  if (bestIndex === -1) return false;
+  rules.channels.splice(bestIndex, 1);
   return true;
 }
