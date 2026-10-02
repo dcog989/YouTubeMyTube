@@ -1,6 +1,6 @@
 import { getRuntimeUrl } from '../../shared/runtime';
 import { h } from '../../shared/ui';
-import { walkShadowRoots } from '../dom';
+import { deepQuery, walkShadowRoots } from '../dom';
 import type { MenuContainer } from './container';
 import { MENU_ITEM_SELECTOR } from './selectors';
 
@@ -34,13 +34,23 @@ function hasDirectText(element: Element): boolean {
   return false;
 }
 
+function fontSizeOf(element: Element): number {
+  return Number.parseFloat(window.getComputedStyle(element).fontSize) || 0;
+}
+
 function findLabelElement(root: Element | ShadowRoot): Element | null {
+  const known = deepQuery(LABEL_SELECTOR, root);
+  if (known && hasDirectText(known)) {
+    const size = fontSizeOf(known);
+    if (size >= MIN_LABEL_SIZE && size <= MAX_LABEL_SIZE) return known;
+  }
+
   let best: Element | null = null;
   let bestScore = -1;
 
   walkShadowRoots(root, (element) => {
     if (!hasDirectText(element)) return;
-    const size = Number.parseFloat(window.getComputedStyle(element).fontSize) || 0;
+    const size = fontSizeOf(element);
     if (size < MIN_LABEL_SIZE || size > MAX_LABEL_SIZE) return;
     const bonus = element.matches(LABEL_SELECTOR) ? LABEL_SELECTOR_BONUS : 0;
     const score = bonus + size;
@@ -73,7 +83,7 @@ export function computeItemStyle(container: MenuContainer): MenuItemStyle {
     box ??= item;
     const candidate = findLabelElement(item);
     if (!candidate) continue;
-    const size = Number.parseFloat(window.getComputedStyle(candidate).fontSize) || 0;
+    const size = fontSizeOf(candidate);
     if (size > labelSize) {
       labelSize = size;
       label = candidate;
