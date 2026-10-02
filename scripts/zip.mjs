@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
 import { deflateRawSync } from 'node:zlib';
+import { crc32 } from './crc32.mjs';
 
 /**
  * @typedef {{ time: number, day: number }} DosStamp
@@ -17,30 +18,6 @@ const LOCAL_SIGNATURE = 0x04034b50;
 const CENTRAL_SIGNATURE = 0x02014b50;
 const END_SIGNATURE = 0x06054b50;
 const MIN_ZIP_YEAR = 1980;
-
-const CRC_TABLE = (() => {
-  const table = new Uint32Array(256);
-  for (let n = 0; n < 256; n += 1) {
-    let c = n;
-    for (let k = 0; k < 8; k += 1) {
-      c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-    }
-    table[n] = c >>> 0;
-  }
-  return table;
-})();
-
-/**
- * @param {Buffer} buffer
- * @returns {number}
- */
-function crc32(buffer) {
-  let crc = 0xffffffff;
-  for (let i = 0; i < buffer.length; i += 1) {
-    crc = (CRC_TABLE[(crc ^ (buffer[i] ?? 0)) & 0xff] ?? 0) ^ (crc >>> 8);
-  }
-  return (crc ^ 0xffffffff) >>> 0;
-}
 
 /**
  * @param {string} dir
