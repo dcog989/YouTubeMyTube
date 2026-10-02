@@ -98,7 +98,8 @@ export function renderChannels(): void {
 export async function addChannel(): Promise<void> {
   const draft = getDraft();
   const input = byId<HTMLInputElement>('channel-add');
-  const parsed = parseBlockInput(input.value, 'channel');
+  const raw = input.value.trim();
+  const parsed = parseBlockInput(raw, 'channel');
   if (parsed?.kind !== 'channel') {
     setStatus('channel-status', t('channelsPasteInvalid'), false);
     return;
@@ -126,14 +127,23 @@ export async function addChannel(): Promise<void> {
   setStatus('channel-status', t('channelsLooking'), true);
 
   try {
-    const meta =
+    const bareHandle =
+      Boolean(handle) && !raw.startsWith('@') && !raw.includes('/') && !raw.includes(':');
+    let meta =
       id || handle ? await resolveChannel({ id, handle }) : await resolveChannelByName(name);
+    if (bareHandle && !meta.name && !meta.id) {
+      const byName = await resolveChannelByName(handle);
+      if (byName.name || byName.id) {
+        meta = byName;
+        if (!meta.handle) stored.handle = '';
+      }
+    }
     if (handle && !meta.name && !meta.id) {
       const index = draft.rules.channels.indexOf(stored);
       if (index !== -1) draft.rules.channels.splice(index, 1);
       renderChannels();
       setDirty(true);
-      setStatus('channel-status', t('channelsNotFound', `@${handle}`), false);
+      setStatus('channel-status', t('channelsNotFound', bareHandle ? raw : `@${handle}`), false);
       return;
     }
     const conflict = draft.rules.channels.find(
