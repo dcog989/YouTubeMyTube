@@ -1,3 +1,7 @@
+export function eventTarget(event: Event): Element | null {
+  return event.composedPath().find((node): node is Element => node instanceof Element) ?? null;
+}
+
 export function closestAcrossShadow(element: Element, selector: string): Element | null {
   let current: Element | null = element;
   while (current) {
