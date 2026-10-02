@@ -106,33 +106,42 @@ export async function addChannel(): Promise<void> {
 
   setStatus('channel-status', t('channelsLooking'), true);
 
+  const liveChannels = (): ChannelEntry[] | null => {
+    const channels = getDraft().rules.channels;
+    return channels.includes(stored) ? channels : null;
+  };
+
   try {
     const bareHandle =
       Boolean(handle) && !raw.startsWith('@') && !raw.includes('/') && !raw.includes(':');
     let meta =
       id || handle ? await resolveChannel({ id, handle }) : await resolveChannelByName(name);
+    if (!liveChannels()) return;
     if (bareHandle && !meta.name && !meta.id) {
       const byName = await resolveChannelByName(handle);
+      if (!liveChannels()) return;
       if (byName.name || byName.id) {
         meta = byName;
         if (!meta.handle) stored.handle = '';
       }
     }
+    const channels = liveChannels();
+    if (!channels) return;
     if (handle && !meta.name && !meta.id) {
-      const index = draft.rules.channels.indexOf(stored);
-      if (index !== -1) draft.rules.channels.splice(index, 1);
+      const index = channels.indexOf(stored);
+      if (index !== -1) channels.splice(index, 1);
       renderChannels();
       setDirty(true);
       setStatus('channel-status', t('channelsNotFound', bareHandle ? raw : `@${handle}`), false);
       return;
     }
-    const conflict = draft.rules.channels.find(
+    const conflict = channels.find(
       (channel) =>
         channel !== stored && channelMatches(channel, { id: meta.id, handle: meta.handle }),
     );
     if (conflict) {
-      const index = draft.rules.channels.indexOf(stored);
-      if (index !== -1) draft.rules.channels.splice(index, 1);
+      const index = channels.indexOf(stored);
+      if (index !== -1) channels.splice(index, 1);
       if (meta.id && !conflict.id) conflict.id = meta.id;
       if (meta.name && !conflict.name) conflict.name = meta.name;
       if (meta.handle && !conflict.handle) conflict.handle = meta.handle;

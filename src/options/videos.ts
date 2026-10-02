@@ -90,6 +90,7 @@ export async function addVideo(): Promise<void> {
 
   try {
     const title = await resolveVideoTitle(entry.id);
+    if (!getDraft().rules.videos.includes(entry)) return;
     if (title) entry.title = title;
     renderVideos();
     setDirty(true);

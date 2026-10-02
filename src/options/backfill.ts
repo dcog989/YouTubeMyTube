@@ -63,7 +63,7 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
 
   for (const target of channelTargets) {
     if (lookups >= MAX_BACKFILL_LOOKUPS) break;
-    if (!draft.rules.channels.includes(target.entry)) continue;
+    if (!getDraft().rules.channels.includes(target.entry)) continue;
     if (
       target.entry.id !== target.id ||
       target.entry.handle !== target.handle ||
@@ -82,6 +82,7 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
     } catch {
       meta = null;
     }
+    if (!getDraft().rules.channels.includes(target.entry)) continue;
     if (!meta) continue;
 
     if (meta.id && meta.id !== target.entry.id) {
@@ -110,7 +111,7 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
 
   for (const target of videoTargets) {
     if (lookups >= MAX_BACKFILL_LOOKUPS) break;
-    if (!draft.rules.videos.includes(target.entry)) continue;
+    if (!getDraft().rules.videos.includes(target.entry)) continue;
     if (target.entry.id !== target.id) continue;
     lookups += 1;
 
@@ -120,6 +121,7 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
     } catch {
       title = null;
     }
+    if (!getDraft().rules.videos.includes(target.entry)) continue;
     if (title === null) continue;
 
     if (title && title !== target.entry.title) {
