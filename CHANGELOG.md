@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.14.3 - 2026-10-02
+#### Bug Fixes
+- (**content**) extract card titles from the current YouTube DOM - (175d5f9) - dcog989
+- (**storage**) avoid clobbering state on transient Firefox storage reads - (700e3f5) - dcog989
+#### Miscellaneous Chores
+- tidy readme - (7e02f0f) - dcog989
+#### Style
+- (**options**) order textarea rules to satisfy specificity lint - (c6315d4) - dcog989
+
+- - -
+
 ## 0.14.2 - 2026-09-22
 #### Miscellaneous Chores
 - (**version**) 0.14.1 - (950c3aa) - dcog989
