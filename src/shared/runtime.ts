@@ -21,7 +21,3 @@ type MessageHandler = (
 export function onRuntimeMessage(handler: MessageHandler): void {
   browser.runtime.onMessage.addListener(handler);
 }
-
-export function onInstalled(handler: () => void): void {
-  browser.runtime.onInstalled.addListener(handler);
-}
