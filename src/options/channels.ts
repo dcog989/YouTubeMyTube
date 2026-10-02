@@ -1,11 +1,6 @@
 import { t } from '../shared/i18n';
 import { parseBlockInput, resolveChannel, resolveChannelByName } from '../shared/resolve';
-import {
-  addChannel as addChannelRule,
-  channelMatches,
-  findChannel,
-  removeChannel,
-} from '../shared/rules';
+import { addChannel as addChannelRule, channelMatches, findChannel } from '../shared/rules';
 import type { ChannelEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
 import { updateCounts } from './counts';
@@ -54,7 +49,8 @@ export function renderChannels(): void {
       text: t('remove'),
     });
     remove.addEventListener('click', () => {
-      removeChannel(draft.rules, { id: channel.id, handle: channel.handle, name: channel.name });
+      const index = draft.rules.channels.indexOf(channel);
+      if (index !== -1) draft.rules.channels.splice(index, 1);
       renderChannels();
       setDirty(true);
     });

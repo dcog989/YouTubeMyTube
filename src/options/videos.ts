@@ -1,6 +1,6 @@
 import { t } from '../shared/i18n';
 import { parseBlockInput, resolveVideoTitle } from '../shared/resolve';
-import { addVideo as addVideoRule, removeVideo } from '../shared/rules';
+import { addVideo as addVideoRule } from '../shared/rules';
 import type { VideoEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
 import { updateCounts } from './counts';
@@ -46,7 +46,8 @@ export function renderVideos(): void {
       text: t('remove'),
     });
     remove.addEventListener('click', () => {
-      removeVideo(draft.rules, video.id);
+      const index = draft.rules.videos.indexOf(video);
+      if (index !== -1) draft.rules.videos.splice(index, 1);
       renderVideos();
       setDirty(true);
     });
