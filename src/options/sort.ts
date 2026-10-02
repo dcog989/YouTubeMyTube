@@ -1,4 +1,4 @@
-import { h } from '../shared/ui';
+import { byId, h } from '../shared/ui';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -89,4 +89,35 @@ export function createSorter(defaultKey: string): {
 
 export function compareValues(a: string, b: string): number {
   return a.localeCompare(b, undefined, { sensitivity: 'base', numeric: true });
+}
+
+export type SortColumns = ReadonlyArray<readonly [key: string, index: number]>;
+
+export interface TableSorter<T> {
+  wire(bodyId: string, onSort: () => void): void;
+  sort(items: T[]): T[];
+}
+
+export function createTableSorter<T>(
+  defaultKey: string,
+  columns: SortColumns,
+  valueAt: (item: T, key: string) => string,
+): TableSorter<T> {
+  const sorter = createSorter(defaultKey);
+
+  return {
+    wire(bodyId, onSort) {
+      const headers = byId(bodyId).closest('table')?.querySelectorAll('thead th');
+      for (const [key, index] of columns) {
+        const cell = headers?.[index];
+        if (!cell) continue;
+        cell.replaceWith(sorter.header(key, cell.textContent ?? '', onSort));
+      }
+    },
+    sort(items) {
+      const { key, direction } = sorter.state();
+      const factor = direction === 'asc' ? 1 : -1;
+      return [...items].sort((a, b) => factor * compareValues(valueAt(a, key), valueAt(b, key)));
+    },
+  };
 }
