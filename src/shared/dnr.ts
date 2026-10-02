@@ -4,7 +4,14 @@ import { escapeRegExp, isActiveEntry } from './patterns';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
 
-export type DnrRule = chrome.declarativeNetRequest.Rule;
+export type DnrRule = browser.declarativeNetRequest.Rule;
+
+type DnrUpdateOptions = browser.declarativeNetRequest._UpdateDynamicRulesOptions;
+
+interface DnrRedirect {
+  extensionPath?: string;
+  url?: string;
+}
 
 export interface DnrBuild {
   rules: DnrRule[];
@@ -14,20 +21,20 @@ export interface DnrBuild {
 function redirectRule(
   id: number,
   regexFilter: string,
-  target: chrome.declarativeNetRequest.Redirect,
+  target: DnrRedirect,
   caseSensitive: boolean,
-): chrome.declarativeNetRequest.Rule {
+): DnrRule {
   return {
     id,
     priority: 1,
     action: {
-      type: 'redirect' as chrome.declarativeNetRequest.RuleActionType,
+      type: 'redirect',
       redirect: target,
     },
     condition: {
       regexFilter,
       isUrlFilterCaseSensitive: caseSensitive,
-      resourceTypes: ['main_frame' as chrome.declarativeNetRequest.ResourceType],
+      resourceTypes: ['main_frame'],
     },
   };
 }
@@ -45,22 +52,18 @@ function handlePattern(handle: string): string {
   return `${YOUTUBE_HOST_PATTERN}/${escapeRegExp(`@${handle}`)}(?:[/?#]|$)`;
 }
 
-function blockedPage(reason: string): chrome.declarativeNetRequest.Redirect {
+function blockedPage(reason: string): DnrRedirect {
   return { extensionPath: `/blocked.html?reason=${encodeURIComponent(reason)}` };
 }
 
 export function buildDnrRules(state: BlockerState): DnrBuild {
   if (!state.settings.enabled) return { rules: [], dropped: 0 };
 
-  const rules: chrome.declarativeNetRequest.Rule[] = [];
+  const rules: DnrRule[] = [];
   let nextId = 1;
   let dropped = 0;
 
-  const push = (
-    regexFilter: string,
-    target: chrome.declarativeNetRequest.Redirect,
-    caseSensitive = true,
-  ): void => {
+  const push = (regexFilter: string, target: DnrRedirect, caseSensitive = true): void => {
     if (rules.length >= MAX_DNR_REGEX_RULES) {
       dropped += 1;
       return;
@@ -95,12 +98,10 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
   return { rules, dropped };
 }
 
-export function getDynamicRules(): Promise<chrome.declarativeNetRequest.Rule[]> {
-  return chrome.declarativeNetRequest.getDynamicRules();
+export function getDynamicRules(): Promise<DnrRule[]> {
+  return browser.declarativeNetRequest.getDynamicRules();
 }
 
-export function updateDynamicRules(
-  options: chrome.declarativeNetRequest.UpdateRuleOptions,
-): Promise<void> {
-  return chrome.declarativeNetRequest.updateDynamicRules(options);
+export function updateDynamicRules(options: DnrUpdateOptions): Promise<void> {
+  return browser.declarativeNetRequest.updateDynamicRules(options);
 }

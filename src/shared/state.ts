@@ -40,7 +40,7 @@ export async function ensureState(): Promise<BlockerState> {
 }
 
 export function onLocalStorageChanged(listener: (newValue: unknown) => void): void {
-  chrome.storage.onChanged.addListener((changes, areaName) => {
+  browser.storage.onChanged.addListener((changes, areaName) => {
     if (areaName !== 'local') return;
     const change = changes[STATE_KEY];
     if (!change) return;

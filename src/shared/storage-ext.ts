@@ -11,7 +11,7 @@ export async function getStored<T>(key: string): Promise<T | undefined> {
   // (bug 1885297), and very rarely the API itself is not ready yet.
   for (let attempt = 0; ; attempt += 1) {
     try {
-      const stored = await chrome.storage.local.get(key);
+      const stored = await browser.storage.local.get(key);
       if (stored[key] !== undefined || attempt >= 1) return stored[key] as T | undefined;
     } catch (error) {
       if (attempt >= 1) throw error;
@@ -21,5 +21,5 @@ export async function getStored<T>(key: string): Promise<T | undefined> {
 }
 
 export function setStored(values: StorageItems): Promise<void> {
-  return chrome.storage.local.set(values);
+  return browser.storage.local.set(values);
 }

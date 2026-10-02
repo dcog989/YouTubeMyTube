@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["chrome", "node"],
+    "types": ["firefox-webext-browser", "node"],
     "allowJs": true,
     "checkJs": true,
     "strict": true,
@@ -18,13 +18,5 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "src",
-    "tests",
-    "e2e",
-    "scripts",
-    "esbuild.config.mjs",
-    "playwright.config.ts",
-    "vitest.config.ts"
-  ]
+  "include": ["src", "tests", "scripts", "esbuild.config.mjs", "vitest.config.ts"]
 }

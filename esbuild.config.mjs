@@ -3,7 +3,6 @@ import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build, context } from 'esbuild';
 import { generateIcons } from './scripts/gen-icons.mjs';
-import { validateManifests } from './scripts/manifest-check.mjs';
 import { createSourceZip } from './scripts/source-zip.mjs';
 import { createZip } from './scripts/zip.mjs';
 
@@ -33,7 +32,7 @@ const STATIC_ASSETS = [
   ['src/blocked/blocked.css', 'blocked.css'],
 ];
 
-const SUPPORTED = ['chrome', 'firefox'];
+const SUPPORTED = ['firefox'];
 const args = process.argv.slice(2);
 const watch = args.includes('--watch');
 const requested = args.find((arg) => !arg.startsWith('--')) ?? 'all';
@@ -134,7 +133,7 @@ function esbuildOptions(browser, name) {
     bundle: true,
     format: 'iife',
     platform: 'browser',
-    target: ['chrome140', 'firefox140'],
+    target: ['firefox140'],
     sourcemap: watch ? 'inline' : false,
     minify: !watch,
     logLevel: 'info',
@@ -142,8 +141,6 @@ function esbuildOptions(browser, name) {
 }
 
 async function main() {
-  validateManifests(ROOT, SUPPORTED);
-
   generateIcons();
 
   for (const browser of browsers) {

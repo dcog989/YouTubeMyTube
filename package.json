@@ -6,7 +6,6 @@
   "description": "YouTube content blocker",
   "scripts": {
     "build": "node esbuild.config.mjs all",
-    "build:chrome": "node esbuild.config.mjs chrome",
     "build:firefox": "node esbuild.config.mjs firefox",
     "check": "biome check . && bun run typecheck && bun run build:firefox && bun run lint:webext",
     "check:fix": "biome check --write .",
@@ -21,7 +20,6 @@
     "release": "cog bump --auto",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
     "update": "bun update --latest",
@@ -29,8 +27,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
-    "@playwright/test": "^1.63.0",
-    "@types/chrome": "^0.3.0",
     "@types/firefox-webext-browser": "^143.0.0",
     "@types/node": "^26.6.2",
     "@vitest/coverage-v8": "^5.0.1",

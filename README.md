@@ -1,6 +1,6 @@
 # YouTubeMyTube
 
-Browser extension for Chrome and Firefox. Blocks videos, channels, users, Shorts and comments on YouTube.
+Firefox extension to block videos, channels, users, Shorts and comments on YouTube.
 
 Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarativeNetRequest` for direct navigation. It does not depend on YouTube's internal renderer schemas or inject into the page's JavaScript, keeping it resilient to YouTube UI changes.
 
@@ -29,13 +29,11 @@ bun install
 bun run build
 ```
 
-- Chrome: `chrome://extensions` → Developer mode → Load unpacked → `dist/chrome`.
 - Firefox: `about:debugging#/runtime/this-firefox` → Load Temporary Add-on → `dist/firefox/manifest.json`.
 
 ## Development
 
 ```sh
-bun run build:chrome
 bun run build:firefox
 bun run check             # Biome lint + format check
 bun run check:fix         # Biome lint + format, writing fixes
@@ -43,13 +41,10 @@ bun run lint:webext       # web-ext lint on dist/firefox
 bun run release           # cog bump --auto: tag + changelog, syncs package.json
 bun run test              # Vitest unit tests
 bun run test:coverage     # Vitest with coverage report
-bun run test:e2e          # Playwright extension smoke test (needs dist/chrome)
 bun run typecheck         # tsc --noEmit
 bun run typecheck:watch   # continuous type-check (run alongside watch)
-bun run watch             # rebuild JS + copy HTML/CSS/manifests on change (both browsers)
+bun run watch             # rebuild JS + copy HTML/CSS/manifests on change
 ```
-
-`bun run test:e2e` needs the Playwright Chromium build once: `bunx playwright install chromium`.
 
 `bun install` runs `prepare`, which installs the [Lefthook](https://lefthook.dev) git hooks. The `pre-commit` hook runs Biome against staged files and a full `tsc --noEmit` type-check, and the `commit-msg` hook enforces [Conventional Commits](https://www.conventionalcommits.org) via [Cocogitto](https://docs.cocogitto.io) (`cog`). Cocogitto is a system binary, not a Bun dependency; install it separately (e.g. `pacman -S cocogitto`, `cargo install cocogitto`, or your package manager). Hook installation is skipped automatically when there is no `.git` directory (for example when building from the submitted source archive).
 
@@ -70,29 +65,28 @@ The extension is built with esbuild via `esbuild.config.mjs`; the same build pro
 3. Build Firefox: `npm run build:firefox` (or `bun run build:firefox`). This runs `node esbuild.config.mjs firefox`.
 4. Output: the unpacked extension in `dist/firefox/` and the archive `dist/youtubemytube-firefox.zip`.
 
-`npm run build` builds both browsers plus the source archive. The submitted source is the original TypeScript under `src/`; esbuild only bundles and minifies it into the shipped JavaScript, so no generated code is included in the source archive. `SOURCE_DATE_EPOCH` (set from the release commit, e.g. `SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)`) only fixes the archive timestamps for byte-identical zips; the emitted JavaScript is deterministic without it.
+`npm run build` builds the extension plus the source archive. The submitted source is the original TypeScript under `src/`; esbuild only bundles and minifies it into the shipped JavaScript, so no generated code is included in the source archive. `SOURCE_DATE_EPOCH` (set from the release commit, e.g. `SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)`) only fixes the archive timestamps for byte-identical zips; the emitted JavaScript is deterministic without it.
 
 ## Package
 
-`bun run build` also writes store-ready archives to `dist/youtubemytube-chrome.zip` and `dist/youtubemytube-firefox.zip`, plus the AMO review source archive at `dist/youtubemytube-source.zip` (packaged from git-tracked files, so it stays out of `dist/` and honours `SOURCE_DATE_EPOCH`). The build fails if the shared fields in `manifests/chrome.json` and `manifests/firefox.json` drift.
+`bun run build` writes the store-ready archive to `dist/youtubemytube-firefox.zip`, plus the AMO review source archive at `dist/youtubemytube-source.zip` (packaged from git-tracked files, so it stays out of `dist/` and honours `SOURCE_DATE_EPOCH`).
 
 Set `SOURCE_DATE_EPOCH` for byte-reproducible archives, e.g. `SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) bun run build`.
 
 ## Continuous integration
 
-`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests: frozen install, `check`, `typecheck`, unit tests with coverage thresholds, build, `web-ext lint`, `bun audit`, and artifact upload, followed by a Playwright smoke test that loads `dist/chrome` in Chromium and asserts the background service worker starts.
+`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests: frozen install, `check`, `typecheck`, unit tests with coverage thresholds, build, `web-ext lint`, `bun audit`, and artifact upload.
 
 ## Release and publishing
 
-`bun run release` (`cog bump --auto`) bumps `package.json` and tags the version. Pushing the tag triggers `.github/workflows/release.yml`, which rebuilds both browsers and publishes:
+`bun run release` (`cog bump --auto`) bumps `package.json` and tags the version. Pushing the tag triggers `.github/workflows/release.yml`, which rebuilds the extension and publishes:
 
 - Firefox: `web-ext sign --channel listed` to AMO.
-- Chrome: `chrome-webstore-upload-cli` upload, then publish.
-- Both archives are attached to the GitHub Release.
+- The archive is attached to the GitHub Release.
 
-Required repository secrets: `AMO_JWT_ISSUER`, `AMO_JWT_SECRET`, `CHROME_EXTENSION_ID`, `CHROME_PUBLISHER_ID`, `CHROME_CLIENT_ID`, `CHROME_CLIENT_SECRET`, `CHROME_REFRESH_TOKEN`.
+Required repository secrets: `AMO_JWT_ISSUER`, `AMO_JWT_SECRET`.
 
-Both stores require the extension to already exist: AMO needs the `browser_specific_settings.gecko.id` from `manifests/firefox.json` registered, and Chrome needs the extension created in the developer dashboard.
+AMO requires the extension to already exist: it needs the `browser_specific_settings.gecko.id` from `manifests/firefox.json` registered.
 
 ## Privacy
 

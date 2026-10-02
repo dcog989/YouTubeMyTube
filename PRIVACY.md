@@ -16,8 +16,7 @@ open source (GNU GPL-3.0), so every claim below can be verified against the sour
 
 ## What the extension stores
 
-The extension keeps its settings in `chrome.storage.local` (Firefox: `browser.storage.local`) on
-your device:
+The extension keeps its settings in `browser.storage.local` on your device:
 
 - Your blocklist: blocked channel IDs, handles and names; blocked video IDs; keyword/regex filters
   for channel names, titles and comments; enabled page-area toggles.

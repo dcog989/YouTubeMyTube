@@ -21,7 +21,7 @@ export function t(key: MessageKey | string, substitutions?: string | string[]): 
       : Array.isArray(substitutions)
         ? substitutions
         : [substitutions];
-  const api = typeof chrome === 'undefined' ? undefined : chrome.i18n;
+  const api = typeof browser === 'undefined' ? undefined : browser.i18n;
   const localized = api?.getMessage?.(key, subs);
   if (localized) return localized;
   const message = EN[key]?.message ?? key;
