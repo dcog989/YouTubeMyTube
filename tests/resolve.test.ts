@@ -17,10 +17,11 @@ const CHANNEL_HTML = `<!doctype html><html><head>
 <script>var x = {"channelId":"UCabc123","canonicalBaseUrl":"/@mychannel"};</script>
 </head></html>`;
 
-function fetchStub(body: string, ok = true): typeof fetch {
+function fetchStub(body: string, status = 200): typeof fetch {
   return (async () =>
     ({
-      ok,
+      ok: status >= 200 && status < 300,
+      status,
       text: async () => body,
       json: async () => JSON.parse(body),
     }) as Response) as unknown as typeof fetch;
@@ -103,6 +104,8 @@ describe('channelMetaFromHtml', () => {
 
 const SEARCH_HTML = `<script>var ytInitialData = {"contents":{"channelRenderer":{"channelId":"UCCB1oLQY3XM86ACD05Lq4HQ","title":{"simpleText":"3 Minutes of Aviation"},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@3MinutesofAviation"}}}}};</script>`;
 
+const SEARCH_HTML_ESCAPED = `<script>var ytInitialData = {"contents":{"channelRenderer":{"channelId":"UCCB1oLQY3XM86ACD05Lq4HQ","title":{"simpleText":"Tom \\u0026 Jerry"},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@TomJerry"}}}}};</script>`;
+
 describe('channelMetaFromSearch', () => {
   it('extracts the first channel result', () => {
     expect(channelMetaFromSearch(SEARCH_HTML)).toEqual({
@@ -110,6 +113,10 @@ describe('channelMetaFromSearch', () => {
       name: '3 Minutes of Aviation',
       handle: '3minutesofaviation',
     });
+  });
+
+  it('unescapes JSON string escapes in the name', () => {
+    expect(channelMetaFromSearch(SEARCH_HTML_ESCAPED).name).toBe('Tom & Jerry');
   });
 
   it('returns empty fields when there is no channel result', () => {
@@ -131,12 +138,18 @@ describe('resolveChannel / resolveVideoTitle', () => {
     expect(meta).toEqual({ id: 'UCabc123', name: 'My Channel', handle: 'mychannel' });
   });
 
-  it('returns the input when the channel page is unavailable', async () => {
+  it('returns the input when the channel is not found (404)', async () => {
     const meta = await resolveChannel(
       { id: 'UC1', handle: 'mychannel' },
-      { fetch: fetchStub('', false) },
+      { fetch: fetchStub('', 404) },
     );
     expect(meta).toEqual({ id: 'UC1', name: '', handle: 'mychannel' });
+  });
+
+  it('rejects on transient failures so callers can retry', async () => {
+    await expect(
+      resolveChannel({ handle: 'mychannel' }, { fetch: fetchStub('', 503) }),
+    ).rejects.toThrow();
   });
 
   it('resolves a video title from oEmbed', async () => {
@@ -147,7 +160,7 @@ describe('resolveChannel / resolveVideoTitle', () => {
   });
 
   it('returns an empty title when oEmbed fails', async () => {
-    const title = await resolveVideoTitle('dQw4w9WgXcQ', { fetch: fetchStub('{}', false) });
+    const title = await resolveVideoTitle('dQw4w9WgXcQ', { fetch: fetchStub('{}', 500) });
     expect(title).toBe('');
   });
 });
@@ -212,7 +225,7 @@ describe('resolveVideoChannel', () => {
   });
 
   it('returns empty identity when oEmbed fails', async () => {
-    const meta = await resolveVideoChannel('dQw4w9WgXcQ', { fetch: fetchStub('{}', false) });
+    const meta = await resolveVideoChannel('dQw4w9WgXcQ', { fetch: fetchStub('{}', 500) });
     expect(meta).toEqual({ id: '', name: '', handle: '' });
   });
 });

@@ -70,6 +70,20 @@ function firstGroup(html: string, pattern: RegExp): string {
   return match?.[1] ? decodeEntities(match[1]).trim() : '';
 }
 
+function decodeJsonString(value: string): string {
+  try {
+    return JSON.parse(`"${value}"`) as string;
+  } catch {
+    return value;
+  }
+}
+
+function jsonGroup(html: string, pattern: RegExp): string {
+  const match = pattern.exec(html);
+  if (!match?.[1]) return '';
+  return decodeEntities(decodeJsonString(match[1])).trim();
+}
+
 export function channelMetaFromHtml(html: string): ChannelMeta {
   const name =
     firstGroup(html, /<meta[^>]+property=["']og:title["'][^>]*content=["']([^"']*)["']/i) ||
@@ -103,8 +117,8 @@ export function channelMetaFromSearch(html: string): ChannelMeta {
   const block = html.slice(start, start + 4096);
   const id = firstGroup(block, /"channelId":"(UC[A-Za-z0-9_-]+)"/);
   const name =
-    firstGroup(block, /"title":\{"simpleText":"([^"]*)"/) ||
-    firstGroup(block, /"title":\{"runs":\[\{"text":"([^"]*)"/);
+    jsonGroup(block, /"title":\{"simpleText":"([^"]*)"/) ||
+    jsonGroup(block, /"title":\{"runs":\[\{"text":"([^"]*)"/);
   const canonical = firstGroup(block, /"canonicalBaseUrl":"\/(@[^"]+)"/);
   return { id, name, handle: canonical ? normalizeHandle(canonical) : '' };
 }
@@ -154,12 +168,16 @@ export async function resolveVideoChannel(
   const meta = channelRefFromOembed(await fetchOembed(videoId, deps));
   if (meta.id || !meta.handle) return meta;
 
-  const resolved = await resolveChannel({ handle: meta.handle }, deps);
-  return {
-    id: resolved.id,
-    name: resolved.name || meta.name,
-    handle: resolved.handle || meta.handle,
-  };
+  try {
+    const resolved = await resolveChannel({ handle: meta.handle }, deps);
+    return {
+      id: resolved.id,
+      name: resolved.name || meta.name,
+      handle: resolved.handle || meta.handle,
+    };
+  } catch {
+    return meta;
+  }
 }
 
 export async function resolveChannel(
@@ -176,7 +194,13 @@ export async function resolveChannel(
   if (!path) return { id, name: '', handle };
 
   const response = await fetchWith(deps)(`${YOUTUBE_ORIGIN}${path}`);
-  if (!response.ok) return { id, name: '', handle };
+  if (!response.ok) {
+    // Only a 404 means the channel genuinely does not exist. Transient
+    // failures (429, 5xx) must reject so callers do not record a permanent
+    // "not found" and can retry later.
+    if (response.status === 404) return { id, name: '', handle };
+    throw new Error(`Channel lookup failed with status ${response.status}`);
+  }
 
   const meta = channelMetaFromHtml(await response.text());
   return { id: meta.id || id, name: meta.name, handle: meta.handle || handle };
