@@ -11,7 +11,7 @@ import { createMenuInjector } from './menu';
 import { onAddedElements } from './observer';
 import { createOverlayFeedback } from './overlay';
 import { createPlaybackGuard } from './playback';
-import { setState, store } from './store';
+import { store } from './store';
 
 async function init(): Promise<void> {
   const guard = createPlaybackGuard();
@@ -21,8 +21,8 @@ async function init(): Promise<void> {
   const menu = createMenuInjector({ store, filter, overlay });
 
   function applyState(next: BlockerState): void {
-    setState(next);
-    applyAreas();
+    store.setState(next);
+    applyAreas(store);
     filter.rescan();
   }
 

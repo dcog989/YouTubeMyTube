@@ -1,8 +1,8 @@
 import { AREA_DEFINITIONS } from '../shared/areas';
-import { getSnapshot } from './store';
+import type { Store } from './store';
 
-export function applyAreas(): void {
-  const state = getSnapshot()?.state;
+export function applyAreas(store: Store): void {
+  const state = store.getSnapshot()?.state;
   const enabled = Boolean(state?.settings.enabled);
   for (const area of AREA_DEFINITIONS) {
     if (area.mode !== 'hide') continue;

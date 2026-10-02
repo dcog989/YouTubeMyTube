@@ -8,17 +8,16 @@ export interface Snapshot {
 
 let snapshot: Snapshot | null = null;
 
-export function getSnapshot(): Snapshot | null {
-  return snapshot;
-}
-
-export function setState(next: BlockerState): void {
-  snapshot = { state: next, compiled: compileRules(next.rules) };
-}
-
 export interface Store {
   getSnapshot(): Snapshot | null;
   setState(next: BlockerState): void;
 }
 
-export const store: Store = { getSnapshot, setState };
+export const store: Store = {
+  getSnapshot() {
+    return snapshot;
+  },
+  setState(next) {
+    snapshot = { state: next, compiled: compileRules(next.rules) };
+  },
+};
