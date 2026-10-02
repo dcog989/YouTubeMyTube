@@ -49,7 +49,7 @@ async function persistChanges(): Promise<void> {
   notify();
 }
 
-async function backfillBatch(): Promise<{ changed: boolean; definitive: number }> {
+async function backfillBatch(): Promise<{ changed: boolean }> {
   const draft = getDraft();
   const channelTargets: ChannelTarget[] = draft.rules.channels
     .filter(needsChannelBackfill)
@@ -59,7 +59,6 @@ async function backfillBatch(): Promise<{ changed: boolean; definitive: number }
     .map((entry) => ({ entry, id: entry.id }));
 
   let changed = false;
-  let definitive = 0;
   let lookups = 0;
 
   for (const target of channelTargets) {
@@ -84,7 +83,6 @@ async function backfillBatch(): Promise<{ changed: boolean; definitive: number }
       meta = null;
     }
     if (!meta) continue;
-    definitive += 1;
 
     if (meta.id && meta.id !== target.entry.id) {
       target.entry.id = meta.id;
@@ -123,7 +121,6 @@ async function backfillBatch(): Promise<{ changed: boolean; definitive: number }
       title = null;
     }
     if (title === null) continue;
-    definitive += 1;
 
     if (title && title !== target.entry.title) {
       target.entry.title = title;
@@ -141,7 +138,7 @@ async function backfillBatch(): Promise<{ changed: boolean; definitive: number }
     }
   }
 
-  return { changed, definitive };
+  return { changed };
 }
 
 export function backfillMissing(): Promise<void> {
@@ -154,9 +151,9 @@ export function backfillMissing(): Promise<void> {
 
 async function runBackfill(): Promise<void> {
   for (;;) {
-    const { changed, definitive } = await backfillBatch();
-    if (changed) await persistChanges();
-    if (definitive === 0) return;
+    const { changed } = await backfillBatch();
+    if (!changed) return;
+    await persistChanges();
     await delay(BACKFILL_BATCH_DELAY);
   }
 }
