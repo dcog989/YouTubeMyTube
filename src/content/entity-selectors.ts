@@ -42,6 +42,8 @@ export const TITLE_SELECTORS = [
   'h3 a',
 ];
 
+export const TITLE_SELECTOR = TITLE_SELECTORS.join(',');
+
 export const CHANNEL_TEXT_SELECTORS = [
   'ytd-channel-name a',
   '#channel-name a',

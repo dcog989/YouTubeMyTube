@@ -9,7 +9,7 @@ import {
   METADATA_SELECTOR,
   OWNER_SCOPES,
   SHADOW_ANCHOR_HOST_SELECTOR,
-  TITLE_SELECTORS,
+  TITLE_SELECTOR,
 } from './entity-selectors';
 
 function textOf(element: Element | null): string {
@@ -63,12 +63,8 @@ function titleOf(card: Element): string {
   const titled = card.querySelector('a[title]');
   const attr = titled?.getAttribute('title')?.trim();
   if (attr) return attr;
-  for (const selector of TITLE_SELECTORS) {
-    const found = card.querySelector(selector) ?? deepQuery(selector, card);
-    const value = textOf(found);
-    if (value) return value;
-  }
-  return textOf(card).slice(0, 300);
+  const value = textOf(deepQuery(TITLE_SELECTOR, card));
+  return value || textOf(card).slice(0, 300);
 }
 
 function applyParsed(entity: Entity, parsed: ParsedUrl): void {
