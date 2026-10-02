@@ -1,4 +1,4 @@
-import { YOUTUBE_DOMAIN, YOUTUBE_HOSTS, YOUTUBE_ORIGIN } from './constants';
+import { YOUTUBE_DOMAIN, YOUTUBE_HOSTS, YOUTUBE_ORIGIN, YOUTUBE_SHORT_DOMAIN } from './constants';
 import type { ParsedUrl } from './types';
 
 export function normalizeHandle(value: string): string {
@@ -34,6 +34,11 @@ export function parseYouTubeUrl(href: string): ParsedUrl {
 
   const path = url.pathname;
   const params = url.searchParams;
+
+  if (url.hostname === YOUTUBE_SHORT_DOMAIN) {
+    const videoId = path.slice(1).split('/')[0];
+    return videoId ? { kind: 'video', videoId } : { kind: 'other' };
+  }
 
   if (path === '/watch') {
     const videoId = params.get('v');

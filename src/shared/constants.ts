@@ -3,6 +3,7 @@ export const STATE_KEY = 'state';
 export const HANDLE_PREFIX = '@';
 
 export const YOUTUBE_DOMAIN = 'youtube.com';
+export const YOUTUBE_SHORT_DOMAIN = 'youtu.be';
 export const YOUTUBE_ORIGIN = 'https://www.youtube.com';
 
 export const YOUTUBE_HOSTS = [
@@ -10,6 +11,7 @@ export const YOUTUBE_HOSTS = [
   `www.${YOUTUBE_DOMAIN}`,
   `m.${YOUTUBE_DOMAIN}`,
   `music.${YOUTUBE_DOMAIN}`,
+  YOUTUBE_SHORT_DOMAIN,
 ] as const;
 
 export const BLOCKED_PAGE = 'blocked.html';

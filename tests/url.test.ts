@@ -12,6 +12,18 @@ describe('parseYouTubeUrl', () => {
     expect(parseYouTubeUrl('/watch?v=abcdefghijk').videoId).toBe('abcdefghijk');
   });
 
+  it('parses youtu.be short links', () => {
+    expect(parseYouTubeUrl('https://youtu.be/dQw4w9WgXcQ?t=10s')).toMatchObject({
+      kind: 'video',
+      videoId: 'dQw4w9WgXcQ',
+    });
+    expect(parseYouTubeUrl('https://youtu.be/dQw4w9WgXcQ/')).toMatchObject({
+      kind: 'video',
+      videoId: 'dQw4w9WgXcQ',
+    });
+    expect(parseYouTubeUrl('https://youtu.be/').kind).toBe('other');
+  });
+
   it('parses shorts, live and embed URLs', () => {
     expect(parseYouTubeUrl('https://m.youtube.com/shorts/abc')).toMatchObject({
       kind: 'shorts',
