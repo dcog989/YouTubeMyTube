@@ -2,8 +2,8 @@ import { CONTEXT_REQUEST } from '../shared/constants';
 import { localizeDocument, t } from '../shared/i18n';
 import { ruleCount, summarizeRules } from '../shared/normalize';
 import { findChannel, hasVideoId } from '../shared/rules';
-import { blockChannel, blockVideo } from '../shared/rules-service';
-import { openOptionsPage, requestMutation } from '../shared/runtime';
+import { blockChannel, blockVideo, setEnabled } from '../shared/rules-service';
+import { openOptionsPage } from '../shared/runtime';
 import { loadState } from '../shared/state';
 import { queryActiveTab, sendTabMessage } from '../shared/tabs';
 import { applyTheme } from '../shared/theme';
@@ -85,7 +85,7 @@ async function applyMutation(mutation: Promise<BlockerState | null>): Promise<vo
 function registerHandlers(): void {
   byId<HTMLInputElement>('enabled').addEventListener('change', (event) => {
     const enabled = (event.target as HTMLInputElement).checked;
-    void applyMutation(requestMutation({ kind: 'setEnabled', enabled }));
+    void applyMutation(setEnabled(enabled));
   });
 
   byId('block-video').addEventListener('click', () => {

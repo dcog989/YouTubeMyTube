@@ -3,6 +3,10 @@ import type { ChannelLookup } from './rules';
 import { requestMutation } from './runtime';
 import type { BlockerState, ChannelEntry, VideoEntry } from './types';
 
+export function setEnabled(enabled: boolean): Promise<BlockerState | null> {
+  return requestMutation({ kind: 'setEnabled', enabled });
+}
+
 export function blockVideo(entry: VideoEntry): Promise<BlockerState | null> {
   return requestMutation({ kind: 'blockVideo', entry });
 }
