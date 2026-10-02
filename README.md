@@ -35,18 +35,18 @@ bun run build
 ## Development
 
 ```sh
-bun run watch             # rebuild JS + copy HTML/CSS/manifests on change (both browsers)
+bun run build:chrome
+bun run build:firefox
+bun run check             # Biome lint + format check
+bun run check:fix         # Biome lint + format, writing fixes
+bun run lint:webext       # web-ext lint on dist/firefox
+bun run release           # cog bump --auto: tag + changelog, syncs package.json
 bun run test              # Vitest unit tests
 bun run test:coverage     # Vitest with coverage report
 bun run test:e2e          # Playwright extension smoke test (needs dist/chrome)
 bun run typecheck         # tsc --noEmit
 bun run typecheck:watch   # continuous type-check (run alongside watch)
-bun run check             # Biome lint + format check
-bun run check:fix         # Biome lint + format, writing fixes
-bun run lint:webext       # web-ext lint on dist/firefox
-bun run build:chrome
-bun run build:firefox
-bun run release           # cog bump --auto: tag + changelog, syncs package.json
+bun run watch             # rebuild JS + copy HTML/CSS/manifests on change (both browsers)
 ```
 
 `bun run test:e2e` needs the Playwright Chromium build once: `bunx playwright install chromium`.
