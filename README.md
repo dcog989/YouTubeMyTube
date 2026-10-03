@@ -2,6 +2,8 @@
 
 Firefox extension to block videos, channels, users, Shorts and comments on YouTube.
 
+Get it here: <https://addons.mozilla.org/en-GB/firefox/addon/youtubemytube/>
+
 Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarativeNetRequest` for direct navigation. It does not depend on YouTube's internal renderer schemas or inject into the page's JavaScript, keeping it resilient to YouTube UI changes.
 
 ![screenshot](assets/screen-1.webp)
@@ -23,6 +25,8 @@ Built on a Manifest V3 WebExtension DOM/CSS-first architecture with `declarative
 - Light/dark/system theme.
 
 ## Install
+
+From AMO: <https://addons.mozilla.org/en-GB/firefox/addon/youtubemytube/>
 
 Build and load unpacked:
 
@@ -92,9 +96,7 @@ AMO requires the extension to already exist: it needs the `browser_specific_sett
 
 ## Privacy
 
-YouTubeMyTube collects no personal data and sends nothing to the developer; settings are stored
-locally and the only network requests go directly to YouTube to resolve public metadata. See
-[PRIVACY.md](PRIVACY.md) for the full policy.
+YouTubeMyTube collects no personal data and sends nothing to the developer; settings are stored locally and the only network requests go directly to YouTube to resolve public metadata. See [PRIVACY.md](PRIVACY.md) for the full policy.
 
 ## License
 
