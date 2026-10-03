@@ -87,11 +87,23 @@ describe('channelMatches', () => {
     expect(channelMatches(named, { name: 'Someone Else' })).toBe(false);
   });
 
-  it('does not match by name when the entry has an id or handle', () => {
-    expect(channelMatches({ id: 'UC1', name: 'Music', handle: '' }, { name: 'Music' })).toBe(false);
+  it('falls back to the name for a name-only lookup', () => {
+    expect(channelMatches({ id: 'UC1', name: 'Music', handle: '' }, { name: 'Music' })).toBe(true);
     expect(channelMatches({ id: '', name: 'Music', handle: 'music' }, { name: 'Music' })).toBe(
-      false,
+      true,
     );
+  });
+
+  it('does not name-match when the lookup and entry are both strong', () => {
+    expect(
+      channelMatches({ id: 'UC1', name: 'Music', handle: '' }, { id: 'UC2', name: 'Music' }),
+    ).toBe(false);
+    expect(
+      channelMatches(
+        { id: '', name: 'Music', handle: 'music' },
+        { handle: 'other', name: 'Music' },
+      ),
+    ).toBe(false);
   });
 });
 
