@@ -52,13 +52,24 @@ function reasonKey(reason: Reason): string {
 
 function findPlayerBox(): HTMLElement | null {
   let fallback: HTMLElement | null = null;
-  for (const selector of PLAYER_BOX_SELECTORS) {
-    const found = deepQuery(selector);
-    if (!found) continue;
+  const consider = (found: HTMLElement | null): HTMLElement | null => {
+    if (!found) return null;
     const rect = found.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) return found;
     fallback ??= found;
+    return null;
+  };
+
+  for (const selector of PLAYER_BOX_SELECTORS) {
+    const found = consider(document.querySelector<HTMLElement>(selector));
+    if (found) return found;
   }
+
+  for (const selector of PLAYER_BOX_SELECTORS) {
+    const found = consider(deepQuery<HTMLElement>(selector));
+    if (found) return found;
+  }
+
   return fallback;
 }
 
