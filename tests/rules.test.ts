@@ -53,7 +53,7 @@ describe('compileRules', () => {
     expect(rules.channelNames.size).toBe(1);
   });
 
-  it('ignores names on channels that have an id or handle', () => {
+  it('collects names even on channels that have an id or handle', () => {
     const rules = compileRules({
       ...defaultRules(),
       channels: [
@@ -61,7 +61,8 @@ describe('compileRules', () => {
         { id: '', name: 'Music', handle: 'somehandle' },
       ],
     });
-    expect(rules.channelNames.size).toBe(0);
+    expect(rules.channelNames.has('music')).toBe(true);
+    expect(rules.channelNames.size).toBe(1);
   });
 });
 

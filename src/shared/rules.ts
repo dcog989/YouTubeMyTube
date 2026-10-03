@@ -17,10 +17,8 @@ export function compileRules(rules: FilterRules): CompiledRules {
     const channelHandle = normalizeHandle(handle);
     if (isActiveEntry(channelId)) channelIds.add(channelId);
     if (isActiveEntry(channelHandle)) handles.add(channelHandle);
-    if (!isActiveEntry(channelId) && !isActiveEntry(channelHandle)) {
-      const channelName = normalizeChannelName(name);
-      if (channelName) channelNames.add(channelName);
-    }
+    const channelName = normalizeChannelName(name);
+    if (channelName) channelNames.add(channelName);
   }
 
   return {

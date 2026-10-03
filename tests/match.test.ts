@@ -34,6 +34,13 @@ describe('matchEntity', () => {
     expect(matchEntity({ channelName: 'Rick Astley Tribute' }, rules).blocked).toBe(false);
   });
 
+  it('blocks names from resolved channel entries that also carry an id', () => {
+    const rules = rulesWith({
+      channels: [{ id: 'UC1', name: 'Rick Astley', handle: 'RickAstley' }],
+    });
+    expect(matchEntity({ channelName: 'Rick Astley' }, rules).blocked).toBe(true);
+  });
+
   it('matches channel filters against handles', () => {
     const rules = rulesWith({ channelFilters: ['somehandle'] });
     expect(matchEntity({ handle: 'SomeHandle' }, rules).blocked).toBe(true);
