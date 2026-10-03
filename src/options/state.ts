@@ -44,6 +44,12 @@ export function setDirty(value: boolean): void {
   dirty = value;
   byId('dirty').hidden = !value;
   save.disabled = !value;
+  byId<HTMLButtonElement>('discard').disabled = !value;
+}
+
+export function discardChanges(): void {
+  if (!dirty || savedSnapshot === '') return;
+  adoptState(JSON.parse(savedSnapshot) as BlockerState);
 }
 
 function showConflict(): void {

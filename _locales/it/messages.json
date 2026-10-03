@@ -27,6 +27,7 @@
 
   "unsavedChanges": { "message": "Modifiche non salvate" },
   "save": { "message": "Salva" },
+  "discard": { "message": "Annulla modifiche" },
   "reload": { "message": "Ricarica" },
   "conflictWarning": {
     "message": "Le impostazioni sono cambiate in un'altra scheda o dal menu di YouTube. Ricarica per conservarle o salva per sovrascriverle."

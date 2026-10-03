@@ -15,6 +15,7 @@ import { selectPanel } from './dom';
 import { syncPatternEditors, wirePatternEditors } from './patterns';
 import {
   commit,
+  discardChanges,
   getDraft,
   handleExternalChange,
   isDirty,
@@ -105,6 +106,8 @@ function wireStatic(): void {
       populate();
     })();
   });
+
+  byId('discard').addEventListener('click', discardChanges);
 
   onLocalStorageChanged(handleExternalChange);
   byId('conflict-reload').addEventListener('click', reloadExternal);

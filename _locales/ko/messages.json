@@ -27,6 +27,7 @@
 
   "unsavedChanges": { "message": "저장되지 않은 변경 사항" },
   "save": { "message": "저장" },
+  "discard": { "message": "변경 사항 취소" },
   "reload": { "message": "새로고침" },
   "conflictWarning": {
     "message": "다른 탭이나 YouTube 메뉴에서 설정이 변경되었습니다. 유지하려면 새로고침하고, 덮어쓰려면 저장하세요."
