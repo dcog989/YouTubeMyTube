@@ -5,7 +5,8 @@ import { normalizeChannelName, normalizeHandle } from './url';
 const MAX_MATCH_LENGTH = 4096;
 
 function matchesAny(patterns: RegExp[], value: string): boolean {
-  return patterns.some((pattern) => pattern.test(value.slice(0, MAX_MATCH_LENGTH)));
+  const bounded = value.slice(0, MAX_MATCH_LENGTH);
+  return patterns.some((pattern) => pattern.test(bounded));
 }
 
 export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
