@@ -23,8 +23,12 @@ export function createOwnerTracker(): OwnerTracker {
   }
 
   function expandedOwner(): Element | null {
-    const expanded = document.querySelector('[aria-expanded="true"]');
-    return expanded ? ownerFrom(expanded) : null;
+    for (const expanded of document.querySelectorAll('[aria-expanded="true"]')) {
+      if (!closestAcrossShadow(expanded, MENU_TRIGGER_SELECTOR)) continue;
+      const owner = ownerFrom(expanded);
+      if (owner) return owner;
+    }
+    return null;
   }
 
   function resolve(container: MenuContainer): Element | null {
@@ -34,12 +38,9 @@ export function createOwnerTracker(): OwnerTracker {
       if (owner) return owner;
     }
 
-    const expanded = expandedOwner();
-    if (expanded) return expanded;
-
     if (lastTarget?.isConnected) return lastTarget;
 
-    return null;
+    return expandedOwner();
   }
 
   function track(event: MouseEvent, onItem: (element: Element) => void): void {
