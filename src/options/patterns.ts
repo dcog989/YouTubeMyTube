@@ -3,10 +3,17 @@ import { t } from '../shared/i18n';
 import { invalidPatterns, sortEntries } from '../shared/patterns';
 import { byId } from '../shared/ui';
 import { updateCounts } from './counts';
-import { arrayToLines, autoGrowTextarea, linesToArray } from './dom';
+import { arrayToLines, autoGrowTextarea, createDebounced, linesToArray } from './dom';
 import { getDraft, setDirty } from './state';
 
+const PATTERN_UPDATE_DELAY_MS = 200;
+
 const patternEditors = new Map<PatternFilterKey, HTMLTextAreaElement>();
+
+const schedulePatternUpdates = createDebounced(() => {
+  updateCounts();
+  updatePatternWarnings();
+}, PATTERN_UPDATE_DELAY_MS);
 
 function updatePatternWarnings(): void {
   const draft = getDraft();
@@ -32,16 +39,14 @@ export function wirePatternEditors(): void {
     const textarea = byId<HTMLTextAreaElement>(`input-${key}`);
     textarea.addEventListener('input', () => {
       getDraft().rules[key] = linesToArray(textarea.value);
-      updateCounts();
-      updatePatternWarnings();
       setDirty(true);
       autoGrowTextarea(textarea);
+      schedulePatternUpdates.schedule();
     });
     textarea.addEventListener('blur', () => {
-      if (alphabetize(key, textarea)) {
-        updateCounts();
-        setDirty(true);
-      }
+      schedulePatternUpdates.cancel();
+      if (alphabetize(key, textarea)) setDirty(true);
+      updateCounts();
       updatePatternWarnings();
       autoGrowTextarea(textarea);
     });
@@ -50,6 +55,7 @@ export function wirePatternEditors(): void {
 }
 
 export function syncPatternEditors(): void {
+  schedulePatternUpdates.cancel();
   const draft = getDraft();
   for (const key of PATTERN_FILTER_KEYS) {
     const editor = patternEditors.get(key);

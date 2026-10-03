@@ -17,6 +17,29 @@ export function autoGrowTextarea(textarea: HTMLTextAreaElement): void {
   textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
+export interface Debounced {
+  schedule(): void;
+  cancel(): void;
+}
+
+export function createDebounced(run: () => void, delayMs: number): Debounced {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  return {
+    schedule() {
+      if (timer !== null) clearTimeout(timer);
+      timer = setTimeout(() => {
+        timer = null;
+        run();
+      }, delayMs);
+    },
+    cancel() {
+      if (timer === null) return;
+      clearTimeout(timer);
+      timer = null;
+    },
+  };
+}
+
 export function setStatus(id: string, message: string, ok: boolean): void {
   const target = byId(id);
   target.hidden = message === '';
