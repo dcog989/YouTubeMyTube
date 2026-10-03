@@ -2,6 +2,41 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.16.0 - 2026-10-03
+#### Features
+- (**options**) add a discard changes button beside save - (bef907f) - dcog989
+- (**options**) pulse the save button when changes activate it - (c28c077) - dcog989
+#### Bug Fixes
+- (**content**) catch late hydration, page titles and recycled-card changes - (bf475b6) - dcog989
+- (**content**) pick menu owner from active trigger and last target - (54fabb8) - dcog989
+- (**content**) back off repeated failed channel lookups in menu - (2c44566) - dcog989
+- (**content**) remove ytb-blank-player class in blank cover clear - (d700910) - dcog989
+- (**content,shared**) scope shorts context, upgrade name-only channels, recover DNR sync, keep filter comments - (380559c) - dcog989
+- (**options**) keep changes dirty and report when save fails - (9ac02aa) - dcog989
+- (**options**) stage reset as draft instead of committing defaults - (024061e) - dcog989
+- (**options**) keep onboarding dismissed when importing a backup - (358a690) - dcog989
+#### Performance Improvements
+- (**content**) fast-path channel hrefs and dedupe nested card entities - (16374fc) - dcog989
+- (**dnr**) use urlFilter for channel id and handle rules to spare the regex cap - (4c322e6) - dcog989
+- (**match**) slice pattern input once before testing - (84eb685) - dcog989
+- (**menu**) skip owner lookup when no menu containers batched - (2cf7a0d) - dcog989
+- (**options**) debounce pattern warning and DNR count recomputation - (061e71d) - dcog989
+- (**overlay**) resolve player box light-DOM-first before shadow walks - (a0ddc0c) - dcog989
+#### Documentation
+- readme more refined - (6e8fcef) - dcog989
+- readme refined - (c6ada1a) - dcog989
+- correct and condense readme - (2380f3a) - dcog989
+- add amo links to readme - (a392fb6) - dcog989
+#### Continuous Integration
+- (**release**) remove disabled AMO signing step - (8cfe529) - dcog989
+#### Miscellaneous Chores
+- remove release script - (715fefb) - dcog989
+- update screenshots - (8fbeaea) - dcog989
+#### Style
+- (**options**) reorder onboarding help/btn overrides after base rules - (371b08a) - dcog989
+
+- - -
+
 ## 0.15.1 - 2026-10-02
 #### Bug Fixes
 - (**normalize**) normalize channel handles on state load - (e34d84e) - dcog989
