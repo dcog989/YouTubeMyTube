@@ -42,7 +42,17 @@ export const TITLE_SELECTORS = [
   'h3 a',
 ];
 
-export const TITLE_SELECTOR = TITLE_SELECTORS.join(',');
+export const PAGE_TITLE_SELECTORS = [
+  'ytd-watch-metadata #title h1 yt-formatted-string',
+  'ytd-watch-metadata #title h1',
+  'h1.ytd-watch-metadata yt-formatted-string',
+  'h1.ytd-watch-metadata',
+  'ytm-slim-video-metadata-renderer h2',
+  'ytd-reel-video-renderer[is-active] #video-title',
+  'ytd-reel-video-renderer[is-active] yt-formatted-string',
+];
+
+export const PAGE_TITLE_SCOPE_SELECTOR = PAGE_TITLE_SELECTORS.join(',');
 
 export const CHANNEL_TEXT_SELECTORS = [
   'ytd-channel-name a',
@@ -60,6 +70,8 @@ export const OWNER_SCOPES = [
   'ytd-watch-metadata',
   'ytd-video-primary-info-renderer',
 ];
+
+export const OWNER_SCOPE_SELECTOR = OWNER_SCOPES.join(',');
 
 export const CHANNEL_LINK_SELECTORS = [
   'ytd-channel-name a[href]',

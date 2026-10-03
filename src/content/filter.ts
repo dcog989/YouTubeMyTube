@@ -2,6 +2,7 @@ import { matchEntity } from '../shared/match';
 import { hasCommentRules } from '../shared/rules';
 import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { createBatcher } from './batch';
+import { closestAcrossShadow } from './dom';
 import { cardEntity, commentEntity } from './entity';
 import { CARD_SELECTOR, COMMENT_SELECTOR, HIDDEN_CLASS } from './entity-selectors';
 import type { Store } from './store';
@@ -69,9 +70,9 @@ export function createFilterEngine(deps: { store: Store; evaluate(): void }): Fi
   }
 
   function processSubtree(root: Element, state: BlockerState, compiled: CompiledRules): void {
-    const card = root.closest(CARD_SELECTOR);
+    const card = closestAcrossShadow(root, CARD_SELECTOR);
     if (card) processNode(card, state, compiled);
-    const comment = root.closest(COMMENT_SELECTOR);
+    const comment = closestAcrossShadow(root, COMMENT_SELECTOR);
     if (comment) processNode(comment, state, compiled);
 
     root.querySelectorAll(CARD_SELECTOR).forEach((node) => {

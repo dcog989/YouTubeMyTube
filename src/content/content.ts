@@ -4,11 +4,12 @@ import { onRuntimeMessage } from '../shared/runtime';
 import { loadState, onLocalStorageChanged } from '../shared/state';
 import type { BlockerState } from '../shared/types';
 import { applyAreas } from './apply-areas';
+import { forEachShadowRoot } from './dom';
 import { currentContext } from './entity';
 import { createEvaluator } from './evaluate';
 import { createFilterEngine } from './filter';
 import { createMenuInjector } from './menu';
-import { onAddedElements } from './observer';
+import { type ElementChange, onElementChanges } from './observer';
 import { createOverlayFeedback } from './overlay';
 import { createPlaybackGuard } from './playback';
 import { store } from './store';
@@ -26,9 +27,18 @@ async function init(): Promise<void> {
     filter.rescan();
   }
 
-  onAddedElements(document.documentElement, (nodes) => {
+  function handleChange({ added, changed }: ElementChange): void {
+    const nodes = [...added, ...changed];
     for (const node of nodes) filter.schedule(node);
-  });
+    for (const node of added) {
+      forEachShadowRoot(node, (shadow) => {
+        onElementChanges(shadow, handleChange);
+      });
+    }
+    evaluator.onMutation(nodes);
+  }
+
+  onElementChanges(document.documentElement, handleChange);
 
   onRuntimeMessage((message, _sender, sendResponse) => {
     if (!message || typeof message !== 'object') return;

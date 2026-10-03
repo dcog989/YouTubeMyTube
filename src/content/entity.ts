@@ -1,15 +1,18 @@
 import type { Entity, ParsedUrl } from '../shared/types';
 import { normalizeHandle, parseYouTubeUrl } from '../shared/url';
-import { deepQuery, forEachShadowRoot } from './dom';
+import { closestAcrossShadow, deepQuery, forEachShadowRoot } from './dom';
 import {
   CHANNEL_HEADER_SELECTORS,
   CHANNEL_LINK_SELECTORS,
   CHANNEL_PAGE_NAME_SELECTORS,
   CHANNEL_TEXT_SELECTORS,
   METADATA_SELECTOR,
+  OWNER_SCOPE_SELECTOR,
   OWNER_SCOPES,
+  PAGE_TITLE_SCOPE_SELECTOR,
+  PAGE_TITLE_SELECTORS,
   SHADOW_ANCHOR_HOST_SELECTOR,
-  TITLE_SELECTOR,
+  TITLE_SELECTORS,
 } from './entity-selectors';
 
 function textOf(element: Element | null): string {
@@ -63,8 +66,11 @@ function titleOf(card: Element): string {
   const titled = card.querySelector('a[title]');
   const attr = titled?.getAttribute('title')?.trim();
   if (attr) return attr;
-  const value = textOf(deepQuery(TITLE_SELECTOR, card));
-  return value || textOf(card).slice(0, 300);
+  for (const selector of TITLE_SELECTORS) {
+    const value = textOf(deepQuery(selector, card));
+    if (value) return value;
+  }
+  return '';
 }
 
 function applyParsed(entity: Entity, parsed: ParsedUrl): void {
@@ -194,6 +200,14 @@ function channelNameForPage(page: ParsedUrl): string {
   return '';
 }
 
+export function isInOwnerScope(node: Element): boolean {
+  return Boolean(closestAcrossShadow(node, OWNER_SCOPE_SELECTOR));
+}
+
+export function isInPageTitleScope(node: Element): boolean {
+  return Boolean(closestAcrossShadow(node, PAGE_TITLE_SCOPE_SELECTOR));
+}
+
 export function currentContext(): Entity {
   const entity: Entity = {};
   const page = parseYouTubeUrl(window.location.href);
@@ -209,6 +223,8 @@ export function currentContext(): Entity {
     }
     const name = channelNameIn(owner ?? scope);
     if (name) entity.channelName = name;
+    const title = firstText(document, PAGE_TITLE_SELECTORS);
+    if (title) entity.title = title;
     return entity;
   }
 
