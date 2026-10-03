@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.16.2 - 2026-10-03
+#### Bug Fixes
+- (**ci**) pin cocogitto-action to v4.2.0 so cog 7 parses cog.toml - (77db87a) - dcog989
+
+- - -
+
 ## 0.16.1 - 2026-10-03
 #### Bug Fixes
 - (**match**) hide comments authored by blocked channels - (ec540bd) - dcog989

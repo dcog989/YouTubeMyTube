@@ -1,6 +1,6 @@
 {
   "name": "youtubemytube",
-  "version": "0.16.1",
+  "version": "0.16.2",
   "private": true,
   "type": "module",
   "description": "YouTube content blocker",
