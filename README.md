@@ -60,7 +60,7 @@ Temporary load it in Firefox: `about:debugging#/runtime/this-firefox` → Load T
 
 ### Release and publish
 
-Pushing a version tag triggers the release workflow, which rebuilds the archives and attaches them to a GitHub Release. AMO publishing is currently disabled until the `AMO_JWT_ISSUER` / `AMO_JWT_SECRET` repository secrets are configured and the add-on ID from `manifests/firefox.json` is registered.
+Pushing a version tag triggers the release workflow, which rebuilds the archives and attaches them to a GitHub Release. Upload the built archive to AMO manually.
 
 ---
 

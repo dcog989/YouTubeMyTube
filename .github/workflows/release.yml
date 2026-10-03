@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   publish:
-    name: Publish to stores
+    name: Publish release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -18,18 +18,6 @@ jobs:
       - run: bun run check
       - run: bun run test
       - run: SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) bun run build
-
-      # Disabled: no AMO JWT API credentials. Re-enable when secrets are added.
-      # - name: Sign and upload to Firefox (AMO)
-      #   run: >-
-      #     bunx web-ext sign
-      #     --source-dir dist/firefox
-      #     --channel listed
-      #     --api-key "$AMO_JWT_ISSUER"
-      #     --api-secret "$AMO_JWT_SECRET"
-      #   env:
-      #     AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
-      #     AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
 
       - uses: softprops/action-gh-release@v3
         with:

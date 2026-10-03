@@ -60,7 +60,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `scripts/gen-icons.mjs` — generates the PNG icons from a vector description.
 - `tests/` — Vitest suites for the pure logic (`vitest.config.ts` limits the run to this directory).
 - `.github/workflows/ci.yml` — CI: install, check, typecheck, unit tests with coverage thresholds, build, `web-ext lint`, `bun audit`, artifacts.
-- `.github/workflows/release.yml` — tag-triggered AMO publish and GitHub Release.
+- `.github/workflows/release.yml` — tag-triggered GitHub Release (archives attached).
 - `.github/dependabot.yml` — GitHub Actions version updates (npm/Bun deps are updated locally).
 
 ### Workflow
@@ -71,7 +71,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - Typecheck: `npm run typecheck` (or `npm run typecheck:watch` alongside `npm run watch`); `checkJs` covers the `.mjs` build scripts too.
 - Build: `npm run build` (or `npm run build:firefox`); writes the store zip plus the AMO source archive to `dist/`. Set `SOURCE_DATE_EPOCH` for reproducible archives.
 - Lint: `npm run check` (Biome, HTML included; `npm run check:fix` to write). Config: `biome.json`. Firefox validation: `npm run lint:webext` (`web-ext lint`).
-- Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit. Pushing the tag publishes via `release.yml` (secrets listed in `README.md`).
+- Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit. Pushing the tag publishes via `release.yml`; AMO upload is manual.
 - Commit messages: Conventional Commits, enforced by Lefthook + Cocogitto (`cog.toml`). Cocogitto is a system binary, not an npm dependency.
 
 ### Common Patterns
