@@ -33,9 +33,17 @@ export function notify(): void {
 }
 
 export function setDirty(value: boolean): void {
+  const save = byId<HTMLButtonElement>('save');
+  if (value && !dirty) {
+    save.classList.remove('is-attention');
+    void save.offsetWidth;
+    save.classList.add('is-attention');
+  } else if (!value) {
+    save.classList.remove('is-attention');
+  }
   dirty = value;
   byId('dirty').hidden = !value;
-  byId<HTMLButtonElement>('save').disabled = !value;
+  save.disabled = !value;
 }
 
 function showConflict(): void {

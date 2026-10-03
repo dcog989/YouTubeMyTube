@@ -351,6 +351,25 @@ textarea:focus {
   border-color: var(--accent-hover);
 }
 
+@keyframes save-attention {
+  0% {
+    box-shadow: 0 0 0 0 var(--accent);
+  }
+  100% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+}
+
+.btn.is-attention {
+  animation: save-attention 1.6s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn.is-attention {
+    animation: none;
+  }
+}
+
 .btn-danger {
   color: var(--danger);
 }
