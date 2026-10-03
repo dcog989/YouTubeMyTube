@@ -187,6 +187,7 @@ export function createBlankCover(options: {
   }
 
   function clear(): void {
+    document.documentElement.classList.remove(VIDEO_BLANK_CLASS);
     lease?.release();
     lease = null;
     window.removeEventListener('resize', schedulePlace, true);
