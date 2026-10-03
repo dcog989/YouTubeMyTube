@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.16.1 - 2026-10-03
+#### Bug Fixes
+- (**match**) hide comments authored by blocked channels - (ec540bd) - dcog989
+- (**match**) hide name-only cards for channels blocked with a resolved id - (7f7cfa4) - dcog989
+- (**popup**) let a channel name alone enable and drive the channel block - (155d155) - dcog989
+- (**rules**) fall back to channel name when the lookup is name-only - (72b6fc6) - dcog989
+- (**unblock**) offer remove for channels matched by display name - (9fe381b) - dcog989
+#### Continuous Integration
+- (**release**) build release body from cog changelog - (72f7d7b) - dcog989
+
+- - -
+
 ## 0.16.0 - 2026-10-03
 #### Features
 - (**options**) add a discard changes button beside save - (bef907f) - dcog989
