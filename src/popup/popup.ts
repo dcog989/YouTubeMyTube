@@ -45,11 +45,11 @@ function renderContext(): void {
   const videoButton = byId<HTMLButtonElement>('block-video');
   const channelButton = byId<HTMLButtonElement>('block-channel');
 
-  const { videoId, channelId, handle } = activeContext;
-  const hasChannel = channelId !== null || handle !== null;
+  const { videoId, channelId, handle, channelName } = activeContext;
+  const hasChannel = channelId !== null || handle !== null || channelName !== null;
   context.hidden = !videoId && !hasChannel;
   videoButton.disabled = videoId === null || hasVideoId(state.rules, videoId);
-  const channel = findChannel(state.rules, { id: channelId, handle });
+  const channel = findChannel(state.rules, { id: channelId, handle, name: channelName });
   channelButton.disabled = !hasChannel || channel !== undefined;
 }
 
@@ -73,7 +73,7 @@ async function detectActiveTab(): Promise<void> {
     if (context?.channelName) activeContext.channelName = context.channelName;
   }
 
-  const { videoId, channelId, handle } = activeContext;
+  const { videoId, channelId, handle, channelName } = activeContext;
   const label = byId('context-label');
   if (videoId) {
     label.textContent = t('contextVideo', videoId);
@@ -81,6 +81,8 @@ async function detectActiveTab(): Promise<void> {
     label.textContent = t('contextChannel', channelId);
   } else if (handle) {
     label.textContent = t('contextChannelHandle', handle);
+  } else if (channelName) {
+    label.textContent = t('contextChannel', channelName);
   }
 
   renderContext();
@@ -107,7 +109,7 @@ function registerHandlers(): void {
 
   byId('block-channel').addEventListener('click', () => {
     const { channelId, handle, channelName } = activeContext;
-    if (!channelId && !handle) return;
+    if (!channelId && !handle && !channelName) return;
     void applyMutation(
       blockChannel({ id: channelId ?? '', name: channelName ?? '', handle: handle ?? '' }),
     );
