@@ -23,7 +23,7 @@ jobs:
 
       - name: Generate release notes
         id: cog
-        uses: cocogitto/cocogitto-action@v4
+        uses: cocogitto/cocogitto-action@v4.2.0
         with:
           command: changelog
           args: --at ${{ github.ref_name }}
