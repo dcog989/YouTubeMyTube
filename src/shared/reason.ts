@@ -6,7 +6,7 @@ export interface Reason {
   value: string;
 }
 
-export type RuleRefKind = 'video' | 'channel' | 'handle';
+export type RuleRefKind = 'video' | 'channel' | 'handle' | 'name';
 
 export interface RuleRef {
   kind: RuleRefKind;
@@ -50,6 +50,11 @@ const REASONS = {
   channelName: {
     pattern: /^channel filter "([\s\S]*)"$/,
     format: (value) => `channel filter "${value}"`,
+  },
+  channelNameRule: {
+    pattern: /^blocked channel name ([\s\S]+)$/,
+    format: (value) => `blocked channel name ${value}`,
+    ref: (value) => ({ kind: 'name', value }),
   },
   comment: {
     pattern: /^comment filter "([\s\S]*)"$/,

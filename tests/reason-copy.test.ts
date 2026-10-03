@@ -10,6 +10,9 @@ describe('reasonLabel', () => {
     expect(reasonLabel({ kind: 'channelName', value: 'x' }, 'fallback')).toBe(
       'This channel is blocked.',
     );
+    expect(reasonLabel({ kind: 'channelNameRule', value: 'x' }, 'fallback')).toBe(
+      'This channel is blocked.',
+    );
     expect(reasonLabel({ kind: 'area', value: 'homePage' }, 'fallback')).toBe(
       'This page is blocked.',
     );
@@ -26,6 +29,7 @@ describe('reasonDetail', () => {
     expect(reasonDetail({ kind: 'handle', value: 'FooBar' })).toBe('Blocked channel: @foobar');
     expect(reasonDetail({ kind: 'title', value: 'x' })).toBe('Blocked title: x');
     expect(reasonDetail({ kind: 'channelName', value: 'x' })).toBe('Blocked channel name: x');
+    expect(reasonDetail({ kind: 'channelNameRule', value: 'x' })).toBe('Blocked channel name: x');
     expect(reasonDetail({ kind: 'comment', value: 'x' })).toBe('Blocked comment: x');
     expect(reasonDetail({ kind: 'area', value: 'shortsPage' })).toBe('Blocked page: shortsPage');
   });

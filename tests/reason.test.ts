@@ -9,6 +9,7 @@ describe('formatReason / parseReason', () => {
       { kind: 'handle', value: 'somechannel' },
       { kind: 'title', value: 'clickbait' },
       { kind: 'channelName', value: 'Drama Daily' },
+      { kind: 'channelNameRule', value: 'Drama Daily' },
       { kind: 'comment', value: 'free crypto' },
       { kind: 'area', value: 'shortsPage' },
     ];

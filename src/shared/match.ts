@@ -25,13 +25,13 @@ export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
   if (entity.channelName) {
     const name = normalizeChannelName(entity.channelName);
     if (name && rules.channelNames.has(name)) {
-      return { blocked: true, reason: { kind: 'channelName', value: entity.channelName } };
+      return { blocked: true, reason: { kind: 'channelNameRule', value: entity.channelName } };
     }
   }
   if (entity.commentAuthor) {
     const author = normalizeChannelName(entity.commentAuthor);
     if (author && rules.channelNames.has(author)) {
-      return { blocked: true, reason: { kind: 'channelName', value: entity.commentAuthor } };
+      return { blocked: true, reason: { kind: 'channelNameRule', value: entity.commentAuthor } };
     }
   }
   if (entity.title && matchesAny(rules.titleFilters, entity.title)) {

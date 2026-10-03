@@ -12,5 +12,6 @@ export function ruleRefForReason(reason: Reason | null): RuleRef | null {
 export function removeRule(rules: FilterRules, ref: RuleRef): boolean {
   if (ref.kind === 'video') return removeVideo(rules, ref.value);
   if (ref.kind === 'channel') return removeChannel(rules, { id: ref.value });
+  if (ref.kind === 'name') return removeChannel(rules, { name: ref.value });
   return removeChannel(rules, { handle: ref.value });
 }

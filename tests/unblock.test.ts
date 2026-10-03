@@ -3,7 +3,7 @@ import { defaultRules } from '../src/shared/defaults';
 import { removeRule, ruleRefForReason } from '../src/shared/unblock';
 
 describe('ruleRefForReason', () => {
-  it('maps exact video, channel and handle reasons', () => {
+  it('maps exact video, channel, handle and name reasons', () => {
     expect(ruleRefForReason({ kind: 'video', value: 'dQw4w9WgXcQ' })).toEqual({
       kind: 'video',
       value: 'dQw4w9WgXcQ',
@@ -15,6 +15,10 @@ describe('ruleRefForReason', () => {
     expect(ruleRefForReason({ kind: 'handle', value: 'SomeChannel' })).toEqual({
       kind: 'handle',
       value: 'somechannel',
+    });
+    expect(ruleRefForReason({ kind: 'channelNameRule', value: 'Drama Daily' })).toEqual({
+      kind: 'name',
+      value: 'Drama Daily',
     });
   });
 
@@ -47,6 +51,13 @@ describe('removeRule', () => {
 
     rules.channels = [{ id: 'UC2', name: '', handle: '' }];
     expect(removeRule(rules, { kind: 'channel', value: 'UC2' })).toBe(true);
+    expect(rules.channels).toEqual([]);
+  });
+
+  it('removes a channel by its blocked display name', () => {
+    const rules = defaultRules();
+    rules.channels = [{ id: 'UC1', name: 'Drama Daily', handle: 'dramadaily' }];
+    expect(removeRule(rules, { kind: 'name', value: 'drama daily' })).toBe(true);
     expect(rules.channels).toEqual([]);
   });
 });

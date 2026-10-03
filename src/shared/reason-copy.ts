@@ -7,6 +7,7 @@ const LABELS: Partial<Record<ReasonKind, MessageKey>> = {
   channel: 'reasonChannelBlocked',
   handle: 'reasonChannelBlocked',
   channelName: 'reasonChannelBlocked',
+  channelNameRule: 'reasonChannelBlocked',
   area: 'reasonAreaBlocked',
 };
 
@@ -18,6 +19,10 @@ const DETAILS: Record<ReasonKind, Detail> = {
   handle: { key: 'reasonDetailHandle', substitute: (value) => normalizeHandle(value) || undefined },
   title: { key: 'reasonDetailTitle', substitute: (value) => value },
   channelName: {
+    key: 'reasonDetailChannelName',
+    substitute: (value) => value,
+  },
+  channelNameRule: {
     key: 'reasonDetailChannelName',
     substitute: (value) => value,
   },
