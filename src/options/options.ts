@@ -22,6 +22,7 @@ import {
   notify,
   reloadExternal,
   setDirty,
+  setDraft,
   subscribe,
 } from './state';
 import { testText, testUrl } from './tester';
@@ -127,7 +128,7 @@ function wireStatic(): void {
 
   byId('reset').addEventListener('click', () => {
     if (!confirm(t('confirmReset'))) return;
-    commit(defaultState());
+    setDraft(defaultState());
     notify();
     setDirty(true);
   });
