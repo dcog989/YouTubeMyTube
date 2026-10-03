@@ -28,6 +28,7 @@
   "unsavedChanges": { "message": "Niezapisane zmiany" },
   "save": { "message": "Zapisz" },
   "discard": { "message": "Odrzuć zmiany" },
+  "saveFailed": { "message": "Nie udało się zapisać zmian. Twoje zmiany pozostają niezapisane." },
   "reload": { "message": "Odśwież" },
   "conflictWarning": {
     "message": "Ustawienia zmieniono w innej karcie lub z menu YouTube. Odśwież, aby je zachować, albo zapisz, aby je nadpisać."

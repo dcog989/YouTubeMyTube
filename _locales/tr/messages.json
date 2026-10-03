@@ -28,6 +28,7 @@
   "unsavedChanges": { "message": "Kaydedilmemiş değişiklikler" },
   "save": { "message": "Kaydet" },
   "discard": { "message": "Değişiklikleri geri al" },
+  "saveFailed": { "message": "Değişiklikler kaydedilemedi. Düzenlemeleriniz hâlâ kaydedilmedi." },
   "reload": { "message": "Yeniden yükle" },
   "conflictWarning": {
     "message": "Ayarlar başka bir sekmede veya YouTube menüsünden değiştirildi. Korumak için yeniden yükleyin, üzerine yazmak için kaydedin."

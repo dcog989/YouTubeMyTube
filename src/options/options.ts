@@ -11,7 +11,7 @@ import { backfillMissing } from './backfill';
 import { addChannel, renderChannels, wireChannelSort } from './channels';
 import { updateCounts } from './counts';
 import { exportSettings, importSettings } from './data';
-import { selectPanel } from './dom';
+import { selectPanel, setStatus } from './dom';
 import { syncPatternEditors, wirePatternEditors } from './patterns';
 import {
   commit,
@@ -21,6 +21,7 @@ import {
   isDirty,
   notify,
   reloadExternal,
+  restoreSnapshot,
   setDirty,
   setDraft,
   subscribe,
@@ -101,8 +102,14 @@ function wireStatic(): void {
   byId('save').addEventListener('click', () => {
     void (async () => {
       const normalized = normalizeState(getDraft());
-      commit(normalized);
-      await requestMutation({ kind: 'replaceState', state: normalized });
+      const previous = commit(normalized);
+      const saved = await requestMutation({ kind: 'replaceState', state: normalized });
+      if (!saved) {
+        restoreSnapshot(previous);
+        setStatus('save-status', t('saveFailed'), false);
+        return;
+      }
+      setStatus('save-status', '', true);
       setDirty(false);
       populate();
     })();

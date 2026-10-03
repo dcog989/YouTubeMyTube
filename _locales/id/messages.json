@@ -28,6 +28,9 @@
   "unsavedChanges": { "message": "Perubahan belum disimpan" },
   "save": { "message": "Simpan" },
   "discard": { "message": "Buang perubahan" },
+  "saveFailed": {
+    "message": "Tidak dapat menyimpan perubahan. Perubahan Anda masih belum disimpan."
+  },
   "reload": { "message": "Muat ulang" },
   "conflictWarning": {
     "message": "Pengaturan berubah di tab lain atau dari menu YouTube. Muat ulang untuk mempertahankannya, atau simpan untuk menimpanya."

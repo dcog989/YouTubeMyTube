@@ -69,10 +69,16 @@ function adoptState(next: BlockerState): void {
   setDirty(false);
 }
 
-export function commit(next: BlockerState): void {
+export function commit(next: BlockerState): string {
+  const previous = savedSnapshot;
   draft = next;
   savedSnapshot = JSON.stringify(draft);
   hideConflict();
+  return previous;
+}
+
+export function restoreSnapshot(previous: string): void {
+  savedSnapshot = previous;
 }
 
 function differsOnlyByOnboarding(incoming: BlockerState): boolean {

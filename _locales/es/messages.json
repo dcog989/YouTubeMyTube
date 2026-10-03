@@ -28,6 +28,9 @@
   "unsavedChanges": { "message": "Cambios sin guardar" },
   "save": { "message": "Guardar" },
   "discard": { "message": "Descartar cambios" },
+  "saveFailed": {
+    "message": "No se pudieron guardar los cambios. Tus ediciones siguen sin guardarse."
+  },
   "reload": { "message": "Recargar" },
   "conflictWarning": {
     "message": "Los ajustes han cambiado en otra pestaña o desde el menú de YouTube. Recarga para conservarlos o guarda para sobrescribirlos."

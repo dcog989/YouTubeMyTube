@@ -28,6 +28,9 @@
   "unsavedChanges": { "message": "Modifications non enregistrées" },
   "save": { "message": "Enregistrer" },
   "discard": { "message": "Annuler les modifications" },
+  "saveFailed": {
+    "message": "Impossible d'enregistrer les modifications. Vos modifications restent non enregistrées."
+  },
   "reload": { "message": "Recharger" },
   "conflictWarning": {
     "message": "Les paramètres ont été modifiés dans un autre onglet ou depuis le menu YouTube. Rechargez pour les conserver ou enregistrez pour les écraser."

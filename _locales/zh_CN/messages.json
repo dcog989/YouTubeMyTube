@@ -28,6 +28,7 @@
   "unsavedChanges": { "message": "未保存的更改" },
   "save": { "message": "保存" },
   "discard": { "message": "放弃更改" },
+  "saveFailed": { "message": "无法保存更改。您的修改仍未保存。" },
   "reload": { "message": "重新加载" },
   "conflictWarning": {
     "message": "设置已在其他标签页或 YouTube 菜单中更改。重新加载以保留，或保存以覆盖。"

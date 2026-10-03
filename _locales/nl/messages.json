@@ -28,6 +28,9 @@
   "unsavedChanges": { "message": "Niet-opgeslagen wijzigingen" },
   "save": { "message": "Opslaan" },
   "discard": { "message": "Wijzigingen verwerpen" },
+  "saveFailed": {
+    "message": "Wijzigingen konden niet worden opgeslagen. Je bewerkingen blijven onopgeslagen."
+  },
   "reload": { "message": "Herladen" },
   "conflictWarning": {
     "message": "De instellingen zijn gewijzigd in een ander tabblad of via het YouTube-menu. Herlaad om ze te behouden, of sla op om ze te overschrijven."
