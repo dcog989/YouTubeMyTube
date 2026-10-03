@@ -28,6 +28,12 @@ export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
       return { blocked: true, reason: { kind: 'channelName', value: entity.channelName } };
     }
   }
+  if (entity.commentAuthor) {
+    const author = normalizeChannelName(entity.commentAuthor);
+    if (author && rules.channelNames.has(author)) {
+      return { blocked: true, reason: { kind: 'channelName', value: entity.commentAuthor } };
+    }
+  }
   if (entity.title && matchesAny(rules.titleFilters, entity.title)) {
     return { blocked: true, reason: { kind: 'title', value: entity.title } };
   }

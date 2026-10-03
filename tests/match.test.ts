@@ -59,6 +59,14 @@ describe('matchEntity', () => {
     expect(matchEntity({ commentContent: 'Nice video' }, rules).blocked).toBe(false);
   });
 
+  it('hides comments authored by a blocked channel name', () => {
+    const rules = rulesWith({
+      channels: [{ id: 'UC1', name: 'Rick Astley', handle: 'RickAstley' }],
+    });
+    expect(matchEntity({ commentAuthor: 'Rick Astley' }, rules).blocked).toBe(true);
+    expect(matchEntity({ commentAuthor: 'Rick Astley Tribute' }, rules).blocked).toBe(false);
+  });
+
   it('caps the tested string length', () => {
     const rules = rulesWith({ commentFilters: ['needle'] });
     expect(matchEntity({ commentContent: 'needle' }, rules).blocked).toBe(true);

@@ -8,11 +8,11 @@ import {
   compileRules,
   findChannel,
   findVideo,
-  hasCommentRules,
   hasVideoId,
   isChannelComplete,
   removeChannel,
   removeVideo,
+  scansComments,
 } from '../src/shared/rules';
 
 describe('compileRules', () => {
@@ -36,9 +36,14 @@ describe('compileRules', () => {
     expect(rules.commentFilters).toHaveLength(1);
   });
 
-  it('reports whether comment rules exist', () => {
-    expect(hasCommentRules(compileRules(defaultRules()))).toBe(false);
-    expect(hasCommentRules(compileRules({ ...defaultRules(), commentFilters: ['x'] }))).toBe(true);
+  it('reports whether comments need scanning', () => {
+    expect(scansComments(compileRules(defaultRules()))).toBe(false);
+    expect(scansComments(compileRules({ ...defaultRules(), commentFilters: ['x'] }))).toBe(true);
+    expect(
+      scansComments(
+        compileRules({ ...defaultRules(), channels: [{ id: 'UC1', name: '', handle: '' }] }),
+      ),
+    ).toBe(true);
   });
 
   it('collects normalized channel names for name-based matching', () => {

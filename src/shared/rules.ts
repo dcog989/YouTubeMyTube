@@ -32,8 +32,13 @@ export function compileRules(rules: FilterRules): CompiledRules {
   };
 }
 
-export function hasCommentRules(rules: CompiledRules): boolean {
-  return rules.commentFilters.length > 0;
+export function scansComments(rules: CompiledRules): boolean {
+  return (
+    rules.commentFilters.length > 0 ||
+    rules.channelIds.size > 0 ||
+    rules.handles.size > 0 ||
+    rules.channelNames.size > 0
+  );
 }
 
 export interface ChannelLookup {

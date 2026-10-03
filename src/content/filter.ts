@@ -1,5 +1,5 @@
 import { matchEntity } from '../shared/match';
-import { hasCommentRules } from '../shared/rules';
+import { scansComments } from '../shared/rules';
 import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { createBatcher } from './batch';
 import { closestAcrossShadow } from './dom';
@@ -72,7 +72,7 @@ export function createFilterEngine(deps: { store: Store; evaluate(): void }): Fi
       return;
     }
 
-    if (hasCommentRules(compiled) && node.matches(COMMENT_SELECTOR)) {
+    if (scansComments(compiled) && node.matches(COMMENT_SELECTOR)) {
       const entity = commentEntity(node);
       const key = entityKey(entity);
       if (key && seen.get(node) === key) return;
@@ -90,7 +90,7 @@ export function createFilterEngine(deps: { store: Store; evaluate(): void }): Fi
     root.querySelectorAll(CARD_SELECTOR).forEach((node) => {
       processNode(node, state, compiled);
     });
-    if (hasCommentRules(compiled)) {
+    if (scansComments(compiled)) {
       root.querySelectorAll(COMMENT_SELECTOR).forEach((node) => {
         processNode(node, state, compiled);
       });
@@ -123,7 +123,7 @@ export function createFilterEngine(deps: { store: Store; evaluate(): void }): Fi
       document.querySelectorAll(CARD_SELECTOR).forEach((node) => {
         processNode(node, state, compiled);
       });
-      if (hasCommentRules(compiled)) {
+      if (scansComments(compiled)) {
         document.querySelectorAll(COMMENT_SELECTOR).forEach((node) => {
           processNode(node, state, compiled);
         });
