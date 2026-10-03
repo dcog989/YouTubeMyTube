@@ -1,5 +1,5 @@
 import { MAX_DNR_REGEX_RULES } from '../shared/constants';
-import { countDnrRules } from '../shared/dnr';
+import { countRegexDnrRules } from '../shared/dnr';
 import { t } from '../shared/i18n';
 import { type RuleSummary, summarizeRules } from '../shared/normalize';
 import { byId } from '../shared/ui';
@@ -30,7 +30,7 @@ function formatCount(count: number): string {
 
 function updateDnrWarning(): void {
   const notice = byId('dnr-warning');
-  const dropped = Math.max(0, countDnrRules(getDraft()) - MAX_DNR_REGEX_RULES);
+  const dropped = Math.max(0, countRegexDnrRules(getDraft()) - MAX_DNR_REGEX_RULES);
   notice.hidden = dropped === 0;
   notice.textContent =
     dropped === 0

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MAX_DNR_REGEX_RULES } from '../src/shared/constants';
 import { defaultState } from '../src/shared/defaults';
-import { applyDnrRules, buildDnrRules, countDnrRules } from '../src/shared/dnr';
+import { applyDnrRules, buildDnrRules, countDnrRules, countRegexDnrRules } from '../src/shared/dnr';
 import type { ChannelEntry, VideoEntry } from '../src/shared/types';
 
 function stateWith(overrides: {
@@ -67,21 +67,26 @@ describe('buildDnrRules', () => {
     ]);
   });
 
-  it('marks handle rules as case-insensitive', () => {
+  it('uses a domain-anchored urlFilter for channel ids', () => {
+    const { rules } = buildDnrRules(stateWith({ channels: [channel('UC123')] }));
+    const rule = rules[0];
+    expect(rule?.condition.regexFilter).toBeUndefined();
+    expect(rule?.condition.urlFilter).toBe('||youtube.com/channel/UC123^');
+    expect(rule?.condition.isUrlFilterCaseSensitive).toBe(true);
+  });
+
+  it('uses a domain-anchored urlFilter for handles', () => {
     const { rules } = buildDnrRules(stateWith({ channels: [channel('', 'SomeChannel')] }));
     const rule = rules[0];
+    expect(rule?.condition.regexFilter).toBeUndefined();
+    expect(rule?.condition.urlFilter).toBe('||youtube.com/@SomeChannel^');
     expect(rule?.condition.isUrlFilterCaseSensitive).toBe(false);
-    const filter = rule?.condition.regexFilter ?? '';
-    expect(new RegExp(filter, 'i').test('https://www.youtube.com/@SOMECHANNEL')).toBe(true);
-    expect(new RegExp(filter, 'i').test('https://www.youtube.com/@another')).toBe(false);
   });
 
   it('percent-encodes non-ASCII handles to match the URL path', () => {
     const { rules } = buildDnrRules(stateWith({ channels: [channel('', 'カナル')] }));
-    const filter = rules[0]?.condition.regexFilter ?? '';
-    const url = `https://www.youtube.com/@${encodeURIComponent('カナル')}`;
-    expect(new RegExp(filter, 'i').test(url)).toBe(true);
-    expect(new RegExp(filter, 'i').test('https://www.youtube.com/@somechannel')).toBe(false);
+    const filter = rules[0]?.condition.urlFilter ?? '';
+    expect(filter).toBe(`||youtube.com/@${encodeURIComponent('カナル')}^`);
   });
 
   it('skips channels without an id or handle', () => {
@@ -135,6 +140,20 @@ describe('buildDnrRules', () => {
     expect(rules).toHaveLength(MAX_DNR_REGEX_RULES);
     expect(dropped).toBe(1);
   });
+
+  it('does not count urlFilter channel/handle rules against the regex cap', () => {
+    const videos = Array.from({ length: MAX_DNR_REGEX_RULES }, (_, index) => video(`v${index}`));
+    const channels = Array.from({ length: 5 }, (_, index) =>
+      channel(`UC${index}`, `handle${index}`),
+    );
+    const { rules, dropped } = buildDnrRules(stateWith({ videos, channels }));
+    expect(dropped).toBe(0);
+    expect(rules).toHaveLength(MAX_DNR_REGEX_RULES + 10);
+    expect(rules.filter((rule) => rule.condition.regexFilter !== undefined)).toHaveLength(
+      MAX_DNR_REGEX_RULES,
+    );
+    expect(rules.filter((rule) => rule.condition.urlFilter !== undefined)).toHaveLength(10);
+  });
 });
 
 describe('applyDnrRules', () => {
@@ -184,5 +203,16 @@ describe('countDnrRules', () => {
 
   it('counts nothing when disabled', () => {
     expect(countDnrRules(stateWith({ videos: [video('abc')], enabled: false }))).toBe(0);
+  });
+
+  it('counts only regex rules for the cap', () => {
+    const state = stateWith({
+      videos: [video('abc')],
+      channels: [channel('UC1', 'somechannel')],
+      trendingPage: true,
+    });
+    // video regex + trending area regex are the only regex rules
+    expect(countRegexDnrRules(state)).toBe(2);
+    expect(countDnrRules(state)).toBe(4);
   });
 });

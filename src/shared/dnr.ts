@@ -14,7 +14,8 @@ interface DnrRedirect {
 }
 
 interface DnrPlanEntry {
-  regexFilter: string;
+  regexFilter?: string;
+  urlFilter?: string;
   target: DnrRedirect;
   caseSensitive: boolean;
 }
@@ -25,6 +26,12 @@ export interface DnrBuild {
 }
 
 function redirectRule(id: number, entry: DnrPlanEntry): DnrRule {
+  const condition: browser.declarativeNetRequest._RuleCondition = {
+    isUrlFilterCaseSensitive: entry.caseSensitive,
+    resourceTypes: ['main_frame'],
+  };
+  if (entry.regexFilter !== undefined) condition.regexFilter = entry.regexFilter;
+  if (entry.urlFilter !== undefined) condition.urlFilter = entry.urlFilter;
   return {
     id,
     priority: 1,
@@ -32,11 +39,7 @@ function redirectRule(id: number, entry: DnrPlanEntry): DnrRule {
       type: 'redirect',
       redirect: entry.target,
     },
-    condition: {
-      regexFilter: entry.regexFilter,
-      isUrlFilterCaseSensitive: entry.caseSensitive,
-      resourceTypes: ['main_frame'],
-    },
+    condition,
   };
 }
 
@@ -45,12 +48,12 @@ function videoIdPattern(videoId: string): string {
   return `${YOUTUBE_HOST_PATTERN}/(?:watch\\?(?:[^#]*&)?v=${id}(?:[&#]|$)|(?:shorts|embed|live)/${id}(?:[/?#]|$))`;
 }
 
-function channelIdPattern(channelId: string): string {
-  return `${YOUTUBE_HOST_PATTERN}/channel/${escapeRegExp(channelId)}(?:[/?#]|$)`;
+function channelIdFilter(channelId: string): string {
+  return `||youtube.com/channel/${channelId}^`;
 }
 
-function handlePattern(handle: string): string {
-  return `${YOUTUBE_HOST_PATTERN}/${escapeRegExp(`@${encodeURIComponent(handle)}`)}(?:[/?#]|$)`;
+function handleFilter(handle: string): string {
+  return `||youtube.com/@${encodeURIComponent(handle)}^`;
 }
 
 function blockedPage(reason: string): DnrRedirect {
@@ -86,7 +89,7 @@ function planDnrRules(state: BlockerState): DnrPlanEntry[] {
     if (isActiveEntry(channelId)) {
       const reason = formatReason({ kind: 'channel', value: channelId });
       plan.push({
-        regexFilter: channelIdPattern(channelId),
+        urlFilter: channelIdFilter(channelId),
         target: blockedPage(reason),
         caseSensitive: true,
       });
@@ -94,7 +97,7 @@ function planDnrRules(state: BlockerState): DnrPlanEntry[] {
     if (isActiveEntry(handle)) {
       const reason = formatReason({ kind: 'handle', value: handle });
       plan.push({
-        regexFilter: handlePattern(handle),
+        urlFilter: handleFilter(handle),
         target: blockedPage(reason),
         caseSensitive: false,
       });
@@ -105,15 +108,28 @@ function planDnrRules(state: BlockerState): DnrPlanEntry[] {
 }
 
 export function buildDnrRules(state: BlockerState): DnrBuild {
-  const plan = planDnrRules(state);
-  const rules = plan
-    .slice(0, MAX_DNR_REGEX_RULES)
-    .map((entry, index) => redirectRule(index + 1, entry));
-  return { rules, dropped: plan.length - rules.length };
+  const rules: DnrRule[] = [];
+  let regexCount = 0;
+  let dropped = 0;
+  for (const entry of planDnrRules(state)) {
+    if (entry.regexFilter !== undefined) {
+      if (regexCount >= MAX_DNR_REGEX_RULES) {
+        dropped += 1;
+        continue;
+      }
+      regexCount += 1;
+    }
+    rules.push(redirectRule(rules.length + 1, entry));
+  }
+  return { rules, dropped };
 }
 
 export function countDnrRules(state: BlockerState): number {
   return planDnrRules(state).length;
+}
+
+export function countRegexDnrRules(state: BlockerState): number {
+  return planDnrRules(state).filter((entry) => entry.regexFilter !== undefined).length;
 }
 
 export function getDynamicRules(): Promise<DnrRule[]> {
