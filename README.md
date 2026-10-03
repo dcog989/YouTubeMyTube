@@ -1,6 +1,6 @@
 # YouTubeMyTube
 
-Firefox extension that blocks YouTube videos, channels, users, Shorts, comments, etc..
+Firefox extension that blocks YouTube videos, channels, users, Shorts, comments.
 
 [Install from AMO](https://addons.mozilla.org/en-GB/firefox/addon/youtubemytube/)
 
@@ -22,7 +22,9 @@ YouTubeMyTube collects no personal data and sends nothing to the developer. Sett
 
 ---
 
-## Architecture
+## Technical
+
+### Architecture
 
 This extension is focused on performance and resilience to YouTube UI changes. Manifest V3, DOM/CSS-first, with `declarativeNetRequest` for fast, direct navigation.
 
@@ -34,9 +36,7 @@ It does not depend on YouTube's internal renderer schemas or inject into the pag
 - **Writes are serialized.** A single service worker is the only writer, and redundant rule updates are diffed away.
 - **Nothing touches YouTube's internals.** No page-level JavaScript injection or network interception, so there's no per-response parsing and less to break.
 
----
-
-## Development
+### Development
 
 ```sh
 bun run build:firefox     # bundle dist/firefox (no archive)
