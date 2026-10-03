@@ -221,15 +221,6 @@ body {
   font-size: 16px;
 }
 
-.onboarding .help {
-  margin: 4px 0 0;
-}
-
-.onboarding .btn {
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
 .panel-actions {
   display: flex;
   align-items: center;
@@ -502,6 +493,15 @@ textarea:focus {
   color: var(--muted);
   font-size: 13px;
   margin: 4px 0 10px;
+}
+
+.onboarding .help {
+  margin: 4px 0 0;
+}
+
+.onboarding .btn {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .fieldset {
