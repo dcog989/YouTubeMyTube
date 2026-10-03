@@ -121,6 +121,8 @@ const METADATA_TEXT_SELECTORS = [
 
 export const METADATA_SELECTOR = METADATA_TEXT_SELECTORS.join(',');
 
+export const ACTIVE_REEL_SELECTOR = 'ytd-reel-video-renderer[is-active]';
+
 export const CARD_SELECTOR = ITEM_SELECTORS.join(',');
 export const COMMENT_SELECTOR = COMMENT_SELECTORS.join(',');
 export const HIDDEN_CLASS = 'ytb-hidden';

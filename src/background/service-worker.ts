@@ -1,5 +1,5 @@
 import { MUTATE_REQUEST, SYNC_REQUEST } from '../shared/constants';
-import { buildDnrRules, type DnrRule, getDynamicRules, updateDynamicRules } from '../shared/dnr';
+import { applyDnrRules, buildDnrRules, type DnrRule, getDynamicRules } from '../shared/dnr';
 import { applyMutation, isMutation } from '../shared/mutations';
 import { normalizeState } from '../shared/normalize';
 import { onInstalled, onRuntimeMessage, openOptionsPage } from '../shared/runtime';
@@ -43,7 +43,12 @@ async function doSync(): Promise<void> {
     );
   }
   const removeRuleIds = existing.map((rule) => rule.id);
-  await updateDynamicRules({ removeRuleIds, addRules });
+  const failedRuleIds = await applyDnrRules(removeRuleIds, addRules);
+  if (failedRuleIds.length > 0) {
+    console.warn(
+      `YouTubeMyTube: ${failedRuleIds.length} DNR rule(s) were rejected by the browser and skipped.`,
+    );
+  }
 }
 
 let syncQueue: Promise<void> = Promise.resolve();

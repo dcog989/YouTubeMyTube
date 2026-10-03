@@ -11,16 +11,31 @@ export function countActiveEntries(entries: string[]): number {
   return entries.filter((entry) => isActiveEntry(entry)).length;
 }
 
+function compareEntries(a: string, b: string): number {
+  const lowerA = a.toLowerCase();
+  const lowerB = b.toLowerCase();
+  if (lowerA < lowerB) return -1;
+  if (lowerA > lowerB) return 1;
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+}
+
 export function sortEntries(entries: string[]): string[] {
-  return [...entries].sort((a, b) => {
-    const lowerA = a.toLowerCase();
-    const lowerB = b.toLowerCase();
-    if (lowerA < lowerB) return -1;
-    if (lowerA > lowerB) return 1;
-    if (a < b) return -1;
-    if (a > b) return 1;
-    return 0;
-  });
+  // Keep `//` comment runs (and blank separators) attached to the entry they
+  // describe so sorting does not strip comments away to the top of the list.
+  const blocks: Array<{ entry: string; lines: string[] }> = [];
+  let pending: string[] = [];
+  for (const line of entries) {
+    if (isActiveEntry(line)) {
+      blocks.push({ entry: line, lines: [...pending, line] });
+      pending = [];
+    } else {
+      pending.push(line);
+    }
+  }
+  blocks.sort((a, b) => compareEntries(a.entry, b.entry));
+  return [...blocks.flatMap((block) => block.lines), ...pending];
 }
 
 export function parsePattern(raw: string): RegExp | null {

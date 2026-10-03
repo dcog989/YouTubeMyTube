@@ -24,6 +24,16 @@ describe('sortEntries', () => {
     expect(sortEntries(input)).toEqual(['apple', 'Banana', 'cherry']);
     expect(input).toEqual(['Banana', 'apple', 'cherry']);
   });
+
+  it('keeps comment runs attached to the entry they describe', () => {
+    const input = ['// music', 'zebra', '// animals', 'ant'];
+    expect(sortEntries(input)).toEqual(['// animals', 'ant', '// music', 'zebra']);
+  });
+
+  it('leaves trailing comments and blanks at the end', () => {
+    expect(sortEntries(['b', 'a', '// trailing'])).toEqual(['a', 'b', '// trailing']);
+    expect(sortEntries(['b', '// note', 'a'])).toEqual(['// note', 'a', 'b']);
+  });
 });
 
 describe('parsePattern', () => {

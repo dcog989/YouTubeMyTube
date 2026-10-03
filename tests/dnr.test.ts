@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { MAX_DNR_REGEX_RULES } from '../src/shared/constants';
 import { defaultState } from '../src/shared/defaults';
-import { buildDnrRules, countDnrRules } from '../src/shared/dnr';
+import { applyDnrRules, buildDnrRules, countDnrRules } from '../src/shared/dnr';
 import type { ChannelEntry, VideoEntry } from '../src/shared/types';
 
 function stateWith(overrides: {
@@ -134,6 +134,33 @@ describe('buildDnrRules', () => {
     const { rules, dropped } = buildDnrRules(stateWith({ videos }));
     expect(rules).toHaveLength(MAX_DNR_REGEX_RULES);
     expect(dropped).toBe(1);
+  });
+});
+
+describe('applyDnrRules', () => {
+  it('applies the batch in one atomic update', async () => {
+    const update = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal('browser', { declarativeNetRequest: { updateDynamicRules: update } });
+    const { rules } = buildDnrRules(stateWith({ videos: [video('a'), video('b')] }));
+    const failed = await applyDnrRules([9], rules);
+    expect(failed).toEqual([]);
+    expect(update).toHaveBeenCalledTimes(1);
+    vi.unstubAllGlobals();
+  });
+
+  it('retries rule-by-rule and reports only the rejected rule', async () => {
+    const { rules } = buildDnrRules(stateWith({ videos: [video('a'), video('bad'), video('b')] }));
+    const badId = rules[1]?.id;
+    const applied: number[] = [];
+    const update = vi.fn(async (options: { addRules?: Array<{ id: number }> }) => {
+      if (options.addRules?.some((rule) => rule.id === badId)) throw new Error('rejected');
+      for (const rule of options.addRules ?? []) applied.push(rule.id);
+    });
+    vi.stubGlobal('browser', { declarativeNetRequest: { updateDynamicRules: update } });
+    const failed = await applyDnrRules([9], rules);
+    expect(failed).toEqual([badId]);
+    expect(applied).toEqual([rules[0]?.id, rules[2]?.id]);
+    vi.unstubAllGlobals();
   });
 });
 

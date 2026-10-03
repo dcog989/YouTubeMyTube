@@ -2,6 +2,7 @@ import type { Entity, ParsedUrl } from '../shared/types';
 import { normalizeHandle, parseYouTubeUrl } from '../shared/url';
 import { closestAcrossShadow, deepQuery, forEachShadowRoot } from './dom';
 import {
+  ACTIVE_REEL_SELECTOR,
   CHANNEL_HEADER_SELECTORS,
   CHANNEL_LINK_SELECTORS,
   CHANNEL_PAGE_NAME_SELECTORS,
@@ -158,7 +159,8 @@ function ownerElementIn(scope: ParentNode): Element | null {
   return null;
 }
 
-function videoScope(videoId: string): ParentNode | null {
+function videoScope(videoId: string, kind: ParsedUrl['kind']): ParentNode | null {
+  if (kind === 'shorts') return document.querySelector(ACTIVE_REEL_SELECTOR);
   const watch = document.querySelector('ytd-watch-flexy');
   const attribute = watch?.getAttribute('video-id');
   if (!watch || !attribute) return document;
@@ -214,14 +216,12 @@ export function currentContext(): Entity {
   applyParsed(entity, page);
 
   if (entity.videoId) {
-    const scope = videoScope(entity.videoId);
+    const scope = videoScope(entity.videoId, page.kind);
     if (!scope) return entity;
-    const owner = ownerElementIn(scope);
-    if (owner) {
-      const link = channelLinkIn(owner);
-      if (link) applyParsed(entity, link);
-    }
-    const name = channelNameIn(owner ?? scope);
+    const owner = ownerElementIn(scope) ?? scope;
+    const link = channelLinkIn(owner);
+    if (link) applyParsed(entity, link);
+    const name = channelNameIn(owner);
     if (name) entity.channelName = name;
     const title = firstText(document, PAGE_TITLE_SELECTORS);
     if (title) entity.title = title;

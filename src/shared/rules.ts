@@ -101,9 +101,23 @@ export function addChannel(rules: FilterRules, entry: ChannelEntry): boolean {
   ) {
     return false;
   }
-  if (findChannel(rules, channel)) return false;
-  rules.channels.push(channel);
-  return true;
+  const existing = findChannel(rules, channel);
+  if (!existing) {
+    rules.channels.push(channel);
+    return true;
+  }
+  // A weaker (name-only) entry can match an incoming entry that carries an id
+  // or handle; upgrade it in place so DNR can enforce the block instead of
+  // silently treating the stronger entry as a duplicate.
+  const beforeLength = rules.channels.length;
+  const before = { id: existing.id, name: existing.name, handle: existing.handle };
+  applyResolvedMeta(rules, existing, channel);
+  return (
+    rules.channels.length !== beforeLength ||
+    existing.id !== before.id ||
+    existing.name !== before.name ||
+    existing.handle !== before.handle
+  );
 }
 
 export function isChannelComplete(channel: ChannelEntry): boolean {

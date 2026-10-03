@@ -123,3 +123,31 @@ export function getDynamicRules(): Promise<DnrRule[]> {
 export function updateDynamicRules(options: DnrUpdateOptions): Promise<void> {
   return browser.declarativeNetRequest.updateDynamicRules(options);
 }
+
+// `updateDynamicRules` is atomic: a single rejected rule aborts the whole
+// batch. Retry rule-by-rule on failure so one bad rule cannot suppress every
+// other block, and report the ids that the browser rejected.
+export async function applyDnrRules(
+  removeRuleIds: number[],
+  addRules: DnrRule[],
+): Promise<number[]> {
+  try {
+    await updateDynamicRules({ removeRuleIds, addRules });
+    return [];
+  } catch (error) {
+    console.warn('YouTubeMyTube: atomic DNR update failed; retrying rule-by-rule', error);
+  }
+
+  await updateDynamicRules({ removeRuleIds, addRules: [] });
+
+  const failedRuleIds: number[] = [];
+  for (const rule of addRules) {
+    try {
+      await updateDynamicRules({ addRules: [rule] });
+    } catch (error) {
+      failedRuleIds.push(rule.id);
+      console.error(`YouTubeMyTube: DNR rule ${rule.id} was rejected`, error);
+    }
+  }
+  return failedRuleIds;
+}

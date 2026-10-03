@@ -148,6 +148,20 @@ describe('add / remove', () => {
     expect(rules.channels).toHaveLength(0);
   });
 
+  it('upgrades a name-only entry when the same channel arrives with an id', () => {
+    const rules = defaultRules();
+    expect(addChannel(rules, { id: '', name: 'Rick Astley', handle: '' })).toBe(true);
+    expect(addChannel(rules, { id: 'UC1', name: 'Rick Astley', handle: 'RickAstley' })).toBe(true);
+    expect(rules.channels).toEqual([{ id: 'UC1', name: 'Rick Astley', handle: 'rickastley' }]);
+  });
+
+  it('does not rewrite an already-resolved duplicate', () => {
+    const rules = defaultRules();
+    expect(addChannel(rules, { id: 'UC1', name: 'Rick', handle: '' })).toBe(true);
+    expect(addChannel(rules, { id: 'UC1', name: '', handle: '' })).toBe(false);
+    expect(rules.channels).toEqual([{ id: 'UC1', name: 'Rick', handle: '' }]);
+  });
+
   it('removes the channel matching the most specific field', () => {
     const rules = defaultRules();
     rules.channels = [
