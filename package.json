@@ -17,7 +17,6 @@
     "lint": "biome lint .",
     "lint:webext": "bunx web-ext lint --source-dir dist/firefox",
     "prepare": "node scripts/install-hooks.mjs",
-    "release": "cog bump --auto",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
