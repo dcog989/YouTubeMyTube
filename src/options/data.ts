@@ -50,6 +50,7 @@ export async function importSettings(file: File): Promise<void> {
   const blocktube = parseBlockTubeBackup(parsed);
   if (blocktube.ok) {
     const { state: merged, added } = mergeBlockTubeImport(getDraft(), blocktube.data);
+    merged.settings.onboardingComplete = true;
     setDraft(merged);
     notify();
     setDirty(true);
@@ -63,7 +64,9 @@ export async function importSettings(file: File): Promise<void> {
   }
 
   if (isBlockerState(parsed)) {
-    setDraft(normalizeState(parsed));
+    const imported = normalizeState(parsed);
+    imported.settings.onboardingComplete = true;
+    setDraft(imported);
     notify();
     setDirty(true);
     setStatus('import-status', t('importNative'), true);
