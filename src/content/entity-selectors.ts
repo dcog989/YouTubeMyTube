@@ -24,6 +24,12 @@ const ITEM_SELECTORS = [
   'ytm-compact-channel-renderer',
 ];
 
+export const NESTED_CARD_SELECTOR = [
+  'yt-lockup-view-model',
+  'ytm-shorts-lockup-view-model',
+  'ytm-shorts-lockup-view-model-v2',
+].join(',');
+
 const COMMENT_SELECTORS = [
   'ytd-comment-thread-renderer',
   'ytd-comment-renderer',

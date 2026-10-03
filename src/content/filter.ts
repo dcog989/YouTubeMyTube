@@ -4,7 +4,12 @@ import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { createBatcher } from './batch';
 import { closestAcrossShadow } from './dom';
 import { cardEntity, commentEntity } from './entity';
-import { CARD_SELECTOR, COMMENT_SELECTOR, HIDDEN_CLASS } from './entity-selectors';
+import {
+  CARD_SELECTOR,
+  COMMENT_SELECTOR,
+  HIDDEN_CLASS,
+  NESTED_CARD_SELECTOR,
+} from './entity-selectors';
 import type { Store } from './store';
 
 export interface FilterEngine {
@@ -48,15 +53,22 @@ export function createFilterEngine(deps: { store: Store; evaluate(): void }): Fi
     return parts.join('\u0000');
   }
 
+  function outermostCard(node: Element): Element {
+    if (!node.matches(NESTED_CARD_SELECTOR)) return node;
+    const parent = node.parentElement;
+    return parent ? (closestAcrossShadow(parent, CARD_SELECTOR) ?? node) : node;
+  }
+
   function processNode(node: Element, state: BlockerState, compiled: CompiledRules): void {
     if (!state.settings.enabled) return;
 
     if (node.matches(CARD_SELECTOR)) {
-      const entity = cardEntity(node);
+      const card = outermostCard(node);
+      const entity = cardEntity(card);
       const key = entityKey(entity);
-      if (key && seen.get(node) === key) return;
-      if (key) seen.set(node, key);
-      setHidden(node, matchEntity(entity, compiled).blocked);
+      if (key && seen.get(card) === key) return;
+      if (key) seen.set(card, key);
+      setHidden(card, matchEntity(entity, compiled).blocked);
       return;
     }
 

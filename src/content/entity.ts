@@ -31,6 +31,7 @@ function firstText(element: ParentNode, selectors: string[]): string {
 
 const NON_CHANNEL_METADATA = /\bviews?\b|\bago\b|^[\d.,]+(?:\s*[KMB])?$/i;
 const CHANNEL_AVATAR_LABEL = /^Go to channel\s+/i;
+const CHANNEL_HREF = /\/(?:channel\/|@)/;
 
 function firstChannelText(candidates: ArrayLike<Element>): string {
   for (const candidate of Array.from(candidates)) {
@@ -81,7 +82,9 @@ function applyParsed(entity: Entity, parsed: ParsedUrl): void {
 }
 
 function applyAnchor(entity: Entity, anchor: HTMLAnchorElement): void {
-  applyParsed(entity, parseYouTubeUrl(anchor.getAttribute('href') ?? ''));
+  const href = anchor.getAttribute('href') ?? '';
+  if (entity.videoId && !CHANNEL_HREF.test(href)) return;
+  applyParsed(entity, parseYouTubeUrl(href));
 }
 
 function hasChannelIdentity(entity: Entity): boolean {
