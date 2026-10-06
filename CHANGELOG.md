@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.16.3 - 2026-10-06
+#### Bug Fixes
+- (**content,shared**) recover filters after transient empty storage reads - (9a21fa2) - dcog989
+#### Miscellaneous Chores
+- updates - (95c0018) - dcog989
+
+- - -
+
 ## 0.16.2 - 2026-10-03
 #### Bug Fixes
 - (**ci**) pin cocogitto-action to v4.2.0 so cog 7 parses cog.toml - (77db87a) - dcog989
