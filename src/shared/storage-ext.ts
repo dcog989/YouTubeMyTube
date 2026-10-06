@@ -4,8 +4,8 @@ type StorageItems = Record<string, unknown>;
 // backend is still starting (bug 1543880, bug 1885297) and the storage API
 // itself can throw before it is ready. Retry with backoff so a transient empty
 // read is not mistaken for an absent key.
-const STORAGE_RETRY_ATTEMPTS = 6;
-const STORAGE_RETRY_BASE_MS = 100;
+const STORAGE_RETRY_ATTEMPTS = 8;
+const STORAGE_RETRY_BASE_MS = 150;
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

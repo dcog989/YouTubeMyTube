@@ -14,6 +14,10 @@ import { createOverlayFeedback } from './overlay';
 import { createPlaybackGuard } from './playback';
 import { store } from './store';
 
+// Delay re-reads after startup so a slow storage backend that returned an empty
+// read at init self-corrects without needing a navigation or a storage write.
+const SETTLE_REFRESH_MS = [3000, 10000];
+
 async function init(): Promise<void> {
   const guard = createPlaybackGuard();
   const overlay = createOverlayFeedback(guard);
@@ -73,6 +77,10 @@ async function init(): Promise<void> {
   if (changeCount === start) applyState(initial);
 
   menu.init();
+  for (const delay of SETTLE_REFRESH_MS) window.setTimeout(() => void refresh(), delay);
+  window.addEventListener('load', () => {
+    void refresh();
+  });
   window.addEventListener('yt-navigate-finish', () => {
     void refresh();
   });
