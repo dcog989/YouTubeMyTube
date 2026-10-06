@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.16.4 - 2026-10-06
+#### Bug Fixes
+- (**content,shared**) recover filters when the startup storage read is empty - (2275d01) - dcog989
+#### Miscellaneous Chores
+- (**scripts**) fold tests into check and rename check:fix to fix - (d15c53f) - dcog989
+- build on cog bump - (1c2c2ba) - dcog989
+
+- - -
+
 ## 0.16.3 - 2026-10-06
 #### Bug Fixes
 - (**content,shared**) recover filters after transient empty storage reads - (9a21fa2) - dcog989
