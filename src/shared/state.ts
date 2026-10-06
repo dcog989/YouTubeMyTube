@@ -11,7 +11,13 @@ export async function readState(): Promise<BlockerState | undefined> {
 }
 
 export async function loadState(): Promise<BlockerState> {
-  return (await readState()) ?? defaultState();
+  try {
+    return (await readState()) ?? defaultState();
+  } catch {
+    // The storage API can be unavailable during startup; content scripts
+    // re-read on navigation/visibility, so a transient failure must not abort.
+    return defaultState();
+  }
 }
 
 // The service worker is the single writer; UI surfaces route mutations through
@@ -20,11 +26,17 @@ export async function saveState(state: BlockerState): Promise<void> {
   await setStored({ [STATE_KEY]: state });
 }
 
-// Writes defaults only when the key is genuinely absent. Called from
-// runtime.onInstalled, where an empty read means a real first install rather
-// than a transient startup read, so it is safe to seed here.
+// Writes defaults only when the key is confirmed absent. If storage cannot be
+// read, seeding is skipped rather than clobbering the user's real rules with a
+// transiently empty read.
 export async function seedState(): Promise<void> {
-  if ((await getStored<unknown>(STATE_KEY)) === undefined) {
+  let stored: unknown;
+  try {
+    stored = await getStored<unknown>(STATE_KEY);
+  } catch {
+    return;
+  }
+  if (stored === undefined) {
     await saveState(defaultState());
   }
 }

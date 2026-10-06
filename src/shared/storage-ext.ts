@@ -1,23 +1,32 @@
 type StorageItems = Record<string, unknown>;
 
-const STORAGE_RETRY_DELAY = 150;
+// Firefox can transiently expose no value while the extension/browser storage
+// backend is still starting (bug 1543880, bug 1885297) and the storage API
+// itself can throw before it is ready. Retry with backoff so a transient empty
+// read is not mistaken for an absent key.
+const STORAGE_RETRY_ATTEMPTS = 6;
+const STORAGE_RETRY_BASE_MS = 100;
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Resolves to the stored value, `undefined` when the key is confirmed absent,
+// or throws when the storage API keeps failing.
 export async function getStored<T>(key: string): Promise<T | undefined> {
-  // Firefox can briefly expose no value during add-on startup/reload
-  // (bug 1885297), and very rarely the API itself is not ready yet.
-  for (let attempt = 0; ; attempt += 1) {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < STORAGE_RETRY_ATTEMPTS; attempt += 1) {
     try {
       const stored = await browser.storage.local.get(key);
-      if (stored[key] !== undefined || attempt >= 1) return stored[key] as T | undefined;
+      if (stored[key] !== undefined) return stored[key] as T;
+      lastError = undefined;
     } catch (error) {
-      if (attempt >= 1) throw error;
+      lastError = error;
     }
-    await delay(STORAGE_RETRY_DELAY);
+    await delay(STORAGE_RETRY_BASE_MS * (attempt + 1));
   }
+  if (lastError !== undefined) throw lastError;
+  return undefined;
 }
 
 export function setStored(values: StorageItems): Promise<void> {

@@ -1,7 +1,7 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
 import { normalizeState } from '../shared/normalize';
 import { onRuntimeMessage } from '../shared/runtime';
-import { loadState, onLocalStorageChanged } from '../shared/state';
+import { loadState, onLocalStorageChanged, readState } from '../shared/state';
 import type { BlockerState } from '../shared/types';
 import { applyAreas } from './apply-areas';
 import { forEachShadowRoot } from './dom';
@@ -21,10 +21,27 @@ async function init(): Promise<void> {
   const filter = createFilterEngine({ store, evaluate: () => evaluator.schedule() });
   const menu = createMenuInjector({ store, filter, overlay });
 
+  let changeCount = 0;
+
   function applyState(next: BlockerState): void {
     store.setState(next);
     applyAreas(store);
     filter.rescan();
+  }
+
+  // Re-read state from storage so a transiently empty startup read cannot leave
+  // the tab filtering with defaults for its whole (SPA) lifetime. A failed read
+  // keeps the current snapshot, and a storage change that lands mid-read wins.
+  async function refresh(): Promise<void> {
+    const start = changeCount;
+    let next: BlockerState | undefined;
+    try {
+      next = await readState();
+    } catch {
+      return;
+    }
+    if (!next || changeCount !== start) return;
+    applyState(next);
   }
 
   function handleChange({ added, changed }: ElementChange): void {
@@ -46,10 +63,22 @@ async function init(): Promise<void> {
     sendResponse(currentContext());
   });
 
-  applyState(await loadState());
-  onLocalStorageChanged((value) => applyState(normalizeState(value)));
+  onLocalStorageChanged((value) => {
+    changeCount += 1;
+    applyState(normalizeState(value));
+  });
+
+  const start = changeCount;
+  const initial = await loadState();
+  if (changeCount === start) applyState(initial);
+
   menu.init();
-  window.addEventListener('yt-navigate-finish', () => filter.rescan());
+  window.addEventListener('yt-navigate-finish', () => {
+    void refresh();
+  });
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') void refresh();
+  });
   window.addEventListener('popstate', () => filter.rescan());
 }
 
