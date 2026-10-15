@@ -6,7 +6,7 @@ import type { Store } from '../store';
 import { type MenuContainer, parentContainer } from './container';
 import { createInjector } from './inject';
 import { createOwnerTracker } from './owner';
-import { INJECTED_ATTR, MENU_ITEM_SELECTOR, MOBILE_HOST } from './selectors';
+import { INJECTED_ATTR, MENU_ITEM_SELECTOR } from './selectors';
 import { observeRoot, scanExisting } from './shadow';
 
 export interface MenuInjector {
@@ -48,7 +48,6 @@ export function createMenuInjector(deps: {
 
   function init(): void {
     if (window.top !== window) return;
-    if (window.location.hostname === MOBILE_HOST) return;
 
     owners.init();
     window.addEventListener('click', handleInjectedClick, true);
