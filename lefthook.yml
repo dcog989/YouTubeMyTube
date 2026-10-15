@@ -1,5 +1,5 @@
 pre-commit:
-  # Sequential: typescript runs after biome --write so tsc sees the formatted files.
+  # Sequential: typescript runs after biome --write so bun check sees the formatted files.
   parallel: false
   jobs:
     - name: biome
@@ -8,7 +8,7 @@ pre-commit:
       stage_fixed: true
     - name: typescript
       glob: "*.{js,mjs,cjs,ts,tsx,json,jsonc}"
-      run: tsc --noEmit
+      run: bun --check
 
 commit-msg:
   jobs:

@@ -68,7 +68,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - Install: `npm install` (or `bun install`); runs `prepare` → installs Lefthook git hooks.
 - Dev: `npm run watch` (rebuilds bundles and re-copies HTML/CSS/manifests on change).
 - Test: `npm test` (or `npm run test:coverage`, whose thresholds CI enforces).
-- Typecheck: `npm run typecheck` (or `npm run typecheck:watch` alongside `npm run watch`); `checkJs` covers the `.mjs` build scripts too.
+- Typecheck: `npm run typecheck` (`bun --check`) or `npm run typecheck:watch` alongside `npm run watch`; `checkJs` covers the `.mjs` build scripts too.
 - Build: `npm run build` (or `npm run build:firefox`); writes the store zip plus the AMO source archive to `dist/`. Set `SOURCE_DATE_EPOCH` for reproducible archives.
 - Lint: `npm run check` (Biome, HTML included; `npm run fix` to write). Config: `biome.json`. Firefox validation: `npm run lint:webext` (`web-ext lint`).
 - Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit, then builds (`esbuild.config.mjs all`) and pushes. Pushing the tag publishes via `release.yml`; AMO upload is manual.

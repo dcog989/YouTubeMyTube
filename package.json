@@ -16,8 +16,8 @@
     "prepare": "node scripts/install-hooks.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit",
-    "typecheck:watch": "tsc --noEmit --watch",
+    "typecheck": "bun --check",
+    "typecheck:watch": "bun --watch --check",
     "update": "bun update --latest",
     "watch": "node esbuild.config.mjs all --watch"
   },
