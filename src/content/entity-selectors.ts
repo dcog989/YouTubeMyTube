@@ -22,6 +22,7 @@ const ITEM_SELECTORS = [
   'ytm-shorts-lockup-view-model-v2',
   'ytm-channel-renderer',
   'ytm-compact-channel-renderer',
+  'ytm-compact-playlist-renderer',
 ];
 
 export const NESTED_CARD_SELECTOR = [
