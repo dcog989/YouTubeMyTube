@@ -122,15 +122,10 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 - Never run git mutations (commit, push, reset, rebase, amend) unless explicitly instructed.
 - Do not create documentation files unless explicitly requested.
 
-### Verification
-
-- Do not run test, lint, format, or type-check commands; the user builds, tests, and lints manually.
-- Run them only when the user explicitly asks.
-
 ### Author Environment
 
 - CachyOS, KDE Plasma 6, Wayland, Btrfs.
-- fish shell, Ghostty terminal, Fresh TUI editor, yay package manager, Bun npm manager, Firefox, and Zed code editor.
+- fish shell, Ghostty terminal, Fresh TUI editor, yay package manager, bun npm manager, Firefox, and Zed code editor.
 
 ### Testing
 
@@ -141,12 +136,16 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 - Logic fully implemented.
 - Existing docs updated if public interfaces changed.
 - When required by the `Verification` rules, run the corresponding `Workflow` command.
-- On completion of an update or fix, print a concise conventional commit message in a fenced code block.
+
+### Commit Messages
+
+- On completion of an update or fix, print a conventional commit message in a fenced code block.
+- Add a body only when the "why" isn't obvious.
+- Do not wrap lines. One physical line per paragraph however long it gets. Never hard-wrap the subject or the body.
 
 ### Communication Style
 
-- Provide concise, actionable responses.
-- Ask clarifying questions when requirements are ambiguous.
-- Flag potential risks or edge cases proactively.
-- Do not pretend to understand how the user feels.
-- Never editorialise your answer. No "to be honest", "honestly", hedging, disclaimers, or meta-commentary — just answer.
+- Fixes and instructions: numbered steps, one action each, exact command/path/code. No prose paragraphs or recap.
+- Questions and explanations: direct prose, only the reasoning needed. No tables unless asked.
+- No preamble, restating, hedging, disclaimers, meta-commentary, emotional framing, or closing offers; end when done unless a real decision is needed.
+- Ask when requirements are ambiguous; put risks and edge cases in one final line.
