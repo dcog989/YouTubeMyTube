@@ -57,6 +57,7 @@ export const PAGE_TITLE_SELECTORS = [
   'ytm-slim-video-metadata-renderer h2',
   'ytd-reel-video-renderer[is-active] #video-title',
   'ytd-reel-video-renderer[is-active] yt-formatted-string',
+  'ytd-reel-video-renderer h1.ytShortsVideoTitleViewModelShortsVideoTitle',
 ];
 
 export const PAGE_TITLE_SCOPE_SELECTOR = PAGE_TITLE_SELECTORS.join(',');
@@ -76,6 +77,7 @@ export const OWNER_SCOPES = [
   'ytm-video-owner-renderer',
   'ytd-watch-metadata',
   'ytd-video-primary-info-renderer',
+  'ytd-reel-video-renderer:has(#shorts-player)',
 ];
 
 export const OWNER_SCOPE_SELECTOR = OWNER_SCOPES.join(',');
