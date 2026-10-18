@@ -5,6 +5,7 @@ import { createBatcher } from './batch';
 import { closestAcrossShadow } from './dom';
 import { cardEntity, commentEntity } from './entity';
 import {
+  ACTIVE_REEL_SELECTOR,
   CARD_SELECTOR,
   COMMENT_SELECTOR,
   HIDDEN_CLASS,
@@ -64,6 +65,9 @@ export function createFilterEngine(deps: { store: Store; evaluate(): void }): Fi
 
     if (node.matches(CARD_SELECTOR)) {
       const card = outermostCard(node);
+      // The active short hosts the player; hiding it only freezes the frame and
+      // keeps audio playing, so the evaluator blocks it with the overlay instead.
+      if (card.matches(ACTIVE_REEL_SELECTOR)) return;
       const entity = cardEntity(card);
       const key = entityKey(entity);
       if (key && seen.get(card) === key) return;
