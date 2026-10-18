@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.17.0 - 2026-10-18
+#### Features
+- (**menu**) inject block items into the mobile menu - (7407dc8) - dcog989
+#### Bug Fixes
+- (**content**) block channels and titles on the current Shorts layout - (a9b2370) - dcog989
+- (**content**) block channels on the current Shorts layout - (eb45940) - dcog989
+- (**content**) hide mobile playlist cards whose channel is blocked - (eb9a617) - dcog989
+#### Documentation
+- agents.md refined - (578ae7e) - dcog989
+#### Miscellaneous Chores
+- (**scripts**) replace tsc with bun check for typechecking - (21eae48) - dcog989
+- updates - (494a47c) - dcog989
+
+- - -
+
 ## 0.16.4 - 2026-10-06
 #### Bug Fixes
 - (**content,shared**) recover filters when the startup storage read is empty - (2275d01) - dcog989
