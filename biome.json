@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!dist", "!assets/icons"]
+    "includes": ["**", "!dist", "!assets/icons", "!**/*.md"]
   },
   "formatter": {
     "enabled": true,

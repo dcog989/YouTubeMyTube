@@ -22,7 +22,7 @@
     "watch": "node esbuild.config.mjs all --watch"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.15",
+    "@biomejs/biome": "2.6.2",
     "@types/firefox-webext-browser": "^143.0.1",
     "@types/node": "^26.6.5",
     "@vitest/coverage-v8": "^5.0.5",
