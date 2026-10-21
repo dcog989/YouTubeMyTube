@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.17.1 - 2026-10-21
+#### Bug Fixes
+- (**content**) hide blocked channels' shorts in feed shelves - (c71ca76) - dcog989
+#### Miscellaneous Chores
+- restore cog's changelog separators after Biome markdown rewrite - (a4b0ec3) - dcog989
+- updates - (032eaf2) - dcog989
+- add logo to root - (9b0cda3) - dcog989
+
+- - -
+
 ## 0.17.0 - 2026-10-18
 #### Features
 - (**menu**) inject block items into the mobile menu - (7407dc8) - dcog989
