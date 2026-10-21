@@ -96,6 +96,7 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 - Comment filtering requires comments to be rendered.
 - In-menu blocking relies on YouTube's menu DOM (desktop popup, mobile bottom sheet) and may be affected by YouTube layout changes. The mobile sheet does not handle Escape, so it stays open after a block until dismissed manually.
 - Watch-page related cards (`yt-lockup-view-model`) expose no channel link or ID, so the menu resolves the channel from the video's oEmbed metadata and falls back to the exact display name if that lookup fails.
+- Shorts lockups (`ytm-shorts-lockup-view-model`, reel items) expose no channel link, name or ID either, so a blocked channel's shorts in a feed are hidden only after an oEmbed lookup resolves the video's channel; if that lookup is rate-limited or offline the short stays visible until it is opened.
 - BlockTube imports map filter lists and the Trending/Shorts toggles. BlockTube-only features (duration filters, advanced JavaScript blocking, autoplay/mix/movie options, the block message) are not imported and are listed in the import report.
 
 ### File System Access

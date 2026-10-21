@@ -11,6 +11,7 @@ import {
   HIDDEN_CLASS,
   NESTED_CARD_SELECTOR,
 } from './entity-selectors';
+import { createChannelCache } from './menu/channel-cache';
 import type { Store } from './store';
 
 export interface FilterEngine {
@@ -20,8 +21,22 @@ export interface FilterEngine {
   rescan(): void;
 }
 
+// Shorts lockups carry no channel link, name or ID; the channel has to come
+// from the video itself (oEmbed).
+const SHORTS_LINK_SELECTOR = 'a[href*="/shorts/"]';
+
+function hasChannelRules(rules: CompiledRules): boolean {
+  return (
+    rules.channelIds.size > 0 ||
+    rules.handles.size > 0 ||
+    rules.channelNames.size > 0 ||
+    rules.channelFilters.length > 0
+  );
+}
+
 export function createFilterEngine(deps: { store: Store; evaluate(): void }): FilterEngine {
   let seen = new WeakMap<Element, string>();
+  const channelCache = createChannelCache();
 
   function setHidden(element: Element, hidden: boolean): void {
     element.classList.toggle(HIDDEN_CLASS, hidden);
@@ -60,6 +75,27 @@ export function createFilterEngine(deps: { store: Store; evaluate(): void }): Fi
     return parent ? (closestAcrossShadow(parent, CARD_SELECTOR) ?? node) : node;
   }
 
+  function withCachedChannel(entity: Entity): Entity {
+    if (!entity.videoId || entity.channelId || entity.handle) return entity;
+    const meta = channelCache.get(entity.videoId);
+    if (!meta) return entity;
+    if (meta.id) entity.channelId = meta.id;
+    if (meta.handle) entity.handle = meta.handle;
+    if (meta.name) entity.channelName = meta.name;
+    return entity;
+  }
+
+  function requestChannel(card: Element, entity: Entity, compiled: CompiledRules): void {
+    if (!entity.videoId || entity.channelId || entity.handle) return;
+    if (!hasChannelRules(compiled) || !card.querySelector(SHORTS_LINK_SELECTOR)) return;
+    const pending = channelCache.request(entity.videoId);
+    if (!pending) return;
+    void pending.then(() => {
+      const snapshot = deps.store.getSnapshot();
+      if (snapshot && card.isConnected) processNode(card, snapshot.state, snapshot.compiled);
+    });
+  }
+
   function processNode(node: Element, state: BlockerState, compiled: CompiledRules): void {
     if (!state.settings.enabled) return;
 
@@ -68,11 +104,13 @@ export function createFilterEngine(deps: { store: Store; evaluate(): void }): Fi
       // The active short hosts the player; hiding it only freezes the frame and
       // keeps audio playing, so the evaluator blocks it with the overlay instead.
       if (card.matches(ACTIVE_REEL_SELECTOR)) return;
-      const entity = cardEntity(card);
+      const entity = withCachedChannel(cardEntity(card));
       const key = entityKey(entity);
       if (key && seen.get(card) === key) return;
       if (key) seen.set(card, key);
-      setHidden(card, matchEntity(entity, compiled).blocked);
+      const blocked = matchEntity(entity, compiled).blocked;
+      setHidden(card, blocked);
+      if (!blocked) requestChannel(card, entity, compiled);
       return;
     }
 
