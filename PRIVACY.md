@@ -39,7 +39,7 @@ options page also clears it.
 
 ## Network requests
 
-The extension only contacts YouTube (`https://www.youtube.com` and `https://www.m.youtube.com`) and
+The extension only contacts YouTube (`https://www.youtube.com` and `https://m.youtube.com`) and
 only to resolve **public** metadata for entries you add:
 
 - Video titles, via YouTube's oEmbed endpoint.
@@ -56,7 +56,7 @@ service.
 - `storage` — to save your blocklist and preferences locally.
 - `declarativeNetRequest` — to redirect direct navigation to blocked videos, channels and page
   areas.
-- Host access to `https://www.youtube.com/*` and `https://www.m.youtube.com/*` — to run the content
+- Host access to `https://www.youtube.com/*` and `https://m.youtube.com/*` — to run the content
   script that hides blocked content, to read the active tab's URL when you open the popup, and to
   perform the metadata lookups above.
 
