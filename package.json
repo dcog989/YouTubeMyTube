@@ -6,6 +6,7 @@
   "description": "YouTube content blocker",
   "scripts": {
     "build": "node esbuild.config.mjs all",
+    "build:chrome": "node esbuild.config.mjs chrome",
     "build:firefox": "node esbuild.config.mjs firefox",
     "check": "biome check . && bun run typecheck && bun run test && bun run build:firefox && bun run lint:webext",
     "fix": "biome check --write .",

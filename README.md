@@ -1,8 +1,20 @@
 # YouTubeMyTube
 
-Firefox extension that blocks YouTube videos, channels, users, Shorts, comments.
+Firefox and Chrome extension that blocks YouTube videos, channels, users, Shorts, comments.
 
-[Install from AMO](https://addons.mozilla.org/en-GB/firefox/addon/youtubemytube/)
+[Install from Mozilla Addons](https://addons.mozilla.org/en-GB/firefox/addon/youtubemytube/)
+
+## Installing in Chrome
+
+Chrome / Chromium requires manual install as it is not published to the Chrome Web Store yet:
+
+1. Download `youtubemytube-chrome.zip` from the [latest release](https://github.com/dcog989/YouTubeMyTube/releases).
+2. Extract the zip archive to a permanent location.
+3. Open `chrome://extensions` then turn on *Developer mode* (toggle in the top-right corner).
+4. Click *Load unpacked* (top left) and select the unzipped folder.
+5. Reload any open YouTube tabs.
+
+You will need to check and apply updates manually by replacing the unzipped folder.
 
 ![screenshot](assets/screen-1.webp)
 
@@ -12,7 +24,7 @@ Firefox extension that blocks YouTube videos, channels, users, Shorts, comments.
 - Block videos by ID or title.
 - Block comments by author or content.
 - Block content-areas: home feed, Shorts, Trending, Explore, Subscriptions, comments, live chat.
-- Block/Unblock entries via YouTube `...` menus or Firefox toolbar popup.
+- Block/Unblock entries via YouTube `...` menus or the toolbar popup.
 - Import/export settings; supports BlockTube backups.
 - Light/Dark/System theming.
 
@@ -51,16 +63,16 @@ bun run fix         # Biome lint + format, writing fixes
 git clone https://github.com/dcog989/YouTubeMyTube
 cd YouTubeMyTube
 bun install --frozen-lockfile
-bun run build      # store + source archives; build:firefox omits them
+bun run build      # store + source archives; build:firefox / build:chrome build one browser only
 ```
 
-This writes the unpacked extension to `dist/firefox/`, the store archive to `dist/youtubemytube-firefox.zip` and the AMO source archive to `dist/youtubemytube-source.zip`.
+This writes the unpacked extension to `dist/firefox/` and `dist/chrome/`, the store archives to `dist/youtubemytube-firefox.zip` and `dist/youtubemytube-chrome.zip`, and the AMO source archive to `dist/youtubemytube-source.zip`.
 
 Temporary load it in Firefox: `about:debugging#/runtime/this-firefox` → Load Temporary Add-on.
 
 ### Release and publish
 
-Pushing a version tag triggers the release workflow, which rebuilds the archives and attaches them to a GitHub Release. Upload the built archive to AMO manually.
+Pushing a version tag triggers the release workflow, which rebuilds the archives and attaches them to a GitHub Release. Upload the built archive to AMO manually. Chrome and Chromium users install `youtubemytube-chrome.zip` manually (see above).
 
 ---
 

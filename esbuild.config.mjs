@@ -32,7 +32,13 @@ const STATIC_ASSETS = [
   ['src/blocked/blocked.css', 'blocked.css'],
 ];
 
-const SUPPORTED = ['firefox'];
+const SUPPORTED = ['firefox', 'chrome'];
+
+/** @type {Record<string, string>} */
+const TARGETS = {
+  firefox: 'firefox140',
+  chrome: 'chrome120',
+};
 const args = process.argv.slice(2);
 const watch = args.includes('--watch');
 const requested = args.find((arg) => !arg.startsWith('--')) ?? 'all';
@@ -133,7 +139,9 @@ function esbuildOptions(browser, name) {
     bundle: true,
     format: 'iife',
     platform: 'browser',
-    target: ['firefox140'],
+    // Chrome exposes extension APIs as `chrome`; Firefox as `browser`.
+    banner: { js: 'globalThis.browser ??= globalThis.chrome;' },
+    target: [TARGETS[browser] ?? 'firefox140'],
     sourcemap: watch ? 'inline' : false,
     minify: !watch,
     logLevel: 'info',

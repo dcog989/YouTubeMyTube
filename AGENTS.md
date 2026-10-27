@@ -4,7 +4,7 @@
 
 - Name: YouTubeMyTube
 - Description: MV3 WebExtension that blocks YouTube videos, channels, users, Shorts and comments. DOM/CSS-first with declarativeNetRequest for direct navigation; no vendored YouTube internals or MAIN-world monkey-patching.
-- Tech: TypeScript, esbuild, Vitest, Firefox Manifest V3.
+- Tech: TypeScript, esbuild, Vitest, Firefox and Chrome Manifest V3.
 
 ### Architecture
 
@@ -52,7 +52,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/content/menu/index.ts` + `src/content/menu/` — `createMenuInjector`: in-page menu injection.
 - `src/background/service-worker.ts` — the single writer: applies `MUTATE_REQUEST` mutations to storage and keeps DNR rules in sync.
 - `src/options/options.ts` + `src/options/` — settings UI, split into entry point, state store, panel modules (channels/videos/areas/patterns), tester, import/export and metadata backfill.
-- `esbuild.config.mjs` — build/packaging for Firefox (bundles entries, copies HTML/CSS/manifests and `_locales/`).
+- `esbuild.config.mjs` — build/packaging for Firefox and Chrome (bundles entries, copies HTML/CSS/manifests and `_locales/`).
 - `scripts/zip.mjs` — dependency-free ZIP writer for the store archives (`createZip`).
 - `scripts/source-zip.mjs` — packages git-tracked files into the AMO review source archive (`createSourceZip`).
 - `scripts/install-hooks.mjs` — installs Lefthook hooks via `prepare`, skipping when there is no `.git` (source archive builds).
@@ -69,7 +69,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - Dev: `npm run watch` (rebuilds bundles and re-copies HTML/CSS/manifests on change).
 - Test: `npm test` (or `npm run test:coverage`, whose thresholds CI enforces).
 - Typecheck: `npm run typecheck` (`bun --check`) or `npm run typecheck:watch` alongside `npm run watch`; `checkJs` covers the `.mjs` build scripts too.
-- Build: `npm run build` (or `npm run build:firefox`); writes the store zip plus the AMO source archive to `dist/`. Set `SOURCE_DATE_EPOCH` for reproducible archives.
+- Build: `npm run build` (or `npm run build:firefox` / `npm run build:chrome`); writes the store zips plus the AMO source archive to `dist/`. Set `SOURCE_DATE_EPOCH` for reproducible archives.
 - Lint: `npm run check` (Biome, HTML included; `npm run fix` to write). Config: `biome.json`. Firefox validation: `npm run lint:webext` (`web-ext lint`).
 - Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit, then builds (`esbuild.config.mjs all`) and pushes. Pushing the tag publishes via `release.yml`; AMO upload is manual.
 - Commit messages: Conventional Commits, enforced by Lefthook + Cocogitto (`cog.toml`). Cocogitto is a system binary, not an npm dependency.
