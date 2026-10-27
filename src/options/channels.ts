@@ -1,5 +1,5 @@
 import { t } from '../shared/i18n';
-import { parseBlockInput, resolveChannelMeta } from '../shared/resolve';
+import { type ChannelMeta, parseBlockInput, resolveChannelMeta } from '../shared/resolve';
 import { addChannel as addChannelRule, applyResolvedMeta, findChannel } from '../shared/rules';
 import type { ChannelEntry } from '../shared/types';
 import { byId, h } from '../shared/ui';
@@ -75,6 +75,38 @@ export function renderChannels(): void {
   updateCounts();
 }
 
+// Legacy /c/ and /user/ URLs carry no id or handle, so the page has to say
+// which channel they belong to before an entry can be added.
+async function addLegacyChannel(path: string, raw: string): Promise<void> {
+  setStatus('channel-status', t('channelsLooking'), true);
+
+  let meta: ChannelMeta | null = null;
+  try {
+    meta = await resolveChannelMeta({ path });
+  } catch {
+    meta = null;
+  }
+  if (!meta || (!meta.id && !meta.name)) {
+    setStatus('channel-status', t('channelsNotFound', raw), false);
+    return;
+  }
+
+  const added = addChannelRule(getDraft().rules, {
+    id: meta.id,
+    name: meta.name,
+    handle: meta.handle,
+  });
+  if (!added) {
+    setStatus('channel-status', t('channelsAlready'), false);
+    return;
+  }
+
+  byId<HTMLInputElement>('channel-add').value = '';
+  renderChannels();
+  setDirty(true);
+  setStatus('channel-status', meta.name ? t('addedNamed', meta.name) : t('channelsAdded'), true);
+}
+
 export async function addChannel(): Promise<void> {
   const draft = getDraft();
   const input = byId<HTMLInputElement>('channel-add');
@@ -82,6 +114,11 @@ export async function addChannel(): Promise<void> {
   const parsed = parseBlockInput(raw, 'channel');
   if (parsed?.kind !== 'channel') {
     setStatus('channel-status', t('channelsPasteInvalid'), false);
+    return;
+  }
+
+  if (parsed.path) {
+    await addLegacyChannel(parsed.path, raw);
     return;
   }
 

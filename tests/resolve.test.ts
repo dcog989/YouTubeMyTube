@@ -53,6 +53,17 @@ describe('parseBlockInput', () => {
     });
   });
 
+  it('parses legacy /c/ and /user/ channel URLs', () => {
+    expect(parseBlockInput('https://www.youtube.com/c/SomeChannel')).toEqual({
+      kind: 'channel',
+      path: '/c/SomeChannel',
+    });
+    expect(parseBlockInput('https://www.youtube.com/user/SomeUser/videos')).toEqual({
+      kind: 'channel',
+      path: '/user/SomeUser',
+    });
+  });
+
   it('returns null for unusable input', () => {
     expect(parseBlockInput('')).toBeNull();
     expect(parseBlockInput('   ')).toBeNull();
@@ -87,6 +98,12 @@ describe('channelMetaFromHtml', () => {
       name: 'My Channel',
       handle: 'mychannel',
     });
+  });
+
+  it('prefers the canonical channel id over related-video ids', () => {
+    const html = `<link rel="canonical" href="https://www.youtube.com/channel/UCown">
+<script>{"channelId":"UCrelated"}</script>`;
+    expect(channelMetaFromHtml(html).id).toBe('UCown');
   });
 
   it('returns empty fields when nothing is present', () => {
@@ -293,5 +310,24 @@ describe('resolveChannelMeta', () => {
 
   it('returns empty fields for an empty reference', async () => {
     expect(await resolveChannelMeta({})).toEqual({ id: '', name: '', handle: '' });
+  });
+
+  it('resolves a legacy channel path through the page it redirects to', async () => {
+    const meta = await resolveChannelMeta(
+      { path: '/c/SomeChannel' },
+      { fetch: fetchStub(CHANNEL_HTML) },
+    );
+    expect(meta).toEqual({ id: 'UCabc123', name: 'My Channel', handle: 'mychannel' });
+  });
+
+  it('returns empty fields for a gone legacy page and rejects transient errors', async () => {
+    expect(await resolveChannelMeta({ path: '/c/Gone' }, { fetch: fetchStub('', 404) })).toEqual({
+      id: '',
+      name: '',
+      handle: '',
+    });
+    await expect(
+      resolveChannelMeta({ path: '/c/Gone' }, { fetch: fetchStub('', 503) }),
+    ).rejects.toThrow();
   });
 });

@@ -62,3 +62,17 @@ export function parseYouTubeUrl(href: string): ParsedUrl {
 
   return { kind: 'other' };
 }
+
+// Legacy /c/Name and /user/Name pages redirect to the canonical /@handle page.
+export function parseLegacyChannelPath(href: string): string | null {
+  let url: URL;
+  try {
+    url = new URL(href, YOUTUBE_ORIGIN);
+  } catch {
+    return null;
+  }
+  if (!isYouTubeHost(url.hostname)) return null;
+  const match = /^\/(c|user)\/([^/?#]+)/.exec(url.pathname);
+  if (!match?.[1] || !match[2]) return null;
+  return `/${match[1]}/${match[2]}`;
+}

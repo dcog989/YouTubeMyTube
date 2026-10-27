@@ -1,9 +1,14 @@
 import { YOUTUBE_ORIGIN } from './constants';
-import { normalizeChannelName, normalizeHandle, parseYouTubeUrl } from './url';
+import {
+  normalizeChannelName,
+  normalizeHandle,
+  parseLegacyChannelPath,
+  parseYouTubeUrl,
+} from './url';
 
 export type BlockInput =
   | { kind: 'video'; videoId: string }
-  | { kind: 'channel'; channelId?: string; handle?: string; name?: string };
+  | { kind: 'channel'; channelId?: string; handle?: string; name?: string; path?: string };
 
 export type BlockInputKind = BlockInput['kind'];
 
@@ -11,6 +16,7 @@ export interface ChannelRef {
   id?: string;
   handle?: string;
   name?: string;
+  path?: string;
 }
 
 export interface ChannelMeta {
@@ -49,6 +55,9 @@ export function parseBlockInput(input: string, kind?: BlockInputKind): BlockInpu
   if (parsed.videoId) return { kind: 'video', videoId: parsed.videoId };
   if (parsed.channelId) return { kind: 'channel', channelId: parsed.channelId };
   if (parsed.handle) return { kind: 'channel', handle: normalizeHandle(parsed.handle) };
+
+  const path = parseLegacyChannelPath(value);
+  if (path) return { kind: 'channel', path };
 
   // Any other plain text (e.g. a multi-word channel name) blocks that name.
   if (kind === 'channel' && !value.includes('/') && !value.includes(':')) {
@@ -90,15 +99,18 @@ export function channelMetaFromHtml(html: string): ChannelMeta {
     firstGroup(html, /<meta[^>]+property=["']og:title["'][^>]*content=["']([^"']*)["']/i) ||
     firstGroup(html, /<meta[^>]+content=["']([^"']*)["'][^>]*property=["']og:title["']/i);
 
+  const canonical = firstGroup(html, /<link[^>]+rel=["']canonical["'][^>]*href=["']([^"']*)["']/i);
+  // The canonical URL names the page's own channel; `"channelId"` also appears
+  // in related-video data, so it is only a last resort.
   const id =
-    firstGroup(html, /"channelId":"(UC[A-Za-z0-9_-]+)"/) ||
+    /youtube\.com\/channel\/(UC[A-Za-z0-9_-]+)/i.exec(canonical)?.[1] ||
     firstGroup(html, /"externalId":"(UC[A-Za-z0-9_-]+)"/) ||
     firstGroup(
       html,
       /<meta[^>]+itemprop=["']identifier["'][^>]*content=["'](UC[A-Za-z0-9_-]+)["']/i,
-    );
+    ) ||
+    firstGroup(html, /"channelId":"(UC[A-Za-z0-9_-]+)"/);
 
-  const canonical = firstGroup(html, /<link[^>]+rel=["']canonical["'][^>]*href=["']([^"']*)["']/i);
   let handle = '';
   const canonicalMatch = /youtube\.com\/@([^/?#]+)/i.exec(canonical);
   if (canonicalMatch?.[1]) handle = normalizeHandle(canonicalMatch[1]);
@@ -230,10 +242,26 @@ export async function resolveChannelByName(
   return meta;
 }
 
+// /c/Name and /user/Name redirect to the canonical /@handle page, so the page
+// body is the only reliable source for the channel id and handle.
+async function resolveLegacyChannel(
+  path: string,
+  deps?: Partial<ResolveDeps>,
+): Promise<ChannelMeta> {
+  const response = await fetchWith(deps)(`${YOUTUBE_ORIGIN}${path}`);
+  if (!response.ok) {
+    if (response.status === 404) return { id: '', name: '', handle: '' };
+    throw new Error(`Channel lookup failed with status ${response.status}`);
+  }
+  return channelMetaFromHtml(await response.text());
+}
+
 export async function resolveChannelMeta(
   ref: ChannelRef,
   deps?: Partial<ResolveDeps>,
 ): Promise<ChannelMeta> {
+  if (ref.path) return resolveLegacyChannel(ref.path, deps);
+
   const id = ref.id?.trim() ?? '';
   const handle = ref.handle?.trim() ?? '';
   const name = ref.name?.trim() ?? '';
