@@ -42,7 +42,7 @@ Manifest V3, DOM/CSS-first, with `declarativeNetRequest` for direct navigation. 
 
 - **Constant-time lookups.** IDs, handles and names are compiled into sets and checked in one step; performance doesn't degrade as the blocklist grows.
 - **Batched DOM work.** Page changes are collapsed into a single pass, processed nodes are skipped, and hiding is a single CSS class rather than per-element style writes.
-- **Bounded matching.** Regex only runs on capped text fields, so it can't be used as a performance footgun.
+- **Capped matching.** Regex only runs on text fields capped at 4096 characters. That bounds the input, not the pattern: a pathological filter such as `/(a+)+$/` can still backtrack badly on a long title.
 - **Serialized writes.** A single service worker is the only writer, and redundant rule updates are diffed away.
 - **No internals.** No JavaScript injection or network interception, so there's no per-response parsing and less to break.
 
