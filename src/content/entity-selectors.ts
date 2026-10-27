@@ -130,10 +130,11 @@ const METADATA_TEXT_SELECTORS = [
 
 export const METADATA_SELECTOR = METADATA_TEXT_SELECTORS.join(',');
 
+export const REEL_SELECTOR = 'ytd-reel-video-renderer';
+
 // The current Shorts layout drops the [is-active] attribute; the player element
 // lives inside the active reel.
-export const ACTIVE_REEL_SELECTOR =
-  'ytd-reel-video-renderer[is-active], ytd-reel-video-renderer:has(#shorts-player)';
+export const ACTIVE_REEL_SELECTOR = `${REEL_SELECTOR}[is-active], ${REEL_SELECTOR}:has(#shorts-player)`;
 
 export const CARD_SELECTOR = ITEM_SELECTORS.join(',');
 export const COMMENT_SELECTOR = COMMENT_SELECTORS.join(',');

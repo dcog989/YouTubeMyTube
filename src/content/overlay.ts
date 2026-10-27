@@ -6,11 +6,13 @@ import { unblockReason } from '../shared/rules-service';
 import { getRuntimeUrl } from '../shared/runtime';
 import { h } from '../shared/ui';
 import { ruleRefForReason } from '../shared/unblock';
+import { parseYouTubeUrl } from '../shared/url';
 import { deepQuery } from './dom';
 import type { PlaybackGuard, PlaybackLease } from './playback';
 
 const OVERLAY_CLASS = 'ytb-block-overlay';
 const VIDEO_BLANK_CLASS = 'ytb-blank-player';
+const PASSIVE_COVER_CLASS = 'ytb-blank-cover-passive';
 const LOGO_PATH = 'assets/icons/128.png';
 
 const PLAYER_BOX_SELECTORS = [
@@ -233,6 +235,8 @@ export function createBlankCover(options: {
     }
 
     const key = reason ? reasonKey(reason) : null;
+    const passive = parseYouTubeUrl(window.location.href).kind === 'shorts';
+    if (cover) cover.classList.toggle(PASSIVE_COVER_CLASS, passive);
     if (cover?.isConnected && key !== null && currentKey === key) return;
 
     lease ??= guard.acquire();
@@ -241,6 +245,7 @@ export function createBlankCover(options: {
 
     if (!cover) {
       cover = h('div', { className: 'ytb-blank-cover' });
+      cover.classList.toggle(PASSIVE_COVER_CLASS, passive);
       document.body.appendChild(cover);
       window.addEventListener('resize', schedulePlace, true);
       window.addEventListener('scroll', schedulePlace, true);

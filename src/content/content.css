@@ -28,6 +28,16 @@ html.ytb-blank-player video {
   height: 40px;
 }
 
+/* The cover sits over the Shorts player, where the pager needs wheel input;
+   let scroll and clicks through and keep only the actions interactive. */
+.ytb-blank-cover-passive {
+  pointer-events: none;
+}
+
+.ytb-blank-cover-passive .ytb-block-actions {
+  pointer-events: auto;
+}
+
 .ytb-blank-title {
   margin: 0;
   font-size: 18px;

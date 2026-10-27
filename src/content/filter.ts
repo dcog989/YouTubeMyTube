@@ -5,11 +5,11 @@ import { createBatcher } from './batch';
 import { closestAcrossShadow } from './dom';
 import { cardEntity, commentEntity } from './entity';
 import {
-  ACTIVE_REEL_SELECTOR,
   CARD_SELECTOR,
   COMMENT_SELECTOR,
   HIDDEN_CLASS,
   NESTED_CARD_SELECTOR,
+  REEL_SELECTOR,
 } from './entity-selectors';
 import type { ChannelCache } from './menu/channel-cache';
 import type { Store } from './store';
@@ -24,6 +24,12 @@ export interface FilterEngine {
 // Shorts lockups carry no channel link, name or ID; the channel has to come
 // from the video itself (oEmbed).
 const SHORTS_LINK_SELECTOR = 'a[href*="/shorts/"]';
+
+// Reels are the Shorts pager's scroll items. Hiding one collapses its snap
+// point and stalls paging, so the evaluator blanks the active reel instead.
+function isReel(element: Element): boolean {
+  return element.matches(REEL_SELECTOR);
+}
 
 function hasChannelRules(rules: CompiledRules): boolean {
   return (
@@ -47,6 +53,7 @@ export function createFilterEngine(deps: {
   }
 
   function hide(element: Element): void {
+    if (isReel(element)) return;
     setHidden(element, true);
   }
 
@@ -105,9 +112,8 @@ export function createFilterEngine(deps: {
 
     if (node.matches(CARD_SELECTOR)) {
       const card = outermostCard(node);
-      // The active short hosts the player; hiding it only freezes the frame and
-      // keeps audio playing, so the evaluator blocks it with the overlay instead.
-      if (card.matches(ACTIVE_REEL_SELECTOR)) return;
+      // The active reel hosts the player; the evaluator blanks it with the cover.
+      if (isReel(card)) return;
       const entity = withCachedChannel(cardEntity(card));
       const key = entityKey(entity);
       if (key && seen.get(card) === key) return;

@@ -20,6 +20,8 @@ const SUPPORTED_KINDS: ReadonlySet<ParsedUrl['kind']> = new Set([
 
 const PLAYER_BLANK_KINDS: ReadonlySet<string> = new Set(['video', 'title']);
 
+const SHORTS_KIND = 'shorts';
+
 function isSupportedPage(parsed: ParsedUrl): boolean {
   return SUPPORTED_KINDS.has(parsed.kind);
 }
@@ -73,7 +75,9 @@ export function createEvaluator(deps: { store: Store; overlay: OverlayFeedback }
     lastIdentity = identityKey(entity);
     const result = matchEntity(entity, compiled);
     if (result.blocked) {
-      if (PLAYER_BLANK_KINDS.has(result.reason.kind)) {
+      // A full-page overlay would swallow the Shorts pager's scroll input, so
+      // Shorts always use the player cover, which lets scrolling through.
+      if (parsed.kind === SHORTS_KIND || PLAYER_BLANK_KINDS.has(result.reason.kind)) {
         deps.overlay.clearChannel();
         deps.overlay.requestBlank(true, result.reason);
         return;
