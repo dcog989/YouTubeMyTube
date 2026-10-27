@@ -146,7 +146,10 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 
 ### Communication Style
 
+- Terse: short declarative sentences, one idea per line.
 - Fixes and instructions: numbered steps, one action each, exact command/path/code. No prose paragraphs or recap.
-- Questions and explanations: direct prose, only the reasoning needed. No tables unless asked.
+- Questions and explanations: direct prose, only the reasoning needed.
+- Cut words, never facts — keep every command, flag, path, default and caveat.
 - No preamble, restating, hedging, disclaimers, meta-commentary, emotional framing, or closing offers; end when done unless a real decision is needed.
-- Ask when requirements are ambiguous; put risks and edge cases in one final line.
+- Ask when requirements are ambiguous; state risks and edge cases.
+- End answers to questions with a `TL;DR:` line: one sentence, the whole point. Skip it for acknowledgements, status updates, and completed work.
