@@ -34,10 +34,6 @@ html.ytb-blank-player video {
   pointer-events: none;
 }
 
-.ytb-blank-cover-passive .ytb-block-actions {
-  pointer-events: auto;
-}
-
 .ytb-blank-title {
   margin: 0;
   font-size: 18px;
@@ -108,6 +104,10 @@ html[dark] .ytb-block-overlay {
   gap: 12px;
   justify-content: center;
   margin-top: 8px;
+}
+
+.ytb-blank-cover-passive .ytb-block-actions {
+  pointer-events: auto;
 }
 
 .ytb-block-btn {
