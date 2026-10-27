@@ -1,4 +1,12 @@
-import { cpSync, watch as fsWatch, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  cpSync,
+  watch as fsWatch,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build, context } from 'esbuild';
@@ -102,7 +110,10 @@ function watchStaticAssets(targets) {
   ];
   const directories = new Set(sources.map((source) => dirname(source)));
   directories.add(resolve(ROOT, 'assets/icons'));
-  directories.add(resolve(ROOT, '_locales'));
+  // Watching `_locales` itself misses edits inside its subdirectories on Linux.
+  for (const entry of readdirSync(resolve(ROOT, '_locales'), { withFileTypes: true })) {
+    if (entry.isDirectory()) directories.add(resolve(ROOT, '_locales', entry.name));
+  }
 
   /** @type {ReturnType<typeof setTimeout> | null} */
   let pending = null;
