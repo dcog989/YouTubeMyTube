@@ -5,6 +5,7 @@ import { applyMutation, isMutation } from '../src/shared/mutations';
 describe('isMutation', () => {
   it('accepts known kinds and rejects everything else', () => {
     expect(isMutation({ kind: 'setEnabled', enabled: true })).toBe(true);
+    expect(isMutation({ kind: 'applyMetadata', fixes: [] })).toBe(true);
     expect(isMutation({ kind: 'replaceState', state: defaultState() })).toBe(true);
     expect(isMutation({ kind: 'unknown' })).toBe(false);
     expect(isMutation({})).toBe(false);
@@ -59,5 +60,68 @@ describe('applyMutation', () => {
     replacement.settings.enabled = false;
     const next = applyMutation(defaultState(), { kind: 'replaceState', state: replacement });
     expect(next).toBe(replacement);
+  });
+});
+
+describe('applyMetadata', () => {
+  it('fills channel and video metadata', () => {
+    const state = defaultState();
+    state.rules.channels.push({ id: '', name: 'Old Name', handle: '' });
+    state.rules.videos.push({ id: 'abc', title: '' });
+
+    const next = applyMutation(state, {
+      kind: 'applyMetadata',
+      fixes: [
+        {
+          kind: 'channel',
+          lookup: { name: 'Old Name' },
+          id: 'UC1',
+          name: 'New Name',
+          handle: 'newhandle',
+          failed: false,
+        },
+        { kind: 'video', videoId: 'abc', title: 'A Video', failed: false },
+      ],
+    });
+
+    expect(next).toBe(state);
+    expect(state.rules.channels[0]).toEqual({ id: 'UC1', name: 'New Name', handle: 'newhandle' });
+    expect(state.rules.videos[0]).toEqual({ id: 'abc', title: 'A Video' });
+  });
+
+  it('marks and clears lookup failures', () => {
+    const state = defaultState();
+    state.rules.channels.push({ id: 'UC1', name: 'Name', handle: '' });
+    state.rules.videos.push({ id: 'abc', title: 'Title' });
+
+    applyMutation(state, {
+      kind: 'applyMetadata',
+      fixes: [
+        { kind: 'channel', lookup: { id: 'UC1' }, id: '', name: '', handle: '', failed: true },
+        { kind: 'video', videoId: 'abc', title: '', failed: true },
+      ],
+    });
+    expect(state.rules.channels[0]?.lookupFailed).toBe(true);
+    expect(state.rules.videos[0]?.lookupFailed).toBe(true);
+
+    applyMutation(state, {
+      kind: 'applyMetadata',
+      fixes: [
+        { kind: 'channel', lookup: { id: 'UC1' }, id: '', name: '', handle: '', failed: false },
+        { kind: 'video', videoId: 'abc', title: 'Title', failed: false },
+      ],
+    });
+    expect(state.rules.channels[0]?.lookupFailed).toBeUndefined();
+    expect(state.rules.videos[0]?.lookupFailed).toBeUndefined();
+  });
+
+  it('ignores entries that are no longer stored', () => {
+    const state = defaultState();
+    expect(
+      applyMutation(state, {
+        kind: 'applyMetadata',
+        fixes: [{ kind: 'video', videoId: 'gone', title: 'Title', failed: false }],
+      }),
+    ).toBeNull();
   });
 });

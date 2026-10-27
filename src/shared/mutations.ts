@@ -1,7 +1,29 @@
 import type { Reason } from './reason';
-import { addChannel, addVideo, type ChannelLookup, removeChannel, removeVideo } from './rules';
-import type { BlockerState, ChannelEntry, VideoEntry } from './types';
+import {
+  addChannel,
+  addVideo,
+  type ChannelLookup,
+  findChannel,
+  findVideo,
+  removeChannel,
+  removeVideo,
+} from './rules';
+import type { BlockerState, ChannelEntry, FilterRules, VideoEntry } from './types';
 import { removeRule, ruleRefForReason } from './unblock';
+
+// Metadata lookups (titles, channel ids/names/handles) computed outside the
+// worker. Applied by the worker to whatever state is stored when it runs, so a
+// background lookup can never overwrite a block made in the meantime.
+export type MetadataFix =
+  | { kind: 'video'; videoId: string; title: string; failed: boolean }
+  | {
+      kind: 'channel';
+      lookup: ChannelLookup;
+      id: string;
+      name: string;
+      handle: string;
+      failed: boolean;
+    };
 
 export type Mutation =
   | { kind: 'setEnabled'; enabled: boolean }
@@ -11,6 +33,7 @@ export type Mutation =
   | { kind: 'blockChannel'; entry: ChannelEntry }
   | { kind: 'unblockChannel'; lookup: ChannelLookup }
   | { kind: 'unblockReason'; reason: Reason }
+  | { kind: 'applyMetadata'; fixes: MetadataFix[] }
   | { kind: 'replaceState'; state: BlockerState };
 
 const MUTATION_KINDS = new Set<string>([
@@ -21,6 +44,7 @@ const MUTATION_KINDS = new Set<string>([
   'blockChannel',
   'unblockChannel',
   'unblockReason',
+  'applyMetadata',
   'replaceState',
 ]);
 
@@ -31,6 +55,62 @@ export function isMutation(value: unknown): value is Mutation {
 }
 
 type InPlaceMutation = Exclude<Mutation, { kind: 'replaceState' }>;
+
+interface LookupMarked {
+  lookupFailed?: boolean;
+}
+
+function setLookupFailed(entry: LookupMarked, failed: boolean): boolean {
+  if (failed === Boolean(entry.lookupFailed)) return false;
+  if (failed) entry.lookupFailed = true;
+  else delete entry.lookupFailed;
+  return true;
+}
+
+// Applies one lookup result to a stored entry; entries added or edited since the
+// lookup started are matched by their original identity (or ignored).
+function applyVideoMeta(entry: VideoEntry, fix: Extract<MetadataFix, { kind: 'video' }>): boolean {
+  let changed = false;
+  if (fix.title && fix.title !== entry.title) {
+    entry.title = fix.title;
+    changed = true;
+  }
+  return setLookupFailed(entry, fix.failed) || changed;
+}
+
+function applyChannelMeta(
+  entry: ChannelEntry,
+  fix: Extract<MetadataFix, { kind: 'channel' }>,
+): boolean {
+  let changed = false;
+  if (fix.id && fix.id !== entry.id) {
+    entry.id = fix.id;
+    changed = true;
+  }
+  if (fix.name && fix.name !== entry.name) {
+    entry.name = fix.name;
+    changed = true;
+  }
+  if (fix.handle !== entry.handle) {
+    entry.handle = fix.handle;
+    changed = true;
+  }
+  return setLookupFailed(entry, fix.failed) || changed;
+}
+
+function applyMetadataFixes(rules: FilterRules, fixes: MetadataFix[]): boolean {
+  let changed = false;
+  for (const fix of fixes) {
+    if (fix.kind === 'video') {
+      const video = findVideo(rules, fix.videoId);
+      if (video && applyVideoMeta(video, fix)) changed = true;
+    } else {
+      const channel = findChannel(rules, fix.lookup);
+      if (channel && applyChannelMeta(channel, fix)) changed = true;
+    }
+  }
+  return changed;
+}
 
 function applyInPlace(state: BlockerState, mutation: InPlaceMutation): boolean {
   switch (mutation.kind) {
@@ -54,6 +134,8 @@ function applyInPlace(state: BlockerState, mutation: InPlaceMutation): boolean {
       const ref = ruleRefForReason(mutation.reason);
       return ref ? removeRule(state.rules, ref) : false;
     }
+    case 'applyMetadata':
+      return applyMetadataFixes(state.rules, mutation.fixes);
   }
 }
 

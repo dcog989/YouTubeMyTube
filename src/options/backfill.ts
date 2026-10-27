@@ -1,4 +1,4 @@
-import { normalizeState } from '../shared/normalize';
+import { applyMutation, type MetadataFix, type Mutation } from '../shared/mutations';
 import { type ChannelMeta, resolveChannelMeta, resolveVideoTitle } from '../shared/resolve';
 import { isChannelComplete } from '../shared/rules';
 import { requestMutation } from '../shared/runtime';
@@ -30,16 +30,32 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function persistChanges(): Promise<void> {
-  if (!isDirty()) {
-    const normalized = normalizeState(getDraft());
-    commit(normalized);
-    await requestMutation({ kind: 'replaceState', state: normalized });
+// Fixes go through the worker's mutation queue so they land on whatever state
+// is stored when they run; they can never replace a block made meanwhile. With
+// unsaved edits in this page they stay in the draft, and Save persists them.
+async function persistFixes(fixes: MetadataFix[]): Promise<boolean> {
+  const mutation: Mutation = { kind: 'applyMetadata', fixes };
+  if (isDirty()) {
+    const changed = applyMutation(getDraft(), mutation) !== null;
+    notify();
+    return changed;
   }
+  const saved = await requestMutation(mutation);
+  if (saved && !isDirty()) commit(saved);
   notify();
+  return saved !== null;
 }
 
-async function backfillBatch(): Promise<{ changed: boolean }> {
+function channelTargetUnchanged(target: ChannelTarget): boolean {
+  return (
+    getDraft().rules.channels.includes(target.entry) &&
+    target.entry.id === target.id &&
+    target.entry.handle === target.handle &&
+    target.entry.name === target.name
+  );
+}
+
+async function collectFixes(): Promise<MetadataFix[]> {
   const draft = getDraft();
   const channelTargets: ChannelTarget[] = draft.rules.channels
     .filter((channel) => !isChannelComplete(channel))
@@ -48,19 +64,12 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
     .filter(needsVideoBackfill)
     .map((entry) => ({ entry, id: entry.id }));
 
-  let changed = false;
+  const fixes: MetadataFix[] = [];
   let lookups = 0;
 
   for (const target of channelTargets) {
     if (lookups >= MAX_BACKFILL_LOOKUPS) break;
-    if (!getDraft().rules.channels.includes(target.entry)) continue;
-    if (
-      target.entry.id !== target.id ||
-      target.entry.handle !== target.handle ||
-      target.entry.name !== target.name
-    ) {
-      continue;
-    }
+    if (!channelTargetUnchanged(target)) continue;
     lookups += 1;
 
     let meta: ChannelMeta | null = null;
@@ -69,31 +78,16 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
     } catch {
       meta = null;
     }
-    if (!getDraft().rules.channels.includes(target.entry)) continue;
-    if (!meta) continue;
+    if (!channelTargetUnchanged(target) || !meta) continue;
 
-    if (meta.id && meta.id !== target.entry.id) {
-      target.entry.id = meta.id;
-      changed = true;
-    }
-    if (meta.name && meta.name !== target.entry.name) {
-      target.entry.name = meta.name;
-      changed = true;
-    }
-    if (meta.handle !== target.entry.handle) {
-      target.entry.handle = meta.handle;
-      changed = true;
-    }
-
-    if (meta.name) {
-      if (target.entry.lookupFailed) {
-        delete target.entry.lookupFailed;
-        changed = true;
-      }
-    } else if (!target.entry.lookupFailed) {
-      target.entry.lookupFailed = true;
-      changed = true;
-    }
+    fixes.push({
+      kind: 'channel',
+      lookup: { id: target.id, handle: target.handle, name: target.name },
+      id: meta.id,
+      name: meta.name,
+      handle: meta.handle,
+      failed: !meta.name,
+    });
   }
 
   for (const target of videoTargets) {
@@ -108,26 +102,13 @@ async function backfillBatch(): Promise<{ changed: boolean }> {
     } catch {
       title = null;
     }
-    if (!getDraft().rules.videos.includes(target.entry)) continue;
-    if (title === null) continue;
+    if (!getDraft().rules.videos.includes(target.entry) || title === null) continue;
+    if (target.entry.id !== target.id) continue;
 
-    if (title && title !== target.entry.title) {
-      target.entry.title = title;
-      changed = true;
-    }
-
-    if (title) {
-      if (target.entry.lookupFailed) {
-        delete target.entry.lookupFailed;
-        changed = true;
-      }
-    } else if (!target.entry.lookupFailed) {
-      target.entry.lookupFailed = true;
-      changed = true;
-    }
+    fixes.push({ kind: 'video', videoId: target.id, title, failed: !title });
   }
 
-  return { changed };
+  return fixes;
 }
 
 export function backfillMissing(): Promise<void> {
@@ -140,9 +121,9 @@ export function backfillMissing(): Promise<void> {
 
 async function runBackfill(): Promise<void> {
   for (;;) {
-    const { changed } = await backfillBatch();
-    if (!changed) return;
-    await persistChanges();
+    const fixes = await collectFixes();
+    if (fixes.length === 0) return;
+    if (!(await persistFixes(fixes))) return;
     await delay(BACKFILL_BATCH_DELAY);
   }
 }
