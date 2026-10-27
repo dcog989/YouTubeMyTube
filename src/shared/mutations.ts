@@ -2,6 +2,7 @@ import type { Reason } from './reason';
 import {
   addChannel,
   addVideo,
+  applyResolvedMeta,
   type ChannelLookup,
   findChannel,
   findVideo,
@@ -78,23 +79,21 @@ function applyVideoMeta(entry: VideoEntry, fix: Extract<MetadataFix, { kind: 'vi
   return setLookupFailed(entry, fix.failed) || changed;
 }
 
+// Merging goes through the same resolver as the Add box, so a lookup that
+// collides with an existing row folds into it instead of leaving a duplicate
+// that save-time normalization drops.
 function applyChannelMeta(
+  rules: FilterRules,
   entry: ChannelEntry,
   fix: Extract<MetadataFix, { kind: 'channel' }>,
 ): boolean {
-  let changed = false;
-  if (fix.id && fix.id !== entry.id) {
-    entry.id = fix.id;
-    changed = true;
-  }
-  if (fix.name && fix.name !== entry.name) {
-    entry.name = fix.name;
-    changed = true;
-  }
-  if (fix.handle !== entry.handle) {
-    entry.handle = fix.handle;
-    changed = true;
-  }
+  const before = { id: entry.id, name: entry.name, handle: entry.handle };
+  const outcome = applyResolvedMeta(rules, entry, fix);
+  const changed =
+    outcome === 'conflict' ||
+    entry.id !== before.id ||
+    entry.name !== before.name ||
+    entry.handle !== before.handle;
   return setLookupFailed(entry, fix.failed) || changed;
 }
 
@@ -106,7 +105,7 @@ function applyMetadataFixes(rules: FilterRules, fixes: MetadataFix[]): boolean {
       if (video && applyVideoMeta(video, fix)) changed = true;
     } else {
       const channel = findChannel(rules, fix.lookup);
-      if (channel && applyChannelMeta(channel, fix)) changed = true;
+      if (channel && applyChannelMeta(rules, channel, fix)) changed = true;
     }
   }
   return changed;

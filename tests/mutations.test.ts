@@ -85,8 +85,30 @@ describe('applyMetadata', () => {
     });
 
     expect(next).toBe(state);
-    expect(state.rules.channels[0]).toEqual({ id: 'UC1', name: 'New Name', handle: 'newhandle' });
+    expect(state.rules.channels[0]).toEqual({ id: 'UC1', name: 'Old Name', handle: 'newhandle' });
     expect(state.rules.videos[0]).toEqual({ id: 'abc', title: 'A Video' });
+  });
+
+  it('merges a resolved channel into the row it collides with', () => {
+    const state = defaultState();
+    state.rules.channels.push({ id: 'UC1', name: '', handle: '' });
+    state.rules.channels.push({ id: '', name: 'Music', handle: '' });
+
+    applyMutation(state, {
+      kind: 'applyMetadata',
+      fixes: [
+        {
+          kind: 'channel',
+          lookup: { name: 'Music' },
+          id: 'UC1',
+          name: 'Music',
+          handle: '',
+          failed: false,
+        },
+      ],
+    });
+
+    expect(state.rules.channels).toEqual([{ id: 'UC1', name: 'Music', handle: '' }]);
   });
 
   it('marks and clears lookup failures', () => {
