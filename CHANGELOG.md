@@ -2,6 +2,35 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.18.0 - 2026-10-27
+#### Features
+- (**options**) resolve legacy /c/ and /user/ channel URLs - (a5f5eb7) - dcog989
+- add Chrome compatibility - (da34914) - dcog989
+#### Bug Fixes
+- (**build**) watch each locale directory in watch mode - (fb7ec73) - dcog989
+- (**content**) stop Shorts block surfaces from stalling pager scroll - (1c6283c) - dcog989
+- (**content**) hide the m.youtube.com home feed - (2654d86) - dcog989
+- (**css**) order .ytb-blank-cover-passive actions rule after .ytb-block-actions - (340525c) - dcog989
+- (**dnr**) strip urlFilter syntax characters from entity filters - (4da766e) - dcog989
+- (**options**) merge backfill channels with the shared resolver - (1cd79df) - dcog989
+- (**options**) apply backfilled metadata through the worker instead of replacing state - (fd06639) - dcog989
+- (**popup**) hide the page-context block when it does not apply - (c61431f) - dcog989
+- (**resolve**) treat only 404 as missing metadata - (f338d2c) - dcog989
+- return an absent storage key without retrying - (1fbb36e) - dcog989
+#### Documentation
+- (**privacy**) fix the mobile YouTube host in the policy - (d49a882) - dcog989
+- (**readme**) stop claiming capped regex cannot be a performance footgun - (e47169b) - dcog989
+#### Tests
+- (**options**) cover backfill failure and single-write paths - (283f12a) - dcog989
+#### Refactoring
+- (**content**) drop menu CSS that inline styles always override - (738767d) - dcog989
+- (**content**) share one channel cache between filter and menu - (0120dc4) - dcog989
+- (**options**) persist backfill fixes once instead of every 25 lookups - (55dc871) - dcog989
+#### Miscellaneous Chores
+- updates + agents.md refined - (eb278c7) - dcog989
+
+- - -
+
 ## 0.17.1 - 2026-10-21
 #### Bug Fixes
 - (**content**) hide blocked channels' shorts in feed shelves - (c71ca76) - dcog989
