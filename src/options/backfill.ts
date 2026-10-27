@@ -26,6 +26,11 @@ function needsVideoBackfill(video: VideoEntry): boolean {
   return !video.lookupFailed && !video.title;
 }
 
+// A failed lookup is only retried after the entry is edited, which clears the flag.
+function needsChannelBackfill(channel: ChannelEntry): boolean {
+  return !channel.lookupFailed && !isChannelComplete(channel);
+}
+
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -58,7 +63,7 @@ function channelTargetUnchanged(target: ChannelTarget): boolean {
 async function collectFixes(): Promise<MetadataFix[]> {
   const draft = getDraft();
   const channelTargets: ChannelTarget[] = draft.rules.channels
-    .filter((channel) => !isChannelComplete(channel))
+    .filter(needsChannelBackfill)
     .map((entry) => ({ entry, id: entry.id, handle: entry.handle, name: entry.name }));
   const videoTargets: VideoTarget[] = draft.rules.videos
     .filter(needsVideoBackfill)

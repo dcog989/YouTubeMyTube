@@ -162,9 +162,13 @@ describe('resolveChannel / resolveVideoTitle', () => {
     expect(title).toBe('Cool Video');
   });
 
-  it('returns an empty title when oEmbed fails', async () => {
-    const title = await resolveVideoTitle('dQw4w9WgXcQ', { fetch: fetchStub('{}', 500) });
+  it('returns an empty title when the video is gone (404)', async () => {
+    const title = await resolveVideoTitle('dQw4w9WgXcQ', { fetch: fetchStub('', 404) });
     expect(title).toBe('');
+  });
+
+  it('rejects a rate-limited title lookup so callers retry later', async () => {
+    await expect(resolveVideoTitle('dQw4w9WgXcQ', { fetch: fetchStub('', 429) })).rejects.toThrow();
   });
 });
 
@@ -185,6 +189,10 @@ describe('resolveChannelByName', () => {
       fetch: fetchStub(SEARCH_HTML),
     });
     expect(meta).toEqual({ id: '', name: '', handle: '' });
+  });
+
+  it('rejects a failed search so callers retry later', async () => {
+    await expect(resolveChannelByName('Someone', { fetch: fetchStub('', 503) })).rejects.toThrow();
   });
 });
 
@@ -227,9 +235,17 @@ describe('resolveVideoChannel', () => {
     expect(meta).toEqual({ id: '', name: 'Rick Astley', handle: 'rickastleyyt' });
   });
 
-  it('returns empty identity when oEmbed fails', async () => {
-    const meta = await resolveVideoChannel('dQw4w9WgXcQ', { fetch: fetchStub('{}', 500) });
+  it('returns empty identity when the video is gone (404)', async () => {
+    const meta = await resolveVideoChannel('dQw4w9WgXcQ', {
+      fetch: fetchStub('{}', 404),
+    });
     expect(meta).toEqual({ id: '', name: '', handle: '' });
+  });
+
+  it('rejects when oEmbed is rate-limited', async () => {
+    await expect(
+      resolveVideoChannel('dQw4w9WgXcQ', { fetch: fetchStub('{}', 429) }),
+    ).rejects.toThrow();
   });
 });
 

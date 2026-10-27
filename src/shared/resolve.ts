@@ -151,7 +151,10 @@ async function fetchOembed(videoId: string, deps?: Partial<ResolveDeps>): Promis
   const target = `${YOUTUBE_ORIGIN}/watch?v=${encodeURIComponent(videoId)}`;
   const url = `${YOUTUBE_ORIGIN}/oembed?url=${encodeURIComponent(target)}&format=json`;
   const response = await fetchWith(deps)(url);
-  if (!response.ok) return null;
+  // Only a 404 means the video is genuinely gone. Transient failures (429, 5xx)
+  // must reject so callers do not record a permanent "not found".
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Video lookup failed with status ${response.status}`);
   return response.json();
 }
 
@@ -216,7 +219,9 @@ export async function resolveChannelByName(
 
   const url = `${YOUTUBE_ORIGIN}/results?search_query=${encodeURIComponent(query)}&sp=${SEARCH_CHANNEL_FILTER}`;
   const response = await fetchWith(deps)(url);
-  if (!response.ok) return { id: '', name: '', handle: '' };
+  // A failed search is not a missing channel: reject so callers can retry later
+  // instead of recording a permanent "not found".
+  if (!response.ok) throw new Error(`Channel search failed with status ${response.status}`);
 
   const meta = channelMetaFromSearch(await response.text());
   if (normalizeChannelName(meta.name) !== normalizeChannelName(query)) {
