@@ -3,6 +3,7 @@ import { closestAcrossShadow, eventTarget } from '../dom';
 import type { FilterEngine } from '../filter';
 import type { OverlayFeedback } from '../overlay';
 import type { Store } from '../store';
+import type { ChannelCache } from './channel-cache';
 import { type MenuContainer, parentContainer } from './container';
 import { createInjector } from './inject';
 import { createOwnerTracker } from './owner';
@@ -17,6 +18,7 @@ export function createMenuInjector(deps: {
   store: Store;
   filter: FilterEngine;
   overlay: OverlayFeedback;
+  channelCache: ChannelCache;
 }): MenuInjector {
   const owners = createOwnerTracker();
   const injector = createInjector({ ...deps, owners });

@@ -11,7 +11,7 @@ import {
   HIDDEN_CLASS,
   NESTED_CARD_SELECTOR,
 } from './entity-selectors';
-import { createChannelCache } from './menu/channel-cache';
+import type { ChannelCache } from './menu/channel-cache';
 import type { Store } from './store';
 
 export interface FilterEngine {
@@ -34,9 +34,13 @@ function hasChannelRules(rules: CompiledRules): boolean {
   );
 }
 
-export function createFilterEngine(deps: { store: Store; evaluate(): void }): FilterEngine {
+export function createFilterEngine(deps: {
+  store: Store;
+  evaluate(): void;
+  channelCache: ChannelCache;
+}): FilterEngine {
   let seen = new WeakMap<Element, string>();
-  const channelCache = createChannelCache();
+  const { channelCache } = deps;
 
   function setHidden(element: Element, hidden: boolean): void {
     element.classList.toggle(HIDDEN_CLASS, hidden);

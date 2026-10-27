@@ -8,7 +8,7 @@ import type { FilterEngine } from '../filter';
 import type { OverlayFeedback } from '../overlay';
 import type { Store } from '../store';
 import { actionsFor, type MenuAction } from './actions';
-import { createChannelCache } from './channel-cache';
+import type { ChannelCache } from './channel-cache';
 import {
   containerStart,
   type MenuContainer,
@@ -38,9 +38,10 @@ export function createInjector(deps: {
   filter: FilterEngine;
   overlay: OverlayFeedback;
   owners: OwnerTracker;
+  channelCache: ChannelCache;
 }): Injector {
   const itemState = new WeakMap<Element, ItemState>();
-  const channelCache = createChannelCache();
+  const { channelCache } = deps;
 
   function currentState(): BlockerState | null {
     return deps.store.getSnapshot()?.state ?? null;

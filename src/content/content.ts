@@ -9,6 +9,7 @@ import { currentContext } from './entity';
 import { createEvaluator } from './evaluate';
 import { createFilterEngine } from './filter';
 import { createMenuInjector } from './menu';
+import { createChannelCache } from './menu/channel-cache';
 import { type ElementChange, onElementChanges } from './observer';
 import { createOverlayFeedback } from './overlay';
 import { createPlaybackGuard } from './playback';
@@ -21,9 +22,10 @@ const SETTLE_REFRESH_MS = [3000, 10000];
 async function init(): Promise<void> {
   const guard = createPlaybackGuard();
   const overlay = createOverlayFeedback(guard);
+  const channelCache = createChannelCache();
   const evaluator = createEvaluator({ store, overlay });
-  const filter = createFilterEngine({ store, evaluate: () => evaluator.schedule() });
-  const menu = createMenuInjector({ store, filter, overlay });
+  const filter = createFilterEngine({ store, channelCache, evaluate: () => evaluator.schedule() });
+  const menu = createMenuInjector({ store, filter, overlay, channelCache });
 
   let changeCount = 0;
 
