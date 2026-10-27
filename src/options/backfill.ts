@@ -11,6 +11,7 @@ const BACKFILL_BATCH_DELAY = 250;
 let inFlight: Promise<void> | null = null;
 
 interface ChannelTarget {
+  kind: 'channel';
   entry: ChannelEntry;
   id: string;
   handle: string;
@@ -18,9 +19,12 @@ interface ChannelTarget {
 }
 
 interface VideoTarget {
+  kind: 'video';
   entry: VideoEntry;
   id: string;
 }
+
+type BackfillTarget = ChannelTarget | VideoTarget;
 
 function needsVideoBackfill(video: VideoEntry): boolean {
   return !video.lookupFailed && !video.title;
@@ -60,59 +64,78 @@ function channelTargetUnchanged(target: ChannelTarget): boolean {
   );
 }
 
-async function collectFixes(): Promise<MetadataFix[]> {
-  const draft = getDraft();
-  const channelTargets: ChannelTarget[] = draft.rules.channels
-    .filter(needsChannelBackfill)
-    .map((entry) => ({ entry, id: entry.id, handle: entry.handle, name: entry.name }));
-  const videoTargets: VideoTarget[] = draft.rules.videos
-    .filter(needsVideoBackfill)
-    .map((entry) => ({ entry, id: entry.id }));
+function videoTargetUnchanged(target: VideoTarget): boolean {
+  return getDraft().rules.videos.includes(target.entry) && target.entry.id === target.id;
+}
 
+function collectTargets(): BackfillTarget[] {
+  const draft = getDraft();
+  return [
+    ...draft.rules.channels.filter(needsChannelBackfill).map(
+      (entry): ChannelTarget => ({
+        kind: 'channel',
+        entry,
+        id: entry.id,
+        handle: entry.handle,
+        name: entry.name,
+      }),
+    ),
+    ...draft.rules.videos
+      .filter(needsVideoBackfill)
+      .map((entry): VideoTarget => ({ kind: 'video', entry, id: entry.id })),
+  ];
+}
+
+async function resolveChannelTarget(target: ChannelTarget): Promise<MetadataFix | null> {
+  if (!channelTargetUnchanged(target)) return null;
+
+  let meta: ChannelMeta | null = null;
+  try {
+    meta = await resolveChannelMeta(target.entry);
+  } catch {
+    meta = null;
+  }
+  if (!channelTargetUnchanged(target) || !meta) return null;
+
+  return {
+    kind: 'channel',
+    lookup: { id: target.id, handle: target.handle, name: target.name },
+    id: meta.id,
+    name: meta.name,
+    handle: meta.handle,
+    failed: !meta.name,
+  };
+}
+
+async function resolveVideoTarget(target: VideoTarget): Promise<MetadataFix | null> {
+  if (!videoTargetUnchanged(target)) return null;
+
+  let title: string | null = null;
+  try {
+    title = await resolveVideoTitle(target.id);
+  } catch {
+    title = null;
+  }
+  if (!videoTargetUnchanged(target) || title === null) return null;
+
+  return { kind: 'video', videoId: target.id, title, failed: !title };
+}
+
+async function resolveTargets(targets: BackfillTarget[]): Promise<MetadataFix[]> {
   const fixes: MetadataFix[] = [];
   let lookups = 0;
-
-  for (const target of channelTargets) {
-    if (lookups >= MAX_BACKFILL_LOOKUPS) break;
-    if (!channelTargetUnchanged(target)) continue;
-    lookups += 1;
-
-    let meta: ChannelMeta | null = null;
-    try {
-      meta = await resolveChannelMeta(target.entry);
-    } catch {
-      meta = null;
+  for (const target of targets) {
+    if (lookups >= MAX_BACKFILL_LOOKUPS) {
+      await delay(BACKFILL_BATCH_DELAY);
+      lookups = 0;
     }
-    if (!channelTargetUnchanged(target) || !meta) continue;
-
-    fixes.push({
-      kind: 'channel',
-      lookup: { id: target.id, handle: target.handle, name: target.name },
-      id: meta.id,
-      name: meta.name,
-      handle: meta.handle,
-      failed: !meta.name,
-    });
-  }
-
-  for (const target of videoTargets) {
-    if (lookups >= MAX_BACKFILL_LOOKUPS) break;
-    if (!getDraft().rules.videos.includes(target.entry)) continue;
-    if (target.entry.id !== target.id) continue;
     lookups += 1;
-
-    let title: string | null = null;
-    try {
-      title = await resolveVideoTitle(target.id);
-    } catch {
-      title = null;
-    }
-    if (!getDraft().rules.videos.includes(target.entry) || title === null) continue;
-    if (target.entry.id !== target.id) continue;
-
-    fixes.push({ kind: 'video', videoId: target.id, title, failed: !title });
+    const fix =
+      target.kind === 'channel'
+        ? await resolveChannelTarget(target)
+        : await resolveVideoTarget(target);
+    if (fix) fixes.push(fix);
   }
-
   return fixes;
 }
 
@@ -124,11 +147,14 @@ export function backfillMissing(): Promise<void> {
   return inFlight;
 }
 
+// One persist per round of lookups, so open YouTube tabs rescan once instead of
+// once per 25 entries.
 async function runBackfill(): Promise<void> {
   for (;;) {
-    const fixes = await collectFixes();
+    const targets = collectTargets();
+    if (targets.length === 0) return;
+    const fixes = await resolveTargets(targets);
     if (fixes.length === 0) return;
     if (!(await persistFixes(fixes))) return;
-    await delay(BACKFILL_BATCH_DELAY);
   }
 }
