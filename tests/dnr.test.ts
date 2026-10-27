@@ -89,6 +89,14 @@ describe('buildDnrRules', () => {
     expect(filter).toBe(`||youtube.com/@${encodeURIComponent('カナル')}^`);
   });
 
+  it('strips urlFilter syntax characters from ids and handles', () => {
+    const { rules } = buildDnrRules(
+      stateWith({ channels: [channel('UCabc*|^', 'some*|^channel')] }),
+    );
+    expect(rules[0]?.condition.urlFilter).toBe('||youtube.com/channel/UCabc^');
+    expect(rules[1]?.condition.urlFilter).toBe('||youtube.com/@somechannel^');
+  });
+
   it('skips channels without an id or handle', () => {
     const { rules } = buildDnrRules(stateWith({ channels: [channel('', '')] }));
     expect(rules).toHaveLength(0);

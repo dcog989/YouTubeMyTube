@@ -48,12 +48,18 @@ function videoIdPattern(videoId: string): string {
   return `${YOUTUBE_HOST_PATTERN}/(?:watch\\?(?:[^#]*&)?v=${id}(?:[&#]|$)|(?:shorts|embed|live)/${id}(?:[/?#]|$))`;
 }
 
+// `urlFilter` gives `*`, `|` and `^` their own meaning; entity fields must only
+// contribute literal characters.
+function urlFilterLiteral(value: string): string {
+  return value.replace(/[*|^]/g, '');
+}
+
 function channelIdFilter(channelId: string): string {
-  return `||youtube.com/channel/${channelId}^`;
+  return `||youtube.com/channel/${urlFilterLiteral(channelId)}^`;
 }
 
 function handleFilter(handle: string): string {
-  return `||youtube.com/@${encodeURIComponent(handle)}^`;
+  return `||youtube.com/@${encodeURIComponent(urlFilterLiteral(handle))}^`;
 }
 
 function blockedPage(reason: string): DnrRedirect {
