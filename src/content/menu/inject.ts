@@ -113,12 +113,6 @@ export function createInjector(deps: {
 
     const label = h('span', { className: 'ytb-menu-item-label', text: action.label });
     item.append(createIcon(), label);
-    item.addEventListener('mouseenter', () => {
-      item.style.backgroundColor = 'var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.2))';
-    });
-    item.addEventListener('mouseleave', () => {
-      item.style.backgroundColor = 'transparent';
-    });
     item.addEventListener('keydown', (event) => {
       if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
       event.preventDefault();
