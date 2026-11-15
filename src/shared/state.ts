@@ -26,9 +26,9 @@ export async function saveState(state: BlockerState): Promise<void> {
   await setStored({ [STATE_KEY]: state });
 }
 
-// Writes defaults only when the key is confirmed absent. If storage cannot be
-// read, seeding is skipped rather than clobbering the user's real rules with a
-// transiently empty read.
+// Writes defaults when the key is absent. Call this on a first install only:
+// on update an absent read can be a storage backend that has not finished
+// starting, and writing defaults would replace the user's real rules.
 export async function seedState(): Promise<void> {
   let stored: unknown;
   try {

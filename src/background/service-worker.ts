@@ -107,8 +107,12 @@ onRuntimeMessage((message, _sender, sendResponse) => {
 });
 
 onInstalled((details) => {
+  // Only a first install may write defaults. On update the storage backend can
+  // transiently read as empty, and seeding would replace the user's rules with
+  // defaults; the sync below runs from worker startup anyway.
+  if (details.reason !== 'install') return;
   void seedState().then(syncDynamicRules);
-  if (details.reason === 'install') openOptionsPage();
+  openOptionsPage();
 });
 
 void syncDynamicRules();
