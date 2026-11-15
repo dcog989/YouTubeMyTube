@@ -1,6 +1,20 @@
+import type { AreaKey } from './areas';
 import { type MessageKey, t } from './i18n';
 import type { Reason, ReasonKind } from './reason';
 import { normalizeHandle } from './url';
+
+const AREA_LABEL_KEYS: Record<AreaKey, MessageKey> = {
+  homePage: 'areaHomePageTitle',
+  trendingPage: 'areaTrendingPageTitle',
+  explorePage: 'areaExplorePageTitle',
+  subscriptionsPage: 'areaSubscriptionsPageTitle',
+  shortsPage: 'areaShortsPageTitle',
+  shortsShelf: 'areaShortsShelfTitle',
+  commentsSection: 'areaCommentsSectionTitle',
+  liveChat: 'areaLiveChatTitle',
+  relatedVideos: 'areaRelatedVideosTitle',
+  promoSections: 'areaPromoSectionsTitle',
+};
 
 const LABELS: Partial<Record<ReasonKind, MessageKey>> = {
   video: 'reasonVideoBlocked',
@@ -44,6 +58,11 @@ export function reasonLabel(reason: Reason | null, fallback: string): string {
 }
 
 export function reasonDetail(reason: Reason): string {
+  if (reason.kind === 'area') {
+    // `value` is an AreaKey; show its title instead of the raw key.
+    const label = AREA_LABEL_KEYS[reason.value as AreaKey];
+    if (label) return t('reasonDetailArea', t(label));
+  }
   const detail = DETAILS[reason.kind];
   const substituted = detail.substitute(reason.value);
   if (substituted) return t(detail.key, substituted);

@@ -31,7 +31,8 @@ describe('reasonDetail', () => {
     expect(reasonDetail({ kind: 'channelName', value: 'x' })).toBe('Blocked channel name: x');
     expect(reasonDetail({ kind: 'channelNameRule', value: 'x' })).toBe('Blocked channel name: x');
     expect(reasonDetail({ kind: 'comment', value: 'x' })).toBe('Blocked comment: x');
-    expect(reasonDetail({ kind: 'area', value: 'shortsPage' })).toBe('Blocked page: shortsPage');
+    expect(reasonDetail({ kind: 'area', value: 'shortsPage' })).toBe('Blocked page: Shorts pages');
+    expect(reasonDetail({ kind: 'area', value: 'notAnArea' })).toBe('Blocked page: notAnArea');
   });
 
   it('falls back to a generic description for empty pattern values', () => {
