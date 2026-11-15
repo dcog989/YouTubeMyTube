@@ -68,11 +68,11 @@ bun run build      # store + source archives; build:firefox / build:chrome build
 
 This writes the unpacked extension to `dist/firefox/` and `dist/chrome/`, the store archives to `dist/youtubemytube-firefox.zip` and `dist/youtubemytube-chrome.zip`, and the AMO source archive to `dist/youtubemytube-source.zip`.
 
-Temporary load it in Firefox: `about:debugging#/runtime/this-firefox` → Load Temporary Add-on.
+Temporary load it in Firefox: `about:debugging#/runtime/this-firefox` → Load Temporary Add-on -> `dist/firefox/manifest.json`
 
 ### Release and publish
 
-Pushing a version tag triggers the release workflow, which rebuilds the archives and attaches them to a GitHub Release. Upload the built archive to AMO manually. Chrome and Chromium users install `youtubemytube-chrome.zip` manually (see above).
+Pushing a version tag triggers the release workflow, which rebuilds the archives and attaches them to a GitHub Release. Upload the built archive to AMO manually. Chrome / Chromium users install `youtubemytube-chrome.zip` manually as above.
 
 ---
 
