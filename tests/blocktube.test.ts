@@ -38,20 +38,20 @@ describe('parseBlockTubeBackup', () => {
     expect(result.data.videoIds).toEqual(['vid1', 'vid2']);
     expect(result.data.channelIds).toEqual(['UC1']);
     expect(result.data.channelHandles).toEqual([]);
-    expect(result.data.channelFilters).toEqual(['drama']);
+    expect(result.data.channelNames).toEqual(['drama']);
     expect(result.data.titleFilters).toEqual(['spoiler']);
     expect(result.data.commentFilters).toEqual(['free crypto']);
     expect(result.data.skipped).toEqual([]);
   });
 
-  it('imports handles as channel rows and keeps other names fuzzy', () => {
+  it('imports handles as channel rows and keeps other names exact', () => {
     const result = parseBlockTubeBackup(
       backup({ channelName: ['@SomeHandle', 'drama', '@', '/free/i'] }),
     );
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.data.channelHandles).toEqual(['@SomeHandle']);
-    expect(result.data.channelFilters).toEqual(['drama', '@', '/free/i']);
+    expect(result.data.channelNames).toEqual(['drama', '@', '/free/i']);
   });
 
   it('drops comment, blank and non-string entries', () => {
@@ -120,14 +120,17 @@ describe('mergeBlockTubeImport', () => {
     const { state: merged, added } = mergeBlockTubeImport(state, parsed.data);
     expect(added).toBe(5);
     expect(merged.rules.videos.map((video) => video.id)).toEqual(['vid1', 'vid2']);
-    expect(merged.rules.channels.map((channel) => channel.id)).toEqual(['UC1']);
-    expect(merged.rules.channelFilters).toEqual(['drama']);
+    expect(merged.rules.channels).toEqual([
+      { id: 'UC1', name: '', handle: '' },
+      { id: '', name: 'drama', handle: '' },
+    ]);
+    expect(merged.rules.channelFilters).toEqual([]);
     expect(merged.rules.titleFilters).toEqual(['spoiler']);
     expect(merged.rules.commentFilters).toEqual(['free crypto']);
     expect(state.rules.videos).toEqual([{ id: 'vid1', title: '' }]);
   });
 
-  it('adds channelName handles as channel rows', () => {
+  it('adds channelName handles and names as channel rows', () => {
     const state = defaultState();
     const parsed = parseBlockTubeBackup(backup({ channelName: ['@SomeHandle', 'drama'] }));
     if (!parsed.ok) throw new Error('expected parse success');
@@ -137,8 +140,9 @@ describe('mergeBlockTubeImport', () => {
     expect(merged.rules.channels).toEqual([
       { id: 'UC1', name: '', handle: '' },
       { id: '', name: '', handle: 'somehandle' },
+      { id: '', name: 'drama', handle: '' },
     ]);
-    expect(merged.rules.channelFilters).toEqual(['drama']);
+    expect(merged.rules.channelFilters).toEqual([]);
   });
 
   it('enables imported areas without disabling existing ones', () => {
