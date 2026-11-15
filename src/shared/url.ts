@@ -9,6 +9,17 @@ export function normalizeChannelName(value: string): string {
   return value.trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
+// BlockTube stores a channel's label verbatim, so an entry can read
+// "7NEWS Australia   @7news". Split the trailing handle out so the lookup has
+// something to resolve. The handle must be a separate word.
+const TRAILING_HANDLE = /\s@([A-Za-z0-9._-]+)\s*$/;
+
+export function splitChannelLabel(value: string): { name: string; handle: string } {
+  const match = TRAILING_HANDLE.exec(value);
+  if (!match?.[1]) return { name: value.trim(), handle: '' };
+  return { name: value.slice(0, match.index).trim(), handle: normalizeHandle(match[1]) };
+}
+
 function safeDecode(value: string): string {
   try {
     return decodeURIComponent(value);

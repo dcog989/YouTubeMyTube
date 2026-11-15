@@ -1,5 +1,24 @@
 import { describe, expect, it } from 'vitest';
-import { parseYouTubeUrl } from '../src/shared/url';
+import { parseYouTubeUrl, splitChannelLabel } from '../src/shared/url';
+
+describe('splitChannelLabel', () => {
+  it('splits a trailing handle from a channel label', () => {
+    expect(splitChannelLabel('7NEWS Australia   @7news')).toEqual({
+      name: '7NEWS Australia',
+      handle: '7news',
+    });
+    expect(splitChannelLabel('Some Channel @Handle')).toEqual({
+      name: 'Some Channel',
+      handle: 'handle',
+    });
+  });
+
+  it('leaves a label without a separate handle alone', () => {
+    expect(splitChannelLabel('Some Channel')).toEqual({ name: 'Some Channel', handle: '' });
+    expect(splitChannelLabel('mail@example.com')).toEqual({ name: 'mail@example.com', handle: '' });
+    expect(splitChannelLabel('  padded  ')).toEqual({ name: 'padded', handle: '' });
+  });
+});
 
 describe('parseYouTubeUrl', () => {
   it('parses watch URLs', () => {

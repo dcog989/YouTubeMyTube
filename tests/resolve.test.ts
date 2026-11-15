@@ -53,6 +53,18 @@ describe('parseBlockInput', () => {
     });
   });
 
+  it('keeps a trailing handle when a channel label is pasted', () => {
+    expect(parseBlockInput('7NEWS Australia   @7news', 'channel')).toEqual({
+      kind: 'channel',
+      name: '7NEWS Australia',
+      handle: '7news',
+    });
+    expect(parseBlockInput('Some Channel', 'channel')).toEqual({
+      kind: 'channel',
+      name: 'Some Channel',
+    });
+  });
+
   it('parses legacy /c/ and /user/ channel URLs', () => {
     expect(parseBlockInput('https://www.youtube.com/c/SomeChannel')).toEqual({
       kind: 'channel',

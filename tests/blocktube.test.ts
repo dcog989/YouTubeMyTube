@@ -37,21 +37,24 @@ describe('parseBlockTubeBackup', () => {
     if (!result.ok) return;
     expect(result.data.videoIds).toEqual(['vid1', 'vid2']);
     expect(result.data.channelIds).toEqual(['UC1']);
-    expect(result.data.channelHandles).toEqual([]);
-    expect(result.data.channelNames).toEqual(['drama']);
+    expect(result.data.channelRefs).toEqual([{ name: 'drama', handle: '' }]);
     expect(result.data.titleFilters).toEqual(['spoiler']);
     expect(result.data.commentFilters).toEqual(['free crypto']);
     expect(result.data.skipped).toEqual([]);
   });
 
-  it('imports handles as channel rows and keeps other names exact', () => {
+  it('splits handles, labels and trailing handles into channel refs', () => {
     const result = parseBlockTubeBackup(
-      backup({ channelName: ['@SomeHandle', 'drama', '@', '/free/i'] }),
+      backup({ channelName: ['@SomeHandle', 'drama', '@', '7NEWS Australia   @7news'] }),
     );
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.data.channelHandles).toEqual(['@SomeHandle']);
-    expect(result.data.channelNames).toEqual(['drama', '@', '/free/i']);
+    expect(result.data.channelRefs).toEqual([
+      { name: '', handle: 'somehandle' },
+      { name: 'drama', handle: '' },
+      { name: '@', handle: '' },
+      { name: '7NEWS Australia', handle: '7news' },
+    ]);
   });
 
   it('drops comment, blank and non-string entries', () => {
@@ -130,17 +133,20 @@ describe('mergeBlockTubeImport', () => {
     expect(state.rules.videos).toEqual([{ id: 'vid1', title: '' }]);
   });
 
-  it('adds channelName handles and names as channel rows', () => {
+  it('adds channel handles and names as channel rows', () => {
     const state = defaultState();
-    const parsed = parseBlockTubeBackup(backup({ channelName: ['@SomeHandle', 'drama'] }));
+    const parsed = parseBlockTubeBackup(
+      backup({ channelName: ['@SomeHandle', 'drama', '7NEWS Australia   @7news'] }),
+    );
     if (!parsed.ok) throw new Error('expected parse success');
 
     const { state: merged, added } = mergeBlockTubeImport(state, parsed.data);
-    expect(added).toBe(7);
+    expect(added).toBe(8);
     expect(merged.rules.channels).toEqual([
       { id: 'UC1', name: '', handle: '' },
       { id: '', name: '', handle: 'somehandle' },
       { id: '', name: 'drama', handle: '' },
+      { id: '', name: '7NEWS Australia', handle: '7news' },
     ]);
     expect(merged.rules.channelFilters).toEqual([]);
   });

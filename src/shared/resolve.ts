@@ -4,6 +4,7 @@ import {
   normalizeHandle,
   parseLegacyChannelPath,
   parseYouTubeUrl,
+  splitChannelLabel,
 } from './url';
 
 export type BlockInput =
@@ -60,8 +61,10 @@ export function parseBlockInput(input: string, kind?: BlockInputKind): BlockInpu
   if (path) return { kind: 'channel', path };
 
   // Any other plain text (e.g. a multi-word channel name) blocks that name.
+  // A pasted "Name @handle" keeps the handle so it can be resolved to an id.
   if (kind === 'channel' && !value.includes('/') && !value.includes(':')) {
-    return { kind: 'channel', name: value };
+    const { name, handle } = splitChannelLabel(value);
+    return handle ? { kind: 'channel', name, handle } : { kind: 'channel', name };
   }
   return null;
 }

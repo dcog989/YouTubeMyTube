@@ -1,6 +1,9 @@
 import { isActiveEntry } from './patterns';
 import { addChannel, addVideo } from './rules';
 import type { AreaFlags, AreaKey, BlockerState } from './types';
+import { normalizeHandle, splitChannelLabel } from './url';
+
+export type ChannelRef = { name: string; handle: string };
 
 const DEFAULT_JAVASCRIPT_MARKER = 'Custom conditions did not match, do not block';
 
@@ -18,8 +21,7 @@ const UNSUPPORTED_OPTIONS: ReadonlyArray<readonly [string, string]> = [
 export interface BlockTubeImport {
   videoIds: string[];
   channelIds: string[];
-  channelHandles: string[];
-  channelNames: string[];
+  channelRefs: ChannelRef[];
   titleFilters: string[];
   commentFilters: string[];
   areas: Partial<AreaFlags>;
@@ -56,14 +58,11 @@ function isHandleEntry(entry: string): boolean {
 
 // BlockTube matches channel names exactly, so names become name-only rows
 // instead of substring filters that would hide every channel containing them.
-function splitChannelEntries(entries: string[]): { handles: string[]; names: string[] } {
-  const handles: string[] = [];
-  const names: string[] = [];
-  for (const entry of entries) {
-    if (isHandleEntry(entry)) handles.push(entry);
-    else names.push(entry);
-  }
-  return { handles, names };
+// A label that carries a trailing handle keeps both halves on one row.
+function splitChannelEntries(entries: string[]): ChannelRef[] {
+  return entries.map((entry) =>
+    isHandleEntry(entry) ? { name: '', handle: normalizeHandle(entry) } : splitChannelLabel(entry),
+  );
 }
 
 function hasAdvancedJavaScript(value: unknown): boolean {
@@ -125,15 +124,14 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
     skipped.add('block message');
   }
 
-  const channelNames = splitChannelEntries(sanitizeList(filterData.channelName));
+  const channelRefs = splitChannelEntries(sanitizeList(filterData.channelName));
 
   return {
     ok: true,
     data: {
       videoIds: sanitizeList(filterData.videoId),
       channelIds: sanitizeList(filterData.channelId),
-      channelHandles: channelNames.handles,
-      channelNames: channelNames.names,
+      channelRefs,
       titleFilters: sanitizeList(filterData.title),
       commentFilters: sanitizeList(filterData.comment),
       areas,
@@ -173,12 +171,8 @@ export function mergeBlockTubeImport(
     if (addChannel(rules, { id, name: '', handle: '' })) added += 1;
   }
 
-  for (const handle of data.channelHandles) {
-    if (addChannel(rules, { id: '', name: '', handle })) added += 1;
-  }
-
-  for (const name of data.channelNames) {
-    if (addChannel(rules, { id: '', name, handle: '' })) added += 1;
+  for (const ref of data.channelRefs) {
+    if (addChannel(rules, { id: '', name: ref.name, handle: ref.handle ?? '' })) added += 1;
   }
 
   const titles = mergePatternList(rules.titleFilters, data.titleFilters);
