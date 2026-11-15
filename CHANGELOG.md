@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.18.1 - 2026-11-15
+#### Bug Fixes
+- (**blocktube**) import channel names as exact-name entries - (96f34d0) - dcog989
+- (**dnr**) cap the total number of dynamic rules - (c164007) - dcog989
+- (**menu**) let CSS own the injected item highlight - (ca0c396) - dcog989
+- (**reason**) label area blocks with the area title - (86860e3) - dcog989
+- (**runtime**) treat a failed mutation send as a rejected mutation - (41de420) - dcog989
+#### Performance Improvements
+- (**content**) cut the per-card DOM walks and redundant rescans - (07e5e45) - dcog989
+#### Documentation
+- readme refined - (621644f) - dcog989
+- agents.md refined - (c0650a6) - dcog989
+#### Miscellaneous Chores
+- package updates - (771994c) - dcog989
+
+- - -
+
 ## 0.18.0 - 2026-10-27
 #### Features
 - (**options**) resolve legacy /c/ and /user/ channel URLs - (a5f5eb7) - dcog989
