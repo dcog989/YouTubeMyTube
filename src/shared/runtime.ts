@@ -16,9 +16,14 @@ export function requestSync(): Promise<void> {
 
 // Routes a mutation to the service worker, the single writer of stored state.
 export function requestMutation(mutation: Mutation): Promise<BlockerState | null> {
-  return browser.runtime
-    .sendMessage({ type: MUTATE_REQUEST, mutation })
-    .then((response) => (response as BlockerState | null) ?? null);
+  return (
+    browser.runtime
+      .sendMessage({ type: MUTATE_REQUEST, mutation })
+      .then((response) => (response as BlockerState | null) ?? null)
+      // A failed send (worker gone, extension reloading) is the same to every
+      // caller as a rejected mutation.
+      .catch(() => null)
+  );
 }
 
 type MessageHandler = (
