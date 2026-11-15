@@ -1,6 +1,6 @@
 import { CONTEXT_REQUEST } from '../shared/constants';
 import { localizeDocument, t } from '../shared/i18n';
-import { ruleCount, summarizeRules } from '../shared/normalize';
+import { ruleCount } from '../shared/normalize';
 import { findChannel, hasVideoId } from '../shared/rules';
 import { blockChannel, blockVideo, setEnabled } from '../shared/rules-service';
 import { openOptionsPage } from '../shared/runtime';
@@ -27,17 +27,8 @@ let activeContext: ActiveContext = {
 };
 
 function renderCounts(): void {
-  const summary = summarizeRules(state);
-  const parts: string[] = [];
-  if (summary.videos) parts.push(t('popupCountVideos', String(summary.videos)));
-  if (summary.channels) parts.push(t('popupCountChannels', String(summary.channels)));
-  const keywords = summary.channelFilters + summary.titleFilters;
-  if (keywords) parts.push(t('popupCountKeywords', String(keywords)));
-  if (summary.commentFilters) parts.push(t('popupCountComments', String(summary.commentFilters)));
-
-  const counts = byId('counts');
-  counts.textContent = parts.length > 0 ? parts.join(' · ') : t('popupNoFilters');
-  counts.title = t('popupTotal', String(ruleCount(state)));
+  const total = ruleCount(state);
+  byId('counts').textContent = total > 0 ? t('popupTotal', String(total)) : t('popupNoFilters');
 }
 
 function renderContext(): void {
