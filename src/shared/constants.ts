@@ -20,6 +20,9 @@ export const YOUTUBE_HOST_PATTERN = String.raw`https?://(?:www|m)\.youtube\.com`
 // Dynamic rules that use regexFilter are capped by the browser
 // (MAX_NUMBER_OF_REGEX_RULES).
 export const MAX_DNR_REGEX_RULES = 1000;
+// All dynamic rules together are capped too; past this a batch update is
+// rejected outright and every rule fails.
+export const MAX_DNR_RULES = 5000;
 
 export const CONTEXT_REQUEST = 'ytb:context';
 export const SYNC_REQUEST = 'ytb:sync';

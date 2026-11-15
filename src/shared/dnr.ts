@@ -1,5 +1,11 @@
 import { AREA_DEFINITIONS } from './areas';
-import { BLOCKED_PAGE, MAX_DNR_REGEX_RULES, YOUTUBE_HOME, YOUTUBE_HOST_PATTERN } from './constants';
+import {
+  BLOCKED_PAGE,
+  MAX_DNR_REGEX_RULES,
+  MAX_DNR_RULES,
+  YOUTUBE_HOME,
+  YOUTUBE_HOST_PATTERN,
+} from './constants';
 import { escapeRegExp, isActiveEntry } from './patterns';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
@@ -118,6 +124,10 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
   let regexCount = 0;
   let dropped = 0;
   for (const entry of planDnrRules(state)) {
+    if (rules.length >= MAX_DNR_RULES) {
+      dropped += 1;
+      continue;
+    }
     if (entry.regexFilter !== undefined) {
       if (regexCount >= MAX_DNR_REGEX_RULES) {
         dropped += 1;
@@ -130,12 +140,15 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
   return { rules, dropped };
 }
 
-export function countDnrRules(state: BlockerState): number {
-  return planDnrRules(state).length;
-}
-
+// Same rule set as buildDnrRules, counted without building the regex strings
+// the options page only needs a number for.
 export function countRegexDnrRules(state: BlockerState): number {
-  return planDnrRules(state).filter((entry) => entry.regexFilter !== undefined).length;
+  if (!state.settings.enabled) return 0;
+  const areas = AREA_DEFINITIONS.filter(
+    (area) => area.mode === 'redirect' && state.areas[area.key],
+  ).length;
+  const videos = state.rules.videos.filter(({ id }) => isActiveEntry(id.trim())).length;
+  return areas + videos;
 }
 
 export function getDynamicRules(): Promise<DnrRule[]> {

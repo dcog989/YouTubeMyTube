@@ -3,7 +3,7 @@ import { applyDnrRules, buildDnrRules, type DnrRule, getDynamicRules } from '../
 import { applyMutation, isMutation } from '../shared/mutations';
 import { normalizeState } from '../shared/normalize';
 import { onInstalled, onRuntimeMessage, openOptionsPage } from '../shared/runtime';
-import { onLocalStorageChanged, readState, saveState, seedState } from '../shared/state';
+import { readState, saveState, seedState } from '../shared/state';
 import type { BlockerState } from '../shared/types';
 
 function canonicalize(value: unknown): unknown {
@@ -39,7 +39,7 @@ async function doSync(): Promise<void> {
   if (sameRules(existing, addRules)) return;
   if (dropped > 0) {
     console.warn(
-      `YouTubeMyTube: ${dropped} DNR rule(s) exceed the browser's regex limit and are enforced in-page only.`,
+      `YouTubeMyTube: ${dropped} DNR rule(s) exceed the browser's rule limits and are enforced in-page only.`,
     );
   }
   const removeRuleIds = existing.map((rule) => rule.id);
@@ -90,10 +90,6 @@ async function handleMutation(mutation: unknown): Promise<BlockerState | null> {
     return null;
   }
 }
-
-onLocalStorageChanged(() => {
-  void syncDynamicRules();
-});
 
 onRuntimeMessage((message, _sender, sendResponse) => {
   if (!message || typeof message !== 'object') return;

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { MAX_DNR_REGEX_RULES } from '../src/shared/constants';
+import { MAX_DNR_REGEX_RULES, MAX_DNR_RULES } from '../src/shared/constants';
 import { defaultState } from '../src/shared/defaults';
-import { applyDnrRules, buildDnrRules, countDnrRules, countRegexDnrRules } from '../src/shared/dnr';
+import { applyDnrRules, buildDnrRules, countRegexDnrRules } from '../src/shared/dnr';
 import type { ChannelEntry, VideoEntry } from '../src/shared/types';
 
 function stateWith(overrides: {
@@ -162,6 +162,13 @@ describe('buildDnrRules', () => {
     );
     expect(rules.filter((rule) => rule.condition.urlFilter !== undefined)).toHaveLength(10);
   });
+
+  it('caps the total rule count and reports the overflow', () => {
+    const channels = Array.from({ length: MAX_DNR_RULES + 5 }, (_, index) => channel(`UC${index}`));
+    const { rules, dropped } = buildDnrRules(stateWith({ channels }));
+    expect(rules).toHaveLength(MAX_DNR_RULES);
+    expect(dropped).toBe(5);
+  });
 });
 
 describe('applyDnrRules', () => {
@@ -191,36 +198,18 @@ describe('applyDnrRules', () => {
   });
 });
 
-describe('countDnrRules', () => {
-  it('matches the generated rule and overflow counts', () => {
+describe('countRegexDnrRules', () => {
+  it('counts nothing when disabled', () => {
+    expect(countRegexDnrRules(stateWith({ videos: [video('abc')], enabled: false }))).toBe(0);
+  });
+
+  it('counts video and redirect-area rules only', () => {
     const state = stateWith({
       videos: [video('abc'), video('')],
-      channels: [channel('UC1', 'somechannel'), channel('', '')],
-      trendingPage: true,
-    });
-    const { rules, dropped } = buildDnrRules(state);
-    expect(countDnrRules(state)).toBe(rules.length + dropped);
-  });
-
-  it('reports the total past the regex cap', () => {
-    const videos = Array.from({ length: MAX_DNR_REGEX_RULES + 5 }, (_, index) =>
-      video(`v${index}`),
-    );
-    expect(countDnrRules(stateWith({ videos }))).toBe(MAX_DNR_REGEX_RULES + 5);
-  });
-
-  it('counts nothing when disabled', () => {
-    expect(countDnrRules(stateWith({ videos: [video('abc')], enabled: false }))).toBe(0);
-  });
-
-  it('counts only regex rules for the cap', () => {
-    const state = stateWith({
-      videos: [video('abc')],
       channels: [channel('UC1', 'somechannel')],
       trendingPage: true,
     });
     // video regex + trending area regex are the only regex rules
     expect(countRegexDnrRules(state)).toBe(2);
-    expect(countDnrRules(state)).toBe(4);
   });
 });
