@@ -2,8 +2,8 @@ import { matchEntity } from '../shared/match';
 import { scansComments } from '../shared/rules';
 import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { createBatcher } from './batch';
-import { closestAcrossShadow } from './dom';
-import { cardEntity, commentEntity } from './entity';
+import { closestAcrossShadow, deepQuery } from './dom';
+import { cardEntity, commentEntity, entityKey } from './entity';
 import {
   CARD_SELECTOR,
   COMMENT_SELECTOR,
@@ -67,19 +67,6 @@ export function createFilterEngine(deps: {
     });
   }
 
-  function entityKey(entity: Entity): string {
-    const parts = [
-      entity.videoId,
-      entity.channelId,
-      entity.handle,
-      entity.channelName,
-      entity.title,
-      entity.commentAuthor,
-      entity.commentContent,
-    ].filter((part): part is string => Boolean(part));
-    return parts.join('\u0000');
-  }
-
   function outermostCard(node: Element): Element {
     if (!node.matches(NESTED_CARD_SELECTOR)) return node;
     const parent = node.parentElement;
@@ -98,7 +85,9 @@ export function createFilterEngine(deps: {
 
   function requestChannel(card: Element, entity: Entity, compiled: CompiledRules): void {
     if (!entity.videoId || entity.channelId || entity.handle) return;
-    if (!hasChannelRules(compiled) || !card.querySelector(SHORTS_LINK_SELECTOR)) return;
+    // Lockup view models keep their anchors in a shadow root, so a plain
+    // querySelector would never see the Shorts link.
+    if (!hasChannelRules(compiled) || !deepQuery(SHORTS_LINK_SELECTOR, card)) return;
     const pending = channelCache.request(entity.videoId);
     if (!pending) return;
     void pending.then(() => {

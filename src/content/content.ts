@@ -29,10 +29,16 @@ async function init(): Promise<void> {
 
   let changeCount = 0;
 
-  function applyState(next: BlockerState): void {
+  function applyState(next: BlockerState, force: boolean): void {
+    const previous = store.getSnapshot()?.state;
+    const rescans =
+      force ||
+      !previous ||
+      previous.settings.enabled !== next.settings.enabled ||
+      JSON.stringify(previous.rules) !== JSON.stringify(next.rules);
     store.setState(next);
     applyAreas(store);
-    filter.rescan();
+    if (rescans) filter.rescan();
   }
 
   // Re-read state from storage so a transiently empty startup read cannot leave
@@ -47,7 +53,7 @@ async function init(): Promise<void> {
       return;
     }
     if (!next || changeCount !== start) return;
-    applyState(next);
+    applyState(next, true);
   }
 
   function handleChange({ added, changed }: ElementChange): void {
@@ -71,12 +77,13 @@ async function init(): Promise<void> {
 
   onLocalStorageChanged((value) => {
     changeCount += 1;
-    applyState(normalizeState(value));
+    // Metadata-only writes cannot change what is hidden, so they skip the rescan.
+    applyState(normalizeState(value), false);
   });
 
   const start = changeCount;
   const initial = await loadState();
-  if (changeCount === start) applyState(initial);
+  if (changeCount === start) applyState(initial, true);
 
   menu.init();
   for (const delay of SETTLE_REFRESH_MS) window.setTimeout(() => void refresh(), delay);

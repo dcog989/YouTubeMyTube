@@ -1,6 +1,6 @@
 import type { Entity, ParsedUrl } from '../shared/types';
 import { normalizeHandle, parseYouTubeUrl } from '../shared/url';
-import { closestAcrossShadow, deepQuery, forEachShadowRoot } from './dom';
+import { closestAcrossShadow, forEachShadowRoot } from './dom';
 import {
   ACTIVE_REEL_SELECTOR,
   CHANNEL_HEADER_SELECTORS,
@@ -32,6 +32,22 @@ function firstText(element: ParentNode, selectors: string[]): string {
 const NON_CHANNEL_METADATA = /\bviews?\b|\bago\b|^[\d.,]+(?:\s*[KMB])?$/i;
 const CHANNEL_AVATAR_LABEL = /^Go to channel\s+/i;
 const CHANNEL_HREF = /\/(?:channel\/|@)/;
+
+// Identity of what a node or page currently shows; callers skip re-evaluating
+// when it is unchanged.
+export function entityKey(entity: Entity): string {
+  return [
+    entity.videoId,
+    entity.channelId,
+    entity.handle,
+    entity.channelName,
+    entity.title,
+    entity.commentAuthor,
+    entity.commentContent,
+  ]
+    .filter((part): part is string => Boolean(part))
+    .join('\u0000');
+}
 
 function firstChannelText(candidates: ArrayLike<Element>): string {
   for (const candidate of Array.from(candidates)) {
@@ -69,8 +85,21 @@ function titleOf(card: Element): string {
   const attr = titled?.getAttribute('title')?.trim();
   if (attr) return attr;
   for (const selector of TITLE_SELECTORS) {
-    const value = textOf(deepQuery(selector, card));
+    const value = textOf(card.querySelector(selector));
     if (value) return value;
+  }
+  // Collect the shadow roots once, then still honour selector order; walking
+  // once per selector made this the hot path on a long feed.
+  const roots: ShadowRoot[] = [];
+  forEachShadowRoot(card, (shadow) => {
+    roots.push(shadow);
+    return true;
+  });
+  for (const selector of TITLE_SELECTORS) {
+    for (const root of roots) {
+      const value = textOf(root.querySelector(selector));
+      if (value) return value;
+    }
   }
   return '';
 }

@@ -1,9 +1,9 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { matchAreaRedirect, matchEntity } from '../shared/match';
-import type { Entity, ParsedUrl } from '../shared/types';
+import type { ParsedUrl } from '../shared/types';
 import { parseYouTubeUrl } from '../shared/url';
 import { createCoalescer } from './batch';
-import { currentContext, isInOwnerScope, isInPageTitleScope } from './entity';
+import { currentContext, entityKey, isInOwnerScope, isInPageTitleScope } from './entity';
 import type { OverlayFeedback } from './overlay';
 import type { Store } from './store';
 
@@ -24,12 +24,6 @@ const SHORTS_KIND = 'shorts';
 
 function isSupportedPage(parsed: ParsedUrl): boolean {
   return SUPPORTED_KINDS.has(parsed.kind);
-}
-
-function identityKey(entity: Entity): string {
-  return [entity.videoId, entity.channelId, entity.handle, entity.channelName, entity.title]
-    .filter((part): part is string => Boolean(part))
-    .join('\u0000');
 }
 
 function isRelevantNode(node: Element): boolean {
@@ -72,7 +66,7 @@ export function createEvaluator(deps: { store: Store; overlay: OverlayFeedback }
     }
 
     const entity = currentContext();
-    lastIdentity = identityKey(entity);
+    lastIdentity = entityKey(entity);
     const result = matchEntity(entity, compiled);
     if (result.blocked) {
       // A full-page overlay would swallow the Shorts pager's scroll input, so
@@ -108,7 +102,7 @@ export function createEvaluator(deps: { store: Store; overlay: OverlayFeedback }
       if (window.top !== window) return;
       if (!isSupportedPage(parseYouTubeUrl(window.location.href))) return;
       if (!nodes.some(isRelevantNode)) return;
-      if (identityKey(currentContext()) === lastIdentity) return;
+      if (entityKey(currentContext()) === lastIdentity) return;
       mutationCheck.schedule();
     },
   };
