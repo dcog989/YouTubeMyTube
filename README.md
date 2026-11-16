@@ -63,7 +63,7 @@ just format         # Biome lint + format, writing fixes
 git clone https://github.com/dcog989/YouTubeMyTube
 cd YouTubeMyTube
 bun install --frozen-lockfile
-bun run build      # store + source archives; build:firefox / build:chrome build one browser only
+just build      # store + source archives; build:firefox / build:chrome build one browser only
 ```
 
 This writes the unpacked extension to `dist/firefox/` and `dist/chrome/`, the store archives to `dist/youtubemytube-firefox.zip` and `dist/youtubemytube-chrome.zip`, and the AMO source archive to `dist/youtubemytube-source.zip`.
