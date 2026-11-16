@@ -28,3 +28,7 @@ dev:
 # Remove build output and dependencies.
 clean:
     bun run clean
+
+# Refresh dependencies to their latest allowed versions.
+update:
+    bun run update
