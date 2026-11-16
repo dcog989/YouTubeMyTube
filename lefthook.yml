@@ -4,11 +4,11 @@ pre-commit:
   jobs:
     - name: biome
       glob: "*.{js,mjs,cjs,ts,tsx,json,jsonc,css,html}"
-      run: biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      run: just format-staged {staged_files}
       stage_fixed: true
     - name: typescript
       glob: "*.{js,mjs,cjs,ts,tsx,json,jsonc}"
-      run: bun --check
+      run: just typecheck
 
 commit-msg:
   jobs:

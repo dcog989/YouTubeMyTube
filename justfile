@@ -49,7 +49,7 @@ hooks:
 icons:
     bun run icons
 
-# package.json script: lint:webext.
+# package.json script: lint:webext (downloads web-ext on a cold cache).
 lint-webext:
     bun run lint:webext
 
@@ -68,6 +68,10 @@ typecheck-watch:
 # Bump the version from conventional commits and tag it.
 release:
     cog bump --auto
+
+# Biome over a file list, as the pre-commit hook passes it.
+format-staged *files:
+    bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {{files}}
 
 # Verify a commit message file, as the commit-msg hook passes it.
 commit-check file *args:

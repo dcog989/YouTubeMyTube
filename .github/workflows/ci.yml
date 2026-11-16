@@ -24,6 +24,7 @@ jobs:
         with:
           tool: just
       - run: just check
+      - run: just lint-webext
       - run: just coverage
       - run: SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) just build
       - run: bun audit
