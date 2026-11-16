@@ -32,3 +32,39 @@ clean:
 # Refresh dependencies to their latest allowed versions.
 update:
     bun run update
+
+# package.json script: build:chrome.
+build-chrome:
+    bun run build:chrome
+
+# package.json script: build:firefox.
+build-firefox:
+    bun run build:firefox
+
+# package.json script: hooks:install.
+hooks:
+    bun run hooks:install
+
+# package.json script: icons.
+icons:
+    bun run icons
+
+# package.json script: lint:webext.
+lint-webext:
+    bun run lint:webext
+
+# package.json script: test:coverage.
+coverage:
+    bun run test:coverage
+
+# package.json script: typecheck.
+typecheck:
+    bun run typecheck
+
+# package.json script: typecheck:watch.
+typecheck-watch:
+    bun run typecheck:watch
+
+# Bump the version from conventional commits and tag it.
+release:
+    cog bump --auto
