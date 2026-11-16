@@ -68,3 +68,7 @@ typecheck-watch:
 # Bump the version from conventional commits and tag it.
 release:
     cog bump --auto
+
+# Verify a commit message file, as the commit-msg hook passes it.
+commit-check file:
+    cog verify --file {{file}}

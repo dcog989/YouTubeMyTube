@@ -13,4 +13,4 @@ pre-commit:
 commit-msg:
   jobs:
     - name: conventional-commit
-      run: cog verify --file {1}
+      run: just commit-check {1}
