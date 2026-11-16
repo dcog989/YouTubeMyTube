@@ -49,10 +49,10 @@ Manifest V3, DOM/CSS-first, with `declarativeNetRequest` for direct navigation. 
 ### Development
 
 ```sh
-bun run watch       # rebuild JS and copy static assets on change
-bun run test        # Vitest unit tests
-bun run check       # Biome + typecheck + tests + build:firefox + web-ext lint
-bun run fix         # Biome lint + format, writing fixes
+just dev            # rebuild JS and copy static assets on change
+just test           # Vitest unit tests
+just check          # Biome + typecheck + tests + build:firefox + web-ext lint
+just format         # Biome lint + format, writing fixes
 ```
 
 [Conventional Commit](https://www.conventionalcommits.org) with `cog bump --auto`; bumps version and creates the tag.

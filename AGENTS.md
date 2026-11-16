@@ -66,11 +66,14 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 ### Workflow
 
 - Install: `npm install` (or `bun install`); runs `prepare` → installs Lefthook git hooks.
-- Dev: `npm run watch` (rebuilds bundles and re-copies HTML/CSS/manifests on change).
-- Test: `npm test` (or `npm run test:coverage`, whose thresholds CI enforces).
-- Typecheck: `npm run typecheck` (`bun --check`) or `npm run typecheck:watch` alongside `npm run watch`; `checkJs` covers the `.mjs` build scripts too.
-- Build: `npm run build` (or `npm run build:firefox` / `npm run build:chrome`); writes the store zips plus the AMO source archive to `dist/`. Set `SOURCE_DATE_EPOCH` for reproducible archives.
-- Lint: `npm run check` (Biome, HTML included; `npm run fix` to write). Config: `biome.json`. Firefox validation: `npm run lint:webext` (`web-ext lint`).
+- Check: `just check` (Biome, typecheck, tests, build:firefox, web-ext lint).
+- Dev: `just dev` (rebuilds bundles and re-copies HTML/CSS/manifests on change).
+- Test: `just test` (Vitest; `npm run test:coverage` for the thresholds CI enforces).
+- Typecheck: `npm run typecheck` (`bun --check`) or `npm run typecheck:watch` alongside `just dev`; `checkJs` covers the `.mjs` build scripts too.
+- Lint: `just lint` (Biome, HTML included).
+- Format: `just format` (Biome lint + format, writing fixes). Config: `biome.json`. Firefox validation: `npm run lint:webext` (`web-ext lint`).
+- Build: `just build` (or `npm run build:firefox` / `npm run build:chrome`); writes the store zips plus the AMO source archive to `dist/`. Set `SOURCE_DATE_EPOCH` for reproducible archives.
+- Clean: `just clean` (removes `dist`, `node_modules` and `bun.lock`).
 - Release: `npm run release` (`cog bump --auto`); `cog.toml` runs `scripts/sync-version.mjs` so `package.json` is bumped with the tag before the version commit, then builds (`esbuild.config.mjs all`) and pushes. Pushing the tag publishes via `release.yml`; AMO upload is manual.
 - Commit messages: Conventional Commits, enforced by Lefthook + Cocogitto (`cog.toml`). Cocogitto is a system binary, not an npm dependency.
 
