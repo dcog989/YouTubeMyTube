@@ -17,6 +17,9 @@ jobs:
           fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
       - run: just check
       - run: just lint-webext
       - run: just test
