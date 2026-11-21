@@ -48,15 +48,15 @@ export async function importSettings(file: File): Promise<void> {
   }
 
   const blocktube = parseBlockTubeBackup(parsed);
-  if (blocktube.ok) {
-    const { state: merged, added } = mergeBlockTubeImport(getDraft(), blocktube.data);
+  if (blocktube) {
+    const { state: merged, added } = mergeBlockTubeImport(getDraft(), blocktube);
     merged.settings.onboardingComplete = true;
     setDraft(merged);
     notify();
     setDirty(true);
     const filters = t(added === 1 ? 'importFilterOne' : 'importFilterMany', String(added));
-    const skipped = blocktube.data.skipped.length
-      ? ` ${t('importSkipped', blocktube.data.skipped.join(', '))}`
+    const skipped = blocktube.skipped.length
+      ? ` ${t('importSkipped', blocktube.skipped.join(', '))}`
       : '';
     setStatus('import-status', `${t('importBlockTube', filters)}${skipped}`, true);
     scheduleBackfill();

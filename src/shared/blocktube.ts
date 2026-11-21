@@ -1,11 +1,13 @@
 import { isActiveEntry } from './patterns';
 import { addChannel, addVideo } from './rules';
 import type { AreaFlags, AreaKey, BlockerState } from './types';
-import { normalizeHandle, splitChannelLabel } from './url';
+import { CHANNEL_ID, normalizeHandle, splitChannelLabel, VIDEO_ID } from './url';
 
-export type ChannelRef = { name: string; handle: string };
+export type ImportedChannelRef = { name: string; handle: string };
 
 const DEFAULT_JAVASCRIPT_MARKER = 'Custom conditions did not match, do not block';
+
+const FILTER_LIST_KEYS = ['videoId', 'channelId', 'channelName', 'title', 'comment'] as const;
 
 const UNSUPPORTED_OPTIONS: ReadonlyArray<readonly [string, string]> = [
   ['autoplay', 'autoplay blocking'],
@@ -21,48 +23,69 @@ const UNSUPPORTED_OPTIONS: ReadonlyArray<readonly [string, string]> = [
 export interface BlockTubeImport {
   videoIds: string[];
   channelIds: string[];
-  channelRefs: ChannelRef[];
+  channelRefs: ImportedChannelRef[];
+  channelNameFilters: string[];
   titleFilters: string[];
   commentFilters: string[];
   areas: Partial<AreaFlags>;
   skipped: string[];
 }
 
-export type BlockTubeParseResult =
-  | { ok: true; data: BlockTubeImport }
-  | { ok: false; error: string };
-
 export interface BlockTubeMergeResult {
   state: BlockerState;
   added: number;
 }
 
-function sanitizeList(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
+interface SanitizedList {
+  entries: string[];
+  rejected: number;
+}
+
+function sanitizeList(value: unknown, validate?: RegExp): SanitizedList {
+  if (!Array.isArray(value)) return { entries: [], rejected: 0 };
   const seen = new Set<string>();
-  const result: string[] = [];
+  const entries: string[] = [];
+  let rejected = 0;
   for (const item of value) {
-    if (typeof item !== 'string') continue;
+    if (typeof item !== 'string') {
+      rejected += 1;
+      continue;
+    }
     const entry = item.trim();
     if (!isActiveEntry(entry)) continue;
+    if (validate && !validate.test(entry)) {
+      rejected += 1;
+      continue;
+    }
     if (seen.has(entry)) continue;
     seen.add(entry);
-    result.push(entry);
+    entries.push(entry);
   }
-  return result;
+  return { entries, rejected };
 }
 
 function isHandleEntry(entry: string): boolean {
   return entry.startsWith('@') && entry.length > 1;
 }
 
-// BlockTube matches channel names exactly, so names become name-only rows
-// instead of substring filters that would hide every channel containing them.
-// A label that carries a trailing handle keeps both halves on one row.
-function splitChannelEntries(entries: string[]): ChannelRef[] {
-  return entries.map((entry) =>
-    isHandleEntry(entry) ? { name: '', handle: normalizeHandle(entry) } : splitChannelLabel(entry),
-  );
+// BlockTube matches channel names as text, so bare names stay pattern filters.
+// A label carrying a handle keeps both halves on one channel row.
+function splitChannelEntries(entries: string[]): {
+  refs: ImportedChannelRef[];
+  filters: string[];
+} {
+  const refs: ImportedChannelRef[] = [];
+  const filters: string[] = [];
+  for (const entry of entries) {
+    if (isHandleEntry(entry)) {
+      refs.push({ name: '', handle: normalizeHandle(entry) });
+      continue;
+    }
+    const { name, handle } = splitChannelLabel(entry);
+    if (handle) refs.push({ name, handle });
+    else filters.push(name);
+  }
+  return { refs, filters };
 }
 
 function hasAdvancedJavaScript(value: unknown): boolean {
@@ -78,23 +101,26 @@ function hasVideoLengthFilter(value: unknown): boolean {
   );
 }
 
-export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
-  if (!value || typeof value !== 'object') {
-    return { ok: false, error: 'That file is not a BlockTube backup.' };
-  }
+export function parseBlockTubeBackup(value: unknown): BlockTubeImport | null {
+  if (!value || typeof value !== 'object') return null;
 
   const record = value as Record<string, unknown>;
   const filters = record.filterData;
   const options = record.options;
-  if (!filters || typeof filters !== 'object' || !options || typeof options !== 'object') {
-    return {
-      ok: false,
-      error: 'That file is not a BlockTube backup (missing filterData/options).',
-    };
+  if (
+    !filters ||
+    typeof filters !== 'object' ||
+    Array.isArray(filters) ||
+    !options ||
+    typeof options !== 'object' ||
+    Array.isArray(options)
+  ) {
+    return null;
   }
 
   const filterData = filters as Record<string, unknown>;
   const optionData = options as Record<string, unknown>;
+  if (!FILTER_LIST_KEYS.some((key) => Array.isArray(filterData[key]))) return null;
 
   const areas: Partial<AreaFlags> = {};
   if (optionData.trending === true) areas.trendingPage = true;
@@ -103,7 +129,13 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
     areas.shortsShelf = true;
   }
 
+  const videoIds = sanitizeList(filterData.videoId, VIDEO_ID);
+  const channelIds = sanitizeList(filterData.channelId, CHANNEL_ID);
+  const channelNames = sanitizeList(filterData.channelName);
+
   const skipped = new Set<string>();
+  if (videoIds.rejected > 0) skipped.add('invalid video IDs');
+  if (channelIds.rejected > 0) skipped.add('invalid channel IDs');
   if (hasAdvancedJavaScript(filterData.javascript) || optionData.enable_javascript === true) {
     skipped.add('advanced JavaScript blocking');
   }
@@ -124,19 +156,19 @@ export function parseBlockTubeBackup(value: unknown): BlockTubeParseResult {
     skipped.add('block message');
   }
 
-  const channelRefs = splitChannelEntries(sanitizeList(filterData.channelName));
+  const { refs: channelRefs, filters: channelNameFilters } = splitChannelEntries(
+    channelNames.entries,
+  );
 
   return {
-    ok: true,
-    data: {
-      videoIds: sanitizeList(filterData.videoId),
-      channelIds: sanitizeList(filterData.channelId),
-      channelRefs,
-      titleFilters: sanitizeList(filterData.title),
-      commentFilters: sanitizeList(filterData.comment),
-      areas,
-      skipped: [...skipped],
-    },
+    videoIds: videoIds.entries,
+    channelIds: channelIds.entries,
+    channelRefs,
+    channelNameFilters,
+    titleFilters: sanitizeList(filterData.title).entries,
+    commentFilters: sanitizeList(filterData.comment).entries,
+    areas,
+    skipped: [...skipped],
   };
 }
 
@@ -172,8 +204,12 @@ export function mergeBlockTubeImport(
   }
 
   for (const ref of data.channelRefs) {
-    if (addChannel(rules, { id: '', name: ref.name, handle: ref.handle ?? '' })) added += 1;
+    if (addChannel(rules, { id: '', name: ref.name, handle: ref.handle })) added += 1;
   }
+
+  const channelFilters = mergePatternList(rules.channelFilters, data.channelNameFilters);
+  rules.channelFilters = channelFilters.list;
+  added += channelFilters.added;
 
   const titles = mergePatternList(rules.titleFilters, data.titleFilters);
   rules.titleFilters = titles.list;
