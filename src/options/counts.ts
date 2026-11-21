@@ -1,5 +1,4 @@
-import { MAX_DNR_REGEX_RULES } from '../shared/constants';
-import { countRegexDnrRules } from '../shared/dnr';
+import { dnrOverflow } from '../shared/dnr';
 import { t } from '../shared/i18n';
 import { type RuleSummary, summarizeRules } from '../shared/normalize';
 import { byId } from '../shared/ui';
@@ -30,14 +29,16 @@ function formatCount(count: number): string {
 
 function updateDnrWarning(): void {
   const notice = byId('dnr-warning');
-  const dropped = Math.max(0, countRegexDnrRules(getDraft()) - MAX_DNR_REGEX_RULES);
-  notice.hidden = dropped === 0;
+  const overflow = dnrOverflow(getDraft());
+  notice.hidden = overflow === null;
+  if (!overflow) {
+    notice.textContent = '';
+    return;
+  }
   notice.textContent =
-    dropped === 0
-      ? ''
-      : dropped === 1
-        ? t('dnrWarningOne', String(MAX_DNR_REGEX_RULES))
-        : t('dnrWarningMany', [String(dropped), String(MAX_DNR_REGEX_RULES)]);
+    overflow.dropped === 1
+      ? t('dnrWarningOne', String(overflow.limit))
+      : t('dnrWarningMany', [String(overflow.dropped), String(overflow.limit)]);
 }
 
 export function updateCounts(): void {

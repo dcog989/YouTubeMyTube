@@ -9,10 +9,12 @@ import {
 import { escapeRegExp, isActiveEntry } from './patterns';
 import { formatReason } from './reason';
 import type { BlockerState } from './types';
+import { CHANNEL_ID, HANDLE, VIDEO_ID } from './url';
 
 export type DnrRule = browser.declarativeNetRequest.Rule;
 
-type DnrUpdateOptions = browser.declarativeNetRequest._UpdateDynamicRulesOptions;
+const AREA_RULE_PRIORITY = 1;
+const ENTITY_RULE_PRIORITY = 2;
 
 interface DnrRedirect {
   extensionPath?: string;
@@ -24,6 +26,7 @@ interface DnrPlanEntry {
   urlFilter?: string;
   target: DnrRedirect;
   caseSensitive: boolean;
+  priority: number;
 }
 
 export interface DnrBuild {
@@ -40,7 +43,7 @@ function redirectRule(id: number, entry: DnrPlanEntry): DnrRule {
   if (entry.urlFilter !== undefined) condition.urlFilter = entry.urlFilter;
   return {
     id,
-    priority: 1,
+    priority: entry.priority,
     action: {
       type: 'redirect',
       redirect: entry.target,
@@ -58,6 +61,21 @@ function videoIdPattern(videoId: string): string {
 // contribute literal characters.
 function urlFilterLiteral(value: string): string {
   return value.replace(/[*|^]/g, '');
+}
+
+function isDnrVideoId(value: string): boolean {
+  const id = value.trim();
+  return isActiveEntry(id) && VIDEO_ID.test(id);
+}
+
+function isDnrChannelId(value: string): boolean {
+  const id = value.trim();
+  return isActiveEntry(id) && CHANNEL_ID.test(id);
+}
+
+function isDnrHandle(value: string): boolean {
+  const handle = value.trim();
+  return isActiveEntry(handle) && HANDLE.test(handle);
 }
 
 function channelIdFilter(channelId: string): string {
@@ -83,35 +101,40 @@ function planDnrRules(state: BlockerState): DnrPlanEntry[] {
       regexFilter: `${YOUTUBE_HOST_PATTERN}${area.path}(?:[/?#]|$)`,
       target: { url: YOUTUBE_HOME },
       caseSensitive: true,
+      priority: AREA_RULE_PRIORITY,
     });
   }
 
   for (const { id } of state.rules.videos) {
     const value = id.trim();
-    if (!isActiveEntry(value)) continue;
+    if (!isDnrVideoId(value)) continue;
     plan.push({
       regexFilter: videoIdPattern(value),
       target: blockedPage(formatReason({ kind: 'video', value })),
       caseSensitive: true,
+      priority: ENTITY_RULE_PRIORITY,
     });
   }
 
   for (const { id, handle } of state.rules.channels) {
     const channelId = id.trim();
-    if (isActiveEntry(channelId)) {
+    if (isDnrChannelId(channelId)) {
       const reason = formatReason({ kind: 'channel', value: channelId });
       plan.push({
         urlFilter: channelIdFilter(channelId),
         target: blockedPage(reason),
         caseSensitive: true,
+        priority: ENTITY_RULE_PRIORITY,
       });
     }
-    if (isActiveEntry(handle)) {
-      const reason = formatReason({ kind: 'handle', value: handle });
+    const channelHandle = handle.trim();
+    if (isDnrHandle(channelHandle)) {
+      const reason = formatReason({ kind: 'handle', value: channelHandle });
       plan.push({
-        urlFilter: handleFilter(handle),
+        urlFilter: handleFilter(channelHandle),
         target: blockedPage(reason),
         caseSensitive: false,
+        priority: ENTITY_RULE_PRIORITY,
       });
     }
   }
@@ -140,23 +163,74 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
   return { rules, dropped };
 }
 
-// Same rule set as buildDnrRules, counted without building the regex strings
-// the options page only needs a number for.
-export function countRegexDnrRules(state: BlockerState): number {
-  if (!state.settings.enabled) return 0;
-  const areas = AREA_DEFINITIONS.filter(
-    (area) => area.mode === 'redirect' && state.areas[area.key],
-  ).length;
-  const videos = state.rules.videos.filter(({ id }) => isActiveEntry(id.trim())).length;
-  return areas + videos;
+// Same rule set as buildDnrRules, counted without building the rule strings the
+// options page only needs numbers for.
+export interface DnrCounts {
+  total: number;
+  regex: number;
+}
+
+export function countDnrRules(state: BlockerState): DnrCounts {
+  if (!state.settings.enabled) return { total: 0, regex: 0 };
+  let areas = 0;
+  for (const area of AREA_DEFINITIONS) {
+    if (area.mode === 'redirect' && state.areas[area.key]) areas += 1;
+  }
+  let videos = 0;
+  for (const { id } of state.rules.videos) {
+    if (isDnrVideoId(id)) videos += 1;
+  }
+  let channels = 0;
+  for (const { id, handle } of state.rules.channels) {
+    if (isDnrChannelId(id)) channels += 1;
+    if (isDnrHandle(handle)) channels += 1;
+  }
+  return { total: areas + videos + channels, regex: areas + videos };
+}
+
+export interface DnrOverflow {
+  dropped: number;
+  limit: number;
+}
+
+export function dnrOverflow(state: BlockerState): DnrOverflow | null {
+  const counts = countDnrRules(state);
+  const totalDropped = Math.max(0, counts.total - MAX_DNR_RULES);
+  const regexDropped = Math.max(0, counts.regex - MAX_DNR_REGEX_RULES);
+  const dropped = Math.max(totalDropped, regexDropped);
+  if (dropped === 0) return null;
+  return {
+    dropped,
+    limit: regexDropped >= dropped ? MAX_DNR_REGEX_RULES : MAX_DNR_RULES,
+  };
+}
+
+function canonicalize(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalize);
+  if (value !== null && typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .filter(([, entry]) => entry !== undefined)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+    return Object.fromEntries(entries.map(([key, entry]) => [key, canonicalize(entry)]));
+  }
+  return value;
+}
+
+function ruleKey(rule: DnrRule): string {
+  return JSON.stringify(canonicalize(rule));
+}
+
+export function sameRules(existing: DnrRule[], next: DnrRule[]): boolean {
+  if (existing.length !== next.length) return false;
+  const existingById = new Map(existing.map((rule) => [rule.id, rule]));
+  return next.every((rule) => {
+    const other = existingById.get(rule.id);
+    return other !== undefined && ruleKey(rule) === ruleKey(other);
+  });
 }
 
 export function getDynamicRules(): Promise<DnrRule[]> {
   return browser.declarativeNetRequest.getDynamicRules();
-}
-
-export function updateDynamicRules(options: DnrUpdateOptions): Promise<void> {
-  return browser.declarativeNetRequest.updateDynamicRules(options);
 }
 
 // `updateDynamicRules` is atomic: a single rejected rule aborts the whole
@@ -167,18 +241,18 @@ export async function applyDnrRules(
   addRules: DnrRule[],
 ): Promise<number[]> {
   try {
-    await updateDynamicRules({ removeRuleIds, addRules });
+    await browser.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
     return [];
   } catch (error) {
     console.warn('YouTubeMyTube: atomic DNR update failed; retrying rule-by-rule', error);
   }
 
-  await updateDynamicRules({ removeRuleIds, addRules: [] });
+  await browser.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules: [] });
 
   const failedRuleIds: number[] = [];
   for (const rule of addRules) {
     try {
-      await updateDynamicRules({ addRules: [rule] });
+      await browser.declarativeNetRequest.updateDynamicRules({ addRules: [rule] });
     } catch (error) {
       failedRuleIds.push(rule.id);
       console.error(`YouTubeMyTube: DNR rule ${rule.id} was rejected`, error);

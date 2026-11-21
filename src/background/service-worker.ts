@@ -1,34 +1,10 @@
 import { MUTATE_REQUEST, SYNC_REQUEST } from '../shared/constants';
-import { applyDnrRules, buildDnrRules, type DnrRule, getDynamicRules } from '../shared/dnr';
+import { applyDnrRules, buildDnrRules, getDynamicRules, sameRules } from '../shared/dnr';
 import { applyMutation, isMutation } from '../shared/mutations';
 import { normalizeState } from '../shared/normalize';
 import { onInstalled, onRuntimeMessage, openOptionsPage } from '../shared/runtime';
 import { readState, saveState, seedState } from '../shared/state';
 import type { BlockerState } from '../shared/types';
-
-function canonicalize(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(canonicalize);
-  if (value !== null && typeof value === 'object') {
-    const entries = Object.entries(value as Record<string, unknown>)
-      .filter(([, entry]) => entry !== undefined)
-      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
-    return Object.fromEntries(entries.map(([key, entry]) => [key, canonicalize(entry)]));
-  }
-  return value;
-}
-
-function ruleKey(rule: DnrRule): string {
-  return JSON.stringify(canonicalize(rule));
-}
-
-function sameRules(existing: DnrRule[], next: DnrRule[]): boolean {
-  if (existing.length !== next.length) return false;
-  const existingById = new Map(existing.map((rule) => [rule.id, rule]));
-  return next.every((rule) => {
-    const other = existingById.get(rule.id);
-    return other !== undefined && ruleKey(rule) === ruleKey(other);
-  });
-}
 
 async function doSync(): Promise<void> {
   const state = await readState();
@@ -91,7 +67,10 @@ async function handleMutation(mutation: unknown): Promise<BlockerState | null> {
   }
 }
 
-onRuntimeMessage((message, _sender, sendResponse) => {
+onRuntimeMessage((message, sender, sendResponse) => {
+  // Other extensions can send runtime messages too; only the extension's own
+  // pages and content scripts may mutate the stored state.
+  if (sender.id !== browser.runtime.id) return;
   if (!message || typeof message !== 'object') return;
   const type = (message as { type?: unknown }).type;
   if (type === SYNC_REQUEST) {
