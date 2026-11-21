@@ -94,6 +94,10 @@
 
   "importBtn": { "message": "Importa impostazioni" },
   "exportBtn": { "message": "Esporta impostazioni" },
+  "restoreBackupBtn": { "message": "Ripristina backup" },
+  "backupInfo": { "message": "Backup: $1 · $2 filtri" },
+  "backupNone": { "message": "Nessun backup automatico per ora." },
+  "backupRestored": { "message": "Backup automatico ripristinato." },
   "resetBtn": { "message": "Reimposta tutto" },
   "dataHelp": {
     "message": "Le impostazioni sono memorizzate localmente nel browser. L'importazione accetta impostazioni YouTubeMyTube o un backup di BlockTube: il formato viene rilevato automaticamente e le voci di BlockTube vengono unite ai filtri esistenti."

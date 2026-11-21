@@ -90,6 +90,10 @@
 
   "importBtn": { "message": "설정 가져오기" },
   "exportBtn": { "message": "설정 내보내기" },
+  "restoreBackupBtn": { "message": "백업 복원" },
+  "backupInfo": { "message": "백업: $1 · 필터 $2개" },
+  "backupNone": { "message": "아직 자동 백업이 없습니다." },
+  "backupRestored": { "message": "자동 백업을 복원했습니다." },
   "resetBtn": { "message": "모두 초기화" },
   "dataHelp": {
     "message": "설정은 브라우저에 로컬로 저장됩니다. 가져오기는 YouTubeMyTube 설정 또는 BlockTube 백업을 지원하며, 형식이 자동으로 감지되고 BlockTube 항목이 기존 필터에 병합됩니다."

@@ -88,6 +88,10 @@
 
   "importBtn": { "message": "导入设置" },
   "exportBtn": { "message": "导出设置" },
+  "restoreBackupBtn": { "message": "恢复备份" },
+  "backupInfo": { "message": "备份：$1 · $2 个过滤条件" },
+  "backupNone": { "message": "尚无自动备份。" },
+  "backupRestored": { "message": "已恢复自动备份。" },
   "resetBtn": { "message": "全部重置" },
   "dataHelp": {
     "message": "设置存储在浏览器本地。导入支持 YouTubeMyTube 设置或 BlockTube 备份——格式会自动检测，BlockTube 条目会合并到现有过滤器中。"

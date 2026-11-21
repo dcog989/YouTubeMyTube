@@ -92,6 +92,10 @@
 
   "importBtn": { "message": "Instellingen importeren" },
   "exportBtn": { "message": "Instellingen exporteren" },
+  "restoreBackupBtn": { "message": "Back-up herstellen" },
+  "backupInfo": { "message": "Back-up: $1 · $2 filters" },
+  "backupNone": { "message": "Nog geen automatische back-up." },
+  "backupRestored": { "message": "Automatische back-up hersteld." },
   "resetBtn": { "message": "Alles resetten" },
   "dataHelp": {
     "message": "Instellingen worden lokaal in je browser opgeslagen. Importeren accepteert YouTubeMyTube-instellingen of een BlockTube-back-up — het formaat wordt automatisch herkend en BlockTube-items worden samengevoegd met je bestaande filters."

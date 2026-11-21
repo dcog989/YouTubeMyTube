@@ -88,6 +88,10 @@
 
   "importBtn": { "message": "Ayarları içe aktar" },
   "exportBtn": { "message": "Ayarları dışa aktar" },
+  "restoreBackupBtn": { "message": "Yedeği geri yükle" },
+  "backupInfo": { "message": "Yedek: $1 · $2 filtre" },
+  "backupNone": { "message": "Henüz otomatik yedek yok." },
+  "backupRestored": { "message": "Otomatik yedek geri yüklendi." },
   "resetBtn": { "message": "Tümünü sıfırla" },
   "dataHelp": {
     "message": "Ayarlar tarayıcınızda yerel olarak saklanır. İçe aktarma, YouTubeMyTube ayarlarını veya bir BlockTube yedeğini kabul eder — biçim otomatik algılanır ve BlockTube girdileri mevcut filtrelerinizle birleştirilir."

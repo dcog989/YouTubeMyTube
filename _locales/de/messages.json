@@ -94,6 +94,10 @@
 
   "importBtn": { "message": "Einstellungen importieren" },
   "exportBtn": { "message": "Einstellungen exportieren" },
+  "restoreBackupBtn": { "message": "Sicherung wiederherstellen" },
+  "backupInfo": { "message": "Sicherung: $1 · $2 Filter" },
+  "backupNone": { "message": "Noch keine automatische Sicherung." },
+  "backupRestored": { "message": "Automatische Sicherung wiederhergestellt." },
   "resetBtn": { "message": "Alles zurücksetzen" },
   "dataHelp": {
     "message": "Die Einstellungen werden lokal in deinem Browser gespeichert. Der Import akzeptiert YouTubeMyTube-Einstellungen oder ein BlockTube-Backup – das Format wird automatisch erkannt, und BlockTube-Einträge werden in deine vorhandenen Filter eingefügt."

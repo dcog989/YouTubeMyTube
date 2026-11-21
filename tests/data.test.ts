@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { importSettings } from '../src/options/data';
+import { importSettings, restoreBackup } from '../src/options/data';
 import { defaultState } from '../src/shared/defaults';
 
 const mocks = vi.hoisted(() => {
@@ -10,12 +10,14 @@ const mocks = vi.hoisted(() => {
     setDirty: vi.fn(),
     notify: vi.fn(),
     backfillMissing: vi.fn(() => Promise.resolve()),
+    readBackup: vi.fn(),
     state: { draft: undefined as unknown, dirty: false },
   };
 });
 
 vi.mock('../src/options/dom', () => ({ setStatus: mocks.setStatus }));
 vi.mock('../src/options/backfill', () => ({ backfillMissing: mocks.backfillMissing }));
+vi.mock('../src/shared/backup', () => ({ readBackup: mocks.readBackup }));
 vi.mock('../src/options/state', () => ({
   getDraft: () => mocks.state.draft,
   setDraft: mocks.setDraft,
@@ -86,5 +88,51 @@ describe('importSettings', () => {
 
     expect(mocks.setStatus).toHaveBeenCalledWith('import-status', expect.any(String), false);
     expect(mocks.setDraft).not.toHaveBeenCalled();
+  });
+});
+
+describe('restoreBackup', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.state.draft = defaultState();
+    mocks.state.dirty = false;
+    mocks.readBackup.mockResolvedValue(undefined);
+  });
+
+  it('loads the snapshot into the draft without saving', async () => {
+    const saved = defaultState();
+    saved.rules.videos = [{ id: 'dQw4w9WgXcQ', title: '' }];
+    mocks.readBackup.mockResolvedValue({ state: saved, savedAt: 1 });
+
+    await restoreBackup();
+
+    expect(mocks.setDraft).toHaveBeenCalledWith(saved);
+    expect(mocks.setDirty).toHaveBeenCalledWith(true);
+    expect(mocks.setStatus).toHaveBeenCalledWith('import-status', expect.any(String), true);
+  });
+
+  it('reports an empty or missing backup instead of restoring defaults', async () => {
+    await restoreBackup();
+    expect(mocks.setDraft).not.toHaveBeenCalled();
+
+    mocks.readBackup.mockResolvedValue({ state: defaultState(), savedAt: 1 });
+    await restoreBackup();
+    expect(mocks.setDraft).not.toHaveBeenCalled();
+    expect(mocks.setStatus).toHaveBeenLastCalledWith('import-status', expect.any(String), false);
+  });
+
+  it('asks before replacing unsaved changes', async () => {
+    const saved = defaultState();
+    saved.rules.videos = [{ id: 'dQw4w9WgXcQ', title: '' }];
+    mocks.readBackup.mockResolvedValue({ state: saved, savedAt: 1 });
+    mocks.state.dirty = true;
+    const confirm = vi.fn(() => false);
+    vi.stubGlobal('confirm', confirm);
+
+    await restoreBackup();
+
+    expect(confirm).toHaveBeenCalledTimes(1);
+    expect(mocks.setDraft).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
   });
 });

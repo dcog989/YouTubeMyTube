@@ -1,7 +1,8 @@
+import { type Backup, readBackup } from '../shared/backup';
 import { mergeBlockTubeImport, parseBlockTubeBackup } from '../shared/blocktube';
 import { t } from '../shared/i18n';
-import { normalizeState } from '../shared/normalize';
-import { h } from '../shared/ui';
+import { normalizeState, ruleCount } from '../shared/normalize';
+import { byId, h } from '../shared/ui';
 import { backfillMissing } from './backfill';
 import { setStatus } from './dom';
 import { getDraft, isDirty, notify, setDirty, setDraft } from './state';
@@ -29,6 +30,42 @@ export function exportSettings(): void {
 }
 
 window.addEventListener('pagehide', releaseExportUrl);
+
+// Shows when the last snapshot was taken and how much it holds. A backup with
+// no rules is the same as none: there is nothing to restore.
+export async function renderBackup(): Promise<void> {
+  let backup: Backup | undefined;
+  try {
+    backup = await readBackup();
+  } catch {
+    backup = undefined;
+  }
+  const count = backup ? ruleCount(backup.state) : 0;
+  byId('backup-status').textContent =
+    backup && count > 0
+      ? t('backupInfo', [new Date(backup.savedAt).toLocaleDateString(), String(count)])
+      : t('backupNone');
+}
+
+export async function restoreBackup(): Promise<void> {
+  let backup: Backup | undefined;
+  try {
+    backup = await readBackup();
+  } catch {
+    backup = undefined;
+  }
+  if (!backup || ruleCount(backup.state) === 0) {
+    setStatus('import-status', t('backupNone'), false);
+    return;
+  }
+  // readBackup already normalized the snapshot; it restores as a draft so the
+  // user can inspect it before saving.
+  if (isDirty() && !confirm(t('confirmImport'))) return;
+  setDraft(backup.state);
+  notify();
+  setDirty(true);
+  setStatus('import-status', t('backupRestored'), true);
+}
 
 // `normalizeState` fills every missing section, so a native export only needs a
 // rules object; older backups predate some of the lists.

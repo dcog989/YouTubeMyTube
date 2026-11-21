@@ -1,7 +1,8 @@
+import { readBackup, shouldSnapshot, writeBackup } from '../shared/backup';
 import { MUTATE_REQUEST, SYNC_REQUEST } from '../shared/constants';
 import { applyDnrRules, buildDnrRules, getDynamicRules, sameRules } from '../shared/dnr';
 import { applyMutation, isMutation } from '../shared/mutations';
-import { normalizeState } from '../shared/normalize';
+import { normalizeState, ruleCount } from '../shared/normalize';
 import { onInstalled, onRuntimeMessage, openOptionsPage } from '../shared/runtime';
 import { readState, saveState, seedState } from '../shared/state';
 import type { BlockerState } from '../shared/types';
@@ -57,6 +58,11 @@ async function handleMutation(mutation: unknown): Promise<BlockerState | null> {
       const next = applyMutation(current, mutation);
       if (!next) return null;
       const normalized = normalizeState(next);
+      // Keep the last state that still had rules so an accidental or buggy
+      // wipe is recoverable from the options page.
+      if (shouldSnapshot(current, await readBackup())) {
+        await writeBackup(current);
+      }
       await saveState(normalized);
       await syncDynamicRules();
       return normalized;
@@ -94,4 +100,22 @@ onInstalled((details) => {
   openOptionsPage();
 });
 
-void syncDynamicRules();
+async function recoverBackup(): Promise<void> {
+  // Only a confirmed-absent state is restored: an empty but present state is
+  // the user's own doing and must not be silently undone.
+  if (await readState()) return;
+  const backup = await readBackup();
+  if (!backup || ruleCount(backup.state) === 0) return;
+  await saveState(backup.state);
+}
+
+async function startup(): Promise<void> {
+  try {
+    await recoverBackup();
+  } catch (error) {
+    console.error('Backup recovery failed', error);
+  }
+  await syncDynamicRules();
+}
+
+void startup();

@@ -90,6 +90,10 @@
 
   "importBtn": { "message": "Importuj ustawienia" },
   "exportBtn": { "message": "Eksportuj ustawienia" },
+  "restoreBackupBtn": { "message": "Przywróć kopię zapasową" },
+  "backupInfo": { "message": "Kopia zapasowa: $1 · filtry: $2" },
+  "backupNone": { "message": "Brak automatycznej kopii zapasowej." },
+  "backupRestored": { "message": "Przywrócono automatyczną kopię zapasową." },
   "resetBtn": { "message": "Resetuj wszystko" },
   "dataHelp": {
     "message": "Ustawienia są przechowywane lokalnie w przeglądarce. Import obsługuje ustawienia YouTubeMyTube lub kopię zapasową BlockTube — format jest wykrywany automatycznie, a wpisy BlockTube są scalane z istniejącymi filtrami."

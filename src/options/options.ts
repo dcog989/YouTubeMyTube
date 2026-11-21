@@ -11,7 +11,7 @@ import { buildAreas, syncAreas } from './areas';
 import { backfillMissing } from './backfill';
 import { addChannel, renderChannels, wireChannelSort } from './channels';
 import { updateCounts } from './counts';
-import { exportSettings, importSettings } from './data';
+import { exportSettings, importSettings, renderBackup, restoreBackup } from './data';
 import { selectPanel, setStatus } from './dom';
 import { syncPatternEditors, wirePatternEditors } from './patterns';
 import {
@@ -134,6 +134,7 @@ function wireStatic(): void {
   byId('test-text-btn').addEventListener('click', testText);
 
   byId('export').addEventListener('click', exportSettings);
+  byId('restore-backup').addEventListener('click', () => void restoreBackup());
 
   const importFile = byId<HTMLInputElement>('import-file');
   byId('import').addEventListener('click', () => importFile.click());
@@ -184,6 +185,7 @@ async function init(): Promise<void> {
   void backfillMissing().catch((error) => {
     console.error('Backfill failed', error);
   });
+  void renderBackup();
 }
 
 void init();

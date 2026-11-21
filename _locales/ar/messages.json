@@ -88,6 +88,10 @@
 
   "importBtn": { "message": "استيراد الإعدادات" },
   "exportBtn": { "message": "تصدير الإعدادات" },
+  "restoreBackupBtn": { "message": "استعادة النسخة الاحتياطية" },
+  "backupInfo": { "message": "النسخة الاحتياطية: $1 · $2 من عوامل التصفية" },
+  "backupNone": { "message": "لا توجد نسخة احتياطية تلقائية بعد." },
+  "backupRestored": { "message": "تمت استعادة النسخة الاحتياطية التلقائية." },
   "resetBtn": { "message": "إعادة تعيين الكل" },
   "dataHelp": {
     "message": "تُخزَّن الإعدادات محليًا في متصفحك. يقبل الاستيراد إعدادات YouTubeMyTube أو نسخة احتياطية من BlockTube — يتم اكتشاف التنسيق تلقائيًا، وتُدمج إدخالات BlockTube في فلاترك الحالية."

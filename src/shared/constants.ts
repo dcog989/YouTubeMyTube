@@ -1,4 +1,5 @@
 export const STATE_KEY = 'state';
+export const BACKUP_KEY = 'backup';
 
 export const HANDLE_PREFIX = '@';
 

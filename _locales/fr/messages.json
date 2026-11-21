@@ -94,6 +94,10 @@
 
   "importBtn": { "message": "Importer les paramètres" },
   "exportBtn": { "message": "Exporter les paramètres" },
+  "restoreBackupBtn": { "message": "Restaurer la sauvegarde" },
+  "backupInfo": { "message": "Sauvegarde : $1 · $2 filtres" },
+  "backupNone": { "message": "Aucune sauvegarde automatique pour l'instant." },
+  "backupRestored": { "message": "Sauvegarde automatique restaurée." },
   "resetBtn": { "message": "Tout réinitialiser" },
   "dataHelp": {
     "message": "Les paramètres sont stockés localement dans votre navigateur. L'import accepte les paramètres YouTubeMyTube ou une sauvegarde BlockTube — le format est détecté automatiquement, et les entrées BlockTube sont fusionnées dans vos filtres existants."

@@ -90,6 +90,10 @@
 
   "importBtn": { "message": "Impor pengaturan" },
   "exportBtn": { "message": "Ekspor pengaturan" },
+  "restoreBackupBtn": { "message": "Pulihkan cadangan" },
+  "backupInfo": { "message": "Cadangan: $1 · $2 filter" },
+  "backupNone": { "message": "Belum ada cadangan otomatis." },
+  "backupRestored": { "message": "Cadangan otomatis dipulihkan." },
   "resetBtn": { "message": "Reset semua" },
   "dataHelp": {
     "message": "Pengaturan disimpan secara lokal di browser Anda. Impor menerima pengaturan YouTubeMyTube atau cadangan BlockTube — formatnya dideteksi secara otomatis, dan entri BlockTube digabungkan ke filter yang sudah ada."

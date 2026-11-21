@@ -90,6 +90,10 @@
 
   "importBtn": { "message": "設定をインポート" },
   "exportBtn": { "message": "設定をエクスポート" },
+  "restoreBackupBtn": { "message": "バックアップを復元" },
+  "backupInfo": { "message": "バックアップ: $1 · フィルター$2件" },
+  "backupNone": { "message": "自動バックアップはまだありません。" },
+  "backupRestored": { "message": "自動バックアップを復元しました。" },
   "resetBtn": { "message": "すべてリセット" },
   "dataHelp": {
     "message": "設定はブラウザーにローカル保存されます。インポートは YouTubeMyTube 設定または BlockTube バックアップに対応しています。形式は自動的に判別され、BlockTube のエントリは既存のフィルターにマージされます。"
