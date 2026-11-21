@@ -38,7 +38,24 @@ describe('matchEntity', () => {
     const rules = rulesWith({
       channels: [{ id: 'UC1', name: 'Rick Astley', handle: 'RickAstley' }],
     });
+    // The card has no id or handle, so the name is all we have to go on.
     expect(matchEntity({ channelName: 'Rick Astley' }, rules).blocked).toBe(true);
+  });
+
+  it('does not name-match a different channel that exposes its own identity', () => {
+    const rules = rulesWith({
+      channels: [{ id: 'UC1', name: 'Music', handle: 'music1' }],
+    });
+    expect(matchEntity({ channelId: 'UC2', channelName: 'Music' }, rules).blocked).toBe(false);
+    expect(matchEntity({ handle: 'music2', channelName: 'Music' }, rules).blocked).toBe(false);
+    expect(matchEntity({ channelId: 'UC1', channelName: 'Music' }, rules).blocked).toBe(true);
+  });
+
+  it('name-matches a card with an identity when the rule is name-only', () => {
+    const rules = rulesWith({
+      channels: [{ id: '', name: 'Music', handle: '' }],
+    });
+    expect(matchEntity({ channelId: 'UC2', channelName: 'Music' }, rules).blocked).toBe(true);
   });
 
   it('matches channel filters against handles', () => {

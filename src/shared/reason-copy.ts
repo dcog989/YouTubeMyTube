@@ -61,7 +61,9 @@ export function reasonLabel(reason: Reason | null, fallback: string): string {
 export function reasonDetail(reason: Reason): string {
   if (reason.kind === 'area') {
     // `value` is an AreaKey; show its title instead of the raw key.
-    const label = AREA_LABEL_KEYS[reason.value as AreaKey];
+    const label = Object.hasOwn(AREA_LABEL_KEYS, reason.value)
+      ? AREA_LABEL_KEYS[reason.value as AreaKey]
+      : undefined;
     if (label) return t('reasonDetailArea', t(label));
   }
   const detail = DETAILS[reason.kind];

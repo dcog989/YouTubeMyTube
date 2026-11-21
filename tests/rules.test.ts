@@ -4,12 +4,12 @@ import {
   addChannel,
   addVideo,
   applyResolvedMeta,
-  channelMatches,
   compileRules,
   findChannel,
   findVideo,
   hasVideoId,
   isChannelComplete,
+  mergeChannelEntries,
   removeChannel,
   removeVideo,
   scansComments,
@@ -39,9 +39,15 @@ describe('compileRules', () => {
   it('reports whether comments need scanning', () => {
     expect(scansComments(compileRules(defaultRules()))).toBe(false);
     expect(scansComments(compileRules({ ...defaultRules(), commentFilters: ['x'] }))).toBe(true);
+    // Comments have an author name, never an id or handle.
     expect(
       scansComments(
         compileRules({ ...defaultRules(), channels: [{ id: 'UC1', name: '', handle: '' }] }),
+      ),
+    ).toBe(false);
+    expect(
+      scansComments(
+        compileRules({ ...defaultRules(), channels: [{ id: '', name: 'Music', handle: '' }] }),
       ),
     ).toBe(true);
   });
@@ -56,6 +62,7 @@ describe('compileRules', () => {
     });
     expect(rules.channelNames.has('rick astley')).toBe(true);
     expect(rules.channelNames.size).toBe(1);
+    expect(rules.weakChannelNames.has('rick astley')).toBe(true);
   });
 
   it('collects names even on channels that have an id or handle', () => {
@@ -68,47 +75,17 @@ describe('compileRules', () => {
     });
     expect(rules.channelNames.has('music')).toBe(true);
     expect(rules.channelNames.size).toBe(1);
-  });
-});
-
-describe('channelMatches', () => {
-  const entry = { id: 'UC1', name: '', handle: 'somechannel' };
-
-  it('matches by id or normalized handle', () => {
-    expect(channelMatches(entry, { id: 'UC1' })).toBe(true);
-    expect(channelMatches(entry, { handle: '@somechannel' })).toBe(true);
-    expect(channelMatches(entry, { id: 'UC2' })).toBe(false);
+    // Both rows carry an identity, so the name is not a name-only rule.
+    expect(rules.weakChannelNames.has('music')).toBe(false);
   });
 
-  it('does not match an empty lookup', () => {
-    expect(channelMatches(entry, {})).toBe(false);
-    expect(channelMatches(entry, { id: '', handle: '' })).toBe(false);
-  });
-
-  it('matches by normalized name as a fallback', () => {
-    const named = { id: '', name: 'Rick Astley', handle: '' };
-    expect(channelMatches(named, { name: 'rick astley' })).toBe(true);
-    expect(channelMatches(named, { name: '  Rick   Astley ' })).toBe(true);
-    expect(channelMatches(named, { name: 'Someone Else' })).toBe(false);
-  });
-
-  it('falls back to the name for a name-only lookup', () => {
-    expect(channelMatches({ id: 'UC1', name: 'Music', handle: '' }, { name: 'Music' })).toBe(true);
-    expect(channelMatches({ id: '', name: 'Music', handle: 'music' }, { name: 'Music' })).toBe(
-      true,
-    );
-  });
-
-  it('does not name-match when the lookup and entry are both strong', () => {
-    expect(
-      channelMatches({ id: 'UC1', name: 'Music', handle: '' }, { id: 'UC2', name: 'Music' }),
-    ).toBe(false);
-    expect(
-      channelMatches(
-        { id: '', name: 'Music', handle: 'music' },
-        { handle: 'other', name: 'Music' },
-      ),
-    ).toBe(false);
+  it('marks names from entries that carry no identity as weak', () => {
+    const rules = compileRules({
+      ...defaultRules(),
+      channels: [{ id: 'UC1', name: 'Music', handle: 'music' }],
+    });
+    expect(rules.channelNames.has('music')).toBe(true);
+    expect(rules.weakChannelNames.has('music')).toBe(false);
   });
 });
 
@@ -199,6 +176,18 @@ describe('add / remove', () => {
     expect(removeChannel(rules, { handle: '@beta', name: 'Same Name' })).toBe(true);
     expect(rules.channels.map((channel) => channel.handle)).toEqual(['alpha']);
   });
+
+  it('removes every row sharing a name when the reason is name-only', () => {
+    const rules = defaultRules();
+    rules.channels = [
+      { id: 'UC1', name: 'Music', handle: 'music1' },
+      { id: '', name: 'Music', handle: '' },
+      { id: 'UC2', name: 'Other', handle: '' },
+    ];
+    expect(removeChannel(rules, { name: 'music' })).toBe(true);
+    expect(rules.channels).toEqual([{ id: 'UC2', name: 'Other', handle: '' }]);
+    expect(removeChannel(rules, { name: 'music' })).toBe(false);
+  });
 });
 
 describe('applyResolvedMeta', () => {
@@ -239,6 +228,40 @@ describe('applyResolvedMeta', () => {
     rules.channels = [stored, { id: '', name: 'Music', handle: '' }];
     expect(applyResolvedMeta(rules, stored, { id: '', name: 'Music', handle: '' })).toBe('merged');
     expect(rules.channels).toHaveLength(2);
+  });
+
+  it('normalizes the resolved handle before storing it', () => {
+    const rules = defaultRules();
+    const stored = { id: '', name: '', handle: '' };
+    rules.channels = [stored];
+    expect(
+      applyResolvedMeta(rules, stored, { id: 'UC1', name: 'Music', handle: '@SomeHandle' }),
+    ).toBe('merged');
+    expect(stored.handle).toBe('somehandle');
+  });
+});
+
+describe('mergeChannelEntries', () => {
+  it('merges duplicate rows and keeps the indexes current', () => {
+    const merged = mergeChannelEntries([
+      { id: 'UC1', name: '', handle: 'old' },
+      { id: 'UC1', name: 'Music', handle: 'new' },
+      { id: '', name: '', handle: 'old' },
+    ]);
+    expect(merged.added).toBe(2);
+    expect(merged.channels).toEqual([
+      { id: 'UC1', name: 'Music', handle: 'new' },
+      { id: '', name: '', handle: 'old' },
+    ]);
+  });
+
+  it('upgrades a name-only row when the channel arrives with an id', () => {
+    const merged = mergeChannelEntries([
+      { id: '', name: 'Music', handle: '' },
+      { id: 'UC1', name: 'Music', handle: 'music' },
+    ]);
+    expect(merged.added).toBe(1);
+    expect(merged.channels).toEqual([{ id: 'UC1', name: 'Music', handle: 'music' }]);
   });
 });
 

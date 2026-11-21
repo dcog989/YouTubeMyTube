@@ -35,6 +35,11 @@ describe('reasonDetail', () => {
     expect(reasonDetail({ kind: 'area', value: 'notAnArea' })).toBe('Blocked page: notAnArea');
   });
 
+  it('does not look up Object prototype keys as area labels', () => {
+    expect(reasonDetail({ kind: 'area', value: 'constructor' })).toBe('Blocked page: constructor');
+    expect(reasonDetail({ kind: 'area', value: '__proto__' })).toBe('Blocked page: __proto__');
+  });
+
   it('falls back to a generic description for empty pattern values', () => {
     expect(reasonDetail({ kind: 'handle', value: '@' })).toBe('Blocked channel.');
     expect(reasonDetail({ kind: 'title', value: '' })).toBe('Blocked by a title filter.');

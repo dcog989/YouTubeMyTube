@@ -93,6 +93,13 @@ describe('normalizeState', () => {
     expect(state.rules.titleFilters).toEqual(['spam']);
   });
 
+  it('dedupes keywords case-insensitively but keeps distinct regexes', () => {
+    const state = normalizeState({
+      rules: { titleFilters: ['Spam', 'spam', '/Spam/', '/spam/'] },
+    });
+    expect(state.rules.titleFilters).toEqual(['/Spam/', '/spam/', 'Spam']);
+  });
+
   it('preserves the lookupFailed marker on entities', () => {
     const state = normalizeState({
       rules: {

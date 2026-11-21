@@ -2,7 +2,7 @@ import { type Reason, type RuleRef, reasonSpec } from './reason';
 import { removeChannel, removeVideo } from './rules';
 import type { FilterRules } from './types';
 
-export type { RuleRef, RuleRefKind } from './reason';
+export type { RuleRef } from './reason';
 
 export function ruleRefForReason(reason: Reason | null): RuleRef | null {
   if (!reason) return null;

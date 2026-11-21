@@ -10,21 +10,28 @@ function matchesAny(patterns: RegExp[], value: string): boolean {
 }
 
 export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
-  if (entity.videoId && rules.videoIds.has(entity.videoId)) {
-    return { blocked: true, reason: { kind: 'video', value: entity.videoId } };
+  const videoId = entity.videoId?.trim() ?? '';
+  if (videoId && rules.videoIds.has(videoId)) {
+    return { blocked: true, reason: { kind: 'video', value: videoId } };
   }
-  if (entity.channelId && rules.channelIds.has(entity.channelId)) {
-    return { blocked: true, reason: { kind: 'channel', value: entity.channelId } };
+  const channelId = entity.channelId?.trim() ?? '';
+  if (channelId && rules.channelIds.has(channelId)) {
+    return { blocked: true, reason: { kind: 'channel', value: channelId } };
   }
-  if (entity.handle) {
-    const value = normalizeHandle(entity.handle);
-    if (rules.handles.has(value)) {
-      return { blocked: true, reason: { kind: 'handle', value } };
-    }
+  const handle = entity.handle ? normalizeHandle(entity.handle) : '';
+  if (handle && rules.handles.has(handle)) {
+    return { blocked: true, reason: { kind: 'handle', value: handle } };
   }
   if (entity.channelName) {
     const name = normalizeChannelName(entity.channelName);
-    if (name && rules.channelNames.has(name)) {
+    // A card that names its channel id or handle tells us which channel it is;
+    // only a name-only rule should override that identity.
+    const hasStrongIdentity = channelId !== '' || handle !== '';
+    if (
+      name &&
+      rules.channelNames.has(name) &&
+      (!hasStrongIdentity || rules.weakChannelNames.has(name))
+    ) {
       return { blocked: true, reason: { kind: 'channelNameRule', value: entity.channelName } };
     }
   }

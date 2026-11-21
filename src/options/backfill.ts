@@ -30,9 +30,10 @@ function needsVideoBackfill(video: VideoEntry): boolean {
   return !video.lookupFailed && !video.title;
 }
 
-// A failed lookup is only retried after the entry is edited, which clears the flag.
+// isChannelComplete excludes entries whose lookup already failed; those are
+// only retried after the entry is edited, which clears the flag.
 function needsChannelBackfill(channel: ChannelEntry): boolean {
-  return !channel.lookupFailed && !isChannelComplete(channel);
+  return !isChannelComplete(channel);
 }
 
 function delay(ms: number): Promise<void> {

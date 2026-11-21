@@ -1,6 +1,6 @@
 import { isActiveEntry } from './patterns';
-import { addChannel, addVideo } from './rules';
-import type { AreaFlags, AreaKey, BlockerState } from './types';
+import { mergeChannelEntries } from './rules';
+import type { AreaFlags, AreaKey, BlockerState, ChannelEntry } from './types';
 import { CHANNEL_ID, normalizeHandle, splitChannelLabel, VIDEO_ID } from './url';
 
 export type ImportedChannelRef = { name: string; handle: string };
@@ -195,17 +195,23 @@ export function mergeBlockTubeImport(
   const rules = structuredClone(state.rules);
   let added = 0;
 
+  const videoIds = new Set(rules.videos.map((video) => video.id.trim()));
   for (const id of data.videoIds) {
-    if (addVideo(rules, { id, title: '' })) added += 1;
+    const value = id.trim();
+    if (!isActiveEntry(value) || videoIds.has(value)) continue;
+    videoIds.add(value);
+    rules.videos.push({ id, title: '' });
+    added += 1;
   }
 
-  for (const id of data.channelIds) {
-    if (addChannel(rules, { id, name: '', handle: '' })) added += 1;
-  }
-
+  const channelEntries: ChannelEntry[] = [];
+  for (const id of data.channelIds) channelEntries.push({ id, name: '', handle: '' });
   for (const ref of data.channelRefs) {
-    if (addChannel(rules, { id: '', name: ref.name, handle: ref.handle })) added += 1;
+    channelEntries.push({ id: '', name: ref.name, handle: ref.handle });
   }
+  const merged = mergeChannelEntries(channelEntries, rules.channels);
+  rules.channels = merged.channels;
+  added += merged.added;
 
   const channelFilters = mergePatternList(rules.channelFilters, data.channelNameFilters);
   rules.channelFilters = channelFilters.list;

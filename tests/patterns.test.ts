@@ -48,9 +48,28 @@ describe('parsePattern', () => {
     expect(pattern?.test('Ending Spoilers revealed')).toBe(true);
   });
 
+  it('keeps the flags the user wrote', () => {
+    expect(parsePattern('/Drama/')?.test('drama')).toBe(false);
+    expect(parsePattern('/Drama/i')?.test('drama')).toBe(true);
+  });
+
   it('strips global and sticky flags', () => {
-    const pattern = parsePattern('/needle/g');
-    expect(pattern?.flags).toBe('i');
+    expect(parsePattern('/needle/g')?.flags).toBe('');
+    expect(parsePattern('/needle/gy')?.flags).toBe('');
+  });
+
+  it('rejects nested quantifiers that can freeze the page', () => {
+    expect(parsePattern('/^(a+)+$/')).toBeNull();
+    expect(parsePattern('/(a*)+/')).toBeNull();
+    expect(parsePattern('/(a?)+/')).toBeNull();
+    expect(parsePattern('/(\\d+){2,}/')).toBeNull();
+  });
+
+  it('keeps safe groups with quantifiers', () => {
+    expect(parsePattern('/(ab)+/')).not.toBeNull();
+    expect(parsePattern('/(a+)?/')).not.toBeNull();
+    expect(parsePattern('/(\\d+){2}/')).not.toBeNull();
+    expect(parsePattern('/[(a+)+]/')).not.toBeNull();
   });
 
   it('returns null for malformed or inactive entries', () => {
@@ -69,5 +88,6 @@ describe('compilePatterns', () => {
 describe('invalidPatterns', () => {
   it('reports active regex entries that fail to compile', () => {
     expect(invalidPatterns(['/[unclosed/', 'ok', '// note', '/fine/i'])).toEqual(['/[unclosed/']);
+    expect(invalidPatterns(['/(a+)+/'])).toEqual(['/(a+)+/']);
   });
 });

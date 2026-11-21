@@ -12,13 +12,18 @@ export function compileRules(rules: FilterRules): CompiledRules {
   const channelIds = new Set<string>();
   const handles = new Set<string>();
   const channelNames = new Set<string>();
+  const weakChannelNames = new Set<string>();
   for (const { id, handle, name } of rules.channels) {
     const channelId = id.trim();
     const channelHandle = normalizeHandle(handle);
+    const strong = isActiveEntry(channelId) || isActiveEntry(channelHandle);
     if (isActiveEntry(channelId)) channelIds.add(channelId);
     if (isActiveEntry(channelHandle)) handles.add(channelHandle);
     const channelName = normalizeChannelName(name);
-    if (channelName) channelNames.add(channelName);
+    if (channelName) {
+      channelNames.add(channelName);
+      if (!strong) weakChannelNames.add(channelName);
+    }
   }
 
   return {
@@ -26,6 +31,7 @@ export function compileRules(rules: FilterRules): CompiledRules {
     channelIds,
     handles,
     channelNames,
+    weakChannelNames,
     titleFilters: compilePatterns(rules.titleFilters),
     channelFilters: compilePatterns(rules.channelFilters),
     commentFilters: compilePatterns(rules.commentFilters),
@@ -33,12 +39,8 @@ export function compileRules(rules: FilterRules): CompiledRules {
 }
 
 export function scansComments(rules: CompiledRules): boolean {
-  return (
-    rules.commentFilters.length > 0 ||
-    rules.channelIds.size > 0 ||
-    rules.handles.size > 0 ||
-    rules.channelNames.size > 0
-  );
+  // Comments carry an author name, never an id or handle.
+  return rules.commentFilters.length > 0 || rules.channelNames.size > 0;
 }
 
 export interface ChannelLookup {
@@ -78,10 +80,6 @@ function channelMatchRank(entry: ChannelEntry, lookup: PreparedLookup): number {
   if (lookup.strong && strongEntry) return NO_MATCH;
   if (lookup.name !== '' && normalizeChannelName(entry.name) === lookup.name) return MATCH_NAME;
   return NO_MATCH;
-}
-
-export function channelMatches(entry: ChannelEntry, lookup: ChannelLookup): boolean {
-  return channelMatchRank(entry, prepareLookup(lookup)) !== NO_MATCH;
 }
 
 export function findChannel(rules: FilterRules, lookup: ChannelLookup): ChannelEntry | undefined {
@@ -140,6 +138,94 @@ export function addChannel(rules: FilterRules, entry: ChannelEntry): boolean {
   );
 }
 
+interface ChannelIndex {
+  byId: Map<string, ChannelEntry>;
+  byHandle: Map<string, ChannelEntry>;
+  byName: Map<string, ChannelEntry>;
+}
+
+interface ChannelKeys {
+  id: string;
+  handle: string;
+  name: string;
+}
+
+function channelKeys(entry: ChannelEntry): ChannelKeys {
+  return {
+    id: entry.id.trim(),
+    handle: entry.handle.trim(),
+    name: normalizeChannelName(entry.name),
+  };
+}
+
+function isStrongChannel(entry: ChannelEntry): boolean {
+  return entry.id.trim() !== '' || entry.handle.trim() !== '';
+}
+
+function indexChannel(index: ChannelIndex, entry: ChannelEntry): void {
+  const keys = channelKeys(entry);
+  if (keys.id && !index.byId.has(keys.id)) index.byId.set(keys.id, entry);
+  if (keys.handle && !index.byHandle.has(keys.handle)) index.byHandle.set(keys.handle, entry);
+  if (keys.name && !index.byName.has(keys.name)) index.byName.set(keys.name, entry);
+}
+
+function unindexChannel(index: ChannelIndex, entry: ChannelEntry, keys: ChannelKeys): void {
+  if (keys.id && index.byId.get(keys.id) === entry) index.byId.delete(keys.id);
+  if (keys.handle && index.byHandle.get(keys.handle) === entry) index.byHandle.delete(keys.handle);
+  if (keys.name && index.byName.get(keys.name) === entry) index.byName.delete(keys.name);
+}
+
+function mergeChannelEntry(stored: ChannelEntry, meta: ChannelEntry): void {
+  if (meta.id) stored.id = meta.id.trim();
+  if (meta.name && !stored.name) stored.name = meta.name.trim();
+  if (meta.handle) stored.handle = normalizeHandle(meta.handle);
+}
+
+// Batch add with the same merge rules as `addChannel`, but indexed so importing
+// or normalizing thousands of rows stays linear instead of scanning per row.
+export function mergeChannelEntries(
+  entries: Iterable<ChannelEntry>,
+  channels: ChannelEntry[] = [],
+): { channels: ChannelEntry[]; added: number } {
+  const index: ChannelIndex = { byId: new Map(), byHandle: new Map(), byName: new Map() };
+  for (const channel of channels) indexChannel(index, channel);
+
+  let added = 0;
+  for (const raw of entries) {
+    const meta: ChannelEntry = {
+      id: raw.id.trim(),
+      name: raw.name.trim(),
+      handle: normalizeHandle(raw.handle),
+    };
+    if (raw.lookupFailed) meta.lookupFailed = true;
+    if (!isActiveEntry(meta.id) && !isActiveEntry(meta.handle) && !isActiveEntry(meta.name)) {
+      continue;
+    }
+
+    const strong = meta.id !== '' || meta.handle !== '';
+    let stored = meta.id ? index.byId.get(meta.id) : undefined;
+    if (!stored && meta.handle) stored = index.byHandle.get(meta.handle);
+    if (!stored && meta.name) {
+      const candidate = index.byName.get(normalizeChannelName(meta.name));
+      if (candidate && !(strong && isStrongChannel(candidate))) stored = candidate;
+    }
+
+    if (!stored) {
+      channels.push(meta);
+      indexChannel(index, meta);
+      added += 1;
+      continue;
+    }
+
+    const oldKeys = channelKeys(stored);
+    mergeChannelEntry(stored, meta);
+    unindexChannel(index, stored, oldKeys);
+    indexChannel(index, stored);
+  }
+
+  return { channels, added };
+}
+
 export function isChannelComplete(channel: ChannelEntry): boolean {
   return !channel.lookupFailed && Boolean(channel.id && channel.name);
 }
@@ -156,23 +242,35 @@ export function applyResolvedMeta(
     (channel) => channel !== stored && channelMatchRank(channel, lookup) !== NO_MATCH,
   );
   if (!conflict) {
-    if (meta.id) stored.id = meta.id;
-    if (meta.name && !stored.name) stored.name = meta.name;
-    if (meta.handle) stored.handle = meta.handle;
+    if (meta.id) stored.id = meta.id.trim();
+    if (meta.name && !stored.name) stored.name = meta.name.trim();
+    if (meta.handle) stored.handle = normalizeHandle(meta.handle);
     return 'merged';
   }
   const index = rules.channels.indexOf(stored);
   if (index !== -1) rules.channels.splice(index, 1);
-  if (meta.id && !conflict.id) conflict.id = meta.id;
-  if (meta.name && !conflict.name) conflict.name = meta.name;
-  if (meta.handle && !conflict.handle) conflict.handle = meta.handle;
+  if (meta.id && !conflict.id) conflict.id = meta.id.trim();
+  if (meta.name && !conflict.name) conflict.name = meta.name.trim();
+  if (meta.handle && !conflict.handle) conflict.handle = normalizeHandle(meta.handle);
   return 'conflict';
 }
 
 export function removeChannel(rules: FilterRules, lookup: ChannelLookup): boolean {
+  const prepared = prepareLookup(lookup);
+  // A name-only reason does not identify one row; remove every row that blocks
+  // that name so the unblock action actually stops hiding the content.
+  if (prepared.id === '' && prepared.handle === '' && prepared.name !== '') {
+    const before = rules.channels.length;
+    for (let index = rules.channels.length - 1; index >= 0; index -= 1) {
+      const channel = rules.channels[index];
+      if (channel && normalizeChannelName(channel.name) === prepared.name) {
+        rules.channels.splice(index, 1);
+      }
+    }
+    return rules.channels.length !== before;
+  }
   let bestIndex = -1;
   let bestRank = Number.POSITIVE_INFINITY;
-  const prepared = prepareLookup(lookup);
   rules.channels.forEach((channel, index) => {
     const rank = channelMatchRank(channel, prepared);
     if (rank !== NO_MATCH && rank < bestRank) {

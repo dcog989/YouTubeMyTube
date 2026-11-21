@@ -64,6 +64,10 @@ export interface CompiledRules {
   channelIds: Set<string>;
   handles: Set<string>;
   channelNames: Set<string>;
+  // Names from entries that carry no id or handle. Those entries block by name
+  // for every card; strong entries block by name only when the card carries no
+  // identity of its own.
+  weakChannelNames: Set<string>;
   titleFilters: RegExp[];
   channelFilters: RegExp[];
   commentFilters: RegExp[];

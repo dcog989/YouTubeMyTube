@@ -1,10 +1,9 @@
 import { AREA_DEFINITIONS, type AreaFlags } from './areas';
 import { defaultAreas, defaultRules, defaultSettings, defaultState } from './defaults';
 import { countActiveEntries, sortEntries } from './patterns';
-import { addChannel } from './rules';
+import { mergeChannelEntries } from './rules';
 import { isTheme } from './theme';
 import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
-import { normalizeHandle } from './url';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -25,8 +24,11 @@ function pickStringArray(value: unknown): string[] {
   for (const item of value) {
     if (typeof item !== 'string') continue;
     const entry = item.trim();
-    if (entry === '' || seen.has(entry)) continue;
-    seen.add(entry);
+    if (entry === '') continue;
+    // Keyword entries match case-insensitively; regex entries do not.
+    const key = entry.startsWith('/') ? entry : entry.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
     result.push(entry);
   }
   return result;
@@ -34,19 +36,19 @@ function pickStringArray(value: unknown): string[] {
 
 function pickChannels(value: unknown): ChannelEntry[] {
   if (!Array.isArray(value)) return [];
-  const rules = defaultRules();
+  const entries: ChannelEntry[] = [];
   for (const item of value) {
     if (!isRecord(item)) continue;
     const entry: ChannelEntry = {
       id: pickString(item.id),
       name: pickString(item.name),
-      handle: normalizeHandle(pickString(item.handle)),
+      handle: pickString(item.handle),
     };
     if (item.lookupFailed === true) entry.lookupFailed = true;
-    // Merge with addChannel so duplicate rows keep every field they carry.
-    addChannel(rules, entry);
+    entries.push(entry);
   }
-  return rules.channels;
+  // Merge duplicate rows so they keep every field they carry.
+  return mergeChannelEntries(entries).channels;
 }
 
 function pickVideos(value: unknown): VideoEntry[] {
