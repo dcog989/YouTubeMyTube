@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type Backup, shouldSnapshot } from '../src/shared/backup';
+import { type Backup, backupState, shouldSeedBackup, shouldSnapshot } from '../src/shared/backup';
 import { defaultState } from '../src/shared/defaults';
 import type { BlockerState } from '../src/shared/types';
 
@@ -12,6 +12,35 @@ function stateWithVideos(ids: string[]): BlockerState {
 function backupOf(state: BlockerState): Backup {
   return { state, savedAt: 1 };
 }
+
+describe('backupState', () => {
+  it('has no base without a backup', () => {
+    expect(backupState(undefined)).toBeUndefined();
+  });
+
+  it('has no base for a backup with no rules', () => {
+    expect(backupState(backupOf(defaultState()))).toBeUndefined();
+  });
+
+  it('returns the backup state when it holds rules', () => {
+    const state = stateWithVideos(['a']);
+    expect(backupState(backupOf(state))).toBe(state);
+  });
+});
+
+describe('shouldSeedBackup', () => {
+  it('seeds from the first save that carries rules', () => {
+    expect(shouldSeedBackup(stateWithVideos(['a']), undefined)).toBe(true);
+  });
+
+  it('does not seed an empty state', () => {
+    expect(shouldSeedBackup(defaultState(), undefined)).toBe(false);
+  });
+
+  it('leaves an existing backup alone', () => {
+    expect(shouldSeedBackup(stateWithVideos(['a']), backupOf(stateWithVideos(['b'])))).toBe(false);
+  });
+});
 
 describe('shouldSnapshot', () => {
   it('skips a state with no rules', () => {

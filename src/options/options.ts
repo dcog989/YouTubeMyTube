@@ -129,6 +129,7 @@ function wireStatic(): void {
       setStatus('save-status', '', true);
       setDirty(!finishSave(saved));
       populate();
+      void renderBackup();
     })();
   });
 

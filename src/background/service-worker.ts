@@ -1,5 +1,12 @@
-import { readBackup, shouldSnapshot, writeBackup } from '../shared/backup';
+import {
+  backupState,
+  readBackup,
+  shouldSeedBackup,
+  shouldSnapshot,
+  writeBackup,
+} from '../shared/backup';
 import { MUTATE_REQUEST, SYNC_REQUEST } from '../shared/constants';
+import { defaultState } from '../shared/defaults';
 import { applyDnrRules, buildDnrRules, getDynamicRules, sameRules } from '../shared/dnr';
 import { applyMutation, isMutation } from '../shared/mutations';
 import { normalizeState, ruleCount } from '../shared/normalize';
@@ -47,23 +54,49 @@ function queueWrite<T>(task: () => Promise<T>): Promise<T> {
   return run;
 }
 
+// Firefox can resolve a storage read with no value while the backend is still
+// starting (bug 1543880, bug 1885297), so a genuinely empty store is confirmed
+// before it is treated as a fresh install.
+const ABSENT_STATE_CONFIRM_MS = 250;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// A confirmed-absent state key is a fresh or cleared store (the storage helpers
+// retry thrown reads), so a save must still work: fall back to the backup, then
+// to defaults. Refusing here left the options page unable to save anything.
+async function currentState(): Promise<BlockerState> {
+  const state = await readState();
+  if (state) return state;
+  const fromBackup = backupState(await readBackup());
+  if (fromBackup) return fromBackup;
+  await delay(ABSENT_STATE_CONFIRM_MS);
+  const retried = await readState();
+  if (retried) return retried;
+  console.warn('YouTubeMyTube: no stored state; writing this mutation from defaults.');
+  return defaultState();
+}
+
 async function handleMutation(mutation: unknown): Promise<BlockerState | null> {
   if (!isMutation(mutation)) return null;
   try {
     return await queueWrite(async () => {
-      const current = await readState();
-      // Abort on a missing key: a transient empty read must not replace the
-      // user's real rules with defaults plus this mutation.
-      if (!current) return null;
+      const current = await currentState();
       const next = applyMutation(current, mutation);
       if (!next) return null;
       const normalized = normalizeState(next);
       // Keep the last state that still had rules so an accidental or buggy
       // wipe is recoverable from the options page.
-      if (shouldSnapshot(current, await readBackup())) {
+      const backup = await readBackup();
+      const snapshotted = shouldSnapshot(current, backup);
+      if (snapshotted) {
         await writeBackup(current);
       }
       await saveState(normalized);
+      if (!snapshotted && shouldSeedBackup(normalized, backup)) {
+        await writeBackup(normalized);
+      }
       await syncDynamicRules();
       return normalized;
     });

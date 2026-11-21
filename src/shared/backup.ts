@@ -8,6 +8,12 @@ export interface Backup {
   savedAt: number;
 }
 
+// The first save into a store that has rules but no usable backup seeds one
+// from what was saved, so a fresh import is protected before the next change.
+export function shouldSeedBackup(saved: BlockerState, existing: Backup | undefined): boolean {
+  return !backupState(existing) && ruleCount(saved) > 0;
+}
+
 // Snapshot only states that still carry rules, and never replace a larger
 // backup with a smaller one: a wipe applied as a series of removals must not
 // walk the backup down to nothing.
@@ -21,6 +27,13 @@ export function shouldSnapshot(current: BlockerState, existing: Backup | undefin
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
+}
+
+// The base for a mutation when the state key is absent. An empty backup is no
+// base at all: restoring it would just write defaults over the user's slots.
+export function backupState(backup: Backup | undefined): BlockerState | undefined {
+  if (!backup || ruleCount(backup.state) === 0) return undefined;
+  return backup.state;
 }
 
 // shortcut: the backup lives in the same storage.local area, so a browser
