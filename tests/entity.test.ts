@@ -1,5 +1,112 @@
-import { describe, expect, it } from 'vitest';
-import { entityKey } from '../src/content/entity';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { cardEntity, commentEntity, entityKey } from '../src/content/entity';
+import { METADATA_SELECTOR } from '../src/content/entity-selectors';
+
+// The extractors only need the few Element members they read; a plain stub
+// keeps these tests free of a DOM implementation.
+class FakeElement {}
+
+beforeAll(() => {
+  vi.stubGlobal('Element', FakeElement);
+});
+
+afterAll(() => {
+  vi.unstubAllGlobals();
+});
+
+interface StubOptions {
+  selectors?: Record<string, Element | Element[]>;
+  attributes?: Record<string, string>;
+  text?: string;
+}
+
+function stub({ selectors = {}, attributes = {}, text = '' }: StubOptions = {}): Element {
+  return Object.assign(new FakeElement(), {
+    querySelector: (selector: string) => selectors[selector] ?? null,
+    querySelectorAll: (selector: string) => {
+      const match = selectors[selector];
+      if (match === undefined) return [];
+      return Array.isArray(match) ? match : [match];
+    },
+    getAttribute: (name: string) => attributes[name] ?? null,
+    textContent: text,
+  }) as unknown as Element;
+}
+
+function anchor(href: string, text = ''): Element {
+  return stub({ attributes: { href }, text });
+}
+
+describe('cardEntity', () => {
+  it('reads the video, channel and title from the card DOM', () => {
+    const card = stub({
+      selectors: {
+        'a[href]': [anchor('/watch?v=abcdefghijk'), anchor('/@RickAstley', 'Rick Astley')],
+        'a[title]': stub({ attributes: { title: '  Never Gonna Give You Up ' } }),
+      },
+    });
+
+    expect(cardEntity(card)).toEqual({
+      videoId: 'abcdefghijk',
+      handle: 'RickAstley',
+      channelName: 'Rick Astley',
+      title: 'Never Gonna Give You Up',
+    });
+  });
+
+  it('marks a Shorts card so the channel lookup can run', () => {
+    const card = stub({
+      selectors: {
+        'a[href]': [anchor('/shorts/abcdefghijk')],
+        '.shortsLockupViewModelHostMetadataTitle': stub({ text: 'A short' }),
+      },
+    });
+
+    const entity = cardEntity(card);
+    expect(entity.videoId).toBe('abcdefghijk');
+    expect(entity.isShorts).toBe(true);
+    expect(entity.title).toBe('A short');
+  });
+
+  it('falls back to the first metadata text that is not a view count or date', () => {
+    const metadata = stub({
+      selectors: {
+        [METADATA_SELECTOR]: [
+          stub({ text: '1.2M views' }),
+          stub({ text: '3 days ago' }),
+          stub({ text: 'Rick Astley' }),
+        ],
+      },
+    });
+    const card = stub({
+      selectors: {
+        'a[href]': [anchor('/watch?v=abcdefghijk')],
+        '#video-title': stub({ text: 'A video' }),
+        'yt-content-metadata-view-model': metadata,
+      },
+    });
+
+    expect(cardEntity(card).channelName).toBe('Rick Astley');
+  });
+});
+
+describe('commentEntity', () => {
+  it('reads the author, handle and body from the comment DOM', () => {
+    const thread = stub({
+      selectors: {
+        'a[href*="/channel/"], a[href^="/@"], a[href*="/@"]': anchor('/@SomeUser'),
+        '#author-text': stub({ text: ' Some User ' }),
+        '#content-text': stub({ text: ' buy my course ' }),
+      },
+    });
+
+    expect(commentEntity(thread)).toEqual({
+      handle: 'SomeUser',
+      commentAuthor: 'Some User',
+      commentContent: 'buy my course',
+    });
+  });
+});
 
 describe('entityKey', () => {
   it('joins the identity fields that decide a re-evaluation', () => {

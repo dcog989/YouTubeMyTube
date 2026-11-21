@@ -1,18 +1,16 @@
 import type { Entity, ParsedUrl } from '../shared/types';
 import { normalizeHandle, parseYouTubeUrl } from '../shared/url';
-import { closestAcrossShadow, forEachShadowRoot } from './dom';
+import { closestAcrossShadow, forEachShadowRoot, shadowRootsWithin } from './dom';
 import {
   ACTIVE_REEL_SELECTOR,
   CHANNEL_HEADER_SELECTORS,
   CHANNEL_LINK_SELECTORS,
   CHANNEL_PAGE_NAME_SELECTORS,
-  CHANNEL_TEXT_SELECTORS,
   METADATA_SELECTOR,
   OWNER_SCOPE_SELECTOR,
   OWNER_SCOPES,
   PAGE_TITLE_SCOPE_SELECTOR,
   PAGE_TITLE_SELECTORS,
-  SHADOW_ANCHOR_HOST_SELECTOR,
   TITLE_SELECTORS,
 } from './entity-selectors';
 
@@ -22,15 +20,13 @@ function textOf(element: Element | null): string {
 
 function firstText(element: ParentNode, selectors: string[]): string {
   for (const selector of selectors) {
-    const found = element.querySelector(selector);
-    const value = textOf(found);
+    const value = textOf(element.querySelector(selector));
     if (value) return value;
   }
   return '';
 }
 
 const NON_CHANNEL_METADATA = /\bviews?\b|\bago\b|^[\d.,]+(?:\s*[KMB])?$/i;
-const CHANNEL_AVATAR_LABEL = /^Go to channel\s+/i;
 const CHANNEL_HREF = /\/(?:channel\/|@)/;
 
 // Identity of what a node or page currently shows; callers skip re-evaluating
@@ -74,13 +70,7 @@ function lockupChannelName(card: Element): string {
   return model ? metadataValue(model) : '';
 }
 
-function channelAvatarLabel(card: Element): string {
-  const avatar = card.querySelector('[aria-label^="Go to channel "]');
-  const label = avatar?.getAttribute('aria-label') ?? '';
-  return label.replace(CHANNEL_AVATAR_LABEL, '').trim();
-}
-
-function titleOf(card: Element): string {
+function titleOf(card: Element, roots: () => ShadowRoot[]): string {
   const titled = card.querySelector('a[title]');
   const attr = titled?.getAttribute('title')?.trim();
   if (attr) return attr;
@@ -88,15 +78,8 @@ function titleOf(card: Element): string {
     const value = textOf(card.querySelector(selector));
     if (value) return value;
   }
-  // Collect the shadow roots once, then still honour selector order; walking
-  // once per selector made this the hot path on a long feed.
-  const roots: ShadowRoot[] = [];
-  forEachShadowRoot(card, (shadow) => {
-    roots.push(shadow);
-    return true;
-  });
   for (const selector of TITLE_SELECTORS) {
-    for (const root of roots) {
+    for (const root of roots()) {
       const value = textOf(root.querySelector(selector));
       if (value) return value;
     }
@@ -112,8 +95,15 @@ function applyParsed(entity: Entity, parsed: ParsedUrl): void {
 
 function applyAnchor(entity: Entity, anchor: HTMLAnchorElement): void {
   const href = anchor.getAttribute('href') ?? '';
+  if (href.includes('/shorts/')) entity.isShorts = true;
   if (entity.videoId && !CHANNEL_HREF.test(href)) return;
-  applyParsed(entity, parseYouTubeUrl(href));
+  const parsed = parseYouTubeUrl(href);
+  applyParsed(entity, parsed);
+  // The channel anchor's own text is the display name in every UI language.
+  if (!entity.channelName && (parsed.channelId || parsed.handle)) {
+    const name = textOf(anchor);
+    if (name) entity.channelName = name;
+  }
 }
 
 function hasChannelIdentity(entity: Entity): boolean {
@@ -127,28 +117,26 @@ function applyAnchors(entity: Entity, anchors: ArrayLike<HTMLAnchorElement>): vo
   }
 }
 
-function applyShadowAnchors(entity: Entity, root: ParentNode): void {
-  for (const host of root.querySelectorAll(SHADOW_ANCHOR_HOST_SELECTOR)) {
-    const shadow = host.shadowRoot;
-    if (!shadow) continue;
-    shadow.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((anchor) => {
+function applyShadowAnchors(entity: Entity, roots: ShadowRoot[]): void {
+  for (const root of roots) {
+    root.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((anchor) => {
       applyAnchor(entity, anchor);
     });
-    if (hasChannelIdentity(entity)) return;
-    applyShadowAnchors(entity, shadow);
     if (hasChannelIdentity(entity)) return;
   }
 }
 
 export function cardEntity(card: Element): Entity {
   const entity: Entity = {};
+  let roots: ShadowRoot[] | undefined;
+  const cardRoots = (): ShadowRoot[] => (roots ??= shadowRootsWithin(card));
+
   applyAnchors(entity, card.querySelectorAll<HTMLAnchorElement>('a[href]'));
 
-  if (!hasChannelIdentity(entity)) applyShadowAnchors(entity, card);
+  if (!hasChannelIdentity(entity)) applyShadowAnchors(entity, cardRoots());
 
-  entity.title = titleOf(card);
-  const channelName =
-    firstText(card, CHANNEL_TEXT_SELECTORS) || channelAvatarLabel(card) || lockupChannelName(card);
+  entity.title = titleOf(card, cardRoots);
+  const channelName = entity.channelName || lockupChannelName(card);
   if (channelName) entity.channelName = channelName;
 
   return entity;

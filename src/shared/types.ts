@@ -46,6 +46,9 @@ export interface Entity {
   title?: string;
   commentAuthor?: string;
   commentContent?: string;
+  // Set when the card linked to a /shorts/ page. The filter only spends an
+  // oEmbed lookup on these cards because their channel is not in the DOM.
+  isShorts?: boolean;
 }
 
 export type MatchResult = { blocked: false } | { blocked: true; reason: Reason };

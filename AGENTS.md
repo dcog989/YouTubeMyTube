@@ -101,6 +101,7 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 - Watch-page related cards (`yt-lockup-view-model`) expose no channel link or ID, so the menu resolves the channel from the video's oEmbed metadata and falls back to the exact display name if that lookup fails.
 - Shorts lockups (`ytm-shorts-lockup-view-model`, reel items) expose no channel link, name or ID either, so a blocked channel's shorts in a feed are hidden only after an oEmbed lookup resolves the video's channel; if that lookup is rate-limited or offline the short stays visible until it is opened.
 - BlockTube imports map filter lists and the Trending/Shorts toggles. BlockTube-only features (duration filters, advanced JavaScript blocking, autoplay/mix/movie options, the block message) are not imported and are listed in the import report.
+- On `music.youtube.com` the content script loads, but its in-page filter matches the `ytd-*` / `ytm-*` YouTube DOM. Music's `ytmusic-*` cards are not filtered in place; only direct-navigation redirects (`declarativeNetRequest`) apply.
 
 ### File System Access
 

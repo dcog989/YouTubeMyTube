@@ -5,7 +5,10 @@ const ITEM_SELECTORS = [
   'ytd-compact-video-renderer',
   'ytd-playlist-video-renderer',
   'ytd-playlist-renderer',
+  'ytd-compact-playlist-renderer',
+  'ytd-grid-playlist-renderer',
   'ytd-radio-renderer',
+  'ytd-compact-radio-renderer',
   'ytd-reel-item-renderer',
   'ytd-reel-video-renderer',
   'ytd-channel-renderer',
@@ -13,6 +16,7 @@ const ITEM_SELECTORS = [
   'ytd-compact-channel-renderer',
   'ytd-movie-renderer',
   'ytd-compact-movie-renderer',
+  'ytd-grid-movie-renderer',
   'yt-lockup-view-model',
   'ytm-video-with-context-renderer',
   'ytm-compact-video-renderer',
@@ -33,7 +37,9 @@ export const NESTED_CARD_SELECTOR = [
 
 const COMMENT_SELECTORS = [
   'ytd-comment-thread-renderer',
+  'ytd-comment-view-model',
   'ytd-comment-renderer',
+  'yt-comment-view-model',
   'ytm-comment-thread-renderer',
   'ytm-comment-renderer',
 ];
@@ -61,12 +67,6 @@ export const PAGE_TITLE_SELECTORS = [
 ];
 
 export const PAGE_TITLE_SCOPE_SELECTOR = PAGE_TITLE_SELECTORS.join(',');
-
-export const CHANNEL_TEXT_SELECTORS = [
-  'ytd-channel-name a',
-  '#channel-name a',
-  'ytm-channel-name a',
-];
 
 export const OWNER_SCOPES = [
   '#owner',
@@ -102,17 +102,6 @@ export const CHANNEL_PAGE_NAME_SELECTORS = [
   'ytd-channel-name yt-formatted-string',
   'yt-channel-name',
 ];
-
-const SHADOW_ANCHOR_HOSTS = [
-  'yt-lockup-view-model',
-  'yt-lockup-metadata-view-model',
-  'yt-content-metadata-view-model',
-  'yt-thumbnail-view-model',
-  'yt-avatar-view-model',
-  'yt-decorated-avatar-view-model',
-];
-
-export const SHADOW_ANCHOR_HOST_SELECTOR = SHADOW_ANCHOR_HOSTS.join(',');
 
 export const CHANNEL_HEADER_SELECTORS = [
   'ytd-channel-header-renderer',

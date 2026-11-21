@@ -39,12 +39,18 @@ describe('compileRules', () => {
   it('reports whether comments need scanning', () => {
     expect(scansComments(compileRules(defaultRules()))).toBe(false);
     expect(scansComments(compileRules({ ...defaultRules(), commentFilters: ['x'] }))).toBe(true);
-    // Comments have an author name, never an id or handle.
+    // Author links carry a handle or a channel id, so id-only and handle-only
+    // blocks must scan comments too.
     expect(
       scansComments(
         compileRules({ ...defaultRules(), channels: [{ id: 'UC1', name: '', handle: '' }] }),
       ),
-    ).toBe(false);
+    ).toBe(true);
+    expect(
+      scansComments(
+        compileRules({ ...defaultRules(), channels: [{ id: '', name: '', handle: '@some' }] }),
+      ),
+    ).toBe(true);
     expect(
       scansComments(
         compileRules({ ...defaultRules(), channels: [{ id: '', name: 'Music', handle: '' }] }),

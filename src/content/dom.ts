@@ -50,6 +50,17 @@ export function forEachShadowRoot(
   });
 }
 
+// Every shadow root under `root`, collected once so a card can reuse them for
+// its title and anchor lookups instead of walking the tree per field.
+export function shadowRootsWithin(root: ParentNode): ShadowRoot[] {
+  const roots: ShadowRoot[] = [];
+  forEachShadowRoot(root, (shadow) => {
+    roots.push(shadow);
+    return true;
+  });
+  return roots;
+}
+
 export function deepQuery<T extends Element = HTMLElement>(
   selector: string,
   root: ParentNode = document,

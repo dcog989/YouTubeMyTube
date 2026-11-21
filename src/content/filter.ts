@@ -2,7 +2,7 @@ import { matchEntity } from '../shared/match';
 import { scansComments } from '../shared/rules';
 import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { createBatcher } from './batch';
-import { closestAcrossShadow, deepQuery, hasAncestorIn } from './dom';
+import { closestAcrossShadow, hasAncestorIn } from './dom';
 import { cardEntity, commentEntity, entityKey } from './entity';
 import {
   CARD_SELECTOR,
@@ -20,10 +20,6 @@ export interface FilterEngine {
   schedule(root: Element): void;
   rescan(): void;
 }
-
-// Shorts lockups carry no channel link, name or ID; the channel has to come
-// from the video itself (oEmbed).
-const SHORTS_LINK_SELECTOR = 'a[href*="/shorts/"]';
 
 // Reels are the Shorts pager's scroll items. Hiding one collapses its snap
 // point and stalls paging, so the evaluator blanks the active reel instead.
@@ -84,10 +80,8 @@ export function createFilterEngine(deps: {
   }
 
   function requestChannel(card: Element, entity: Entity, compiled: CompiledRules): void {
-    if (!entity.videoId || entity.channelId || entity.handle) return;
-    // Lockup view models keep their anchors in a shadow root, so a plain
-    // querySelector would never see the Shorts link.
-    if (!hasChannelRules(compiled) || !deepQuery(SHORTS_LINK_SELECTOR, card)) return;
+    if (!entity.videoId || !entity.isShorts || entity.channelId || entity.handle) return;
+    if (!hasChannelRules(compiled)) return;
     const pending = channelCache.request(entity.videoId);
     if (!pending) return;
     void pending.then(() => {
@@ -122,20 +116,22 @@ export function createFilterEngine(deps: {
     }
   }
 
+  function scan(root: ParentNode, state: BlockerState, compiled: CompiledRules): void {
+    root.querySelectorAll(CARD_SELECTOR).forEach((node) => {
+      processNode(node, state, compiled);
+    });
+    if (!scansComments(compiled)) return;
+    root.querySelectorAll(COMMENT_SELECTOR).forEach((node) => {
+      processNode(node, state, compiled);
+    });
+  }
+
   function processSubtree(root: Element, state: BlockerState, compiled: CompiledRules): void {
     const card = closestAcrossShadow(root, CARD_SELECTOR);
     if (card) processNode(card, state, compiled);
     const comment = closestAcrossShadow(root, COMMENT_SELECTOR);
     if (comment) processNode(comment, state, compiled);
-
-    root.querySelectorAll(CARD_SELECTOR).forEach((node) => {
-      processNode(node, state, compiled);
-    });
-    if (scansComments(compiled)) {
-      root.querySelectorAll(COMMENT_SELECTOR).forEach((node) => {
-        processNode(node, state, compiled);
-      });
-    }
+    scan(root, state, compiled);
   }
 
   const batcher = createBatcher<Element>((nodes) => {
@@ -153,15 +149,7 @@ export function createFilterEngine(deps: {
     seen = new WeakMap<Element, string>();
     const snapshot = deps.store.getSnapshot();
     if (snapshot?.state.settings.enabled) {
-      const { state, compiled } = snapshot;
-      document.querySelectorAll(CARD_SELECTOR).forEach((node) => {
-        processNode(node, state, compiled);
-      });
-      if (scansComments(compiled)) {
-        document.querySelectorAll(COMMENT_SELECTOR).forEach((node) => {
-          processNode(node, state, compiled);
-        });
-      }
+      scan(document, snapshot.state, snapshot.compiled);
     }
     deps.evaluate();
   }

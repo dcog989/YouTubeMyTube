@@ -39,8 +39,14 @@ export function compileRules(rules: FilterRules): CompiledRules {
 }
 
 export function scansComments(rules: CompiledRules): boolean {
-  // Comments carry an author name, never an id or handle.
-  return rules.commentFilters.length > 0 || rules.channelNames.size > 0;
+  // Comment authors expose a name; their author link can also carry a handle
+  // or a channel id, which matchEntity checks like any other entity.
+  return (
+    rules.commentFilters.length > 0 ||
+    rules.channelNames.size > 0 ||
+    rules.channelIds.size > 0 ||
+    rules.handles.size > 0
+  );
 }
 
 export interface ChannelLookup {
