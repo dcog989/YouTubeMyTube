@@ -29,6 +29,7 @@
   "save": { "message": "Save" },
   "discard": { "message": "Discard changes" },
   "saveFailed": { "message": "Could not save changes. Your edits are still unsaved." },
+  "loadFailed": { "message": "Could not load saved settings. Reopen this page." },
   "reload": { "message": "Reload" },
   "conflictWarning": {
     "message": "Settings changed in another tab or from the YouTube menu. Reload to keep them, or Save to overwrite."

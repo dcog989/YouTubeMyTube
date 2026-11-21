@@ -12,6 +12,10 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function waitBeforeRetry(attempt: number): Promise<void> {
+  return delay(STORAGE_RETRY_BASE_MS * (attempt + 1));
+}
+
 // Resolves to the stored value, `undefined` when the key is confirmed absent,
 // or throws when the storage API keeps failing.
 export async function getStored<T>(key: string): Promise<T | undefined> {
@@ -23,11 +27,21 @@ export async function getStored<T>(key: string): Promise<T | undefined> {
     } catch (error) {
       lastError = error;
     }
-    await delay(STORAGE_RETRY_BASE_MS * (attempt + 1));
+    if (attempt < STORAGE_RETRY_ATTEMPTS - 1) await waitBeforeRetry(attempt);
   }
   throw lastError;
 }
 
-export function setStored(values: StorageItems): Promise<void> {
-  return browser.storage.local.set(values);
+export async function setStored(values: StorageItems): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < STORAGE_RETRY_ATTEMPTS; attempt += 1) {
+    try {
+      await browser.storage.local.set(values);
+      return;
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < STORAGE_RETRY_ATTEMPTS - 1) await waitBeforeRetry(attempt);
+  }
+  throw lastError;
 }

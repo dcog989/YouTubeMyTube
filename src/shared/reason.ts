@@ -68,6 +68,18 @@ const REASONS = {
 
 export type ReasonKind = keyof typeof REASONS;
 
+const REASON_KINDS = new Set<string>(Object.keys(REASONS));
+
+export function isReason(value: unknown): value is Reason {
+  if (typeof value !== 'object' || value === null) return false;
+  const reason = value as { kind?: unknown; value?: unknown };
+  return (
+    typeof reason.kind === 'string' &&
+    REASON_KINDS.has(reason.kind) &&
+    typeof reason.value === 'string'
+  );
+}
+
 export function reasonSpec(kind: ReasonKind): ReasonSpec {
   return REASONS[kind];
 }

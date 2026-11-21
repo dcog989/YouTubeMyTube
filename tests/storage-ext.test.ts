@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { getStored } from '../src/shared/storage-ext';
+import { getStored, setStored } from '../src/shared/storage-ext';
 
 function stubStorage(get: () => Promise<Record<string, unknown>>): void {
   vi.stubGlobal('browser', { storage: { local: { get } } });
@@ -36,5 +36,26 @@ describe('getStored', () => {
     await vi.runAllTimersAsync();
     await assertion;
     expect(get).toHaveBeenCalledTimes(8);
+  });
+});
+
+describe('setStored', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it('retries a throwing write and then succeeds', async () => {
+    vi.useFakeTimers();
+    const set = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('storage unavailable'))
+      .mockResolvedValueOnce(undefined);
+    vi.stubGlobal('browser', { storage: { local: { set } } });
+
+    const assertion = setStored({ state: { rules: [] } });
+    await vi.runAllTimersAsync();
+    await expect(assertion).resolves.toBeUndefined();
+    expect(set).toHaveBeenCalledTimes(2);
   });
 });

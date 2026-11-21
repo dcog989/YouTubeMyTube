@@ -1,4 +1,4 @@
-import type { Reason } from './reason';
+import { isReason, type Reason } from './reason';
 import {
   addChannel,
   addVideo,
@@ -37,22 +37,91 @@ export type Mutation =
   | { kind: 'applyMetadata'; fixes: MetadataFix[] }
   | { kind: 'replaceState'; state: BlockerState };
 
-const MUTATION_KINDS = new Set<string>([
-  'setEnabled',
-  'completeOnboarding',
-  'blockVideo',
-  'unblockVideo',
-  'blockChannel',
-  'unblockChannel',
-  'unblockReason',
-  'applyMetadata',
-  'replaceState',
-]);
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function isVideoEntry(value: unknown): value is VideoEntry {
+  return isRecord(value) && typeof value.id === 'string' && typeof value.title === 'string';
+}
+
+function isChannelEntry(value: unknown): value is ChannelEntry {
+  return (
+    isRecord(value) &&
+    typeof value.id === 'string' &&
+    typeof value.name === 'string' &&
+    typeof value.handle === 'string'
+  );
+}
+
+function isOptionalString(value: unknown): boolean {
+  return value === undefined || value === null || typeof value === 'string';
+}
+
+function isChannelLookup(value: unknown): value is ChannelLookup {
+  return (
+    isRecord(value) &&
+    isOptionalString(value.id) &&
+    isOptionalString(value.handle) &&
+    isOptionalString(value.name)
+  );
+}
+
+function isMetadataFix(value: unknown): value is MetadataFix {
+  if (!isRecord(value) || typeof value.failed !== 'boolean') return false;
+  if (value.kind === 'video') {
+    return typeof value.videoId === 'string' && typeof value.title === 'string';
+  }
+  return (
+    value.kind === 'channel' &&
+    isChannelLookup(value.lookup) &&
+    typeof value.id === 'string' &&
+    typeof value.name === 'string' &&
+    typeof value.handle === 'string'
+  );
+}
+
+function isRuleSet(value: unknown): value is FilterRules {
+  return (
+    isRecord(value) &&
+    Array.isArray(value.channels) &&
+    Array.isArray(value.videos) &&
+    Array.isArray(value.channelFilters) &&
+    Array.isArray(value.titleFilters) &&
+    Array.isArray(value.commentFilters)
+  );
+}
+
+function isBlockerState(value: unknown): value is BlockerState {
+  return (
+    isRecord(value) && isRuleSet(value.rules) && isRecord(value.areas) && isRecord(value.settings)
+  );
+}
 
 export function isMutation(value: unknown): value is Mutation {
-  if (!value || typeof value !== 'object') return false;
-  const kind = (value as { kind?: unknown }).kind;
-  return typeof kind === 'string' && MUTATION_KINDS.has(kind);
+  if (!isRecord(value)) return false;
+  switch (value.kind) {
+    case 'setEnabled':
+      return typeof value.enabled === 'boolean';
+    case 'completeOnboarding':
+      return true;
+    case 'blockVideo':
+      return isVideoEntry(value.entry);
+    case 'unblockVideo':
+      return typeof value.videoId === 'string';
+    case 'blockChannel':
+      return isChannelEntry(value.entry);
+    case 'unblockChannel':
+      return isChannelLookup(value.lookup);
+    case 'unblockReason':
+      return isReason(value.reason);
+    case 'applyMetadata':
+      return Array.isArray(value.fixes) && value.fixes.every(isMetadataFix);
+    case 'replaceState':
+      return isBlockerState(value.state);
+    default:
+      return false;
+  }
 }
 
 type InPlaceMutation = Exclude<Mutation, { kind: 'replaceState' }>;
@@ -94,7 +163,9 @@ function applyChannelMeta(
     entry.id !== before.id ||
     entry.name !== before.name ||
     entry.handle !== before.handle;
-  return setLookupFailed(entry, fix.failed) || changed;
+  // A conflict deletes the incoming row; the flag belongs to the one that stayed.
+  const target = outcome === 'conflict' ? (findChannel(rules, fix) ?? entry) : entry;
+  return setLookupFailed(target, fix.failed) || changed;
 }
 
 function applyMetadataFixes(rules: FilterRules, fixes: MetadataFix[]): boolean {

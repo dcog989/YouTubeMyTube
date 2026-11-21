@@ -3,8 +3,9 @@ import { localizeDocument, t } from '../shared/i18n';
 import { normalizeState } from '../shared/normalize';
 import { completeOnboarding } from '../shared/rules-service';
 import { requestMutation } from '../shared/runtime';
-import { loadState, onLocalStorageChanged } from '../shared/state';
+import { onLocalStorageChanged, readState } from '../shared/state';
 import { applyTheme, isTheme } from '../shared/theme';
+import type { BlockerState } from '../shared/types';
 import { byId } from '../shared/ui';
 import { buildAreas, syncAreas } from './areas';
 import { backfillMissing } from './backfill';
@@ -153,7 +154,16 @@ function wireStatic(): void {
 
 async function init(): Promise<void> {
   localizeDocument();
-  commit(await loadState());
+  let initial: BlockerState;
+  try {
+    initial = (await readState()) ?? defaultState();
+  } catch (error) {
+    // Saving an empty fallback would replace the stored rules; stay read-only.
+    console.error('YouTubeMyTube: failed to load saved settings', error);
+    setStatus('save-status', t('loadFailed'), false);
+    return;
+  }
+  commit(initial);
   buildAreas();
   wirePatternEditors();
   wireStatic();

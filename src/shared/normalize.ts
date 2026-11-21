@@ -1,9 +1,10 @@
 import { AREA_DEFINITIONS, type AreaFlags } from './areas';
 import { defaultAreas, defaultRules, defaultSettings, defaultState } from './defaults';
-import { countActiveEntries, isActiveEntry, sortEntries } from './patterns';
+import { countActiveEntries, sortEntries } from './patterns';
+import { addChannel } from './rules';
 import { isTheme } from './theme';
 import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
-import { normalizeChannelName, normalizeHandle } from './url';
+import { normalizeHandle } from './url';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -19,33 +20,33 @@ function pickBoolean(value: unknown): boolean | undefined {
 
 function pickStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  return value.filter((item): item is string => typeof item === 'string');
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const item of value) {
+    if (typeof item !== 'string') continue;
+    const entry = item.trim();
+    if (entry === '' || seen.has(entry)) continue;
+    seen.add(entry);
+    result.push(entry);
+  }
+  return result;
 }
 
 function pickChannels(value: unknown): ChannelEntry[] {
   if (!Array.isArray(value)) return [];
-  const result: ChannelEntry[] = [];
-  const ids = new Set<string>();
-  const handles = new Set<string>();
-  const names = new Set<string>();
+  const rules = defaultRules();
   for (const item of value) {
     if (!isRecord(item)) continue;
-    const id = pickString(item.id);
-    const name = pickString(item.name);
-    const handle = normalizeHandle(pickString(item.handle));
-    if (!id && !handle && !name) continue;
-    if (id && ids.has(id)) continue;
-    if (handle && handles.has(handle)) continue;
-    const normalizedName = normalizeChannelName(name);
-    if (!id && !handle && normalizedName && names.has(normalizedName)) continue;
-    if (id) ids.add(id);
-    if (handle) handles.add(handle);
-    if (normalizedName) names.add(normalizedName);
-    const entry: ChannelEntry = { id, name, handle };
+    const entry: ChannelEntry = {
+      id: pickString(item.id),
+      name: pickString(item.name),
+      handle: normalizeHandle(pickString(item.handle)),
+    };
     if (item.lookupFailed === true) entry.lookupFailed = true;
-    result.push(entry);
+    // Merge with addChannel so duplicate rows keep every field they carry.
+    addChannel(rules, entry);
   }
-  return result;
+  return rules.channels;
 }
 
 function pickVideos(value: unknown): VideoEntry[] {
@@ -116,21 +117,13 @@ export interface RuleSummary {
   titleFilters: number;
   commentFilters: number;
   areas: number;
-  redirectAreas: number;
-  activeVideoIds: number;
-  activeChannelIds: number;
-  handles: number;
-  enabled: boolean;
 }
 
 export function summarizeRules(state: BlockerState): RuleSummary {
   const { channels, channelFilters, videos, titleFilters, commentFilters } = state.rules;
   let areas = 0;
-  let redirectAreas = 0;
   for (const area of AREA_DEFINITIONS) {
-    if (!state.areas[area.key]) continue;
-    areas += 1;
-    if (area.mode === 'redirect') redirectAreas += 1;
+    if (state.areas[area.key]) areas += 1;
   }
   return {
     videos: videos.length,
@@ -139,11 +132,6 @@ export function summarizeRules(state: BlockerState): RuleSummary {
     titleFilters: countActiveEntries(titleFilters),
     commentFilters: countActiveEntries(commentFilters),
     areas,
-    redirectAreas,
-    activeVideoIds: videos.filter(({ id }) => isActiveEntry(id)).length,
-    activeChannelIds: channels.filter(({ id }) => isActiveEntry(id)).length,
-    handles: channels.filter(({ handle }) => isActiveEntry(handle)).length,
-    enabled: state.settings.enabled,
   };
 }
 

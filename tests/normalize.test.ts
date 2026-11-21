@@ -62,6 +62,37 @@ describe('normalizeState', () => {
     expect(state.rules.channels).toEqual([{ id: '', name: 'Rick Astley', handle: '' }]);
   });
 
+  it('merges duplicate channel rows instead of dropping their fields', () => {
+    const state = normalizeState({
+      rules: {
+        channels: [
+          { id: 'UC1', name: '', handle: '' },
+          { id: 'UC1', name: 'Foo', handle: 'foo' },
+        ],
+      },
+    });
+    expect(state.rules.channels).toEqual([{ id: 'UC1', name: 'Foo', handle: 'foo' }]);
+  });
+
+  it('drops a name-only row that matches a stronger row', () => {
+    const state = normalizeState({
+      rules: {
+        channels: [
+          { id: '', name: 'Foo', handle: '' },
+          { id: 'UC1', name: 'Foo', handle: 'foo' },
+        ],
+      },
+    });
+    expect(state.rules.channels).toEqual([{ id: 'UC1', name: 'Foo', handle: 'foo' }]);
+  });
+
+  it('trims and dedupes pattern lists', () => {
+    const state = normalizeState({
+      rules: { titleFilters: ['spam', ' spam ', 'spam', '  '] },
+    });
+    expect(state.rules.titleFilters).toEqual(['spam']);
+  });
+
   it('preserves the lookupFailed marker on entities', () => {
     const state = normalizeState({
       rules: {

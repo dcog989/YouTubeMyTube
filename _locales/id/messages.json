@@ -31,6 +31,7 @@
   "saveFailed": {
     "message": "Tidak dapat menyimpan perubahan. Perubahan Anda masih belum disimpan."
   },
+  "loadFailed": { "message": "Pengaturan tersimpan tidak dapat dimuat. Buka kembali halaman ini." },
   "reload": { "message": "Muat ulang" },
   "conflictWarning": {
     "message": "Pengaturan berubah di tab lain atau dari menu YouTube. Muat ulang untuk mempertahankannya, atau simpan untuk menimpanya."

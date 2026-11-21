@@ -31,6 +31,9 @@
   "saveFailed": {
     "message": "Impossible d'enregistrer les modifications. Vos modifications restent non enregistrées."
   },
+  "loadFailed": {
+    "message": "Impossible de charger les paramètres enregistrés. Rouvrez cette page."
+  },
   "reload": { "message": "Recharger" },
   "conflictWarning": {
     "message": "Les paramètres ont été modifiés dans un autre onglet ou depuis le menu YouTube. Rechargez pour les conserver ou enregistrez pour les écraser."

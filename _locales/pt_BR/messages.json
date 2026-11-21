@@ -31,6 +31,9 @@
   "saveFailed": {
     "message": "Não foi possível salvar as alterações. Suas edições ainda não foram salvas."
   },
+  "loadFailed": {
+    "message": "Não foi possível carregar as configurações salvas. Reabra esta página."
+  },
   "reload": { "message": "Recarregar" },
   "conflictWarning": {
     "message": "As configurações foram alteradas em outra aba ou pelo menu do YouTube. Recarregue para mantê-las ou salve para substituí-las."

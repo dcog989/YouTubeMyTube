@@ -12,6 +12,13 @@ describe('isMutation', () => {
     expect(isMutation(null)).toBe(false);
     expect(isMutation('setEnabled')).toBe(false);
   });
+
+  it('rejects malformed payloads instead of trusting the kind', () => {
+    expect(isMutation({ kind: 'replaceState', state: {} })).toBe(false);
+    expect(isMutation({ kind: 'blockVideo' })).toBe(false);
+    expect(isMutation({ kind: 'setEnabled', enabled: 'yes' })).toBe(false);
+    expect(isMutation({ kind: 'unblockReason', reason: { kind: 'nope', value: 'x' } })).toBe(false);
+  });
 });
 
 describe('applyMutation', () => {
@@ -109,6 +116,28 @@ describe('applyMetadata', () => {
     });
 
     expect(state.rules.channels).toEqual([{ id: 'UC1', name: 'Music', handle: '' }]);
+  });
+
+  it('clears lookupFailed on the row that survives a merge', () => {
+    const state = defaultState();
+    state.rules.channels.push({ id: 'UC1', name: '', handle: '', lookupFailed: true });
+    state.rules.channels.push({ id: '', name: 'Bar', handle: '' });
+
+    applyMutation(state, {
+      kind: 'applyMetadata',
+      fixes: [
+        {
+          kind: 'channel',
+          lookup: { name: 'Bar' },
+          id: 'UC1',
+          name: 'Foo',
+          handle: 'foo',
+          failed: false,
+        },
+      ],
+    });
+
+    expect(state.rules.channels).toEqual([{ id: 'UC1', name: 'Foo', handle: 'foo' }]);
   });
 
   it('marks and clears lookup failures', () => {
