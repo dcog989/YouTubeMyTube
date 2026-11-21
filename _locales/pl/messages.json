@@ -33,6 +33,9 @@
   "conflictWarning": {
     "message": "Ustawienia zmieniono w innej karcie lub z menu YouTube. Odśwież, aby je zachować, albo zapisz, aby je nadpisać."
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube nie ma dostępu do YouTube, więc nic nie jest blokowane. Zezwól na dostęp do youtube.com w ustawieniach rozszerzeń przeglądarki, a następnie odśwież karty YouTube."
+  },
   "confirmReset": { "message": "Zresetować wszystkie ustawienia i filtry?" },
   "onboardingHeading": { "message": "Witamy w YouTubeMyTube" },
   "onboardingBody": {

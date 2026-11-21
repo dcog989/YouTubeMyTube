@@ -33,6 +33,9 @@
   "conflictWarning": {
     "message": "Pengaturan berubah di tab lain atau dari menu YouTube. Muat ulang untuk mempertahankannya, atau simpan untuk menimpanya."
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube tidak memiliki akses ke YouTube, jadi tidak ada yang diblokir. Izinkan akses ke youtube.com di pengaturan ekstensi peramban, lalu muat ulang tab YouTube."
+  },
   "confirmReset": { "message": "Reset semua pengaturan dan filter?" },
   "onboardingHeading": { "message": "Selamat datang di YouTubeMyTube" },
   "onboardingBody": {

@@ -36,6 +36,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/backup.ts` — rolling backup of the last non-empty state (`shouldSnapshot`, `shouldSeedBackup`, `readBackup`/`writeBackup`); the worker seeds it on writes and the options page restores it.
 - `src/shared/rules-service.ts` — transactional block/unblock operations (`blockVideo`/`blockChannel`/`unblockReason`) used by the UI surfaces.
 - `src/shared/runtime.ts` — `browser.runtime` wrappers (extension URL, sync request, mutation request, options page).
+- `src/shared/permissions.ts` — `hasYouTubeAccess()`: host access is optional in Firefox MV3, so the options page warns when the extension cannot inject into YouTube.
 - `src/shared/tabs.ts` — `browser.tabs` wrappers (active tab, tab messaging).
 - `src/shared/blocktube.ts` — BlockTube backup parsing and additive merge (pure, unit-tested).
 - `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata, video titles and a video's channel (oEmbed); `resolveChannelMeta` is the unified channel-completion strategy (`id` → `handle` → name).

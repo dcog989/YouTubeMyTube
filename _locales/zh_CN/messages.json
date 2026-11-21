@@ -31,6 +31,9 @@
   "conflictWarning": {
     "message": "设置已在其他标签页或 YouTube 菜单中更改。重新加载以保留，或保存以覆盖。"
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube 没有 YouTube 访问权限，因此没有拦截任何内容。请在浏览器的扩展设置中允许访问 youtube.com，然后重新加载 YouTube 标签页。"
+  },
   "confirmReset": { "message": "重置所有设置和过滤器？" },
   "onboardingHeading": { "message": "欢迎使用 YouTubeMyTube" },
   "onboardingBody": {

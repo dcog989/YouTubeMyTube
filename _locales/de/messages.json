@@ -35,6 +35,9 @@
   "conflictWarning": {
     "message": "Die Einstellungen wurden in einem anderen Tab oder über das YouTube-Menü geändert. Lade neu, um sie zu behalten, oder speichere, um sie zu überschreiben."
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube hat keinen Zugriff auf YouTube, daher wird nichts blockiert. Erlaube den Website-Zugriff auf youtube.com in den Erweiterungseinstellungen des Browsers und lade die YouTube-Tabs neu."
+  },
   "confirmReset": { "message": "Alle Einstellungen und Filter zurücksetzen?" },
   "onboardingHeading": { "message": "Willkommen bei YouTubeMyTube" },
   "onboardingBody": {

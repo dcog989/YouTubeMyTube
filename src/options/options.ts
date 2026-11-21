@@ -1,6 +1,7 @@
 import { defaultState } from '../shared/defaults';
 import { localizeDocument, t } from '../shared/i18n';
 import { normalizeState } from '../shared/normalize';
+import { hasYouTubeAccess } from '../shared/permissions';
 import { completeOnboarding } from '../shared/rules-service';
 import { requestMutation } from '../shared/runtime';
 import { onLocalStorageChanged, readState } from '../shared/state';
@@ -55,6 +56,10 @@ function populate(): void {
 
 function syncOnboarding(): void {
   byId('onboarding').hidden = getDraft().settings.onboardingComplete;
+}
+
+async function syncPermissionWarning(): Promise<void> {
+  byId('permission-warning').hidden = await hasYouTubeAccess();
 }
 
 function dismissOnboarding(): void {
@@ -163,6 +168,8 @@ function wireStatic(): void {
     if (getDraft().settings.theme === 'system') applyTheme('system');
   });
 
+  window.addEventListener('focus', () => void syncPermissionWarning());
+
   window.addEventListener('beforeunload', (event) => {
     if (!isDirty()) return;
     event.preventDefault();
@@ -194,6 +201,7 @@ async function init(): Promise<void> {
     console.error('Backfill failed', error);
   });
   void renderBackup();
+  void syncPermissionWarning();
 }
 
 void init();

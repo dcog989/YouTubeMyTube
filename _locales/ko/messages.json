@@ -33,6 +33,9 @@
   "conflictWarning": {
     "message": "다른 탭이나 YouTube 메뉴에서 설정이 변경되었습니다. 유지하려면 새로고침하고, 덮어쓰려면 저장하세요."
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube에 YouTube 접근 권한이 없어 아무것도 차단되지 않습니다. 브라우저 확장 설정에서 youtube.com 접근을 허용한 뒤 YouTube 탭을 새로고침하세요."
+  },
   "confirmReset": { "message": "모든 설정과 필터를 초기화할까요?" },
   "onboardingHeading": { "message": "YouTubeMyTube에 오신 것을 환영합니다" },
   "onboardingBody": {

@@ -31,6 +31,9 @@
   "conflictWarning": {
     "message": "تم تغيير الإعدادات في علامة تبويب أخرى أو من قائمة YouTube. أعد التحميل للاحتفاظ بها، أو احفظ لاستبدالها."
   },
+  "permissionWarning": {
+    "message": "لا يملك YouTubeMyTube صلاحية الوصول إلى YouTube، لذا لا يتم حظر أي شيء. اسمح بالوصول إلى youtube.com من إعدادات الإضافات في المتصفح، ثم أعد تحميل علامات تبويب YouTube."
+  },
   "confirmReset": { "message": "إعادة تعيين كل الإعدادات والفلاتر؟" },
   "onboardingHeading": { "message": "مرحبًا بك في YouTubeMyTube" },
   "onboardingBody": {

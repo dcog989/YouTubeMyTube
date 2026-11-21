@@ -35,6 +35,9 @@
   "conflictWarning": {
     "message": "As configurações foram alteradas em outra aba ou pelo menu do YouTube. Recarregue para mantê-las ou salve para substituí-las."
   },
+  "permissionWarning": {
+    "message": "O YouTubeMyTube não tem acesso ao YouTube, então nada está sendo bloqueado. Permita o acesso a youtube.com nas configurações de extensões do navegador e recarregue as abas do YouTube."
+  },
   "confirmReset": { "message": "Redefinir todas as configurações e filtros?" },
   "onboardingHeading": { "message": "Bem-vindo ao YouTubeMyTube" },
   "onboardingBody": {

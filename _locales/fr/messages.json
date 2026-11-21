@@ -35,6 +35,9 @@
   "conflictWarning": {
     "message": "Les paramètres ont été modifiés dans un autre onglet ou depuis le menu YouTube. Rechargez pour les conserver ou enregistrez pour les écraser."
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube n'a pas accès à YouTube, donc rien n'est bloqué. Autorisez l'accès à youtube.com dans les paramètres d'extensions du navigateur, puis rechargez les onglets YouTube."
+  },
   "confirmReset": { "message": "Réinitialiser tous les paramètres et filtres ?" },
   "onboardingHeading": { "message": "Bienvenue dans YouTubeMyTube" },
   "onboardingBody": {

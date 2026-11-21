@@ -35,6 +35,9 @@
   "conflictWarning": {
     "message": "De instellingen zijn gewijzigd in een ander tabblad of via het YouTube-menu. Herlaad om ze te behouden, of sla op om ze te overschrijven."
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube heeft geen toegang tot YouTube, dus er wordt niets geblokkeerd. Sta toegang tot youtube.com toe in de extensie-instellingen van de browser en herlaad de YouTube-tabbladen."
+  },
   "confirmReset": { "message": "Alle instellingen en filters resetten?" },
   "onboardingHeading": { "message": "Welkom bij YouTubeMyTube" },
   "onboardingBody": {

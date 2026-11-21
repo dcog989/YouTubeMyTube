@@ -33,6 +33,9 @@
   "conflictWarning": {
     "message": "別のタブまたは YouTube メニューで設定が変更されました。保持するには再読み込み、上書きするには保存してください。"
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube は YouTube にアクセスできないため、何もブロックされていません。ブラウザの拡張機能の設定で youtube.com へのアクセスを許可し、YouTube のタブを再読み込みしてください。"
+  },
   "confirmReset": { "message": "すべての設定とフィルターをリセットしますか？" },
   "onboardingHeading": { "message": "YouTubeMyTube へようこそ" },
   "onboardingBody": {

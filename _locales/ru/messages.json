@@ -35,6 +35,9 @@
   "conflictWarning": {
     "message": "Настройки изменены в другой вкладке или через меню YouTube. Перезагрузите, чтобы сохранить их, или сохраните, чтобы перезаписать."
   },
+  "permissionWarning": {
+    "message": "У YouTubeMyTube нет доступа к YouTube, поэтому ничего не блокируется. Разрешите доступ к youtube.com в настройках расширений браузера и перезагрузите вкладки YouTube."
+  },
   "confirmReset": { "message": "Сбросить все настройки и фильтры?" },
   "onboardingHeading": { "message": "Добро пожаловать в YouTubeMyTube" },
   "onboardingBody": {

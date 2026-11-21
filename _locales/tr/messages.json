@@ -31,6 +31,9 @@
   "conflictWarning": {
     "message": "Ayarlar başka bir sekmede veya YouTube menüsünden değiştirildi. Korumak için yeniden yükleyin, üzerine yazmak için kaydedin."
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube'nin YouTube erişimi yok, bu yüzden hiçbir şey engellenmiyor. Tarayıcının uzantı ayarlarından youtube.com erişimine izin verin, ardından YouTube sekmelerini yenileyin."
+  },
   "confirmReset": { "message": "Tüm ayarlar ve filtreler sıfırlansın mı?" },
   "onboardingHeading": { "message": "YouTubeMyTube'a hoş geldiniz" },
   "onboardingBody": {

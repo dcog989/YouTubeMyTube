@@ -35,6 +35,9 @@
   "conflictWarning": {
     "message": "Le impostazioni sono cambiate in un'altra scheda o dal menu di YouTube. Ricarica per conservarle o salva per sovrascriverle."
   },
+  "permissionWarning": {
+    "message": "YouTubeMyTube non ha accesso a YouTube, quindi non viene bloccato nulla. Consenti l'accesso a youtube.com nelle impostazioni delle estensioni del browser, poi ricarica le schede di YouTube."
+  },
   "confirmReset": { "message": "Reimpostare tutte le impostazioni e i filtri?" },
   "onboardingHeading": { "message": "Benvenuto in YouTubeMyTube" },
   "onboardingBody": {
