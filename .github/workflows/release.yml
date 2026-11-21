@@ -3,6 +3,12 @@ name: Release
 on:
   push:
     tags: ["v*", "[0-9]*"]
+  # Re-run a tag whose release run failed, without deleting and re-pushing it.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to publish
+        required: true
 
 permissions:
   contents: read
@@ -14,6 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ inputs.tag || github.ref_name }}
           fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
         with:
@@ -41,6 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ inputs.tag || github.ref_name }}
           fetch-depth: 0
       - uses: actions/download-artifact@v7
         with:
@@ -52,9 +60,11 @@ jobs:
         uses: cocogitto/cocogitto-action@52d0023b4396897f1815648e553db2ab8d782f3a # v4.2.0
         with:
           command: changelog
-          args: --at ${{ github.ref_name }}
+          args: --at ${{ inputs.tag || github.ref_name }}
 
       - uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3
         with:
+          # On a manual run the ref is the branch, so the tag must be explicit.
+          tag_name: ${{ inputs.tag || github.ref_name }}
           files: release-archives/*.zip
           body: ${{ steps.cog.outputs.stdout }}
