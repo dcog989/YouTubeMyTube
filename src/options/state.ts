@@ -2,6 +2,7 @@ import { defaultState } from '../shared/defaults';
 import { normalizeState } from '../shared/normalize';
 import type { BlockerState } from '../shared/types';
 import { byId } from '../shared/ui';
+import { classifyExternalChange } from './conflict';
 
 type Listener = () => void;
 
@@ -11,6 +12,8 @@ let draft: BlockerState = defaultState();
 let savedSnapshot = '';
 let dirty = false;
 let external: BlockerState | null = null;
+let saving = false;
+let revision = 0;
 
 export function getDraft(): BlockerState {
   return draft;
@@ -18,10 +21,15 @@ export function getDraft(): BlockerState {
 
 export function setDraft(next: BlockerState): void {
   draft = next;
+  revision += 1;
 }
 
 export function isDirty(): boolean {
   return dirty;
+}
+
+export function getRevision(): number {
+  return revision;
 }
 
 export function subscribe(listener: Listener): void {
@@ -48,8 +56,11 @@ export function setDirty(value: boolean): void {
 }
 
 export function discardChanges(): void {
-  if (!dirty || savedSnapshot === '') return;
-  adoptState(JSON.parse(savedSnapshot) as BlockerState);
+  if (!dirty) return;
+  // Keep whatever is actually stored, including a write from another tab.
+  const target =
+    external ?? (savedSnapshot === '' ? null : (JSON.parse(savedSnapshot) as BlockerState));
+  if (target) adoptState(target);
 }
 
 function showConflict(): void {
@@ -64,47 +75,68 @@ function adoptState(next: BlockerState): void {
   draft = next;
   savedSnapshot = JSON.stringify(draft);
   external = null;
+  revision += 1;
   hideConflict();
   notify();
   setDirty(false);
 }
 
-export function commit(next: BlockerState): string {
-  const previous = savedSnapshot;
+export function commit(next: BlockerState): void {
   draft = next;
   savedSnapshot = JSON.stringify(draft);
+  external = null;
+  revision += 1;
   hideConflict();
-  return previous;
 }
 
-export function restoreSnapshot(previous: string): void {
-  savedSnapshot = previous;
+// The page stays editable during the write; its echo is not a conflict.
+export function beginSave(): void {
+  saving = true;
+  revision += 1;
 }
 
-function differsOnlyByOnboarding(incoming: BlockerState): boolean {
-  if (savedSnapshot === '') return false;
-  const baseline = JSON.parse(savedSnapshot) as BlockerState;
-  if (incoming.settings.onboardingComplete === baseline.settings.onboardingComplete) return false;
-  const withoutOnboarding: BlockerState = {
-    ...incoming,
-    settings: {
-      ...incoming.settings,
-      onboardingComplete: baseline.settings.onboardingComplete,
-    },
-  };
-  return JSON.stringify(withoutOnboarding) === savedSnapshot;
+// `saved` is what the worker stored. Returns true when the draft still matches
+// it, so the caller may clear the dirty flag.
+export function finishSave(saved: BlockerState): boolean {
+  saving = false;
+  savedSnapshot = JSON.stringify(saved);
+  if (external && JSON.stringify(external) === savedSnapshot) external = null;
+  const clean = JSON.stringify(normalizeState(draft)) === savedSnapshot;
+  if (clean) draft = saved;
+  if (external) showConflict();
+  else hideConflict();
+  return clean;
+}
+
+export function failSave(): void {
+  saving = false;
+  if (external) showConflict();
 }
 
 export function handleExternalChange(value: unknown): void {
   const incoming = normalizeState(value);
-  if (JSON.stringify(incoming) === savedSnapshot) return;
-  if (differsOnlyByOnboarding(incoming)) {
-    savedSnapshot = JSON.stringify(incoming);
-    return;
+  const action = classifyExternalChange(incoming, savedSnapshot, dirty, saving);
+  switch (action.kind) {
+    case 'ignore':
+      return;
+    case 'saving':
+      external = incoming;
+      return;
+    case 'onboarding':
+      if (draft.settings.onboardingComplete !== action.onboardingComplete) {
+        draft.settings.onboardingComplete = action.onboardingComplete;
+        notify();
+      }
+      savedSnapshot = JSON.stringify(incoming);
+      return;
+    case 'adopt':
+      adoptState(incoming);
+      return;
+    case 'conflict':
+      external = incoming;
+      showConflict();
+      return;
   }
-  external = incoming;
-  if (dirty) showConflict();
-  else adoptState(incoming);
 }
 
 export function reloadExternal(): void {

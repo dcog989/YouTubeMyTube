@@ -3,7 +3,7 @@ import { type ChannelMeta, resolveChannelMeta, resolveVideoTitle } from '../shar
 import { isChannelComplete } from '../shared/rules';
 import { requestMutation } from '../shared/runtime';
 import type { ChannelEntry, VideoEntry } from '../shared/types';
-import { commit, getDraft, isDirty, notify } from './state';
+import { commit, getDraft, getRevision, isDirty, notify } from './state';
 
 const MAX_BACKFILL_LOOKUPS = 25;
 const BACKFILL_BATCH_DELAY = 250;
@@ -47,12 +47,15 @@ async function persistFixes(fixes: MetadataFix[]): Promise<boolean> {
   const mutation: Mutation = { kind: 'applyMetadata', fixes };
   if (isDirty()) {
     const changed = applyMutation(getDraft(), mutation) !== null;
-    notify();
+    if (changed) notify();
     return changed;
   }
+  const revision = getRevision();
   const saved = await requestMutation(mutation);
-  if (saved && !isDirty()) commit(saved);
-  notify();
+  if (saved && !isDirty() && getRevision() === revision) {
+    commit(saved);
+    notify();
+  }
   return saved !== null;
 }
 

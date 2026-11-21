@@ -15,14 +15,16 @@ import { exportSettings, importSettings } from './data';
 import { selectPanel, setStatus } from './dom';
 import { syncPatternEditors, wirePatternEditors } from './patterns';
 import {
+  beginSave,
   commit,
   discardChanges,
+  failSave,
+  finishSave,
   getDraft,
   handleExternalChange,
   isDirty,
   notify,
   reloadExternal,
-  restoreSnapshot,
   setDirty,
   setDraft,
   subscribe,
@@ -38,6 +40,7 @@ function syncThemeButtons(): void {
 }
 
 function populate(): void {
+  applyTheme(getDraft().settings.theme);
   syncThemeButtons();
   syncOnboarding();
   byId<HTMLInputElement>('enabled').checked = getDraft().settings.enabled;
@@ -103,15 +106,19 @@ function wireStatic(): void {
   byId('save').addEventListener('click', () => {
     void (async () => {
       const normalized = normalizeState(getDraft());
-      const previous = commit(normalized);
+      const saveButton = byId<HTMLButtonElement>('save');
+      saveButton.disabled = true;
+      byId<HTMLButtonElement>('discard').disabled = true;
+      beginSave();
       const saved = await requestMutation({ kind: 'replaceState', state: normalized });
       if (!saved) {
-        restoreSnapshot(previous);
+        failSave();
+        setDirty(true);
         setStatus('save-status', t('saveFailed'), false);
         return;
       }
       setStatus('save-status', '', true);
-      setDirty(false);
+      setDirty(!finishSave(saved));
       populate();
     })();
   });
@@ -168,7 +175,6 @@ async function init(): Promise<void> {
   wirePatternEditors();
   wireStatic();
   subscribe(populate);
-  applyTheme(getDraft().settings.theme);
   populate();
   setDirty(false);
   selectPanelWithCounts('channels');
