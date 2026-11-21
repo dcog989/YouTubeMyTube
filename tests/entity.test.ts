@@ -155,6 +155,28 @@ describe('currentContext', () => {
     page('aaaaaaaaaaa');
     expect(currentContext()).toEqual({ videoId: 'dQw4w9WgXcQ' });
   });
+
+  it('reads the other identity form from the channel page header', () => {
+    const link = stub({ attributes: { href: '/@RickAstleyYT' } });
+    const header = Object.assign(new FakeElement(), {
+      querySelectorAll: (selector: string) =>
+        selector === '#avatar-link[href]' ? [link] : ([] as Element[]),
+    });
+    const name = Object.assign(stub({ text: 'Rick Astley' }), {
+      closest: () => header,
+    });
+    vi.stubGlobal('document', stub({ selectors: { 'ytd-channel-name #text': name } }));
+    vi.stubGlobal('window', {
+      location: { href: 'https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw' },
+    });
+
+    // The /channel/ URL names the id; the header link supplies the handle so a
+    // handle-only rule can block this page too.
+    expect(currentContext()).toEqual({
+      channelId: 'UCuAXFkgsw1L7xaCfnd5JJOw',
+      handle: 'RickAstleyYT',
+    });
+  });
 });
 
 describe('entityKey', () => {

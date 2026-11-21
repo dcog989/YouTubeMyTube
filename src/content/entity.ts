@@ -244,6 +244,20 @@ function channelNameForPage(page: ParsedUrl): string {
   return '';
 }
 
+// The page header links the channel in the other form too (a /channel/UC… page
+// usually links /@handle). The URL alone cannot match a rule that names the
+// channel the other way, and DNR only covers the URL form the rule carries.
+function channelIdentityForPage(page: ParsedUrl): ParsedUrl | null {
+  if (!page.channelId && !page.handle) return null;
+  const headerSelector = CHANNEL_HEADER_SELECTORS.join(',');
+  for (const selector of CHANNEL_PAGE_NAME_SELECTORS) {
+    const element = document.querySelector(selector);
+    const header = element?.closest(headerSelector);
+    if (header) return channelLinkIn(header);
+  }
+  return null;
+}
+
 export function isInOwnerScope(node: Element): boolean {
   return Boolean(closestAcrossShadow(node, OWNER_SCOPE_SELECTOR));
 }
@@ -273,5 +287,7 @@ export function currentContext(): Entity {
 
   const name = channelNameForPage(page);
   if (name) entity.channelName = name;
+  const identity = channelIdentityForPage(page);
+  if (identity) applyParsed(entity, identity);
   return entity;
 }
