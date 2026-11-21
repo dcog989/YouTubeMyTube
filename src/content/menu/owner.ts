@@ -35,9 +35,11 @@ export function createOwnerTracker(): OwnerTracker {
   }
 
   // Cheap gate for the DOM batcher: scanning every added subtree for menu items
-  // is only useful after a trigger press or while a menu is expanded.
+  // is only useful after a click on a card or while a menu is expanded. Not
+  // every menu sets aria-expanded (the sheet popups do not), so a recent card
+  // click also opens the gate.
   function isPossible(): boolean {
-    return triggerPressed || expandedOpen;
+    return triggerPressed || expandedOpen || lastTarget !== null;
   }
 
   function resolve(container: MenuContainer): Element | null {

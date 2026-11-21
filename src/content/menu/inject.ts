@@ -19,12 +19,31 @@ import {
   popupOf,
 } from './container';
 import type { OwnerTracker } from './owner';
-import { INJECTED_ATTR, NON_MENU_SELECTOR } from './selectors';
+import { INJECTED_ATTR, MENU_ITEM_SELECTOR, NON_MENU_SELECTOR } from './selectors';
 import { createIcon } from './style';
 
 interface ItemState {
   action: MenuAction;
   owner: Element;
+}
+
+// Label elements inside a menu row; the row box itself only inherits the popup's
+// font, so its computed size says nothing about how the label reads.
+const LABEL_SAMPLE_SELECTOR = 'yt-formatted-string, .yt-core-attributed-string, #text, span';
+const MIN_FONT_PX = 14;
+const MAX_FONT_PX = 18;
+
+interface MenuItemStyle {
+  fontSize: string;
+  lineHeight: string;
+  color: string;
+}
+
+function hasDirectText(element: Element): boolean {
+  for (const child of element.childNodes) {
+    if (child.nodeType === Node.TEXT_NODE && child.textContent?.trim()) return true;
+  }
+  return false;
 }
 
 export interface Injector {
@@ -99,13 +118,48 @@ export function createInjector(deps: {
     void applyAction(action, owner);
   }
 
-  function createItem(action: MenuAction, owner: Element): HTMLElement {
+  // The dropdown's own font and colour are not the rows': YouTube styles the
+  // label, not the popup, so measure a label and reuse its size, line height
+  // and colour.
+  function itemStyle(scope: Element): MenuItemStyle | null {
+    let best: Element | null = null;
+    let bestSize = 0;
+    for (const row of scope.querySelectorAll(MENU_ITEM_SELECTOR)) {
+      for (const label of row.querySelectorAll(LABEL_SAMPLE_SELECTOR)) {
+        if (!hasDirectText(label)) continue;
+        const size = Number.parseFloat(getComputedStyle(label).fontSize) || 0;
+        if (size > bestSize) {
+          bestSize = size;
+          best = label;
+        }
+      }
+    }
+    if (!best) return null;
+    const style = getComputedStyle(best);
+    const size = Math.min(Math.max(bestSize, MIN_FONT_PX), MAX_FONT_PX);
+    return {
+      fontSize: `${size}px`,
+      lineHeight: style.lineHeight,
+      color: style.color,
+    };
+  }
+
+  function createItem(
+    action: MenuAction,
+    owner: Element,
+    style: MenuItemStyle | null,
+  ): HTMLElement {
     const item = h('div', {
       className: 'ytb-menu-item',
       [INJECTED_ATTR]: '',
       role: 'menuitem',
       tabIndex: 0,
     });
+    if (style) {
+      item.style.fontSize = style.fontSize;
+      item.style.lineHeight = style.lineHeight;
+      item.style.color = style.color;
+    }
 
     const label = h('span', { className: 'ytb-menu-item-label', text: action.label });
     item.append(createIcon(), label);
@@ -170,8 +224,9 @@ export function createInjector(deps: {
     }
     for (const item of owned) item.remove();
 
+    const style = itemStyle(scope);
     for (const action of actions) {
-      host.appendChild(createItem(action, owner));
+      host.appendChild(createItem(action, owner, style));
     }
   }
 

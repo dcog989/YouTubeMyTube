@@ -35,6 +35,8 @@ export const MENU_POPUP_SELECTOR = [
   'ytd-menu-popup-renderer',
   'ytd-multi-page-menu-renderer',
   'ytm-bottom-sheet-renderer',
+  'yt-sheet-view-model',
+  'yt-contextual-sheet-layout',
 ].join(',');
 
 export const INJECTED_ATTR = 'data-ytb-menu-item';
