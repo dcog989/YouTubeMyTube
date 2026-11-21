@@ -69,6 +69,10 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "ID do vídeo" },
   "thTitle": { "message": "Título" },
+  "allowedVideosLabel": { "message": "Vídeos permitidos" },
+  "allowedVideosHelp": {
+    "message": "Vídeos desbloqueados no player. Eles continuam visíveis mesmo que um filtro ainda corresponda."
+  },
   "titleFiltersLabel": { "message": "Filtro difuso de vídeos" },
   "titleFiltersHelp": {
     "message": "Palavras-chave ou /regex/flags, uma por linha. Comparadas com os títulos dos cards."

@@ -65,6 +65,10 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "معرّف الفيديو" },
   "thTitle": { "message": "العنوان" },
+  "allowedVideosLabel": { "message": "الفيديوهات المسموح بها" },
+  "allowedVideosHelp": {
+    "message": "الفيديوهات التي ألغيت حظرها من المشغّل. تظل مرئية حتى إذا طابقها عامل تصفية."
+  },
   "titleFiltersLabel": { "message": "تصفية الفيديوهات الضبابية" },
   "titleFiltersHelp": {
     "message": "كلمات مفتاحية أو /regex/flags، واحد في كل سطر. تُطابَق مع عناوين البطاقات."

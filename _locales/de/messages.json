@@ -69,6 +69,10 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "Video-ID" },
   "thTitle": { "message": "Titel" },
+  "allowedVideosLabel": { "message": "Erlaubte Videos" },
+  "allowedVideosHelp": {
+    "message": "Videos, die du im Player entsperrt hast. Sie bleiben sichtbar, auch wenn ein Filter weiterhin passt."
+  },
   "titleFiltersLabel": { "message": "Videos unscharf filtern" },
   "titleFiltersHelp": {
     "message": "Schlüsselwörter oder /regex/flags, eines pro Zeile. Abgleich mit Kartentiteln."

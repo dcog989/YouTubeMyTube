@@ -67,6 +67,10 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "Identyfikator filmu" },
   "thTitle": { "message": "Tytuł" },
+  "allowedVideosLabel": { "message": "Dozwolone filmy" },
+  "allowedVideosHelp": {
+    "message": "Filmy odblokowane w odtwarzaczu. Pozostają widoczne, nawet jeśli filtr nadal pasuje."
+  },
   "titleFiltersLabel": { "message": "Filtrowanie filmów rozmyte" },
   "titleFiltersHelp": {
     "message": "Słowa kluczowe lub /regex/flags, po jednym w wierszu. Dopasowywane do tytułów kart."

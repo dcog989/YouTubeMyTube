@@ -67,6 +67,10 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "動画 ID" },
   "thTitle": { "message": "タイトル" },
+  "allowedVideosLabel": { "message": "許可された動画" },
+  "allowedVideosHelp": {
+    "message": "プレーヤーからブロックを解除した動画です。フィルターに一致しても表示され続けます。"
+  },
   "titleFiltersLabel": { "message": "動画をあいまいフィルター" },
   "titleFiltersHelp": {
     "message": "キーワードまたは /regex/flags を 1 行に 1 つ。カードのタイトルに対して照合されます。"

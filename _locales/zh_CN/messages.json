@@ -65,6 +65,10 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "视频 ID" },
   "thTitle": { "message": "标题" },
+  "allowedVideosLabel": { "message": "已允许的视频" },
+  "allowedVideosHelp": {
+    "message": "你从播放器中解除屏蔽的视频。即使筛选器仍然匹配，它们也会保持可见。"
+  },
   "titleFiltersLabel": { "message": "模糊筛选视频" },
   "titleFiltersHelp": {
     "message": "关键词或 /regex/flags，每行一个。与卡片标题匹配。"

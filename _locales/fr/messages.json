@@ -69,6 +69,10 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "ID de la vidéo" },
   "thTitle": { "message": "Titre" },
+  "allowedVideosLabel": { "message": "Vidéos autorisées" },
+  "allowedVideosHelp": {
+    "message": "Vidéos débloquées depuis le lecteur. Elles restent visibles même si un filtre correspond encore."
+  },
   "titleFiltersLabel": { "message": "Filtrage flou des vidéos" },
   "titleFiltersHelp": {
     "message": "Mots-clés ou /regex/flags, un par ligne. Comparés aux titres des vignettes."

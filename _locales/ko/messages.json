@@ -67,6 +67,10 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "동영상 ID" },
   "thTitle": { "message": "제목" },
+  "allowedVideosLabel": { "message": "허용된 동영상" },
+  "allowedVideosHelp": {
+    "message": "플레이어에서 차단을 해제한 동영상입니다. 필터와 일치해도 계속 표시됩니다."
+  },
   "titleFiltersLabel": { "message": "동영상 퍼지 필터" },
   "titleFiltersHelp": {
     "message": "키워드 또는 /regex/flags, 한 줄에 하나. 카드 제목과 비교합니다."
