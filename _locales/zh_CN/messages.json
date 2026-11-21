@@ -18,7 +18,7 @@
   "navChannels": { "message": "屏蔽频道" },
   "navVideos": { "message": "屏蔽视频" },
   "navComments": { "message": "屏蔽评论" },
-  "navAreas": { "message": "屏蔽区域" },
+  "navAreas": { "message": "屏蔽页面与区块" },
   "navTester": { "message": "测试过滤器" },
   "navData": { "message": "导入 / 导出 / 重置" },
 
@@ -78,7 +78,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "隐藏 YouTube 的整个区域。页面屏蔽会重定向到首页。"
+    "message": "重定向整个页面或隐藏其中的区块。"
   },
   "testerSub": { "message": "在保存前对照 URL 或文本检查规则。" },
   "urlLabel": { "message": "URL" },

@@ -18,7 +18,7 @@
   "navChannels": { "message": "Bloquear canais" },
   "navVideos": { "message": "Bloquear vídeos" },
   "navComments": { "message": "Bloquear comentários" },
-  "navAreas": { "message": "Bloquear áreas" },
+  "navAreas": { "message": "Bloquear páginas e seções" },
   "navTester": { "message": "Testar filtros" },
   "navData": { "message": "Importar / Exportar / Redefinir" },
 
@@ -82,7 +82,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "Oculta seções inteiras do YouTube. Os bloqueios de página redirecionam para a página inicial."
+    "message": "Redirecione páginas inteiras ou oculte seções nelas."
   },
   "testerSub": {
     "message": "Verifique uma regra em relação a uma URL ou a um texto antes de salvar."

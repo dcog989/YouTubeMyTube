@@ -18,7 +18,7 @@
   "navChannels": { "message": "채널 차단" },
   "navVideos": { "message": "동영상 차단" },
   "navComments": { "message": "댓글 차단" },
-  "navAreas": { "message": "영역 차단" },
+  "navAreas": { "message": "페이지 및 섹션 차단" },
   "navTester": { "message": "필터 테스트" },
   "navData": { "message": "가져오기 / 내보내기 / 초기화" },
 
@@ -80,7 +80,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "YouTube의 전체 섹션을 숨깁니다. 페이지 차단은 홈페이지로 리디렉션합니다."
+    "message": "전체 페이지를 리디렉션하거나 페이지 내 섹션을 숨깁니다."
   },
   "testerSub": { "message": "저장하기 전에 URL 또는 텍스트에 대해 규칙을 확인합니다." },
   "urlLabel": { "message": "URL" },

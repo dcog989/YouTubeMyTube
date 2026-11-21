@@ -18,7 +18,7 @@
   "navChannels": { "message": "Kanalları engelle" },
   "navVideos": { "message": "Videoları engelle" },
   "navComments": { "message": "Yorumları engelle" },
-  "navAreas": { "message": "Alanları engelle" },
+  "navAreas": { "message": "Sayfaları ve bölümleri engelle" },
   "navTester": { "message": "Filtreleri test et" },
   "navData": { "message": "İçe / Dışa Aktar / Sıfırla" },
 
@@ -78,7 +78,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "YouTube'un tüm bölümlerini gizleyin. Sayfa engellemeleri ana sayfaya yönlendirir."
+    "message": "Tüm sayfaları yönlendirin veya içindeki bölümleri gizleyin."
   },
   "testerSub": { "message": "Kaydetmeden önce bir kuralı URL veya metinle test edin." },
   "urlLabel": { "message": "URL" },

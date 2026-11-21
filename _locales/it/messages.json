@@ -18,7 +18,7 @@
   "navChannels": { "message": "Blocca canali" },
   "navVideos": { "message": "Blocca video" },
   "navComments": { "message": "Blocca commenti" },
-  "navAreas": { "message": "Blocca aree" },
+  "navAreas": { "message": "Blocca pagine e sezioni" },
   "navTester": { "message": "Prova i filtri" },
   "navData": { "message": "Importa / Esporta / Reimposta" },
 
@@ -82,7 +82,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "Nasconde intere sezioni di YouTube. I blocchi delle pagine reindirizzano alla home."
+    "message": "Reindirizza intere pagine o nascondi sezioni al loro interno."
   },
   "testerSub": {
     "message": "Verifica una regola rispetto a un URL o a un testo prima di salvare."

@@ -18,7 +18,7 @@
   "navChannels": { "message": "Блокировать каналы" },
   "navVideos": { "message": "Блокировать видео" },
   "navComments": { "message": "Блокировать комментарии" },
-  "navAreas": { "message": "Блокировать разделы" },
+  "navAreas": { "message": "Блокировать страницы и разделы" },
   "navTester": { "message": "Проверить фильтры" },
   "navData": { "message": "Импорт / Экспорт / Сброс" },
 
@@ -82,7 +82,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "Скрывайте целые разделы YouTube. Блокировка страниц перенаправляет на главную."
+    "message": "Перенаправляйте целые страницы или скрывайте их разделы."
   },
   "testerSub": { "message": "Проверьте правило по URL или тексту перед сохранением." },
   "urlLabel": { "message": "URL" },

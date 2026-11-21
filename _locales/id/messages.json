@@ -18,7 +18,7 @@
   "navChannels": { "message": "Blokir saluran" },
   "navVideos": { "message": "Blokir video" },
   "navComments": { "message": "Blokir komentar" },
-  "navAreas": { "message": "Blokir area" },
+  "navAreas": { "message": "Blokir halaman & bagian" },
   "navTester": { "message": "Uji filter" },
   "navData": { "message": "Impor / Ekspor / Reset" },
 
@@ -80,7 +80,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "Sembunyikan seluruh bagian YouTube. Pemblokiran halaman mengalihkan ke halaman beranda."
+    "message": "Alihkan seluruh halaman atau sembunyikan bagian di dalamnya."
   },
   "testerSub": { "message": "Periksa aturan terhadap URL atau teks sebelum menyimpan." },
   "urlLabel": { "message": "URL" },

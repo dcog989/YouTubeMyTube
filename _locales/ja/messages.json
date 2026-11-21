@@ -18,7 +18,7 @@
   "navChannels": { "message": "チャンネルをブロック" },
   "navVideos": { "message": "動画をブロック" },
   "navComments": { "message": "コメントをブロック" },
-  "navAreas": { "message": "エリアをブロック" },
+  "navAreas": { "message": "ページとセクションをブロック" },
   "navTester": { "message": "フィルターをテスト" },
   "navData": { "message": "インポート / エクスポート / リセット" },
 
@@ -80,7 +80,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "YouTube のセクション全体を非表示にします。ページのブロックはホームページにリダイレクトします。"
+    "message": "ページ全体をリダイレクトするか、その中のセクションを非表示にします。"
   },
   "testerSub": { "message": "保存する前に、URL またはテキストに対してルールを確認します。" },
   "urlLabel": { "message": "URL" },

@@ -18,7 +18,7 @@
   "navChannels": { "message": "Kanalen blokkeren" },
   "navVideos": { "message": "Video's blokkeren" },
   "navComments": { "message": "Reacties blokkeren" },
-  "navAreas": { "message": "Gebieden blokkeren" },
+  "navAreas": { "message": "Pagina's en secties blokkeren" },
   "navTester": { "message": "Filters testen" },
   "navData": { "message": "Importeren / Exporteren / Resetten" },
 
@@ -82,7 +82,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "Verberg hele secties van YouTube. Paginablokkeringen verwijzen door naar de startpagina."
+    "message": "Leid hele pagina's om of verberg secties erin."
   },
   "testerSub": { "message": "Controleer een regel tegen een URL of tekst voordat je opslaat." },
   "urlLabel": { "message": "URL" },

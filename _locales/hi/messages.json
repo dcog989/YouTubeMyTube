@@ -18,7 +18,7 @@
   "navChannels": { "message": "चैनल ब्लॉक करें" },
   "navVideos": { "message": "वीडियो ब्लॉक करें" },
   "navComments": { "message": "टिप्पणियाँ ब्लॉक करें" },
-  "navAreas": { "message": "क्षेत्र ब्लॉक करें" },
+  "navAreas": { "message": "पेज और अनुभाग ब्लॉक करें" },
   "navTester": { "message": "फ़िल्टर जाँचें" },
   "navData": { "message": "आयात / निर्यात / रीसेट" },
 
@@ -78,7 +78,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "YouTube के पूरे अनुभाग छिपाएँ। पेज ब्लॉक होम पेज पर रीडायरेक्ट करते हैं।"
+    "message": "पूरे पेज रीडायरेक्ट करें या उनके अनुभाग छिपाएँ।"
   },
   "testerSub": { "message": "सहेजने से पहले किसी नियम को URL या टेक्स्ट से जाँचें।" },
   "urlLabel": { "message": "URL" },

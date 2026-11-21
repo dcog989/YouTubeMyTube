@@ -18,7 +18,7 @@
   "navChannels": { "message": "Kanäle blockieren" },
   "navVideos": { "message": "Videos blockieren" },
   "navComments": { "message": "Kommentare blockieren" },
-  "navAreas": { "message": "Bereiche blockieren" },
+  "navAreas": { "message": "Seiten & Bereiche blockieren" },
   "navTester": { "message": "Filter testen" },
   "navData": { "message": "Importieren / Exportieren / Zurücksetzen" },
 
@@ -82,7 +82,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "Blende ganze Bereiche von YouTube aus. Seitenblockierungen leiten auf die Startseite um."
+    "message": "Leite ganze Seiten um oder blende Bereiche darin aus."
   },
   "testerSub": {
     "message": "Prüfe eine Regel anhand einer URL oder eines Textes, bevor du speicherst."

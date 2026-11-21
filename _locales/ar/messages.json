@@ -18,7 +18,7 @@
   "navChannels": { "message": "حظر القنوات" },
   "navVideos": { "message": "حظر الفيديوهات" },
   "navComments": { "message": "حظر التعليقات" },
-  "navAreas": { "message": "حظر الأقسام" },
+  "navAreas": { "message": "حظر الصفحات والأقسام" },
   "navTester": { "message": "اختبار الفلاتر" },
   "navData": { "message": "استيراد / تصدير / إعادة تعيين" },
 
@@ -78,7 +78,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "أخفِ أقسامًا كاملة من YouTube. تؤدي عمليات حظر الصفحات إلى إعادة التوجيه إلى الصفحة الرئيسية."
+    "message": "أعد توجيه الصفحات كاملة أو أخفِ أقسامًا منها."
   },
   "testerSub": { "message": "تحقق من قاعدة مقابل عنوان URL أو نص قبل الحفظ." },
   "urlLabel": { "message": "URL" },

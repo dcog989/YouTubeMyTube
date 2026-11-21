@@ -18,7 +18,7 @@
   "navChannels": { "message": "Block Channels" },
   "navVideos": { "message": "Block Videos" },
   "navComments": { "message": "Block Comments" },
-  "navAreas": { "message": "Block Areas" },
+  "navAreas": { "message": "Block Pages & Sections" },
   "navTester": { "message": "Test Filters" },
   "navData": { "message": "Import / Export / Reset" },
 
@@ -78,7 +78,7 @@
   "commentFiltersPlaceholder": { "message": "spammer\n/free\\s+crypto/i" },
 
   "areasSub": {
-    "message": "Hide entire sections of YouTube. Page blocks redirect to the home page."
+    "message": "Redirect whole pages or hide sections on them."
   },
   "testerSub": {
     "message": "Check a rule against a URL or a piece of text before saving."
