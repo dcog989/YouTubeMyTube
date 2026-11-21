@@ -100,6 +100,9 @@ async function init(): Promise<void> {
     void refresh();
   });
   window.addEventListener('yt-navigate-finish', () => {
+    // SPA navigation changes the page identity without a network request, so
+    // neither DNR nor the mutation observer re-decides the block.
+    evaluator.schedule();
     void refresh();
   });
   window.addEventListener('visibilitychange', () => {
