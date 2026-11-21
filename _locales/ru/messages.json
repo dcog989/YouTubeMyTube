@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "Включить блокировку" },
   "theme": { "message": "Тема" },
   "themeSystem": { "message": "Системная тема" },
-  "themeSystemShort": { "message": "Системная" },
   "themeLight": { "message": "Светлая тема" },
-  "themeLightShort": { "message": "Светлая" },
   "themeDark": { "message": "Тёмная тема" },
-  "themeDarkShort": { "message": "Тёмная" },
 
   "settingsSections": { "message": "Разделы настроек" },
   "navChannels": { "message": "Блокировать каналы" },

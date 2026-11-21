@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "Blokkering inschakelen" },
   "theme": { "message": "Thema" },
   "themeSystem": { "message": "Systeemthema" },
-  "themeSystemShort": { "message": "Systeem" },
   "themeLight": { "message": "Licht thema" },
-  "themeLightShort": { "message": "Licht" },
   "themeDark": { "message": "Donker thema" },
-  "themeDarkShort": { "message": "Donker" },
 
   "settingsSections": { "message": "Instellingensecties" },
   "navChannels": { "message": "Kanalen blokkeren" },

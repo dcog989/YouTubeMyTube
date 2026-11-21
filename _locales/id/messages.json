@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "Aktifkan pemblokiran" },
   "theme": { "message": "Tema" },
   "themeSystem": { "message": "Tema sistem" },
-  "themeSystemShort": { "message": "Sistem" },
   "themeLight": { "message": "Tema terang" },
-  "themeLightShort": { "message": "Terang" },
   "themeDark": { "message": "Tema gelap" },
-  "themeDarkShort": { "message": "Gelap" },
 
   "settingsSections": { "message": "Bagian pengaturan" },
   "navChannels": { "message": "Blokir saluran" },

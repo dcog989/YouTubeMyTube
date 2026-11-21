@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "ブロックを有効にする" },
   "theme": { "message": "テーマ" },
   "themeSystem": { "message": "システムテーマ" },
-  "themeSystemShort": { "message": "システム" },
   "themeLight": { "message": "ライトテーマ" },
-  "themeLightShort": { "message": "ライト" },
   "themeDark": { "message": "ダークテーマ" },
-  "themeDarkShort": { "message": "ダーク" },
 
   "settingsSections": { "message": "設定セクション" },
   "navChannels": { "message": "チャンネルをブロック" },

@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "Engellemeyi etkinleştir" },
   "theme": { "message": "Tema" },
   "themeSystem": { "message": "Sistem teması" },
-  "themeSystemShort": { "message": "Sistem" },
   "themeLight": { "message": "Açık tema" },
-  "themeLightShort": { "message": "Açık" },
   "themeDark": { "message": "Koyu tema" },
-  "themeDarkShort": { "message": "Koyu" },
 
   "settingsSections": { "message": "Ayar bölümleri" },
   "navChannels": { "message": "Kanalları engelle" },

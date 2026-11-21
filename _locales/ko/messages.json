@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "차단 사용" },
   "theme": { "message": "테마" },
   "themeSystem": { "message": "시스템 테마" },
-  "themeSystemShort": { "message": "시스템" },
   "themeLight": { "message": "라이트 테마" },
-  "themeLightShort": { "message": "라이트" },
   "themeDark": { "message": "다크 테마" },
-  "themeDarkShort": { "message": "다크" },
 
   "settingsSections": { "message": "설정 섹션" },
   "navChannels": { "message": "채널 차단" },

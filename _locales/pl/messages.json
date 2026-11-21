@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "Włącz blokowanie" },
   "theme": { "message": "Motyw" },
   "themeSystem": { "message": "Motyw systemowy" },
-  "themeSystemShort": { "message": "Systemowy" },
   "themeLight": { "message": "Jasny motyw" },
-  "themeLightShort": { "message": "Jasny" },
   "themeDark": { "message": "Ciemny motyw" },
-  "themeDarkShort": { "message": "Ciemny" },
 
   "settingsSections": { "message": "Sekcje ustawień" },
   "navChannels": { "message": "Blokuj kanały" },

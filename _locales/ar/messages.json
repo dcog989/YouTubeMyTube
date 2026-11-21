@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "تفعيل الحظر" },
   "theme": { "message": "المظهر" },
   "themeSystem": { "message": "مظهر النظام" },
-  "themeSystemShort": { "message": "النظام" },
   "themeLight": { "message": "المظهر الفاتح" },
-  "themeLightShort": { "message": "فاتح" },
   "themeDark": { "message": "المظهر الداكن" },
-  "themeDarkShort": { "message": "داكن" },
 
   "settingsSections": { "message": "أقسام الإعدادات" },
   "navChannels": { "message": "حظر القنوات" },

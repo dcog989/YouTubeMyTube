@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "启用屏蔽" },
   "theme": { "message": "主题" },
   "themeSystem": { "message": "系统主题" },
-  "themeSystemShort": { "message": "系统" },
   "themeLight": { "message": "浅色主题" },
-  "themeLightShort": { "message": "浅色" },
   "themeDark": { "message": "深色主题" },
-  "themeDarkShort": { "message": "深色" },
 
   "settingsSections": { "message": "设置部分" },
   "navChannels": { "message": "屏蔽频道" },

@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "Enable blocking" },
   "theme": { "message": "Theme" },
   "themeSystem": { "message": "System theme" },
-  "themeSystemShort": { "message": "System" },
   "themeLight": { "message": "Light theme" },
-  "themeLightShort": { "message": "Light" },
   "themeDark": { "message": "Dark theme" },
-  "themeDarkShort": { "message": "Dark" },
 
   "settingsSections": { "message": "Settings sections" },
   "navChannels": { "message": "Block Channels" },

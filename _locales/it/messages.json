@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "Attiva il blocco" },
   "theme": { "message": "Tema" },
   "themeSystem": { "message": "Tema di sistema" },
-  "themeSystemShort": { "message": "Sistema" },
   "themeLight": { "message": "Tema chiaro" },
-  "themeLightShort": { "message": "Chiaro" },
   "themeDark": { "message": "Tema scuro" },
-  "themeDarkShort": { "message": "Scuro" },
 
   "settingsSections": { "message": "Sezioni delle impostazioni" },
   "navChannels": { "message": "Blocca canali" },

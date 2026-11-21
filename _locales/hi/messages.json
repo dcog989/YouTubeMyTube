@@ -11,11 +11,8 @@
   "enableBlocking": { "message": "ब्लॉकिंग चालू करें" },
   "theme": { "message": "थीम" },
   "themeSystem": { "message": "सिस्टम थीम" },
-  "themeSystemShort": { "message": "सिस्टम" },
   "themeLight": { "message": "लाइट थीम" },
-  "themeLightShort": { "message": "लाइट" },
   "themeDark": { "message": "डार्क थीम" },
-  "themeDarkShort": { "message": "डार्क" },
 
   "settingsSections": { "message": "सेटिंग्स अनुभाग" },
   "navChannels": { "message": "चैनल ब्लॉक करें" },
