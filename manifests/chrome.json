@@ -6,13 +6,21 @@
   "default_locale": "en",
   "minimum_chrome_version": "120",
   "permissions": ["storage", "declarativeNetRequest"],
-  "host_permissions": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://m.youtube.com/*",
+    "https://music.youtube.com/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://music.youtube.com/*"
+      ],
       "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_start",
@@ -38,7 +46,11 @@
   "web_accessible_resources": [
     {
       "resources": ["blocked.html", "assets/icons/*.png"],
-      "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"]
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://music.youtube.com/*"
+      ]
     }
   ],
   "icons": {

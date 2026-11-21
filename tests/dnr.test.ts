@@ -126,6 +126,11 @@ describe('buildDnrRules', () => {
     expect(filter).toContain('dQw4w9WgXcQ');
   });
 
+  it('covers YouTube Music in the video pattern', () => {
+    const { rules } = buildDnrRules(stateWith({ videos: [video('abc')] }));
+    expect(rules[0]?.condition.regexFilter).toContain('music');
+  });
+
   it('assigns unique positive rule ids', () => {
     const { rules } = buildDnrRules(
       stateWith({ videos: [video('a'), video('b'), video('c')], channels: [channel('UC1')] }),

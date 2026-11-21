@@ -31,6 +31,13 @@ describe('parseYouTubeUrl', () => {
     expect(parseYouTubeUrl('/watch?v=abcdefghijk').videoId).toBe('abcdefghijk');
   });
 
+  it('parses YouTube Music watch URLs', () => {
+    expect(parseYouTubeUrl('https://music.youtube.com/watch?v=abcdefghijk')).toMatchObject({
+      kind: 'video',
+      videoId: 'abcdefghijk',
+    });
+  });
+
   it('parses youtu.be short links', () => {
     expect(parseYouTubeUrl('https://youtu.be/dQw4w9WgXcQ?t=10s')).toMatchObject({
       kind: 'video',

@@ -16,7 +16,7 @@ export const YOUTUBE_HOSTS = [
 
 export const BLOCKED_PAGE = 'blocked.html';
 export const YOUTUBE_HOME = `${YOUTUBE_ORIGIN}/`;
-export const YOUTUBE_HOST_PATTERN = String.raw`https?://(?:www|m)\.youtube\.com`;
+export const YOUTUBE_HOST_PATTERN = String.raw`https?://(?:www|m|music)\.youtube\.com`;
 // Dynamic rules that use regexFilter are capped by the browser
 // (MAX_NUMBER_OF_REGEX_RULES).
 export const MAX_DNR_REGEX_RULES = 1000;
