@@ -35,7 +35,9 @@ import { addVideo, renderVideos, wireVideoSort } from './videos';
 function syncThemeButtons(): void {
   const theme = getDraft().settings.theme;
   document.querySelectorAll<HTMLButtonElement>('.theme-btn').forEach((button) => {
-    button.classList.toggle('is-active', button.dataset.theme === theme);
+    const active = button.dataset.theme === theme;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
   });
 }
 
@@ -160,6 +162,7 @@ function wireStatic(): void {
 }
 
 async function init(): Promise<void> {
+  document.documentElement.lang = browser.i18n.getUILanguage();
   localizeDocument();
   let initial: BlockerState;
   try {

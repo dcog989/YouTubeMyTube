@@ -35,10 +35,11 @@
               class="theme-btn"
               data-theme="system"
               aria-label="System theme"
-              data-i18n-attr="aria-label:themeSystem"
-              title="System"
+              aria-pressed="false"
+              data-i18n-attr="aria-label:themeSystem;title:themeSystem"
             >
               <svg
+                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -50,7 +51,6 @@
                 stroke-linejoin="round"
                 class="lucide lucide-monitor"
               >
-                <title>System</title>
                 <rect width="20" height="14" x="2" y="3" rx="2" />
                 <line x1="8" x2="16" y1="21" y2="21" />
                 <line x1="12" x2="12" y1="17" y2="21" />
@@ -61,10 +61,11 @@
               class="theme-btn"
               data-theme="light"
               aria-label="Light theme"
-              data-i18n-attr="aria-label:themeLight"
-              title="Light"
+              aria-pressed="false"
+              data-i18n-attr="aria-label:themeLight;title:themeLight"
             >
               <svg
+                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -76,7 +77,6 @@
                 stroke-linejoin="round"
                 class="lucide lucide-sun"
               >
-                <title>Light</title>
                 <circle cx="12" cy="12" r="4" />
                 <path d="M12 2v2" />
                 <path d="M12 20v2" />
@@ -93,10 +93,11 @@
               class="theme-btn"
               data-theme="dark"
               aria-label="Dark theme"
-              data-i18n-attr="aria-label:themeDark"
-              title="Dark"
+              aria-pressed="false"
+              data-i18n-attr="aria-label:themeDark;title:themeDark"
             >
               <svg
+                aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -108,7 +109,6 @@
                 stroke-linejoin="round"
                 class="lucide lucide-moon"
               >
-                <title>Dark</title>
                 <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
               </svg>
             </button>
@@ -231,7 +231,7 @@
               </table>
             </div>
           </fieldset>
-          <fieldset class="fieldset fieldset-scroll" id="channel-fuzzy">
+          <fieldset class="fieldset fieldset-scroll">
             <legend class="row-title" data-i18n="channelFiltersLabel">Fuzzy filter channels</legend>
             <p class="help" data-i18n="channelFiltersHelp">
               Keywords or /regex/flags, one per line. Matched against channel names and handles.
@@ -276,7 +276,7 @@
               </table>
             </div>
           </fieldset>
-          <fieldset class="fieldset fieldset-scroll" id="video-fuzzy">
+          <fieldset class="fieldset fieldset-scroll">
             <legend class="row-title" data-i18n="titleFiltersLabel">Fuzzy filter videos</legend>
             <p class="help" data-i18n="titleFiltersHelp">
               Keywords or /regex/flags, one per line. Matched against card titles.
