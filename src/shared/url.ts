@@ -82,7 +82,9 @@ export function parseYouTubeUrl(href: string): ParsedUrl {
   if (embed?.[1] && VIDEO_ID.test(embed[1])) return { kind: 'embed', videoId: embed[1] };
 
   const channel = /^\/channel\/([^/?#]+)/.exec(path);
-  if (channel?.[1]) return { kind: 'channel', channelId: channel[1] };
+  if (channel?.[1] && CHANNEL_ID.test(channel[1])) {
+    return { kind: 'channel', channelId: channel[1] };
+  }
 
   const handle = /^\/@([^/?#]+)/.exec(path);
   if (handle?.[1]) {

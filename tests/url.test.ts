@@ -86,11 +86,17 @@ describe('parseYouTubeUrl', () => {
   });
 
   it('parses channel and handle URLs', () => {
-    expect(parseYouTubeUrl('https://www.youtube.com/channel/UC123').channelId).toBe('UC123');
+    expect(
+      parseYouTubeUrl('https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv').channelId,
+    ).toBe('UCabcdefghijklmnopqrstuv');
     expect(parseYouTubeUrl('https://www.youtube.com/@SomeHandle/videos')).toMatchObject({
       kind: 'handle',
       handle: 'SomeHandle',
     });
+  });
+
+  it('rejects channel paths that are not channel ids', () => {
+    expect(parseYouTubeUrl('https://www.youtube.com/channel/foo').kind).toBe('other');
   });
 
   it('rejects handles that are too short to exist', () => {

@@ -43,9 +43,9 @@ describe('parseBlockInput', () => {
       kind: 'video',
       videoId: 'dQw4w9WgXcQ',
     });
-    expect(parseBlockInput('https://www.youtube.com/channel/UCabc')).toEqual({
+    expect(parseBlockInput('https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv')).toEqual({
       kind: 'channel',
-      channelId: 'UCabc',
+      channelId: 'UCabcdefghijklmnopqrstuv',
     });
     expect(parseBlockInput('https://www.youtube.com/@SomeHandle/videos')).toEqual({
       kind: 'channel',

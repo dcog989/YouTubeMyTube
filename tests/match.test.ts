@@ -114,11 +114,14 @@ describe('matchDirectNavigation', () => {
   });
 
   it('blocks direct channel navigation', () => {
-    const rules = rulesWith({ channels: [{ id: 'UC123', name: '', handle: '' }] });
-    const parsed = parseYouTubeUrl('https://www.youtube.com/channel/UC123');
-    expect(matchDirectNavigation(parsed, '/channel/UC123', rules, defaultAreas()).blocked).toBe(
-      true,
-    );
+    const rules = rulesWith({
+      channels: [{ id: 'UCabcdefghijklmnopqrstuv', name: '', handle: '' }],
+    });
+    const parsed = parseYouTubeUrl('https://www.youtube.com/channel/UCabcdefghijklmnopqrstuv');
+    expect(
+      matchDirectNavigation(parsed, '/channel/UCabcdefghijklmnopqrstuv', rules, defaultAreas())
+        .blocked,
+    ).toBe(true);
   });
 
   it('blocks enabled area pages', () => {
