@@ -39,6 +39,8 @@
     "message": "YouTubeMyTube n'a pas accès à YouTube, donc rien n'est bloqué. Autorisez l'accès à youtube.com dans les paramètres d'extensions du navigateur, puis rechargez les onglets YouTube."
   },
   "confirmReset": { "message": "Réinitialiser tous les paramètres et filtres ?" },
+  "cancelBtn": { "message": "Annuler" },
+  "confirmBtn": { "message": "Confirmer" },
   "onboardingHeading": { "message": "Bienvenue dans YouTubeMyTube" },
   "onboardingBody": {
     "message": "Choisissez une section à gauche pour bloquer des chaînes, des vidéos, des commentaires ou des zones entières. Vous pouvez aussi bloquer directement depuis YouTube via le menu du lecteur ou le popup de la barre d'outils. Les modifications sont appliquées lorsque vous cliquez sur Enregistrer."

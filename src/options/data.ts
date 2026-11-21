@@ -4,6 +4,7 @@ import { t } from '../shared/i18n';
 import { normalizeState, ruleCount } from '../shared/normalize';
 import { byId, h } from '../shared/ui';
 import { backfillMissing } from './backfill';
+import { confirmAction } from './confirm';
 import { setStatus } from './dom';
 import { getDraft, isDirty, notify, setDirty, setDraft } from './state';
 
@@ -60,7 +61,7 @@ export async function restoreBackup(): Promise<void> {
   }
   // readBackup already normalized the snapshot; it restores as a draft so the
   // user can inspect it before saving.
-  if (isDirty() && !confirm(t('confirmImport'))) return;
+  if (isDirty() && !(await confirmAction(t('confirmImport')))) return;
   setDraft(backup.state);
   notify();
   setDirty(true);
@@ -113,7 +114,7 @@ export async function importSettings(file: File): Promise<void> {
 
   if (isBlockerState(parsed)) {
     // A native import replaces the draft; a BlockTube backup merges into it.
-    if (isDirty() && !confirm(t('confirmImport'))) return;
+    if (isDirty() && !(await confirmAction(t('confirmImport')))) return;
     const imported = normalizeState(parsed);
     imported.settings.onboardingComplete = true;
     setDraft(imported);

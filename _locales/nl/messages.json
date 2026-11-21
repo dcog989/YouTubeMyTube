@@ -39,6 +39,8 @@
     "message": "YouTubeMyTube heeft geen toegang tot YouTube, dus er wordt niets geblokkeerd. Sta toegang tot youtube.com toe in de extensie-instellingen van de browser en herlaad de YouTube-tabbladen."
   },
   "confirmReset": { "message": "Alle instellingen en filters resetten?" },
+  "cancelBtn": { "message": "Annuleren" },
+  "confirmBtn": { "message": "Bevestigen" },
   "onboardingHeading": { "message": "Welkom bij YouTubeMyTube" },
   "onboardingBody": {
     "message": "Kies links een sectie om kanalen, video's, reacties of hele gebieden te blokkeren. Je kunt ook direct op YouTube blokkeren via het spelermenu of de pop-up in de werkbalk. Wijzigingen worden toegepast wanneer je op Opslaan klikt."

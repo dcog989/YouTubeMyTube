@@ -37,6 +37,8 @@
     "message": "YouTubeMyTube tidak memiliki akses ke YouTube, jadi tidak ada yang diblokir. Izinkan akses ke youtube.com di pengaturan ekstensi peramban, lalu muat ulang tab YouTube."
   },
   "confirmReset": { "message": "Reset semua pengaturan dan filter?" },
+  "cancelBtn": { "message": "Batal" },
+  "confirmBtn": { "message": "Konfirmasi" },
   "onboardingHeading": { "message": "Selamat datang di YouTubeMyTube" },
   "onboardingBody": {
     "message": "Pilih bagian di kiri untuk memblokir kanal, video, komentar, atau seluruh area. Anda juga dapat memblokir langsung di YouTube melalui menu pemutar atau popup toolbar. Perubahan diterapkan saat Anda menekan Simpan."

@@ -37,6 +37,8 @@
     "message": "YouTubeMyTube は YouTube にアクセスできないため、何もブロックされていません。ブラウザの拡張機能の設定で youtube.com へのアクセスを許可し、YouTube のタブを再読み込みしてください。"
   },
   "confirmReset": { "message": "すべての設定とフィルターをリセットしますか？" },
+  "cancelBtn": { "message": "キャンセル" },
+  "confirmBtn": { "message": "確認" },
   "onboardingHeading": { "message": "YouTubeMyTube へようこそ" },
   "onboardingBody": {
     "message": "左のセクションを選んで、チャンネル、動画、コメント、またはページ全体をブロックできます。プレイヤーのメニューやツールバーのポップアップから YouTube 上で直接ブロックすることもできます。変更は「保存」を押すと適用されます。"

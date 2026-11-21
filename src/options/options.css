@@ -647,6 +647,31 @@ th.is-sorted {
   margin-bottom: 12px;
 }
 
+.confirm-dialog {
+  width: calc(100% - 32px);
+  max-width: 420px;
+  padding: 20px 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--text);
+}
+
+.confirm-dialog::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
+
+.confirm-message {
+  margin: 0 0 18px;
+  font-weight: 600;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 @media (max-width: 760px) {
   .layout {
     grid-template-columns: 1fr;

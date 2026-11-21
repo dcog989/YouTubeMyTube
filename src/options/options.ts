@@ -11,6 +11,7 @@ import { byId } from '../shared/ui';
 import { buildAreas, syncAreas } from './areas';
 import { backfillMissing } from './backfill';
 import { addChannel, renderChannels, setChannelFilter, wireChannelSort } from './channels';
+import { confirmAction, wireConfirm } from './confirm';
 import { updateCounts } from './counts';
 import { exportSettings, importSettings, renderBackup, restoreBackup } from './data';
 import { selectPanel, setStatus } from './dom';
@@ -74,6 +75,7 @@ function selectPanelWithCounts(name: string): void {
 }
 
 function wireStatic(): void {
+  wireConfirm();
   document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
     button.addEventListener('click', () =>
       selectPanelWithCounts(button.dataset.panel ?? 'channels'),
@@ -158,17 +160,27 @@ function wireStatic(): void {
   });
 
   byId('reset').addEventListener('click', () => {
-    if (!confirm(t('confirmReset'))) return;
-    setDraft(defaultState());
-    notify();
-    setDirty(true);
+    void (async () => {
+      if (!(await confirmAction(t('confirmReset')))) return;
+      setDraft(defaultState());
+      notify();
+      setDirty(true);
+    })();
   });
 
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (getDraft().settings.theme === 'system') applyTheme('system');
   });
 
-  window.addEventListener('focus', () => void syncPermissionWarning());
+  window.addEventListener('focus', () => {
+    void syncPermissionWarning();
+    // Blocks made in another tab (or the YouTube menu) arrive as storage
+    // changes; re-run the lookup pass so a handle-only row gains its id.
+    void backfillMissing();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') void backfillMissing();
+  });
 
   window.addEventListener('beforeunload', (event) => {
     if (!isDirty()) return;

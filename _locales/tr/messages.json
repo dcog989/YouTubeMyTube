@@ -35,6 +35,8 @@
     "message": "YouTubeMyTube'nin YouTube erişimi yok, bu yüzden hiçbir şey engellenmiyor. Tarayıcının uzantı ayarlarından youtube.com erişimine izin verin, ardından YouTube sekmelerini yenileyin."
   },
   "confirmReset": { "message": "Tüm ayarlar ve filtreler sıfırlansın mı?" },
+  "cancelBtn": { "message": "İptal" },
+  "confirmBtn": { "message": "Onayla" },
   "onboardingHeading": { "message": "YouTubeMyTube'a hoş geldiniz" },
   "onboardingBody": {
     "message": "Kanalları, videoları, yorumları veya tüm alanları engellemek için soldan bir bölüm seçin. Ayrıca oynatıcı menüsünü veya araç çubuğu açılır penceresini kullanarak doğrudan YouTube'da da engelleyebilirsiniz. Değişiklikler Kaydet'e bastığınızda uygulanır."

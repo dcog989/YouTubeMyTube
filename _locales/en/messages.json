@@ -35,6 +35,8 @@
     "message": "YouTubeMyTube has no access to YouTube, so nothing is being blocked. Allow site access for youtube.com in your browser's extension settings, then reload YouTube tabs."
   },
   "confirmReset": { "message": "Reset all settings and filters?" },
+  "cancelBtn": { "message": "Cancel" },
+  "confirmBtn": { "message": "Confirm" },
   "onboardingHeading": { "message": "Welcome to YouTubeMyTube" },
   "onboardingBody": {
     "message": "Choose a section on the left to block channels, videos, comments or whole areas. You can also block directly from YouTube using the player menu or the toolbar popup. Changes are applied when you press Save."

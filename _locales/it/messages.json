@@ -39,6 +39,8 @@
     "message": "YouTubeMyTube non ha accesso a YouTube, quindi non viene bloccato nulla. Consenti l'accesso a youtube.com nelle impostazioni delle estensioni del browser, poi ricarica le schede di YouTube."
   },
   "confirmReset": { "message": "Reimpostare tutte le impostazioni e i filtri?" },
+  "cancelBtn": { "message": "Annulla" },
+  "confirmBtn": { "message": "Conferma" },
   "onboardingHeading": { "message": "Benvenuto in YouTubeMyTube" },
   "onboardingBody": {
     "message": "Scegli una sezione a sinistra per bloccare canali, video, commenti o intere aree. Puoi anche bloccare direttamente da YouTube usando il menu del player o il popup della barra degli strumenti. Le modifiche vengono applicate quando premi Salva."

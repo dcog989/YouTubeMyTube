@@ -37,6 +37,8 @@
     "message": "YouTubeMyTube nie ma dostępu do YouTube, więc nic nie jest blokowane. Zezwól na dostęp do youtube.com w ustawieniach rozszerzeń przeglądarki, a następnie odśwież karty YouTube."
   },
   "confirmReset": { "message": "Zresetować wszystkie ustawienia i filtry?" },
+  "cancelBtn": { "message": "Anuluj" },
+  "confirmBtn": { "message": "Potwierdź" },
   "onboardingHeading": { "message": "Witamy w YouTubeMyTube" },
   "onboardingBody": {
     "message": "Wybierz sekcję po lewej, aby blokować kanały, filmy, komentarze lub całe obszary. Możesz też blokować bezpośrednio na YouTube, korzystając z menu odtwarzacza lub wyskakującego okienka na pasku narzędzi. Zmiany są stosowane po kliknięciu Zapisz."

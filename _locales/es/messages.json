@@ -39,6 +39,8 @@
     "message": "YouTubeMyTube no tiene acceso a YouTube, así que no se está bloqueando nada. Permite el acceso a youtube.com en los ajustes de extensiones del navegador y recarga las pestañas de YouTube."
   },
   "confirmReset": { "message": "¿Restablecer todos los ajustes y filtros?" },
+  "cancelBtn": { "message": "Cancelar" },
+  "confirmBtn": { "message": "Confirmar" },
   "onboardingHeading": { "message": "Bienvenido a YouTubeMyTube" },
   "onboardingBody": {
     "message": "Elige una sección a la izquierda para bloquear canales, vídeos, comentarios o áreas completas. También puedes bloquear directamente en YouTube desde el menú del reproductor o el popup de la barra de herramientas. Los cambios se aplican al pulsar Guardar."

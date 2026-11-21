@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => {
     notify: vi.fn(),
     backfillMissing: vi.fn(() => Promise.resolve()),
     readBackup: vi.fn(),
+    confirmAction: vi.fn(() => Promise.resolve(true)),
     state: { draft: undefined as unknown, dirty: false },
   };
 });
@@ -18,6 +19,7 @@ const mocks = vi.hoisted(() => {
 vi.mock('../src/options/dom', () => ({ setStatus: mocks.setStatus }));
 vi.mock('../src/options/backfill', () => ({ backfillMissing: mocks.backfillMissing }));
 vi.mock('../src/shared/backup', () => ({ readBackup: mocks.readBackup }));
+vi.mock('../src/options/confirm', () => ({ confirmAction: mocks.confirmAction }));
 vi.mock('../src/options/state', () => ({
   getDraft: () => mocks.state.draft,
   setDraft: mocks.setDraft,
@@ -62,14 +64,12 @@ describe('importSettings', () => {
 
   it('asks before replacing unsaved changes with a native import', async () => {
     mocks.state.dirty = true;
-    const confirm = vi.fn(() => false);
-    vi.stubGlobal('confirm', confirm);
+    mocks.confirmAction.mockResolvedValueOnce(false);
 
     await importSettings(fileOf(JSON.stringify(NATIVE)));
 
-    expect(confirm).toHaveBeenCalledTimes(1);
+    expect(mocks.confirmAction).toHaveBeenCalledTimes(1);
     expect(mocks.setDraft).not.toHaveBeenCalled();
-    vi.unstubAllGlobals();
   });
 
   it('merges a BlockTube backup into the draft without asking', async () => {
@@ -126,13 +126,11 @@ describe('restoreBackup', () => {
     saved.rules.videos = [{ id: 'dQw4w9WgXcQ', title: '' }];
     mocks.readBackup.mockResolvedValue({ state: saved, savedAt: 1 });
     mocks.state.dirty = true;
-    const confirm = vi.fn(() => false);
-    vi.stubGlobal('confirm', confirm);
+    mocks.confirmAction.mockResolvedValueOnce(false);
 
     await restoreBackup();
 
-    expect(confirm).toHaveBeenCalledTimes(1);
+    expect(mocks.confirmAction).toHaveBeenCalledTimes(1);
     expect(mocks.setDraft).not.toHaveBeenCalled();
-    vi.unstubAllGlobals();
   });
 });
