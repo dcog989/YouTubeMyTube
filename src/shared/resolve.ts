@@ -85,9 +85,9 @@ function decodeEntities(value: string): string {
     .replace(/&amp;/g, '&');
 }
 
-function firstGroup(html: string, pattern: RegExp): string {
-  const match = pattern.exec(html);
-  return match?.[1] ? decodeEntities(match[1]).trim() : '';
+function firstGroup(html: string, pattern: RegExp, group = 1): string {
+  const value = pattern.exec(html)?.[group];
+  return value ? decodeEntities(value).trim() : '';
 }
 
 function decodeJsonString(value: string): string {
@@ -106,10 +106,10 @@ function jsonGroup(html: string, pattern: RegExp): string {
 
 export function channelMetaFromHtml(html: string): ChannelMeta {
   const name =
-    firstGroup(html, /<meta[^>]+property=["']og:title["'][^>]*content=["']([^"']*)["']/i) ||
-    firstGroup(html, /<meta[^>]+content=["']([^"']*)["'][^>]*property=["']og:title["']/i);
+    firstGroup(html, /<meta[^>]+property=["']og:title["'][^>]*content=(["'])(.*?)\1/i, 2) ||
+    firstGroup(html, /<meta[^>]+content=(["'])(.*?)\1[^>]*property=["']og:title["']/i, 2);
 
-  const canonical = firstGroup(html, /<link[^>]+rel=["']canonical["'][^>]*href=["']([^"']*)["']/i);
+  const canonical = firstGroup(html, /<link[^>]+rel=["']canonical["'][^>]*href=(["'])(.*?)\1/i, 2);
   // The canonical URL names the page's own channel; `"channelId"` also appears
   // in related-video data, so it is only a last resort.
   const id =
@@ -117,7 +117,8 @@ export function channelMetaFromHtml(html: string): ChannelMeta {
     firstGroup(html, /"externalId":"(UC[A-Za-z0-9_-]+)"/) ||
     firstGroup(
       html,
-      /<meta[^>]+itemprop=["']identifier["'][^>]*content=["'](UC[A-Za-z0-9_-]+)["']/i,
+      /<meta[^>]+itemprop=["']identifier["'][^>]*content=(["'])(UC[A-Za-z0-9_-]+)\1/i,
+      2,
     ) ||
     firstGroup(html, /"channelId":"(UC[A-Za-z0-9_-]+)"/);
 
@@ -133,17 +134,33 @@ export function channelMetaFromHtml(html: string): ChannelMeta {
 }
 
 const SEARCH_CHANNEL_FILTER = 'EgIQAg%3D%3D';
+const CHANNEL_RENDERER = '"channelRenderer":';
+const MAX_SEARCH_RESULTS = 20;
 
-export function channelMetaFromSearch(html: string): ChannelMeta {
-  const start = html.indexOf('"channelRenderer":');
-  if (start === -1) return { id: '', name: '', handle: '' };
-  const block = html.slice(start, start + 4096);
+function metaFromChannelRenderer(block: string): ChannelMeta {
   const id = firstGroup(block, /"channelId":"(UC[A-Za-z0-9_-]+)"/);
   const name =
     jsonGroup(block, /"title":\{"simpleText":"((?:[^"\\]|\\.)*)"/) ||
     jsonGroup(block, /"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/);
   const canonical = firstGroup(block, /"canonicalBaseUrl":"\/(@[^"]+)"/);
   return { id, name, handle: canonical ? normalizeHandle(canonical) : '' };
+}
+
+// One block per `channelRenderer`, bounded by the next renderer instead of a
+// fixed window, so a long first result cannot hide its own handle.
+export function channelMetasFromSearch(html: string): ChannelMeta[] {
+  const metas: ChannelMeta[] = [];
+  let start = html.indexOf(CHANNEL_RENDERER);
+  while (start !== -1 && metas.length < MAX_SEARCH_RESULTS) {
+    const next = html.indexOf(CHANNEL_RENDERER, start + CHANNEL_RENDERER.length);
+    metas.push(metaFromChannelRenderer(html.slice(start, next === -1 ? html.length : next)));
+    start = next;
+  }
+  return metas;
+}
+
+export function channelMetaFromSearch(html: string): ChannelMeta {
+  return channelMetasFromSearch(html)[0] ?? { id: '', name: '', handle: '' };
 }
 
 export function videoTitleFromOembed(payload: unknown): string {
@@ -189,7 +206,13 @@ export async function resolveVideoTitle(
   videoId: string,
   deps?: Partial<ResolveDeps>,
 ): Promise<string> {
-  return videoTitleFromOembed(await fetchOembed(videoId, deps));
+  const payload = await fetchOembed(videoId, deps);
+  if (payload === null) return '';
+  const title = videoTitleFromOembed(payload);
+  // A 200 without a title means the API answered with something unexpected
+  // (consent/bot page), not that the video is gone; callers must retry later.
+  if (!title) throw new Error('Video lookup returned no title');
+  return title;
 }
 
 export async function resolveVideoChannel(
@@ -234,6 +257,11 @@ export async function resolveChannel(
   }
 
   const meta = channelMetaFromHtml(await response.text());
+  if (!meta.name && !meta.id && !meta.handle) {
+    // A 200 without any channel metadata is a consent/bot page or a layout
+    // change, not a missing channel; callers must retry later.
+    throw new Error('Channel lookup returned no metadata');
+  }
   return { id: meta.id || id, name: meta.name, handle: meta.handle || handle };
 }
 
@@ -250,11 +278,13 @@ export async function resolveChannelByName(
   // instead of recording a permanent "not found".
   if (!response.ok) throw new Error(`Channel search failed with status ${response.status}`);
 
-  const meta = channelMetaFromSearch(await response.text());
-  if (normalizeChannelName(meta.name) !== normalizeChannelName(query)) {
-    return { id: '', name: '', handle: '' };
-  }
-  return meta;
+  const matches = channelMetasFromSearch(await response.text()).filter(
+    (meta) => normalizeChannelName(meta.name) === normalizeChannelName(query),
+  );
+  // Display names are not unique; guessing between two same-name channels would
+  // attach the wrong id to the block.
+  const meta = matches.length === 1 ? matches[0] : undefined;
+  return meta ?? { id: '', name: '', handle: '' };
 }
 
 // /c/Name and /user/Name redirect to the canonical /@handle page, so the page
@@ -268,7 +298,11 @@ async function resolveLegacyChannel(
     if (response.status === 404) return { id: '', name: '', handle: '' };
     throw new Error(`Channel lookup failed with status ${response.status}`);
   }
-  return channelMetaFromHtml(await response.text());
+  const meta = channelMetaFromHtml(await response.text());
+  if (!meta.name && !meta.id && !meta.handle) {
+    throw new Error('Channel lookup returned no metadata');
+  }
+  return meta;
 }
 
 export async function resolveChannelMeta(
@@ -292,9 +326,10 @@ export async function resolveChannelMeta(
       if (byHandle.name) return byHandle;
     }
 
-    const query = name || (id ? '' : handle);
-    if (query) {
-      const byName = await resolveChannelByName(query, deps);
+    // Only a stored display name identifies a channel for a search; a handle is
+    // not a name, so searching it would bind the block to a different channel.
+    if (name) {
+      const byName = await resolveChannelByName(name, deps);
       if (byName.id || byName.name) return byName;
     }
     return byRef;

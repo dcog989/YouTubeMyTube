@@ -151,6 +151,18 @@ describe('channelMetaFromHtml', () => {
       '&quot;',
     );
   });
+
+  it('keeps an apostrophe inside a double-quoted attribute', () => {
+    expect(channelMetaFromHtml(`<meta property="og:title" content="Rob's Channel">`).name).toBe(
+      "Rob's Channel",
+    );
+  });
+
+  it('rejects a 200 page with no channel metadata so callers retry', async () => {
+    await expect(
+      resolveChannel({ handle: 'mychannel' }, { fetch: fetchStub('<html></html>') }),
+    ).rejects.toThrow();
+  });
 });
 
 const SEARCH_HTML = `<script>var ytInitialData = {"contents":{"channelRenderer":{"channelId":"UCCB1oLQY3XM86ACD05Lq4HQ","title":{"simpleText":"3 Minutes of Aviation"},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@3MinutesofAviation"}}}}};</script>`;
@@ -168,6 +180,12 @@ describe('channelMetaFromSearch', () => {
       name: '3 Minutes of Aviation',
       handle: '3minutesofaviation',
     });
+  });
+
+  it('finds the handle past the old 4 KB window', () => {
+    const padding = 'x'.repeat(6000);
+    const html = `<script>{"channelRenderer":{"channelId":"UCabc12345678901234567","title":{"simpleText":"Long Result"},"description":${JSON.stringify(padding)},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@LongResult"}}}}</script>`;
+    expect(channelMetaFromSearch(html).handle).toBe('longresult');
   });
 
   it('unescapes JSON string escapes in the name', () => {
@@ -226,6 +244,10 @@ describe('resolveChannel / resolveVideoTitle', () => {
   it('rejects a rate-limited title lookup so callers retry later', async () => {
     await expect(resolveVideoTitle('dQw4w9WgXcQ', { fetch: fetchStub('', 429) })).rejects.toThrow();
   });
+
+  it('rejects a 200 payload with no title so callers retry later', async () => {
+    await expect(resolveVideoTitle('dQw4w9WgXcQ', { fetch: fetchStub('{}') })).rejects.toThrow();
+  });
 });
 
 describe('resolveChannelByName', () => {
@@ -260,6 +282,16 @@ describe('resolveChannelByName', () => {
 
   it('rejects a failed search so callers retry later', async () => {
     await expect(resolveChannelByName('Someone', { fetch: fetchStub('', 503) })).rejects.toThrow();
+  });
+
+  it('stays name-only when two results share the display name', async () => {
+    const html = `${SEARCH_HTML}${SEARCH_HTML.replace(
+      'UCCB1oLQY3XM86ACD05Lq4HQ',
+      'UCduplicate1234567890123456',
+    )}`;
+    expect(await resolveChannelByName('3 Minutes of Aviation', { fetch: fetchStub(html) })).toEqual(
+      { id: '', name: '', handle: '' },
+    );
   });
 });
 
@@ -330,7 +362,7 @@ describe('resolveChannelMeta', () => {
     expect(meta).toEqual({ id: 'UCabc123', name: 'My Channel', handle: 'mychannel' });
   });
 
-  it('falls back to a name search when a bare handle has no channel page', async () => {
+  it('does not search a bare handle as if it were a display name', async () => {
     const fetchImpl = (async (input: unknown) => {
       const isHandlePage = String(input).includes('/@aviation');
       const body = isHandlePage ? '' : SEARCH_HTML_AVIATION;
@@ -343,7 +375,7 @@ describe('resolveChannelMeta', () => {
     }) as unknown as typeof fetch;
 
     const meta = await resolveChannelMeta({ handle: 'aviation' }, { fetch: fetchImpl });
-    expect(meta).toEqual({ id: 'UCCB1oLQY3XM86ACD05Lq4HQ', name: 'Aviation', handle: 'aviation' });
+    expect(meta).toEqual({ id: '', name: '', handle: 'aviation' });
   });
 
   it('resolves a name-only entry through the channel search', async () => {
