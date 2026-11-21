@@ -8,9 +8,11 @@ const OUT_DIR = resolve(ROOT, 'assets/icons');
 export const ICON_SIZES = [16, 32, 48, 64, 96, 128];
 const SUPERSAMPLE = 4;
 
-const LOZENGE_WIDTH = 0.88;
-const LOZENGE_HEIGHT = 0.6;
-const LOZENGE_CORNER_RADIUS = 0.14;
+// Badge geometry: a superellipse, so every edge bows out slightly like a CRT
+// face instead of going dead straight.
+const SHAPE_WIDTH = 0.96;
+const SHAPE_HEIGHT = 0.68;
+const SHAPE_EXPONENT = 4;
 
 const GLYPH_BOX = 0.48;
 const GLYPH_VIEWBOX = 24;
@@ -25,7 +27,7 @@ const CHECK_POINTS = [
   [4, 12],
 ];
 
-const LOZENGE_COLOR = { r: 224, g: 49, b: 64 };
+const SHAPE_COLOR = { r: 255, g: 0, b: 49 };
 const GLYPH_COLOR = { r: 255, g: 255, b: 255 };
 
 /**
@@ -79,17 +81,14 @@ function encodePng(width, height, rgba) {
  * @param {number} cy
  * @param {number} halfWidth
  * @param {number} halfHeight
- * @param {number} radius
  * @returns {boolean}
  */
-function inRoundedRect(px, py, cx, cy, halfWidth, halfHeight, radius) {
-  const dx = Math.abs(px - cx);
-  const dy = Math.abs(py - cy);
-  if (dx > halfWidth || dy > halfHeight) return false;
-  const innerX = halfWidth - radius;
-  const innerY = halfHeight - radius;
-  if (dx <= innerX || dy <= innerY) return true;
-  return Math.hypot(dx - innerX, dy - innerY) <= radius;
+function inShape(px, py, cx, cy, halfWidth, halfHeight) {
+  return (
+    Math.abs((px - cx) / halfWidth) ** SHAPE_EXPONENT +
+      Math.abs((py - cy) / halfHeight) ** SHAPE_EXPONENT <=
+    1
+  );
 }
 
 /**
@@ -119,9 +118,8 @@ function renderIcon(size) {
   const hiBuf = new Uint8ClampedArray(hi * hi * 4);
   const center = hi / 2;
 
-  const halfWidth = hi * (LOZENGE_WIDTH / 2);
-  const halfHeight = hi * (LOZENGE_HEIGHT / 2);
-  const cornerRadius = hi * LOZENGE_CORNER_RADIUS;
+  const halfWidth = hi * (SHAPE_WIDTH / 2);
+  const halfHeight = hi * (SHAPE_HEIGHT / 2);
   const checkStroke = hi * (CHECK_STROKE / 2);
   /** @type {[number, number][]} */
   const checkPath = CHECK_POINTS.map(([x, y]) => [
@@ -133,7 +131,7 @@ function renderIcon(size) {
     for (let x = 0; x < hi; x += 1) {
       const px = x + 0.5;
       const py = y + 0.5;
-      if (!inRoundedRect(px, py, center, center, halfWidth, halfHeight, cornerRadius)) continue;
+      if (!inShape(px, py, center, center, halfWidth, halfHeight)) continue;
 
       const offset = (y * hi + x) * 4;
       let onCheck = false;
@@ -145,9 +143,9 @@ function renderIcon(size) {
       }
       const isGlyph = onCheck;
 
-      hiBuf[offset] = isGlyph ? GLYPH_COLOR.r : LOZENGE_COLOR.r;
-      hiBuf[offset + 1] = isGlyph ? GLYPH_COLOR.g : LOZENGE_COLOR.g;
-      hiBuf[offset + 2] = isGlyph ? GLYPH_COLOR.b : LOZENGE_COLOR.b;
+      hiBuf[offset] = isGlyph ? GLYPH_COLOR.r : SHAPE_COLOR.r;
+      hiBuf[offset + 1] = isGlyph ? GLYPH_COLOR.g : SHAPE_COLOR.g;
+      hiBuf[offset + 2] = isGlyph ? GLYPH_COLOR.b : SHAPE_COLOR.b;
       hiBuf[offset + 3] = 255;
     }
   }

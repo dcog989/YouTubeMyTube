@@ -10,15 +10,16 @@
   --panel: light-dark(#ffffff, #1f2229);
   --panel-alt: light-dark(#f0f1f4, #262a32);
   --text: light-dark(#1a1a1f, #eceef2);
-  --muted: light-dark(#5f6470, #9aa1ad);
+  --muted: light-dark(#575b66, #d0d3d9);
   --border: light-dark(#e0e2e7, #333844);
-  --accent: #e03140;
-  --accent-hover: light-dark(#c42736, #eb4a59);
-  --danger: light-dark(#b42318, #f2685f);
+  --accent: #d10028;
+  --accent-text: light-dark(#b70024, #ffbec9);
+  --accent-hover: light-dark(#b80024, #e6002b);
+  --danger: light-dark(#a92117, #fac5c1);
   --ok-bg: light-dark(#e7f6ec, #14301f);
-  --ok-text: light-dark(#157347, #6ddc9a);
+  --ok-text: light-dark(#136941, #8de4b0);
   --bad-bg: light-dark(#fdecea, #3a1a18);
-  --bad-text: light-dark(#b42318, #ff9a92);
+  --bad-text: light-dark(#a52016, #ffc1bc);
   --input-bg: light-dark(#ffffff, #171a20);
 }
 
@@ -104,7 +105,7 @@ body {
 }
 
 .dirty {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 12px;
   font-weight: 600;
 }
@@ -295,7 +296,7 @@ textarea {
 .input:focus,
 .select:focus,
 textarea:focus {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: -1px;
   border-color: transparent;
 }
@@ -320,7 +321,7 @@ textarea:focus {
 }
 
 .btn:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .btn:disabled {
@@ -453,7 +454,7 @@ textarea:focus {
 }
 
 .switch input:focus-visible + .slider {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
 }
 

@@ -3,9 +3,10 @@
   color-scheme: light dark;
   --bg: light-dark(#f4f5f7, #16181d);
   --text: light-dark(#1a1a1f, #eceef2);
-  --muted: light-dark(#5f6470, #9aa1ad);
+  --muted: light-dark(#575b66, #d0d3d9);
   --border: light-dark(#e0e2e7, #333844);
-  --accent: #e03140;
+  --accent: #d10028;
+  --accent-text: light-dark(#b70024, #ffbec9);
   --panel: light-dark(#ffffff, #1f2229);
 }
 
@@ -80,7 +81,7 @@ h1 {
 }
 
 .btn:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .btn-primary {

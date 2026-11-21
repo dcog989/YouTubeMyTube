@@ -7,10 +7,11 @@
   --bg: light-dark(#ffffff, #1f2229);
   --panel-alt: light-dark(#f0f1f4, #2a2e37);
   --text: light-dark(#1a1a1f, #eceef2);
-  --muted: light-dark(#5f6470, #9aa1ad);
+  --muted: light-dark(#575b66, #d0d3d9);
   --border: light-dark(#e0e2e7, #333844);
-  --accent: #e03140;
-  --accent-hover: light-dark(#c42736, #eb4a59);
+  --accent: #d10028;
+  --accent-text: light-dark(#b70024, #ffbec9);
+  --accent-hover: light-dark(#b80024, #e6002b);
 }
 
 :root[data-theme="light"] {
@@ -96,7 +97,7 @@ body {
 
 .status {
   margin: 0;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 12px;
 }
 
@@ -116,7 +117,7 @@ body {
 }
 
 .btn:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-text);
 }
 
 .btn:disabled {
@@ -184,6 +185,6 @@ body {
 }
 
 .switch input:focus-visible + .slider {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 2px;
 }

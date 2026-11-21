@@ -7,7 +7,11 @@
   aria-label="YouTubeMyTube"
 >
   <title>YouTubeMyTube</title>
-  <rect x="1.44" y="4.8" width="21.12" height="14.4" rx="3.36" fill="#e03140" />
+  <!-- Superellipse badge: every edge bows out slightly. -->
+  <path
+    fill="#ff0031"
+    d="M12 3.84 C22.737 3.84 23.52 4.395 23.52 12 C23.52 19.605 22.737 20.16 12 20.16 C1.263 20.16 0.48 19.605 0.48 12 C0.48 4.395 1.263 3.84 12 3.84 Z"
+  />
   <g
     fill="none"
     stroke="#ffffff"
