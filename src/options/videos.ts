@@ -5,7 +5,8 @@ import type { VideoEntry } from '../shared/types';
 import { byId } from '../shared/ui';
 import { updateCounts } from './counts';
 import { setStatus } from './dom';
-import { removeLabelFor, renderEntityTable } from './entity-table';
+import { focusRemove, removeLabelFor, renderEntityTable } from './entity-table';
+import { videoLookupApplies } from './lookup';
 import { createTableSorter, type SortColumns } from './sort';
 import { getDraft, isDirty, setDirty } from './state';
 
@@ -36,18 +37,22 @@ export function renderVideos(force = false): void {
     items: sorter.sort(draft.rules.videos),
     idOf: (video) => video.id,
     setId: (video, value) => {
+      if (video.id === value) return;
+      // The title belongs to the old id.
       video.id = value;
+      video.title = '';
       delete video.lookupFailed;
       setDirty(true);
     },
     placeholder: '11-character ID',
     columns: [(video) => video.title || (video.lookupFailed ? t('notFound') : '—')],
     removeLabel: (video) => removeLabelFor(video.id || video.title),
-    onRemove: (video) => {
-      const index = draft.rules.videos.indexOf(video);
-      if (index !== -1) draft.rules.videos.splice(index, 1);
+    onRemove: (video, index) => {
+      const draftIndex = draft.rules.videos.indexOf(video);
+      if (draftIndex !== -1) draft.rules.videos.splice(draftIndex, 1);
       renderVideos(true);
       setDirty(true);
+      focusRemove('video-rows', index, 'video-add');
     },
   });
   updateCounts();
@@ -69,13 +74,13 @@ export async function addVideo(): Promise<void> {
   }
 
   input.value = '';
-  renderVideos(true);
   setDirty(true);
   setStatus('video-status', t('videosLooking'), true);
 
+  const id = entry.id;
   try {
-    const title = await resolveVideoTitle(entry.id);
-    if (!getDraft().rules.videos.includes(entry)) {
+    const title = await resolveVideoTitle(id);
+    if (!videoLookupApplies(getDraft().rules, entry, id)) {
       setStatus('video-status', '', true);
       return;
     }
@@ -84,6 +89,7 @@ export async function addVideo(): Promise<void> {
     setDirty(true);
     setStatus('video-status', entry.title ? t('addedNamed', entry.title) : t('videosAdded'), true);
   } catch {
+    renderVideos();
     setStatus('video-status', t('videosFetchFailed'), false);
   }
 }

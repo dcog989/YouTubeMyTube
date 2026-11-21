@@ -5,7 +5,8 @@ import type { ChannelEntry } from '../shared/types';
 import { byId } from '../shared/ui';
 import { updateCounts } from './counts';
 import { setStatus } from './dom';
-import { removeLabelFor, renderEntityTable } from './entity-table';
+import { focusRemove, removeLabelFor, renderEntityTable } from './entity-table';
+import { channelAddStep } from './lookup';
 import { createTableSorter, type SortColumns } from './sort';
 import { getDraft, isDirty, setDirty } from './state';
 
@@ -39,7 +40,12 @@ export function renderChannels(force = false): void {
     items: sorter.sort(draft.rules.channels),
     idOf: (channel) => channel.id,
     setId: (channel, value) => {
+      if (channel.id === value) return;
+      // The name and handle belong to the old id; keeping them would keep
+      // blocking the channel the user is replacing.
       channel.id = value;
+      channel.name = '';
+      channel.handle = '';
       delete channel.lookupFailed;
       setDirty(true);
     },
@@ -49,11 +55,12 @@ export function renderChannels(force = false): void {
       (channel) => (channel.handle ? `@${channel.handle}` : '—'),
     ],
     removeLabel: (channel) => removeLabelFor(channel.id || channel.name || channel.handle),
-    onRemove: (channel) => {
-      const index = draft.rules.channels.indexOf(channel);
-      if (index !== -1) draft.rules.channels.splice(index, 1);
+    onRemove: (channel, index) => {
+      const draftIndex = draft.rules.channels.indexOf(channel);
+      if (draftIndex !== -1) draft.rules.channels.splice(draftIndex, 1);
       renderChannels(true);
       setDirty(true);
+      focusRemove('channel-rows', index, 'channel-add');
     },
   });
   updateCounts();
@@ -71,7 +78,7 @@ async function addLegacyChannel(path: string, raw: string): Promise<void> {
     setStatus('channel-status', t('channelsFetchFailed'), false);
     return;
   }
-  if (!meta || (!meta.id && !meta.name)) {
+  if (!meta || (!meta.id && !meta.name && !meta.handle)) {
     setStatus('channel-status', t('channelsNotFound', raw), false);
     return;
   }
@@ -117,11 +124,11 @@ export async function addChannel(): Promise<void> {
   }
 
   input.value = '';
-  renderChannels(true);
   setDirty(true);
 
   const stored = findChannel(draft.rules, entry);
   if (!stored) {
+    renderChannels(true);
     setStatus('channel-status', t('channelsAdded'), true);
     return;
   }
@@ -132,17 +139,19 @@ export async function addChannel(): Promise<void> {
     const channels = getDraft().rules.channels;
     return channels.includes(stored) ? channels : null;
   };
+  const before = { id: stored.id, name: stored.name, handle: stored.handle };
 
   try {
     const bareHandle =
       Boolean(handle) && !raw.startsWith('@') && !raw.includes('/') && !raw.includes(':');
     const meta = await resolveChannelMeta({ id, handle, name });
     const channels = liveChannels();
-    if (!channels) {
+    const step = channelAddStep(channels ? stored : undefined, before, handle, meta);
+    if (step === 'stale' || !channels) {
       setStatus('channel-status', '', true);
       return;
     }
-    if (handle && !meta.name && !meta.id) {
+    if (step === 'not-found') {
       const index = channels.indexOf(stored);
       if (index !== -1) channels.splice(index, 1);
       renderChannels();
@@ -164,6 +173,7 @@ export async function addChannel(): Promise<void> {
       true,
     );
   } catch {
+    renderChannels();
     setStatus('channel-status', t('channelsFetchFailed'), false);
   }
 }

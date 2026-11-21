@@ -9,17 +9,25 @@ export interface EntityTableOptions<T> {
   placeholder: string;
   columns: Array<(item: T) => string>;
   removeLabel: (item: T) => string;
-  onRemove: (item: T) => void;
+  onRemove: (item: T, index: number) => void;
 }
 
 export function removeLabelFor(name: string): string {
   return name ? `${t('remove')}: ${name}` : t('remove');
 }
 
+// Keeps keyboard focus on the same row after a remove re-renders the table.
+export function focusRemove(bodyId: string, index: number, fallbackId: string): void {
+  const buttons = byId(bodyId).querySelectorAll<HTMLButtonElement>('button');
+  const target =
+    index >= 0 && buttons.length > 0 ? buttons.item(Math.min(index, buttons.length - 1)) : null;
+  (target ?? byId<HTMLButtonElement>(fallbackId)).focus();
+}
+
 export function renderEntityTable<T>(options: EntityTableOptions<T>): void {
   const body = byId(options.bodyId);
-  body.replaceChildren();
-  for (const item of options.items) {
+  const rows = document.createDocumentFragment();
+  options.items.forEach((item, index) => {
     const idInput = h('input', {
       className: 'input entity-input',
       value: options.idOf(item),
@@ -34,9 +42,9 @@ export function renderEntityTable<T>(options: EntityTableOptions<T>): void {
       text: t('remove'),
     });
     remove.setAttribute('aria-label', options.removeLabel(item));
-    remove.addEventListener('click', () => options.onRemove(item));
+    remove.addEventListener('click', () => options.onRemove(item, index));
 
-    body.appendChild(
+    rows.appendChild(
       h(
         'tr',
         {},
@@ -47,5 +55,6 @@ export function renderEntityTable<T>(options: EntityTableOptions<T>): void {
         h('td', { className: 'col-action' }, remove),
       ),
     );
-  }
+  });
+  body.replaceChildren(rows);
 }
