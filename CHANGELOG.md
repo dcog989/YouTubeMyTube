@@ -2,6 +2,101 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.19.0 - 2026-11-21
+#### Features
+- (**areas**) add paid videos toggle and hide YouTube Featured shelves - (05b5e3c) - dcog989
+- (**content**) block video pages in-page with a blurred player cover - (617cc00) - dcog989
+- (**dnr**) block blocked videos embedded in other sites - (281850c) - dcog989
+- (**options**) rename the areas panel to pages and sections - (de932be) - dcog989
+- (**options**) list videos allowed from the player - (103eeb8) - dcog989
+- (**options**) replace window.confirm with an in-page confirmation dialog - (6731cf0) - dcog989
+- (**options**) warn when the extension has no access to YouTube - (dce5b25) - dcog989
+- (**options**) shorten the import and export buttons and add tooltips - (db375ab) - dcog989
+- (**options**) filter the channel and video block lists - (c40b6a6) - dcog989
+- (**popup**) report total filter count only - (e129b18) - dcog989
+- keep an automatic pre-write snapshot of the block rules - (73f53d8) - dcog989
+- apply blocking on YouTube Music - (81aeffa) - dcog989
+#### Bug Fixes
+- (**backup**) allow the first save and seed the automatic snapshot - (a026e03) - dcog989
+- (**blocked**) allow the video the user unblocked - (4b82bef) - dcog989
+- (**blocked**) stay on the page when the removal failed - (9bd7a22) - dcog989
+- (**build**) keep ZIP timestamps in UTC so an epoch reproduces the same bytes in every timezone - (07a4fc0) - dcog989
+- (**build**) ship the license and build from a source archive - (b4e22dd) - dcog989
+- (**build**) move web-ext lint out of check and call just from hooks - (4a87102) - dcog989
+- (**content**) match channel pages by either identity form - (f50866f) - dcog989
+- (**content**) keep the block overlay accurate and modal - (b432519) - dcog989
+- (**content**) re-evaluate blocking after in-app navigation - (15a046d) - dcog989
+- (**content**) clear the block overlay from the state the removal returned - (7101e31) - dcog989
+- (**content**) only answer context requests from this extension - (eeb19f1) - dcog989
+- (**content**) time out and cap channel lookups - (69ebe75) - dcog989
+- (**content**) make the block overlay fail closed and reachable - (a6f0a1b) - dcog989
+- (**content**) filter current comments and missed card types - (16364cb) - dcog989
+- (**content**) render the blank cover as soon as the body exists - (cde3f45) - dcog989
+- (**content**) re-evaluate state changes the rescan check ignored - (d032a1c) - dcog989
+- (**dnr**) harden rule generation and worker reconciliation - (b07c58f) - dcog989
+- (**i18n**) localize the options tab title and set the text direction - (d5de80d) - dcog989
+- (**icons**) match YouTube favicon geometry and #ff0033 badge red - (0b8aa91) - dcog989
+- (**import**) keep BlockTube channel-name semantics and validate ids - (82b121e) - dcog989
+- (**menu**) size the injected row from the menu label, not the row box - (9821520) - dcog989
+- (**menu**) act on the clicked entity, not a stale one - (611ed62) - dcog989
+- (**options**) guard settings import against oversized files and unsaved edits - (d322805) - dcog989
+- (**options**) test URLs with the same parsing the Add boxes use - (dc71ec3) - dcog989
+- (**options**) cap metadata backfill so a big import cannot hammer YouTube - (55f45a8) - dcog989
+- (**options**) restore the blocking switch focus ring - (b8b8a3c) - dcog989
+- (**options**) localize the shell controls and expose their state - (b8159e0) - dcog989
+- (**options**) keep entity edits authoritative during lookups - (d56da1a) - dcog989
+- (**options**) reject imports without a rules list - (41fbaa9) - dcog989
+- (**options**) announce status changes and the active panel - (6f46b6e) - dcog989
+- (**options**) protect drafts across save, discard and external changes - (5af51c9) - dcog989
+- (**popup**) count enabled areas in the total - (390a9fc) - dcog989
+- (**popup**) keep the video title, unblock and report failed saves - (96cc3d1) - dcog989
+- (**resolve**) retry empty lookups and never guess between same-name channels - (89f6bb0) - dcog989
+- (**resolve**) follow the id-handle-name fallback for channel lookups - (f61b8be) - dcog989
+- (**shared**) make channel matching identity-aware and merges linear - (57273e3) - dcog989
+- (**ui**) consistent accent coloring - (42f3b90) - dcog989
+- (**url**) reject channel paths that are not channel ids - (6a69d83) - dcog989
+- (**url**) validate entity ids and accept scheme-less links - (359ad11) - dcog989
+- harden state loading, normalization and mutation validation - (232db8a) - dcog989
+#### Performance Improvements
+- (**content**) skip the card rescan when only areas change - (43f9c15) - dcog989
+- (**content**) cap concurrent channel lookups - (00c5d3e) - dcog989
+- (**content**) run in the top frame only and dedupe mutation records - (872d473) - dcog989
+- (**rules**) normalize channel lookups once per scan - (c5a11de) - dcog989
+#### Documentation
+- (**agents**) add the content, popup and blocked modules to the file map - (f890520) - dcog989
+- agents.md refined - (54d0f35) - dcog989
+- disclose music.youtube.com and list the missing key files - (6e9f4f6) - dcog989
+- agents.md refined - (8b48c73) - dcog989
+- readme refined - (327518b) - dcog989
+#### Tests
+- (**content**) guard state rescans, batching, playback leases and lookup limits - (ec538b8) - dcog989
+- (**menu**) cover the block/unblock decision - (ba38f37) - dcog989
+- cover the ZIP writer and check markup keys against the catalog - (dd97b08) - dcog989
+- include data operations in the coverage gate - (5fa340d) - dcog989
+#### Continuous Integration
+- (**release**) allow re-running a release for an existing tag - (60d56e0) - dcog989
+- pin the toolchain and isolate the release token - (62998a3) - dcog989
+- install just in the release job - (f433854) - dcog989
+#### Refactoring
+- (**content**) drop the allowed-video exception list in favor of a settings hint - (c78c386) - dcog989
+- (**content**) type the block surface rule and guard its tables - (46fa2f7) - dcog989
+- (**dnr**) derive rule counts from the plan - (e98b7b0) - dcog989
+- (**options**) fold the sorter into the table sorter - (2d4dae8) - dcog989
+- (**options**) share entity tables and keep edits in place - (4517fd2) - dcog989
+- (**scripts**) use node:zlib crc32 instead of a hand-rolled table - (990d397) - dcog989
+#### Miscellaneous Chores
+- (**build**) call just from the git hooks - (987a073) - dcog989
+- (**build**) call just from the git hooks - (9c64ee6) - dcog989
+- (**build**) call the just recipes from CI, hooks and docs - (92b87d2) - dcog989
+- (**build**) wrap the remaining dev scripts in just - (dd2f063) - dcog989
+- (**build**) add an update recipe - (077ca74) - dcog989
+- (**build**) add a justfile for the common dev tasks - (b700736) - dcog989
+- (**i18n**) drop the unused short theme labels from all catalogs - (636c730) - dcog989
+- updates - (f1544f0) - dcog989
+- updates - (4d3f86f) - dcog989
+
+- - -
+
 ## 0.18.2 - 2026-11-15
 #### Bug Fixes
 - (**background**) never seed default state on update - (e0d444e) - dcog989
