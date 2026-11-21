@@ -163,29 +163,20 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
   return { rules, dropped };
 }
 
-// Same rule set as buildDnrRules, counted without building the rule strings the
-// options page only needs numbers for.
+// Same rule set as buildDnrRules, counted from the plan so the warning cannot
+// drift from what the worker installs.
 export interface DnrCounts {
   total: number;
   regex: number;
 }
 
 export function countDnrRules(state: BlockerState): DnrCounts {
-  if (!state.settings.enabled) return { total: 0, regex: 0 };
-  let areas = 0;
-  for (const area of AREA_DEFINITIONS) {
-    if (area.mode === 'redirect' && state.areas[area.key]) areas += 1;
+  const plan = planDnrRules(state);
+  let regex = 0;
+  for (const entry of plan) {
+    if (entry.regexFilter !== undefined) regex += 1;
   }
-  let videos = 0;
-  for (const { id } of state.rules.videos) {
-    if (isDnrVideoId(id)) videos += 1;
-  }
-  let channels = 0;
-  for (const { id, handle } of state.rules.channels) {
-    if (isDnrChannelId(id)) channels += 1;
-    if (isDnrHandle(handle)) channels += 1;
-  }
-  return { total: areas + videos + channels, regex: areas + videos };
+  return { total: plan.length, regex };
 }
 
 export interface DnrOverflow {
