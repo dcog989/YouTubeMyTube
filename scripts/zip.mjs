@@ -42,8 +42,11 @@ function collectFiles(dir, base = dir) {
  * @returns {DosStamp}
  */
 function dosTimestamp(date) {
-  const time = (date.getHours() << 11) | (date.getMinutes() << 5) | (date.getSeconds() >> 1);
-  const day = ((date.getFullYear() - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
+  // UTC keeps an archive byte-identical regardless of the build machine's timezone.
+  const time =
+    (date.getUTCHours() << 11) | (date.getUTCMinutes() << 5) | (date.getUTCSeconds() >> 1);
+  const day =
+    ((date.getUTCFullYear() - 1980) << 9) | ((date.getUTCMonth() + 1) << 5) | date.getUTCDate();
   return { time, day };
 }
 
@@ -53,7 +56,7 @@ function dosTimestamp(date) {
 function archiveDate() {
   const epoch = Number.parseInt(process.env.SOURCE_DATE_EPOCH ?? '', 10);
   const date = Number.isFinite(epoch) ? new Date(epoch * 1000) : new Date();
-  return date.getFullYear() < MIN_ZIP_YEAR ? new Date(MIN_ZIP_YEAR, 0, 1) : date;
+  return date.getUTCFullYear() < MIN_ZIP_YEAR ? new Date(Date.UTC(MIN_ZIP_YEAR, 0, 1)) : date;
 }
 
 /**
