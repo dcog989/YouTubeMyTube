@@ -100,9 +100,9 @@ function buildActions(reason: Reason, feedback: Feedback): HTMLElement {
       const saved = await unblockReason(reason, parseYouTubeUrl(window.location.href).videoId);
       if (!saved) return;
       // The worker returned the stored state; apply it here so the cover clears
-      // even when the storage echo is late or never arrives.
+      // even when the storage echo is late or never arrives. The rescan shows
+      // the remaining block when another rule still matches.
       feedback.apply(saved);
-      feedback.clear();
     })();
   });
 
@@ -314,6 +314,25 @@ function createChannelOverlay(options: {
   let overlay: HTMLElement | null = null;
   let currentKey = '';
   let lease: PlaybackLease | null = null;
+  let inertHost: HTMLElement | null = null;
+
+  // The overlay is a sibling of the app root, so making the app inert leaves
+  // the overlay's buttons as the only focusable content.
+  function appHost(): HTMLElement | null {
+    return document.querySelector<HTMLElement>('ytd-app, ytm-app');
+  }
+
+  function setInert(): void {
+    const host = appHost();
+    if (inertHost && inertHost !== host) inertHost.removeAttribute('inert');
+    inertHost = host;
+    host?.setAttribute('inert', '');
+  }
+
+  function clearInert(): void {
+    inertHost?.removeAttribute('inert');
+    inertHost = null;
+  }
 
   function clear(): void {
     lease?.release();
@@ -321,6 +340,7 @@ function createChannelOverlay(options: {
     overlay?.remove();
     overlay = null;
     currentKey = '';
+    clearInert();
   }
 
   function channelLabel(info: ChannelOverlayInfo): string {
@@ -352,7 +372,10 @@ function createChannelOverlay(options: {
     if (!host) return;
 
     const key = `${reasonKey(info.reason)}|${info.name ?? ''}|${info.id ?? ''}`;
-    if (overlay && currentKey === key && overlay.isConnected) return;
+    if (overlay && currentKey === key && overlay.isConnected) {
+      setInert();
+      return;
+    }
     clear();
 
     lease = guard.acquire();
@@ -361,6 +384,7 @@ function createChannelOverlay(options: {
     host.appendChild(root);
     overlay = root;
     currentKey = key;
+    setInert();
     const action =
       root.querySelector<HTMLButtonElement>('.ytb-block-remove:not([hidden])') ??
       root.querySelector<HTMLButtonElement>('.ytb-block-home');
