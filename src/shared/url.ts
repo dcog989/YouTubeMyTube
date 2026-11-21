@@ -49,6 +49,12 @@ export function isYouTubeHost(hostname: string): boolean {
   return hostname.endsWith(`.${YOUTUBE_DOMAIN}`);
 }
 
+// The path the browser would request, using the same scheme-less handling as
+// `parseYouTubeUrl` so callers compare entities and areas from one URL string.
+export function pathnameFrom(href: string): string {
+  return toUrl(href)?.pathname ?? '/';
+}
+
 export function parseYouTubeUrl(href: string): ParsedUrl {
   const url = toUrl(href);
   if (!url || !isYouTubeHost(url.hostname)) return { kind: 'other' };
