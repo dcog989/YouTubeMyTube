@@ -21,7 +21,7 @@ const SETTLE_REFRESH_MS = [3000, 10000];
 
 async function init(): Promise<void> {
   const guard = createPlaybackGuard();
-  const overlay = createOverlayFeedback(guard);
+  const overlay = createOverlayFeedback(guard, (state) => applyState(state));
   const channelCache = createChannelCache();
   const evaluator = createEvaluator({ store, overlay });
   const filter = createFilterEngine({ store, channelCache, evaluate: () => evaluator.schedule() });

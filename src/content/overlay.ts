@@ -4,6 +4,7 @@ import type { Reason } from '../shared/reason';
 import { reasonDetail } from '../shared/reason-copy';
 import { unblockReason } from '../shared/rules-service';
 import { getRuntimeUrl } from '../shared/runtime';
+import type { BlockerState } from '../shared/types';
 import { h } from '../shared/ui';
 import { ruleRefForReason } from '../shared/unblock';
 import { parseYouTubeUrl } from '../shared/url';
@@ -46,6 +47,7 @@ interface ChannelOverlay {
 
 interface Feedback {
   clear(): void;
+  apply(state: BlockerState): void;
 }
 
 function reasonKey(reason: Reason): string {
@@ -94,7 +96,11 @@ function buildActions(reason: Reason, feedback: Feedback): HTMLElement {
     void (async () => {
       if (!ref) return;
       // A failed or no-op removal must not reveal content that is still blocked.
-      if (!(await unblockReason(reason))) return;
+      const saved = await unblockReason(reason);
+      if (!saved) return;
+      // The worker returned the stored state; apply it here so the cover clears
+      // even when the storage echo is late or never arrives.
+      feedback.apply(saved);
       feedback.clear();
     })();
   });
@@ -121,11 +127,17 @@ export interface OverlayFeedback extends Feedback {
 // The cover and overlay need `feedback.clear` for their remove buttons, while
 // feedback needs both to clear them; the consts close over each other, which is
 // safe because clear only runs after both are initialized.
-export function createOverlayFeedback(guard: PlaybackGuard): OverlayFeedback {
+export function createOverlayFeedback(
+  guard: PlaybackGuard,
+  onState?: (state: BlockerState) => void,
+): OverlayFeedback {
   const feedback: Feedback = {
     clear() {
       blank.clear();
       overlay.clear();
+    },
+    apply(state) {
+      onState?.(state);
     },
   };
 
@@ -134,6 +146,7 @@ export function createOverlayFeedback(guard: PlaybackGuard): OverlayFeedback {
 
   return {
     clear: feedback.clear,
+    apply: feedback.apply,
     requestBlank: (blanked, reason) => blank.set(blanked, reason),
     clearChannel: () => overlay.clear(),
     showChannel: (info) => overlay.show(info),
