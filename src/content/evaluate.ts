@@ -1,5 +1,6 @@
 import { YOUTUBE_HOME } from '../shared/constants';
 import { matchAreaRedirect, matchEntity } from '../shared/match';
+import type { Reason, ReasonKind } from '../shared/reason';
 import type { ParsedUrl } from '../shared/types';
 import { parseYouTubeUrl } from '../shared/url';
 import { createCoalescer } from './batch';
@@ -18,9 +19,15 @@ const SUPPORTED_KINDS: ReadonlySet<ParsedUrl['kind']> = new Set([
   'handle',
 ]);
 
-const PLAYER_BLANK_KINDS: ReadonlySet<string> = new Set(['video', 'title']);
+const PLAYER_BLANK_KINDS: ReadonlySet<ReasonKind> = new Set(['video', 'title']);
 
 const SHORTS_KIND = 'shorts';
+
+// A full-page overlay would swallow the Shorts pager's scroll input, so Shorts
+// always use the player cover, which lets scrolling through.
+export function blockSurface(reason: Reason, kind: ParsedUrl['kind']): 'blank' | 'channel' {
+  return kind === SHORTS_KIND || PLAYER_BLANK_KINDS.has(reason.kind) ? 'blank' : 'channel';
+}
 
 function isSupportedPage(parsed: ParsedUrl): boolean {
   return SUPPORTED_KINDS.has(parsed.kind);
@@ -69,9 +76,7 @@ export function createEvaluator(deps: { store: Store; overlay: OverlayFeedback }
     lastIdentity = entityKey(entity);
     const result = matchEntity(entity, compiled);
     if (result.blocked) {
-      // A full-page overlay would swallow the Shorts pager's scroll input, so
-      // Shorts always use the player cover, which lets scrolling through.
-      if (parsed.kind === SHORTS_KIND || PLAYER_BLANK_KINDS.has(result.reason.kind)) {
+      if (blockSurface(result.reason, parsed.kind) === 'blank') {
         deps.overlay.clearChannel();
         deps.overlay.requestBlank(true, result.reason);
         return;
