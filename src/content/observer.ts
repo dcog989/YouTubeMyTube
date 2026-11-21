@@ -11,28 +11,31 @@ const OBSERVED_ATTRIBUTES = ['href', 'title', 'aria-label'];
 const listeners = new WeakMap<Node, Set<ChangeListener>>();
 
 function collectChanges(mutations: MutationRecord[]): ElementChange {
-  const added: Element[] = [];
-  const changed: Element[] = [];
+  const added = new Set<Element>();
+  const changed = new Set<Element>();
   for (const mutation of mutations) {
     if (mutation.type === 'childList') {
-      let replacedText = false;
+      let textChanged = false;
       mutation.addedNodes.forEach((node) => {
-        if (node.nodeType === Node.ELEMENT_NODE) added.push(node as Element);
-        else replacedText = true;
+        if (node.nodeType === Node.ELEMENT_NODE) added.add(node as Element);
+        else textChanged = true;
       });
-      if (replacedText && mutation.target.nodeType === Node.ELEMENT_NODE) {
-        changed.push(mutation.target as Element);
+      mutation.removedNodes.forEach((node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) textChanged = true;
+      });
+      if (textChanged && mutation.target.nodeType === Node.ELEMENT_NODE) {
+        changed.add(mutation.target as Element);
       }
       continue;
     }
     if (mutation.type === 'characterData') {
       const parent = mutation.target.parentElement;
-      if (parent) changed.push(parent);
+      if (parent) changed.add(parent);
       continue;
     }
-    if (mutation.target.nodeType === Node.ELEMENT_NODE) changed.push(mutation.target as Element);
+    if (mutation.target.nodeType === Node.ELEMENT_NODE) changed.add(mutation.target as Element);
   }
-  return { added, changed };
+  return { added: [...added], changed: [...changed] };
 }
 
 function observe(root: Node, rootListeners: Set<ChangeListener>): void {
