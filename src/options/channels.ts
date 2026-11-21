@@ -28,6 +28,20 @@ export function wireChannelSort(onSort: () => void): void {
   sorter.wire('channel-rows', onSort);
 }
 
+let channelFilter = '';
+
+function matchesChannelFilter(channel: ChannelEntry): boolean {
+  if (!channelFilter) return true;
+  return [channel.id, channel.name, channel.handle].some((field) =>
+    field.toLowerCase().includes(channelFilter),
+  );
+}
+
+export function setChannelFilter(value: string): void {
+  channelFilter = value.trim().toLowerCase();
+  renderChannels(true);
+}
+
 export function renderChannels(force = false): void {
   const body = byId('channel-rows');
   if (!force && isDirty() && body.contains(document.activeElement)) {
@@ -37,7 +51,7 @@ export function renderChannels(force = false): void {
   const draft = getDraft();
   renderEntityTable({
     bodyId: 'channel-rows',
-    items: sorter.sort(draft.rules.channels),
+    items: sorter.sort(draft.rules.channels.filter(matchesChannelFilter)),
     idOf: (channel) => channel.id,
     setId: (channel, value) => {
       if (channel.id === value) return;

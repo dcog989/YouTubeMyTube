@@ -44,6 +44,8 @@
 
   "channelBlockLabel": { "message": "حظر قناة" },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "channelSearchPlaceholder": { "message": "تصفية القنوات..." },
+  "videoSearchPlaceholder": { "message": "تصفية الفيديوهات..." },
   "thChannelId": { "message": "معرّف القناة" },
   "thName": { "message": "الاسم" },
   "thHandle": { "message": "Handle" },

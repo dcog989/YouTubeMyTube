@@ -44,6 +44,8 @@
 
   "channelBlockLabel": { "message": "Block a channel" },
   "channelAddPlaceholder": { "message": "Add channel name, URL, @handle, or ID..." },
+  "channelSearchPlaceholder": { "message": "Filter channels..." },
+  "videoSearchPlaceholder": { "message": "Filter videos..." },
   "thChannelId": { "message": "Channel ID" },
   "thName": { "message": "Name" },
   "thHandle": { "message": "Handle" },

@@ -33,6 +33,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/storage-ext.ts` — thin `browser.storage.local` get/set wrappers.
 - `src/shared/mutations.ts` — serializable `Mutation` union and the pure `applyMutation` reducer (single-writer protocol).
 - `src/shared/state.ts` — load/save/ensure the blocker state and `onLocalStorageChanged`; only the service worker writes.
+- `src/shared/backup.ts` — rolling backup of the last non-empty state (`shouldSnapshot`, `shouldSeedBackup`, `readBackup`/`writeBackup`); the worker seeds it on writes and the options page restores it.
 - `src/shared/rules-service.ts` — transactional block/unblock operations (`blockVideo`/`blockChannel`/`unblockReason`) used by the UI surfaces.
 - `src/shared/runtime.ts` — `browser.runtime` wrappers (extension URL, sync request, mutation request, options page).
 - `src/shared/tabs.ts` — `browser.tabs` wrappers (active tab, tab messaging).

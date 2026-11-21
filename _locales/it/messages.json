@@ -48,6 +48,8 @@
 
   "channelBlockLabel": { "message": "Blocca un canale" },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "channelSearchPlaceholder": { "message": "Filtra canali..." },
+  "videoSearchPlaceholder": { "message": "Filtra video..." },
   "thChannelId": { "message": "ID canale" },
   "thName": { "message": "Nome" },
   "thHandle": { "message": "Handle" },

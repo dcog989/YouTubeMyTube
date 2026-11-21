@@ -44,6 +44,8 @@
 
   "channelBlockLabel": { "message": "屏蔽频道" },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "channelSearchPlaceholder": { "message": "筛选频道..." },
+  "videoSearchPlaceholder": { "message": "筛选视频..." },
   "thChannelId": { "message": "频道 ID" },
   "thName": { "message": "名称" },
   "thHandle": { "message": "Handle" },

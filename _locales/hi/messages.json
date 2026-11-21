@@ -44,6 +44,8 @@
 
   "channelBlockLabel": { "message": "चैनल ब्लॉक करें" },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "channelSearchPlaceholder": { "message": "चैनल फ़िल्टर करें..." },
+  "videoSearchPlaceholder": { "message": "वीडियो फ़िल्टर करें..." },
   "thChannelId": { "message": "चैनल ID" },
   "thName": { "message": "नाम" },
   "thHandle": { "message": "Handle" },

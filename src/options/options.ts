@@ -9,7 +9,7 @@ import type { BlockerState } from '../shared/types';
 import { byId } from '../shared/ui';
 import { buildAreas, syncAreas } from './areas';
 import { backfillMissing } from './backfill';
-import { addChannel, renderChannels, wireChannelSort } from './channels';
+import { addChannel, renderChannels, setChannelFilter, wireChannelSort } from './channels';
 import { updateCounts } from './counts';
 import { exportSettings, importSettings, renderBackup, restoreBackup } from './data';
 import { selectPanel, setStatus } from './dom';
@@ -30,7 +30,7 @@ import {
   subscribe,
 } from './state';
 import { testText, testUrl } from './tester';
-import { addVideo, renderVideos, wireVideoSort } from './videos';
+import { addVideo, renderVideos, setVideoFilter, wireVideoSort } from './videos';
 
 function syncThemeButtons(): void {
   const theme = getDraft().settings.theme;
@@ -100,6 +100,13 @@ function wireStatic(): void {
   byId('video-add-btn').addEventListener('click', () => void addVideo());
   byId<HTMLInputElement>('video-add').addEventListener('keydown', (event) => {
     if (event.key === 'Enter') void addVideo();
+  });
+
+  byId<HTMLInputElement>('channel-search').addEventListener('input', (event) => {
+    setChannelFilter((event.target as HTMLInputElement).value);
+  });
+  byId<HTMLInputElement>('video-search').addEventListener('input', (event) => {
+    setVideoFilter((event.target as HTMLInputElement).value);
   });
 
   wireChannelSort(renderChannels);

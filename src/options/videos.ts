@@ -25,6 +25,18 @@ export function wireVideoSort(onSort: () => void): void {
   sorter.wire('video-rows', onSort);
 }
 
+let videoFilter = '';
+
+function matchesVideoFilter(video: VideoEntry): boolean {
+  if (!videoFilter) return true;
+  return [video.id, video.title].some((field) => field.toLowerCase().includes(videoFilter));
+}
+
+export function setVideoFilter(value: string): void {
+  videoFilter = value.trim().toLowerCase();
+  renderVideos(true);
+}
+
 export function renderVideos(force = false): void {
   const body = byId('video-rows');
   if (!force && isDirty() && body.contains(document.activeElement)) {
@@ -34,7 +46,7 @@ export function renderVideos(force = false): void {
   const draft = getDraft();
   renderEntityTable({
     bodyId: 'video-rows',
-    items: sorter.sort(draft.rules.videos),
+    items: sorter.sort(draft.rules.videos.filter(matchesVideoFilter)),
     idOf: (video) => video.id,
     setId: (video, value) => {
       if (video.id === value) return;

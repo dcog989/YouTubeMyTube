@@ -44,6 +44,8 @@
 
   "channelBlockLabel": { "message": "Kanal engelle" },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "channelSearchPlaceholder": { "message": "Kanalları filtrele..." },
+  "videoSearchPlaceholder": { "message": "Videoları filtrele..." },
   "thChannelId": { "message": "Kanal kimliği" },
   "thName": { "message": "Ad" },
   "thHandle": { "message": "Handle" },

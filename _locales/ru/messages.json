@@ -48,6 +48,8 @@
 
   "channelBlockLabel": { "message": "Заблокировать канал" },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "channelSearchPlaceholder": { "message": "Фильтр каналов..." },
+  "videoSearchPlaceholder": { "message": "Фильтр видео..." },
   "thChannelId": { "message": "ID канала" },
   "thName": { "message": "Название" },
   "thHandle": { "message": "Handle" },

@@ -607,13 +607,16 @@ th.is-sorted {
 
 .test-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
   margin-top: 6px;
 }
 
+/* Two inputs plus a button fit on desktop; the filter wraps to its own line
+   on narrow widths instead of squeezing the add field. */
 .test-row .input {
-  flex: 1;
+  flex: 1 1 180px;
 }
 
 .test-result {

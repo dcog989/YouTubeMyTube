@@ -46,6 +46,8 @@
 
   "channelBlockLabel": { "message": "채널 차단" },
   "channelAddPlaceholder": { "message": "https://www.youtube.com/@handle" },
+  "channelSearchPlaceholder": { "message": "채널 필터..." },
+  "videoSearchPlaceholder": { "message": "동영상 필터..." },
   "thChannelId": { "message": "채널 ID" },
   "thName": { "message": "이름" },
   "thHandle": { "message": "Handle" },

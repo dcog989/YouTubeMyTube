@@ -1,6 +1,6 @@
 # YouTubeMyTube
 
-Firefox / Chrome extension that blocks YouTube videos, channels, users, Shorts, comments. It's like *BlockTube* but better.
+Firefox / Chrome extension that blocks YouTube videos, channels, users, Shorts, comments.
 
 ![screenshot](assets/screen-1.webp)
 
@@ -11,7 +11,9 @@ Firefox / Chrome extension that blocks YouTube videos, channels, users, Shorts, 
 - Block comments by author or content.
 - Block content-areas: home feed, Shorts, Trending, Explore, Subscriptions, comments, live chat, paid videos.
 - Block/Unblock entries via YouTube `...` menus or the toolbar popup.
-- Import/export settings; supports BlockTube backups.
+- Instant filter for channel and video lists.
+- Import/export settings; supports import of *BlockTube* backups.
+- Automatic backup of last non-empty filters; only removed on *Reset* or uninstall.
 - Light/Dark/System theming.
 
 > [!NOTE]
@@ -32,8 +34,6 @@ Chrome / Chromium require manual install as it is not published to the Chrome We
 3. Open `chrome://extensions` then turn on *Developer mode* (toggle in the top-right corner).
 4. Click *Load unpacked* (top left) and select the unzipped folder.
 5. Reload any open YouTube tabs.
-
-You will need to check and apply updates manually by replacing the unzipped folder.
 
 ## Privacy
 
