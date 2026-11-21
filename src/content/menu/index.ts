@@ -24,6 +24,7 @@ export function createMenuInjector(deps: {
   const injector = createInjector({ ...deps, owners });
 
   const batcher = createBatcher<Element>((nodes) => {
+    if (!owners.isPossible()) return;
     const containers = new Set<MenuContainer>();
     for (const node of nodes) {
       const item = node.matches(MENU_ITEM_SELECTOR) ? node : node.querySelector(MENU_ITEM_SELECTOR);
@@ -31,7 +32,7 @@ export function createMenuInjector(deps: {
       if (container) containers.add(container);
     }
 
-    if (containers.size === 0 || !owners.current()?.isConnected) return;
+    if (containers.size === 0) return;
 
     for (const container of containers) {
       if (container.isConnected) injector.inject(container);

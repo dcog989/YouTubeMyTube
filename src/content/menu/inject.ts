@@ -1,3 +1,4 @@
+import { blockChannel, blockVideo, unblockChannel, unblockVideo } from '../../shared/rules-service';
 import type { BlockerState, Entity } from '../../shared/types';
 import { h } from '../../shared/ui';
 import { parseYouTubeUrl } from '../../shared/url';
@@ -6,9 +7,9 @@ import { cardEntity, currentContext } from '../entity';
 import { CARD_SELECTOR, COMMENT_SELECTOR } from '../entity-selectors';
 import type { FilterEngine } from '../filter';
 import type { OverlayFeedback } from '../overlay';
-import type { Store } from '../store';
+import { applyDecision, type Store } from '../store';
 import { actionsFor, type MenuAction } from './actions';
-import type { ChannelCache } from './channel-cache';
+import { type ChannelCache, withCachedChannel } from './channel-cache';
 import {
   containerStart,
   type MenuContainer,
@@ -18,9 +19,8 @@ import {
   popupOf,
 } from './container';
 import type { OwnerTracker } from './owner';
-import { persistAction } from './persist';
 import { INJECTED_ATTR, NON_MENU_SELECTOR } from './selectors';
-import { applyItemStyle, computeItemStyle, createIcon, type MenuItemStyle } from './style';
+import { createIcon } from './style';
 
 interface ItemState {
   action: MenuAction;
@@ -55,15 +55,7 @@ export function createInjector(deps: {
 
   function entityFor(owner: Element): Entity {
     const entity = owner.matches(CARD_SELECTOR) ? cardEntity(owner) : currentContext();
-    if (entity.videoId) {
-      const meta = channelCache.get(entity.videoId);
-      if (meta) {
-        if (!entity.channelId && meta.id) entity.channelId = meta.id;
-        if (!entity.handle && meta.handle) entity.handle = meta.handle;
-        if (!entity.channelName && meta.name) entity.channelName = meta.name;
-      }
-    }
-    return entity;
+    return withCachedChannel(channelCache, entity);
   }
 
   function requestChannel(videoId: string, container: MenuContainer): void {
@@ -92,24 +84,28 @@ export function createInjector(deps: {
       stored.kind === 'video'
         ? fresh.find((action) => action.kind === 'video')
         : fresh.find((action) => action.kind === 'channel');
-    return match ?? null;
+    // Another tab may have flipped the block since the label was drawn; acting
+    // on the fresh mode would do the opposite of what the item says.
+    return match && match.mode === stored.mode ? match : null;
   }
 
   function activateItem(item: Element): void {
     const action = liveActionFor(item);
-    if (!action) return;
+    if (!action) {
+      close();
+      return;
+    }
     const owner = ownerForItem(item) ?? undefined;
     void applyAction(action, owner);
   }
 
-  function createItem(action: MenuAction, owner: Element, style: MenuItemStyle): HTMLElement {
+  function createItem(action: MenuAction, owner: Element): HTMLElement {
     const item = h('div', {
       className: 'ytb-menu-item',
       [INJECTED_ATTR]: '',
       role: 'menuitem',
       tabIndex: 0,
     });
-    applyItemStyle(item, style);
 
     const label = h('span', { className: 'ytb-menu-item-label', text: action.label });
     item.append(createIcon(), label);
@@ -174,9 +170,8 @@ export function createInjector(deps: {
     }
     for (const item of owned) item.remove();
 
-    const style = computeItemStyle(container);
     for (const action of actions) {
-      host.appendChild(createItem(action, owner, style));
+      host.appendChild(createItem(action, owner));
     }
   }
 
@@ -188,13 +183,13 @@ export function createInjector(deps: {
   function applyVisibility(action: MenuAction, owner: Element | undefined): void {
     const card = owner instanceof HTMLElement && owner.matches(CARD_SELECTOR) ? owner : null;
     const isCurrentVideo =
-      action.kind === 'video' && parseYouTubeUrl(window.location.href).videoId === action.value;
+      action.kind === 'video' && parseYouTubeUrl(window.location.href).videoId === action.entry.id;
 
     if (action.mode === 'block') {
       if (card) {
         deps.filter.hide(card);
       } else if (isCurrentVideo) {
-        deps.overlay.requestBlank(true, { kind: 'video', value: action.value });
+        deps.overlay.requestBlank(true, { kind: 'video', value: action.entry.id });
       }
       return;
     }
@@ -206,13 +201,33 @@ export function createInjector(deps: {
     }
   }
 
+  function persistAction(action: MenuAction): Promise<BlockerState | null> {
+    if (action.kind === 'video') {
+      return action.mode === 'unblock' ? unblockVideo(action.entry.id) : blockVideo(action.entry);
+    }
+    return action.mode === 'unblock'
+      ? unblockChannel({
+          id: action.entry.id,
+          handle: action.entry.handle,
+          name: action.entry.name,
+        })
+      : blockChannel(action.entry);
+  }
+
   async function applyAction(action: MenuAction, owner: Element | undefined): Promise<void> {
     applyVisibility(action, owner);
     const persisted = await persistAction(action);
-    if (persisted) deps.store.setState(persisted);
-    // The storage echo compares equal to this state, so rescan here or the rest
-    // of the page keeps showing cards that this action just blocked/unblocked.
-    deps.filter.rescan();
+    if (!persisted) {
+      // The optimistic hide must be reverted when the worker rejected the write.
+      deps.filter.rescan();
+      close();
+      return;
+    }
+    const applied = currentState();
+    deps.store.setState(persisted);
+    // The storage echo may already have applied this state and rescanned; the
+    // page still needs one refilter when it did not.
+    if (!applied || applyDecision(applied, persisted).refilter) deps.filter.rescan();
     close();
   }
 

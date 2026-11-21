@@ -6,7 +6,6 @@ import { normalizeHandle } from '../../shared/url';
 interface MenuActionBase {
   label: string;
   mode: 'block' | 'unblock';
-  value: string;
 }
 
 export interface VideoMenuAction extends MenuActionBase {
@@ -30,7 +29,6 @@ export function actionsFor(entity: Entity, rules: FilterRules): MenuAction[] {
       label: t(blocked ? 'menuUnblockVideo' : 'menuBlockVideo'),
       kind: 'video',
       mode: blocked ? 'unblock' : 'block',
-      value: entity.videoId,
       entry: { id: entity.videoId, title: entity.title ?? '' },
     });
   }
@@ -44,7 +42,6 @@ export function actionsFor(entity: Entity, rules: FilterRules): MenuAction[] {
       label: t(blocked ? 'menuUnblockChannel' : 'menuBlockChannel'),
       kind: 'channel',
       mode: blocked ? 'unblock' : 'block',
-      value: id || handle || name,
       entry: { id, name, handle },
     });
   }

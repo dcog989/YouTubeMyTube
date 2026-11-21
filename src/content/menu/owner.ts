@@ -6,7 +6,7 @@ import { attachShadows } from './shadow';
 
 export interface OwnerTracker {
   init(): void;
-  current(): Element | null;
+  isPossible(): boolean;
   resolve(container: MenuContainer): Element | null;
   track(event: MouseEvent, onItem: (element: Element) => void): void;
   reset(): void;
@@ -15,6 +15,9 @@ export interface OwnerTracker {
 export function createOwnerTracker(): OwnerTracker {
   let lastTarget: Element | null = null;
   let observer: MutationObserver | null = null;
+  let expandedOpen = false;
+  let triggerPressed = false;
+  const shadowOwners = new WeakSet<Element>();
 
   function ownerFrom(scope: Element): Element | null {
     return (
@@ -29,6 +32,12 @@ export function createOwnerTracker(): OwnerTracker {
       if (owner) return owner;
     }
     return null;
+  }
+
+  // Cheap gate for the DOM batcher: scanning every added subtree for menu items
+  // is only useful after a trigger press or while a menu is expanded.
+  function isPossible(): boolean {
+    return triggerPressed || expandedOpen;
   }
 
   function resolve(container: MenuContainer): Element | null {
@@ -56,16 +65,31 @@ export function createOwnerTracker(): OwnerTracker {
           closestAcrossShadow(trigger, MENU_HOST_SELECTOR))
         : null);
 
-    if (!owner) return;
+    // A press outside any card or host must not leave an old card as the owner
+    // of the next menu; that menu would block the previously clicked video.
+    if (!owner) {
+      lastTarget = null;
+      return;
+    }
     lastTarget = owner;
 
-    if (trigger) attachShadows(owner, MENU_ITEM_SELECTOR, onItem);
+    if (trigger) {
+      triggerPressed = true;
+      if (!shadowOwners.has(owner)) {
+        shadowOwners.add(owner);
+        attachShadows(owner, MENU_ITEM_SELECTOR, onItem);
+      }
+    }
   }
 
   function init(): void {
     if (observer) return;
     observer = new MutationObserver(() => {
-      if (!document.querySelector('[aria-expanded="true"]')) lastTarget = null;
+      expandedOpen = Boolean(document.querySelector('[aria-expanded="true"]'));
+      if (!expandedOpen) {
+        lastTarget = null;
+        triggerPressed = false;
+      }
     });
     observer.observe(document.documentElement, {
       attributes: true,
@@ -76,11 +100,12 @@ export function createOwnerTracker(): OwnerTracker {
 
   return {
     init,
-    current: () => (lastTarget?.isConnected ? lastTarget : expandedOwner()),
+    isPossible,
     resolve,
     track,
     reset: () => {
       lastTarget = null;
+      triggerPressed = false;
     },
   };
 }

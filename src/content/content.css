@@ -151,6 +151,22 @@ html[dark] .ytb-block-overlay {
   color: var(--yt-spec-text-primary-inverse, #0f0f0f);
 }
 
+/* The injected item inherits the menu's own font and colour; measuring every
+   YouTube menu item on each open is not needed for that. */
+.ytb-menu-item {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 16px;
+  color: inherit;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
 .ytb-menu-item:hover,
 .ytb-menu-item:focus-visible {
   background-color: var(--yt-spec-10-percent-layer, rgba(128, 128, 128, 0.2));

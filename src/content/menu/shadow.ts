@@ -31,5 +31,4 @@ export function attachShadows(owner: Element, selector: string, onElement: Eleme
     scanExisting(root, selector, onElement);
   }
   observeShadowTree(owner, selector, onElement);
-  scanExisting(owner, selector, onElement);
 }
