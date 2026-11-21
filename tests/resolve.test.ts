@@ -101,6 +101,27 @@ describe('parseBlockInput', () => {
     });
     expect(parseBlockInput('3 Minutes of Aviation')).toBeNull();
   });
+
+  it('keeps punctuation that is valid in a channel name', () => {
+    expect(parseBlockInput('AC/DC', 'channel')).toEqual({
+      kind: 'channel',
+      name: 'AC/DC',
+    });
+    expect(parseBlockInput('Foo: Bar', 'channel')).toEqual({
+      kind: 'channel',
+      name: 'Foo: Bar',
+    });
+  });
+
+  it('still treats a pasted non-YouTube URL as unusable', () => {
+    expect(parseBlockInput('https://example.com/channel/foo', 'channel')).toBeNull();
+    expect(parseBlockInput('www.example.com/foo', 'channel')).toBeNull();
+    expect(parseBlockInput('example.com/foo', 'channel')).toBeNull();
+  });
+
+  it('rejects handles that are too short to exist', () => {
+    expect(parseBlockInput('@a')).toBeNull();
+  });
 });
 
 describe('channelMetaFromHtml', () => {
@@ -138,6 +159,8 @@ const SEARCH_HTML_ESCAPED = `<script>var ytInitialData = {"contents":{"channelRe
 
 const SEARCH_HTML_AVIATION = `<script>var ytInitialData = {"contents":{"channelRenderer":{"channelId":"UCCB1oLQY3XM86ACD05Lq4HQ","title":{"simpleText":"Aviation"},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@Aviation"}}}}};</script>`;
 
+const SEARCH_HTML_QUOTED = `<script>var ytInitialData = {"contents":{"channelRenderer":{"channelId":"UCquoted1234567890123456","title":{"simpleText":"Rob \\"The Rob\\" Channel"},"navigationEndpoint":{"browseEndpoint":{"canonicalBaseUrl":"/@RobTheRob"}}}}};</script>`;
+
 describe('channelMetaFromSearch', () => {
   it('extracts the first channel result', () => {
     expect(channelMetaFromSearch(SEARCH_HTML)).toEqual({
@@ -153,6 +176,10 @@ describe('channelMetaFromSearch', () => {
 
   it('returns empty fields when there is no channel result', () => {
     expect(channelMetaFromSearch('<html></html>')).toEqual({ id: '', name: '', handle: '' });
+  });
+
+  it('keeps quotes in a display name', () => {
+    expect(channelMetaFromSearch(SEARCH_HTML_QUOTED).name).toBe('Rob "The Rob" Channel');
   });
 });
 
@@ -218,6 +245,17 @@ describe('resolveChannelByName', () => {
       fetch: fetchStub(SEARCH_HTML),
     });
     expect(meta).toEqual({ id: '', name: '', handle: '' });
+  });
+
+  it('matches a quoted display name', async () => {
+    const meta = await resolveChannelByName('Rob "The Rob" Channel', {
+      fetch: fetchStub(SEARCH_HTML_QUOTED),
+    });
+    expect(meta).toEqual({
+      id: 'UCquoted1234567890123456',
+      name: 'Rob "The Rob" Channel',
+      handle: 'robtherob',
+    });
   });
 
   it('rejects a failed search so callers retry later', async () => {
@@ -341,5 +379,86 @@ describe('resolveChannelMeta', () => {
     await expect(
       resolveChannelMeta({ path: '/c/Gone' }, { fetch: fetchStub('', 503) }),
     ).rejects.toThrow();
+  });
+
+  it('tries the handle when a stored id is gone', async () => {
+    const calls: string[] = [];
+    const fetchImpl = (async (input: unknown) => {
+      const url = String(input);
+      calls.push(url);
+      if (url.includes('/@aviation')) {
+        return {
+          ok: true,
+          status: 200,
+          text: async () => CHANNEL_HTML,
+          json: async () => ({}),
+        } as Response;
+      }
+      return { ok: false, status: 404, text: async () => '', json: async () => ({}) } as Response;
+    }) as unknown as typeof fetch;
+
+    const meta = await resolveChannelMeta(
+      { id: 'UCdead', handle: 'aviation' },
+      { fetch: fetchImpl },
+    );
+    expect(meta).toEqual({ id: 'UCabc123', name: 'My Channel', handle: 'mychannel' });
+    expect(calls.some((url) => url.includes('/results'))).toBe(false);
+  });
+
+  it('searches by name when the stored id and handle are both gone', async () => {
+    const calls: string[] = [];
+    const fetchImpl = (async (input: unknown) => {
+      const url = String(input);
+      calls.push(url);
+      if (url.includes('/results')) {
+        return {
+          ok: true,
+          status: 200,
+          text: async () => SEARCH_HTML,
+          json: async () => ({}),
+        } as Response;
+      }
+      return { ok: false, status: 404, text: async () => '', json: async () => ({}) } as Response;
+    }) as unknown as typeof fetch;
+
+    const meta = await resolveChannelMeta(
+      { id: 'UCdead', handle: 'aviation', name: '3 Minutes of Aviation' },
+      { fetch: fetchImpl },
+    );
+    expect(meta).toEqual({
+      id: 'UCCB1oLQY3XM86ACD05Lq4HQ',
+      name: '3 Minutes of Aviation',
+      handle: '3minutesofaviation',
+    });
+    expect(calls.some((url) => url.includes('search_query=3%20Minutes%20of%20Aviation'))).toBe(
+      true,
+    );
+  });
+
+  it('searches the display name, not a stale handle', async () => {
+    const calls: string[] = [];
+    const fetchImpl = (async (input: unknown) => {
+      const url = String(input);
+      calls.push(url);
+      if (url.includes('/results')) {
+        return {
+          ok: true,
+          status: 200,
+          text: async () => SEARCH_HTML,
+          json: async () => ({}),
+        } as Response;
+      }
+      return { ok: false, status: 404, text: async () => '', json: async () => ({}) } as Response;
+    }) as unknown as typeof fetch;
+
+    const meta = await resolveChannelMeta(
+      { handle: 'stale', name: '3 Minutes of Aviation' },
+      { fetch: fetchImpl },
+    );
+    expect(meta.id).toBe('UCCB1oLQY3XM86ACD05Lq4HQ');
+    expect(calls.some((url) => url.includes('search_query=3%20Minutes%20of%20Aviation'))).toBe(
+      true,
+    );
+    expect(calls.some((url) => url.includes('search_query=stale'))).toBe(false);
   });
 });

@@ -1,10 +1,13 @@
 import { YOUTUBE_ORIGIN } from './constants';
 import {
+  CHANNEL_ID,
+  HANDLE,
   normalizeChannelName,
   normalizeHandle,
   parseLegacyChannelPath,
   parseYouTubeUrl,
   splitChannelLabel,
+  VIDEO_ID,
 } from './url';
 
 export type BlockInput =
@@ -30,9 +33,13 @@ export interface ResolveDeps {
   fetch: typeof fetch;
 }
 
-const CHANNEL_ID = /^UC[A-Za-z0-9_-]{20,}$/;
-const VIDEO_ID = /^[A-Za-z0-9_-]{11}$/;
-const HANDLE = /^[A-Za-z0-9._-]{3,30}$/;
+function looksLikeUrl(value: string): boolean {
+  return (
+    /^[a-z][a-z0-9+.-]*:\/\//i.test(value) ||
+    value.startsWith('//') ||
+    /^(?:www\.|(?:[\w-]+\.)+\w+\/)/i.test(value)
+  );
+}
 
 export function parseBlockInput(input: string, kind?: BlockInputKind): BlockInput | null {
   const value = input.trim();
@@ -40,7 +47,7 @@ export function parseBlockInput(input: string, kind?: BlockInputKind): BlockInpu
 
   if (value.startsWith('@')) {
     const handle = normalizeHandle(value);
-    return handle ? { kind: 'channel', handle } : null;
+    return HANDLE.test(handle) ? { kind: 'channel', handle } : null;
   }
   if (CHANNEL_ID.test(value)) return { kind: 'channel', channelId: value };
 
@@ -62,7 +69,7 @@ export function parseBlockInput(input: string, kind?: BlockInputKind): BlockInpu
 
   // Any other plain text (e.g. a multi-word channel name) blocks that name.
   // A pasted "Name @handle" keeps the handle so it can be resolved to an id.
-  if (kind === 'channel' && !value.includes('/') && !value.includes(':')) {
+  if (kind === 'channel' && !looksLikeUrl(value)) {
     const { name, handle } = splitChannelLabel(value);
     return handle ? { kind: 'channel', name, handle } : { kind: 'channel', name };
   }
@@ -133,8 +140,8 @@ export function channelMetaFromSearch(html: string): ChannelMeta {
   const block = html.slice(start, start + 4096);
   const id = firstGroup(block, /"channelId":"(UC[A-Za-z0-9_-]+)"/);
   const name =
-    jsonGroup(block, /"title":\{"simpleText":"([^"]*)"/) ||
-    jsonGroup(block, /"title":\{"runs":\[\{"text":"([^"]*)"/);
+    jsonGroup(block, /"title":\{"simpleText":"((?:[^"\\]|\\.)*)"/) ||
+    jsonGroup(block, /"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/);
   const canonical = firstGroup(block, /"canonicalBaseUrl":"\/(@[^"]+)"/);
   return { id, name, handle: canonical ? normalizeHandle(canonical) : '' };
 }
@@ -271,9 +278,18 @@ export async function resolveChannelMeta(
 
   if (id || handle) {
     const byRef = await resolveChannel({ id, handle }, deps);
-    if (byRef.id || byRef.name) return byRef;
-    if (handle) {
-      const byName = await resolveChannelByName(handle, deps);
+    if (byRef.name) return byRef;
+
+    // The id was tried first; when both are present, the handle is the next
+    // strongest identity before falling back to the display name.
+    if (id && handle) {
+      const byHandle = await resolveChannel({ handle }, deps);
+      if (byHandle.name) return byHandle;
+    }
+
+    const query = name || (id ? '' : handle);
+    if (query) {
+      const byName = await resolveChannelByName(query, deps);
       if (byName.id || byName.name) return byName;
     }
     return byRef;
