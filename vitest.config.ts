@@ -6,7 +6,13 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      include: ['src/shared/**/*.ts', 'src/options/backfill.ts', 'src/options/conflict.ts'],
+      include: [
+        'src/shared/**/*.ts',
+        'src/options/backfill.ts',
+        'src/options/conflict.ts',
+        'src/options/data.ts',
+        'src/options/tester.ts',
+      ],
       exclude: ['src/**/*.d.ts'],
       thresholds: {
         lines: 80,
