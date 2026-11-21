@@ -1,11 +1,24 @@
 import { type ChannelMeta, resolveVideoChannel } from '../../shared/resolve';
+import type { Entity } from '../../shared/types';
 
 export interface ChannelCache {
   get(videoId: string): ChannelMeta | undefined;
   request(videoId: string): Promise<void> | null;
 }
 
+// Fill a card's missing channel identity from a lookup that already resolved.
+export function withCachedChannel(cache: ChannelCache, entity: Entity): Entity {
+  if (!entity.videoId || entity.channelId || entity.handle) return entity;
+  const meta = cache.get(entity.videoId);
+  if (!meta) return entity;
+  if (meta.id) entity.channelId = meta.id;
+  if (meta.handle) entity.handle = meta.handle;
+  if (meta.name) entity.channelName = meta.name;
+  return entity;
+}
+
 const MAX_ENTRIES = 100;
+const MAX_QUEUED_LOOKUPS = 100;
 const EMPTY_TTL_MS = 60_000;
 // A feed can show dozens of Shorts at once; cap the burst so YouTube does not
 // rate-limit the whole batch and leave those cards unresolved.
@@ -71,6 +84,9 @@ export function createChannelCache(): ChannelCache {
     },
     request(videoId) {
       if (cache.has(videoId) || isBackedOff(videoId)) return null;
+      // Cards the user already scrolled past would otherwise pile up as queued
+      // requests that fire minutes later.
+      if (active >= MAX_CONCURRENT_LOOKUPS && queue.length >= MAX_QUEUED_LOOKUPS) return null;
       const inFlight = pending.get(videoId);
       if (inFlight) return inFlight;
 

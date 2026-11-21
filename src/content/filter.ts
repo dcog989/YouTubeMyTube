@@ -11,7 +11,7 @@ import {
   NESTED_CARD_SELECTOR,
   REEL_SELECTOR,
 } from './entity-selectors';
-import type { ChannelCache } from './menu/channel-cache';
+import { type ChannelCache, withCachedChannel } from './menu/channel-cache';
 import type { Store } from './store';
 
 export interface FilterEngine {
@@ -69,16 +69,6 @@ export function createFilterEngine(deps: {
     return parent ? (closestAcrossShadow(parent, CARD_SELECTOR) ?? node) : node;
   }
 
-  function withCachedChannel(entity: Entity): Entity {
-    if (!entity.videoId || entity.channelId || entity.handle) return entity;
-    const meta = channelCache.get(entity.videoId);
-    if (!meta) return entity;
-    if (meta.id) entity.channelId = meta.id;
-    if (meta.handle) entity.handle = meta.handle;
-    if (meta.name) entity.channelName = meta.name;
-    return entity;
-  }
-
   function requestChannel(card: Element, entity: Entity, compiled: CompiledRules): void {
     if (!entity.videoId || !entity.isShorts || entity.channelId || entity.handle) return;
     if (!hasChannelRules(compiled)) return;
@@ -97,7 +87,7 @@ export function createFilterEngine(deps: {
       const card = outermostCard(node);
       // The active reel hosts the player; the evaluator blanks it with the cover.
       if (isReel(card)) return;
-      const entity = withCachedChannel(cardEntity(card));
+      const entity = withCachedChannel(channelCache, cardEntity(card));
       const key = entityKey(entity);
       if (key && seen.get(card) === key) return;
       if (key) seen.set(card, key);

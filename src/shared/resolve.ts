@@ -165,14 +165,19 @@ export function channelRefFromOembed(payload: unknown): ChannelMeta {
   };
 }
 
-function fetchWith(deps?: Partial<ResolveDeps>): typeof fetch {
-  return deps?.fetch ?? globalThis.fetch;
+const LOOKUP_TIMEOUT_MS = 10_000;
+
+// A hung request would hold a channel-cache slot forever; abort it so the slot
+// frees and the card can retry later.
+function fetchLookup(url: string, deps?: Partial<ResolveDeps>): Promise<Response> {
+  const fetchImpl = deps?.fetch ?? globalThis.fetch;
+  return fetchImpl(url, { signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS) });
 }
 
 async function fetchOembed(videoId: string, deps?: Partial<ResolveDeps>): Promise<unknown> {
   const target = `${YOUTUBE_ORIGIN}/watch?v=${encodeURIComponent(videoId)}`;
   const url = `${YOUTUBE_ORIGIN}/oembed?url=${encodeURIComponent(target)}&format=json`;
-  const response = await fetchWith(deps)(url);
+  const response = await fetchLookup(url, deps);
   // Only a 404 means the video is genuinely gone. Transient failures (429, 5xx)
   // must reject so callers do not record a permanent "not found".
   if (response.status === 404) return null;
@@ -219,7 +224,7 @@ export async function resolveChannel(
       : '';
   if (!path) return { id, name: '', handle };
 
-  const response = await fetchWith(deps)(`${YOUTUBE_ORIGIN}${path}`);
+  const response = await fetchLookup(`${YOUTUBE_ORIGIN}${path}`, deps);
   if (!response.ok) {
     // Only a 404 means the channel genuinely does not exist. Transient
     // failures (429, 5xx) must reject so callers do not record a permanent
@@ -240,7 +245,7 @@ export async function resolveChannelByName(
   if (!query) return { id: '', name: '', handle: '' };
 
   const url = `${YOUTUBE_ORIGIN}/results?search_query=${encodeURIComponent(query)}&sp=${SEARCH_CHANNEL_FILTER}`;
-  const response = await fetchWith(deps)(url);
+  const response = await fetchLookup(url, deps);
   // A failed search is not a missing channel: reject so callers can retry later
   // instead of recording a permanent "not found".
   if (!response.ok) throw new Error(`Channel search failed with status ${response.status}`);
@@ -258,7 +263,7 @@ async function resolveLegacyChannel(
   path: string,
   deps?: Partial<ResolveDeps>,
 ): Promise<ChannelMeta> {
-  const response = await fetchWith(deps)(`${YOUTUBE_ORIGIN}${path}`);
+  const response = await fetchLookup(`${YOUTUBE_ORIGIN}${path}`, deps);
   if (!response.ok) {
     if (response.status === 404) return { id: '', name: '', handle: '' };
     throw new Error(`Channel lookup failed with status ${response.status}`);
