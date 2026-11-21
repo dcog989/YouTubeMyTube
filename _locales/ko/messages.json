@@ -119,6 +119,10 @@
   "areaPromoSectionsSub": {
     "message": "Premium, 멤버십, 더 많은 주제 탐색과 같은 프로모 배너와 탐색 선반을 숨깁니다."
   },
+  "areaPaidVideosTitle": { "message": "유료 동영상" },
+  "areaPaidVideosSub": {
+    "message": "유료로 시청하는 영화와 프로그램을 숨깁니다."
+  },
 
   "reasonVideoBlocked": { "message": "이 동영상은 차단되었습니다." },
   "reasonChannelBlocked": { "message": "이 채널은 차단되었습니다." },

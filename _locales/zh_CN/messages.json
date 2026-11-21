@@ -117,6 +117,10 @@
   "areaPromoSectionsSub": {
     "message": "隐藏推广横幅和推荐货架，如 Premium、会员和探索更多主题。"
   },
+  "areaPaidVideosTitle": { "message": "付费视频" },
+  "areaPaidVideosSub": {
+    "message": "隐藏付费观看的电影和节目。"
+  },
 
   "reasonVideoBlocked": { "message": "此视频已被屏蔽。" },
   "reasonChannelBlocked": { "message": "此频道已被屏蔽。" },

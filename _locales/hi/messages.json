@@ -117,6 +117,10 @@
   "areaPromoSectionsSub": {
     "message": "प्रोमो बैनर और खोज शेल्फ़ जैसे Premium, सदस्यताएँ और और विषय एक्सप्लोर करें छिपाएँ।"
   },
+  "areaPaidVideosTitle": { "message": "भुगतान वाले वीडियो" },
+  "areaPaidVideosSub": {
+    "message": "भुगतान करके देखने वाली फ़िल्में और शो छिपाएँ।"
+  },
 
   "reasonVideoBlocked": { "message": "यह वीडियो ब्लॉक है।" },
   "reasonChannelBlocked": { "message": "यह चैनल ब्लॉक है।" },

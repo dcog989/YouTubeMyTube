@@ -117,6 +117,10 @@
   "areaPromoSectionsSub": {
     "message": "إخفاء اللافتات الترويجية وأرفف الاستكشاف مثل Premium والعضويات واستكشاف مزيد من الموضوعات."
   },
+  "areaPaidVideosTitle": { "message": "فيديوهات مدفوعة" },
+  "areaPaidVideosSub": {
+    "message": "إخفاء الأفلام والبرامج المدفوعة."
+  },
 
   "reasonVideoBlocked": { "message": "هذا الفيديو محظور." },
   "reasonChannelBlocked": { "message": "هذه القناة محظورة." },

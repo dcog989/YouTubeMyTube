@@ -25,6 +25,7 @@ export const AREA_DEFINITIONS = [
   { key: 'liveChat', mode: 'hide', className: 'ytb-hide-live-chat' },
   { key: 'relatedVideos', mode: 'hide', className: 'ytb-hide-related' },
   { key: 'promoSections', mode: 'hide', className: 'ytb-hide-promos' },
+  { key: 'paidVideos', mode: 'hide', className: 'ytb-hide-paid' },
 ] as const satisfies readonly AreaDefinition[];
 
 export type AreaKey = (typeof AREA_DEFINITIONS)[number]['key'];

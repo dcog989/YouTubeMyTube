@@ -119,6 +119,10 @@
   "areaPromoSectionsSub": {
     "message": "Verberg promobanners en ontdekkingsschappen zoals Premium, lidmaatschappen en Meer onderwerpen verkennen."
   },
+  "areaPaidVideosTitle": { "message": "Betaalde video's" },
+  "areaPaidVideosSub": {
+    "message": "Verberg betaalde films en series."
+  },
 
   "reasonVideoBlocked": { "message": "Deze video is geblokkeerd." },
   "reasonChannelBlocked": { "message": "Dit kanaal is geblokkeerd." },

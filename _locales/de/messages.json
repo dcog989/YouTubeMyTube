@@ -121,6 +121,10 @@
   "areaPromoSectionsSub": {
     "message": "Blendet Werbebanner und Entdecken-Regale wie Premium, Mitgliedschaften und Weitere Themen entdecken aus."
   },
+  "areaPaidVideosTitle": { "message": "Kostenpflichtige Videos" },
+  "areaPaidVideosSub": {
+    "message": "Kostenpflichtige Filme und Serien ausblenden."
+  },
 
   "reasonVideoBlocked": { "message": "Dieses Video ist blockiert." },
   "reasonChannelBlocked": { "message": "Dieser Kanal ist blockiert." },

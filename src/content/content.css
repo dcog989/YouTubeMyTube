@@ -200,6 +200,20 @@ html.ytb-hide-promos ytd-rich-section-renderer:has(ytd-chips-shelf-with-video-sh
 html.ytb-hide-promos
   ytd-browse[page-subtype="home"]
   ytd-rich-section-renderer:has(.ytChipsShelfViewModelHost),
+html.ytb-hide-promos ytd-rich-section-renderer:has(div#dismissible .ytBadgeShapePromoted),
 html.ytb-hide-promos ytd-chips-shelf-with-video-shelf-renderer {
+  display: none !important;
+}
+
+html.ytb-hide-paid :is(ytd-rich-item-renderer, ytd-grid-item-renderer):has(.ytBadgeShapeCommerce),
+html.ytb-hide-paid
+  :is(
+    ytd-grid-show-renderer,
+    ytd-grid-movie-renderer,
+    ytd-video-renderer,
+    yt-lockup-view-model,
+    ytm-compact-video-renderer,
+    ytm-video-with-context-renderer
+  ):has(.ytBadgeShapeCommerce) {
   display: none !important;
 }

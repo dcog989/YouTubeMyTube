@@ -119,6 +119,10 @@
   "areaPromoSectionsSub": {
     "message": "Hide promotional banners and discovery shelves such as Premium, memberships and Explore more topics."
   },
+  "areaPaidVideosTitle": { "message": "Paid videos" },
+  "areaPaidVideosSub": {
+    "message": "Hide pay-to-watch movies and shows."
+  },
 
   "reasonVideoBlocked": { "message": "This video is blocked." },
   "reasonChannelBlocked": { "message": "This channel is blocked." },

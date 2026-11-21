@@ -117,6 +117,10 @@
   "areaPromoSectionsSub": {
     "message": "Ukryj banery promocyjne i półki odkrywania, takie jak Premium, członkostwa i Odkrywaj więcej tematów."
   },
+  "areaPaidVideosTitle": { "message": "Płatne filmy" },
+  "areaPaidVideosSub": {
+    "message": "Ukryj płatne filmy i seriale."
+  },
 
   "reasonVideoBlocked": { "message": "Ten film jest zablokowany." },
   "reasonChannelBlocked": { "message": "Ten kanał jest zablokowany." },

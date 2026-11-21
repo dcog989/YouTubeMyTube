@@ -117,6 +117,10 @@
   "areaPromoSectionsSub": {
     "message": "Premium、メンバーシップ、その他のトピックを探すなどのプロモバナーや発見シェルフを非表示にします。"
   },
+  "areaPaidVideosTitle": { "message": "有料動画" },
+  "areaPaidVideosSub": {
+    "message": "視聴に料金がかかる映画や番組を非表示にします。"
+  },
 
   "reasonVideoBlocked": { "message": "この動画はブロックされています。" },
   "reasonChannelBlocked": { "message": "このチャンネルはブロックされています。" },

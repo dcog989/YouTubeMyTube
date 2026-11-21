@@ -117,6 +117,10 @@
   "areaPromoSectionsSub": {
     "message": "Premium, üyelikler ve Daha fazla konu keşfet gibi promosyon banner'larını ve keşif raflarını gizle."
   },
+  "areaPaidVideosTitle": { "message": "Ücretli videolar" },
+  "areaPaidVideosSub": {
+    "message": "Ücretli filmleri ve dizileri gizle."
+  },
 
   "reasonVideoBlocked": { "message": "Bu video engellendi." },
   "reasonChannelBlocked": { "message": "Bu kanal engellendi." },

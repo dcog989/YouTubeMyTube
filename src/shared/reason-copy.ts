@@ -14,6 +14,7 @@ const AREA_LABEL_KEYS: Record<AreaKey, MessageKey> = {
   liveChat: 'areaLiveChatTitle',
   relatedVideos: 'areaRelatedVideosTitle',
   promoSections: 'areaPromoSectionsTitle',
+  paidVideos: 'areaPaidVideosTitle',
 };
 
 const LABELS: Partial<Record<ReasonKind, MessageKey>> = {

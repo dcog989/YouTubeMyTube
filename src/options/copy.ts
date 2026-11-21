@@ -21,4 +21,5 @@ export const AREA_COPY: Record<AreaKey, AreaCopy> = {
   liveChat: areaCopy('areaLiveChatTitle', 'areaLiveChatSub'),
   relatedVideos: areaCopy('areaRelatedVideosTitle', 'areaRelatedVideosSub'),
   promoSections: areaCopy('areaPromoSectionsTitle', 'areaPromoSectionsSub'),
+  paidVideos: areaCopy('areaPaidVideosTitle', 'areaPaidVideosSub'),
 };

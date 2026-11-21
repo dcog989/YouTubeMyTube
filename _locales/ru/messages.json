@@ -119,6 +119,10 @@
   "areaPromoSectionsSub": {
     "message": "Скрывает рекламные баннеры и полки рекомендаций, такие как Premium, спонсорство и «Обзор других тем»."
   },
+  "areaPaidVideosTitle": { "message": "Платные видео" },
+  "areaPaidVideosSub": {
+    "message": "Скрывать фильмы и сериалы, доступные за плату."
+  },
 
   "reasonVideoBlocked": { "message": "Это видео заблокировано." },
   "reasonChannelBlocked": { "message": "Этот канал заблокирован." },

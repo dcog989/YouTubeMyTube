@@ -23,10 +23,13 @@ You will need to check and apply updates manually by replacing the unzipped fold
 - Block channels by ID, handle or name.
 - Block videos by ID or title.
 - Block comments by author or content.
-- Block content-areas: home feed, Shorts, Trending, Explore, Subscriptions, comments, live chat.
+- Block content-areas: home feed, Shorts, Trending, Explore, Subscriptions, comments, live chat, paid videos.
 - Block/Unblock entries via YouTube `...` menus or the toolbar popup.
 - Import/export settings; supports BlockTube backups.
 - Light/Dark/System theming.
+
+> [!NOTE]
+> On collaboration videos, only the uploading channel is checked. A channel that appears as a collaborator does not block the video; block the video itself if needed.
 
 ## Privacy
 

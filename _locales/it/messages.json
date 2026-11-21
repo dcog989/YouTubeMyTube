@@ -125,6 +125,10 @@
   "areaPromoSectionsSub": {
     "message": "Nasconde banner promozionali e scaffali di scoperta come Premium, abbonamenti ed Esplora altri argomenti."
   },
+  "areaPaidVideosTitle": { "message": "Video a pagamento" },
+  "areaPaidVideosSub": {
+    "message": "Nascondi film e serie a pagamento."
+  },
 
   "reasonVideoBlocked": { "message": "Questo video è bloccato." },
   "reasonChannelBlocked": { "message": "Questo canale è bloccato." },

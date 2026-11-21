@@ -119,6 +119,10 @@
   "areaPromoSectionsSub": {
     "message": "Sembunyikan spanduk promosi dan rak penemuan seperti Premium, keanggotaan, dan Jelajahi topik lainnya."
   },
+  "areaPaidVideosTitle": { "message": "Video berbayar" },
+  "areaPaidVideosSub": {
+    "message": "Sembunyikan film dan acara berbayar."
+  },
 
   "reasonVideoBlocked": { "message": "Video ini diblokir." },
   "reasonChannelBlocked": { "message": "Saluran ini diblokir." },

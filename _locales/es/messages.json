@@ -123,6 +123,10 @@
   "areaPromoSectionsSub": {
     "message": "Oculta los banners promocionales y las estanterías de descubrimiento como Premium, membresías y Explorar más temas."
   },
+  "areaPaidVideosTitle": { "message": "Vídeos de pago" },
+  "areaPaidVideosSub": {
+    "message": "Ocultar películas y series de pago."
+  },
 
   "reasonVideoBlocked": { "message": "Este vídeo está bloqueado." },
   "reasonChannelBlocked": { "message": "Este canal está bloqueado." },
