@@ -6,11 +6,14 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
+      // Gated: pure logic plus the options helpers with unit tests. Browser-bound
+      // modules (content, background, popup, blocked, options panels) are not measured.
       include: [
         'src/shared/**/*.ts',
         'src/options/backfill.ts',
         'src/options/conflict.ts',
         'src/options/data.ts',
+        'src/options/lookup.ts',
         'src/options/tester.ts',
       ],
       exclude: ['src/**/*.d.ts'],
