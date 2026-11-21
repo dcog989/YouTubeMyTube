@@ -7,11 +7,34 @@ export interface ChannelCache {
 
 const MAX_ENTRIES = 100;
 const EMPTY_TTL_MS = 60_000;
+// A feed can show dozens of Shorts at once; cap the burst so YouTube does not
+// rate-limit the whole batch and leave those cards unresolved.
+const MAX_CONCURRENT_LOOKUPS = 4;
 
 export function createChannelCache(): ChannelCache {
   const cache = new Map<string, ChannelMeta>();
   const pending = new Map<string, Promise<void>>();
   const retryAfter = new Map<string, number>();
+  let active = 0;
+  const queue: Array<() => void> = [];
+
+  function startOrQueue(task: () => void): void {
+    if (active < MAX_CONCURRENT_LOOKUPS) {
+      active += 1;
+      task();
+      return;
+    }
+    queue.push(task);
+  }
+
+  function finishLookup(): void {
+    const next = queue.shift();
+    if (next) {
+      next();
+      return;
+    }
+    active -= 1;
+  }
 
   function evictExcess<K, V>(map: Map<K, V>): void {
     if (map.size <= MAX_ENTRIES) return;
@@ -51,17 +74,23 @@ export function createChannelCache(): ChannelCache {
       const inFlight = pending.get(videoId);
       if (inFlight) return inFlight;
 
-      const promise = resolveVideoChannel(videoId)
-        .then((meta) => {
-          if (meta.id || meta.handle || meta.name) store(videoId, meta);
-          else markEmpty(videoId);
-        })
-        .catch(() => {
-          markEmpty(videoId);
-        })
-        .finally(() => {
-          pending.delete(videoId);
+      const promise = new Promise<void>((resolve) => {
+        startOrQueue(() => {
+          resolveVideoChannel(videoId)
+            .then((meta) => {
+              if (meta.id || meta.handle || meta.name) store(videoId, meta);
+              else markEmpty(videoId);
+            })
+            .catch(() => {
+              markEmpty(videoId);
+            })
+            .finally(() => {
+              pending.delete(videoId);
+              resolve();
+              finishLookup();
+            });
         });
+      });
 
       pending.set(videoId, promise);
       return promise;
