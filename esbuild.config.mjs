@@ -1,5 +1,6 @@
 import {
   cpSync,
+  existsSync,
   watch as fsWatch,
   mkdirSync,
   readdirSync,
@@ -18,6 +19,8 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 /** @type {{ name: string, version: string }} */
 const pkg = JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8'));
 const VERSION = pkg.version;
+// Chrome and Firefox reject prerelease/build metadata in the manifest version.
+const MANIFEST_VERSION = VERSION.split(/[-+]/)[0] ?? VERSION;
 const WATCH_DEBOUNCE_MS = 50;
 
 /** @type {Record<string, string>} */
@@ -31,6 +34,7 @@ const ENTRIES = {
 
 /** @type {Array<[string, string]>} */
 const STATIC_ASSETS = [
+  ['LICENSE', 'LICENSE'],
   ['src/content/content.css', 'content.css'],
   ['src/popup/popup.html', 'popup.html'],
   ['src/popup/popup.css', 'popup.css'],
@@ -72,7 +76,7 @@ function distDir(browser) {
 function resolveManifest(browser) {
   return readFileSync(resolve(ROOT, 'manifests', `${browser}.json`), 'utf8').replaceAll(
     '__VERSION__',
-    VERSION,
+    MANIFEST_VERSION,
   );
 }
 
@@ -187,8 +191,12 @@ async function main() {
     }
 
     const sourceArchive = resolve(ROOT, 'dist', `${pkg.name}-source.zip`);
-    const { entries: sourceEntries } = createSourceZip(sourceArchive);
-    console.log(`Packaged ${sourceEntries} source files → ${sourceArchive}`);
+    if (existsSync(resolve(ROOT, '.git'))) {
+      const { entries: sourceEntries } = createSourceZip(sourceArchive);
+      console.log(`Packaged ${sourceEntries} source files → ${sourceArchive}`);
+    } else {
+      console.log('Skipping source archive: no .git directory (building from a source archive).');
+    }
   }
 }
 
