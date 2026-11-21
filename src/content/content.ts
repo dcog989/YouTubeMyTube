@@ -35,7 +35,8 @@ async function init(): Promise<void> {
     if (previous && !decision.rescans) return;
     store.setState(next, previous && decision.rulesEqual ? previous.compiled : undefined);
     applyAreas(store);
-    filter.rescan();
+    if (decision.refilter) filter.rescan();
+    else evaluator.schedule();
   }
 
   // Re-read state from storage so a transiently empty startup read cannot leave

@@ -11,32 +11,55 @@ vi.mock('../src/shared/resolve', () => ({ resolveVideoChannel }));
 
 describe('applyDecision', () => {
   it('rescans on the first state', () => {
-    expect(applyDecision(null, defaultState())).toEqual({ rescans: true, rulesEqual: false });
+    expect(applyDecision(null, defaultState())).toEqual({
+      rescans: true,
+      refilter: true,
+      rulesEqual: false,
+    });
   });
 
   it('skips the rescan when only non-filtering settings change', () => {
     const previous = defaultState();
     const next = structuredClone(previous);
     next.settings.theme = 'dark';
-    expect(applyDecision(previous, next)).toEqual({ rescans: false, rulesEqual: true });
+    expect(applyDecision(previous, next)).toEqual({
+      rescans: false,
+      refilter: false,
+      rulesEqual: true,
+    });
   });
 
   it('rescans when the rules change', () => {
     const previous = defaultState();
     const next = structuredClone(previous);
     next.rules.videos.push({ id: 'abcdefghijk', title: '' });
-    expect(applyDecision(previous, next)).toEqual({ rescans: true, rulesEqual: false });
+    expect(applyDecision(previous, next)).toEqual({
+      rescans: true,
+      refilter: true,
+      rulesEqual: false,
+    });
   });
 
-  it('rescans when an area or the enabled flag changes', () => {
+  it('re-evaluates without refiltering when only an area changes', () => {
     const previous = defaultState();
     const areas = structuredClone(previous);
     areas.areas.trendingPage = true;
-    expect(applyDecision(previous, areas).rescans).toBe(true);
+    expect(applyDecision(previous, areas)).toEqual({
+      rescans: true,
+      refilter: false,
+      rulesEqual: true,
+    });
+  });
 
+  it('refilters when the enabled flag changes', () => {
+    const previous = defaultState();
     const disabled = structuredClone(previous);
     disabled.settings.enabled = false;
-    expect(applyDecision(previous, disabled).rescans).toBe(true);
+    expect(applyDecision(previous, disabled)).toEqual({
+      rescans: true,
+      refilter: true,
+      rulesEqual: true,
+    });
   });
 });
 
