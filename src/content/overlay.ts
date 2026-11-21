@@ -12,9 +12,10 @@ import { deepQuery } from './dom';
 import type { PlaybackGuard, PlaybackLease } from './playback';
 
 const OVERLAY_CLASS = 'ytb-block-overlay';
-const VIDEO_BLANK_CLASS = 'ytb-blank-player';
+export const VIDEO_BLANK_CLASS = 'ytb-blank-player';
 const PASSIVE_COVER_CLASS = 'ytb-blank-cover-passive';
 const LOGO_PATH = 'assets/icons/128.png';
+const THUMBNAIL_ORIGIN = 'https://i.ytimg.com/vi';
 
 const PLAYER_BOX_SELECTORS = [
   '#movie_player',
@@ -96,7 +97,7 @@ function buildActions(reason: Reason, feedback: Feedback): HTMLElement {
     void (async () => {
       if (!ref) return;
       // A failed or no-op removal must not reveal content that is still blocked.
-      const saved = await unblockReason(reason);
+      const saved = await unblockReason(reason, parseYouTubeUrl(window.location.href).videoId);
       if (!saved) return;
       // The worker returned the stored state; apply it here so the cover clears
       // even when the storage echo is late or never arrives.
@@ -167,6 +168,11 @@ export function createBlankCover(options: {
   let currentKey: string | null = null;
   let lease: PlaybackLease | null = null;
 
+  function thumbnailForPage(): string {
+    const videoId = parseYouTubeUrl(window.location.href).videoId;
+    return videoId ? `url("${THUMBNAIL_ORIGIN}/${videoId}/hqdefault.jpg")` : 'none';
+  }
+
   function resolvePlayerBox(): HTMLElement | null {
     if (playerBox?.isConnected) return playerBox;
     const found = findPlayerBox();
@@ -180,8 +186,10 @@ export function createBlankCover(options: {
     if (!box) return;
     const rect = box.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
-    cover.style.left = `${rect.left}px`;
-    cover.style.top = `${rect.top}px`;
+    // Document coordinates: the cover scrolls with the player instead of
+    // staying fixed over the content below it.
+    cover.style.left = `${rect.left + window.scrollX}px`;
+    cover.style.top = `${rect.top + window.scrollY}px`;
     cover.style.width = `${rect.width}px`;
     cover.style.height = `${rect.height}px`;
   }
@@ -288,6 +296,7 @@ export function createBlankCover(options: {
       retryPlace(10);
     }
 
+    cover?.style.setProperty('--ytb-thumbnail', thumbnailForPage());
     if (reason) renderContent(reason);
     currentKey = key;
     watchBox();

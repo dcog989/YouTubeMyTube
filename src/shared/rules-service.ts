@@ -23,11 +23,17 @@ export function blockChannel(entry: ChannelEntry): Promise<BlockerState | null> 
   return requestMutation({ kind: 'blockChannel', entry });
 }
 
-export function unblockChannel(lookup: ChannelLookup): Promise<BlockerState | null> {
-  return requestMutation({ kind: 'unblockChannel', lookup });
+export function unblockChannel(
+  lookup: ChannelLookup,
+  videoId?: string,
+): Promise<BlockerState | null> {
+  return requestMutation({ kind: 'unblockChannel', lookup, videoId });
 }
 
-export function unblockReason(reason: Reason | null): Promise<BlockerState | null> {
+export function unblockReason(
+  reason: Reason | null,
+  videoId?: string,
+): Promise<BlockerState | null> {
   if (!reason) return Promise.resolve(null);
-  return requestMutation({ kind: 'unblockReason', reason });
+  return requestMutation({ kind: 'unblockReason', reason, videoId });
 }

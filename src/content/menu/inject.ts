@@ -261,11 +261,14 @@ export function createInjector(deps: {
       return action.mode === 'unblock' ? unblockVideo(action.entry.id) : blockVideo(action.entry);
     }
     return action.mode === 'unblock'
-      ? unblockChannel({
-          id: action.entry.id,
-          handle: action.entry.handle,
-          name: action.entry.name,
-        })
+      ? unblockChannel(
+          {
+            id: action.entry.id,
+            handle: action.entry.handle,
+            name: action.entry.name,
+          },
+          parseYouTubeUrl(window.location.href).videoId,
+        )
       : blockChannel(action.entry);
   }
 

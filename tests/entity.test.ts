@@ -1,5 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { cardEntity, commentEntity, entityKey } from '../src/content/entity';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { cardEntity, commentEntity, currentContext, entityKey } from '../src/content/entity';
 import { METADATA_SELECTOR } from '../src/content/entity-selectors';
 
 // The extractors only need the few Element members they read; a plain stub
@@ -105,6 +105,55 @@ describe('commentEntity', () => {
       commentAuthor: 'Some User',
       commentContent: 'buy my course',
     });
+  });
+});
+
+describe('currentContext', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.stubGlobal('Element', FakeElement);
+  });
+
+  function page(identifier: string): Element {
+    const author = stub({
+      selectors: {
+        'link[itemprop="url"]': stub({
+          attributes: { href: 'http://www.youtube.com/@RickAstleyYT' },
+        }),
+        'link[itemprop="name"], meta[itemprop="name"]': stub({
+          attributes: { content: 'Rick Astley' },
+        }),
+      },
+    });
+    const document = stub({
+      selectors: {
+        'meta[itemprop="identifier"]': stub({ attributes: { content: identifier } }),
+        'meta[itemprop="name"]': stub({
+          attributes: { content: 'Never Gonna Give You Up' },
+        }),
+        'span[itemprop="author"]': author,
+      },
+    });
+    vi.stubGlobal('document', document);
+    vi.stubGlobal('window', {
+      location: { href: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+    });
+    return document;
+  }
+
+  it('reads the channel and title from head data before the player DOM exists', () => {
+    page('dQw4w9WgXcQ');
+    expect(currentContext()).toEqual({
+      videoId: 'dQw4w9WgXcQ',
+      handle: 'RickAstleyYT',
+      channelName: 'Rick Astley',
+      title: 'Never Gonna Give You Up',
+    });
+  });
+
+  it('ignores head data left behind by a previous navigation', () => {
+    page('aaaaaaaaaaa');
+    expect(currentContext()).toEqual({ videoId: 'dQw4w9WgXcQ' });
   });
 });
 

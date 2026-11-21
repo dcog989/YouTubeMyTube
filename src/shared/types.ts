@@ -22,6 +22,9 @@ export interface FilterRules {
   videos: VideoEntry[];
   titleFilters: string[];
   commentFilters: string[];
+  // Videos the user explicitly unblocked from the player cover. They stay
+  // visible even when a channel or pattern filter still matches them.
+  allowedVideos: string[];
 }
 
 export type Theme = 'system' | 'light' | 'dark';
@@ -64,6 +67,7 @@ export interface ParsedUrl {
 
 export interface CompiledRules {
   videoIds: Set<string>;
+  allowedVideoIds: Set<string>;
   channelIds: Set<string>;
   handles: Set<string>;
   channelNames: Set<string>;

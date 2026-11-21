@@ -9,6 +9,7 @@ function rules(overrides: Partial<FilterRules> = {}): FilterRules {
     channelFilters: [],
     titleFilters: [],
     commentFilters: [],
+    allowedVideos: [],
     ...overrides,
   };
 }

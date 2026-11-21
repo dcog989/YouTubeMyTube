@@ -8,6 +8,7 @@ export function defaultRules(): FilterRules {
     videos: [],
     titleFilters: [],
     commentFilters: [],
+    allowedVideos: [],
   };
 }
 

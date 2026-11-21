@@ -62,6 +62,38 @@ describe('applyMutation', () => {
     expect(applyMutation(state, { kind: 'unblockReason', reason: noRef })).toBeNull();
   });
 
+  it('allows the video supplied with an unblock', () => {
+    const state = defaultState();
+    state.rules.channels = [{ id: 'UC1', name: 'Chan', handle: 'chan' }];
+    const reason = { kind: 'handle', value: 'chan' } as const;
+    expect(applyMutation(state, { kind: 'unblockReason', reason, videoId: 'dQw4w9WgXcQ' })).toBe(
+      state,
+    );
+    expect(state.rules.channels).toHaveLength(0);
+    expect(state.rules.allowedVideos).toEqual(['dQw4w9WgXcQ']);
+    expect(applyMutation(state, { kind: 'unblockReason', reason, videoId: 'dQw4w9WgXcQ' })).toBe(
+      null,
+    );
+
+    const entry = { id: 'dQw4w9WgXcQ', title: '' };
+    expect(applyMutation(state, { kind: 'blockVideo', entry })).toBe(state);
+    expect(state.rules.allowedVideos).toEqual([]);
+  });
+
+  it('allows the video supplied with a channel unblock', () => {
+    const state = defaultState();
+    state.rules.channels = [{ id: 'UC1', name: 'Chan', handle: 'chan' }];
+    expect(
+      applyMutation(state, {
+        kind: 'unblockChannel',
+        lookup: { handle: 'chan' },
+        videoId: 'dQw4w9WgXcQ',
+      }),
+    ).toBe(state);
+    expect(state.rules.channels).toHaveLength(0);
+    expect(state.rules.allowedVideos).toEqual(['dQw4w9WgXcQ']);
+  });
+
   it('replaces the whole state', () => {
     const replacement = defaultState();
     replacement.settings.enabled = false;

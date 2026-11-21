@@ -3,26 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { blockSurface } from '../src/content/evaluate';
 
 describe('blockSurface', () => {
-  it('blanks the player for video-level reasons', () => {
-    expect(blockSurface({ kind: 'video', value: 'abcdefghijk' }, 'video')).toBe('blank');
-    expect(blockSurface({ kind: 'title', value: 'some title' }, 'video')).toBe('blank');
-  });
-
-  it('shows the full overlay for channel-level reasons', () => {
-    for (const kind of [
-      'channel',
-      'handle',
-      'channelName',
-      'channelNameRule',
-      'comment',
-    ] as const) {
-      expect(blockSurface({ kind, value: 'value' }, 'video')).toBe('channel');
+  it('blanks the player on every video page, whatever the reason', () => {
+    for (const kind of ['video', 'shorts', 'live', 'embed'] as const) {
+      expect(blockSurface(kind)).toBe('blank');
     }
   });
 
-  it('always blanks on Shorts so the pager keeps its scroll input', () => {
-    expect(blockSurface({ kind: 'channel', value: 'UC123' }, 'shorts')).toBe('blank');
-    expect(blockSurface({ kind: 'channelNameRule', value: 'name' }, 'shorts')).toBe('blank');
+  it('keeps the full overlay for channel pages', () => {
+    expect(blockSurface('channel')).toBe('channel');
+    expect(blockSurface('handle')).toBe('channel');
   });
 });
 
@@ -37,7 +26,7 @@ describe('player selectors', () => {
     // `video` is the cover's last-resort element, not a container the CSS targets.
     inSource.delete('video');
 
-    const block = /html\.ytb-blank-player\s*:is\(([\s\S]*?)\)\s*video/.exec(css)?.[1] ?? '';
+    const block = /html\.ytb-blank-player\s*:is\(([\s\S]*?)\)\s*\{/.exec(css)?.[1] ?? '';
     const inCss = new Set(
       block
         .split(',')

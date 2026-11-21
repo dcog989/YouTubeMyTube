@@ -11,6 +11,7 @@ import {
 } from './rules';
 import type { BlockerState, ChannelEntry, FilterRules, VideoEntry } from './types';
 import { removeRule, ruleRefForReason } from './unblock';
+import { VIDEO_ID } from './url';
 
 // Metadata lookups (titles, channel ids/names/handles) computed outside the
 // worker. Applied by the worker to whatever state is stored when it runs, so a
@@ -32,8 +33,8 @@ export type Mutation =
   | { kind: 'blockVideo'; entry: VideoEntry }
   | { kind: 'unblockVideo'; videoId: string }
   | { kind: 'blockChannel'; entry: ChannelEntry }
-  | { kind: 'unblockChannel'; lookup: ChannelLookup }
-  | { kind: 'unblockReason'; reason: Reason }
+  | { kind: 'unblockChannel'; lookup: ChannelLookup; videoId?: string }
+  | { kind: 'unblockReason'; reason: Reason; videoId?: string }
   | { kind: 'applyMetadata'; fixes: MetadataFix[] }
   | { kind: 'replaceState'; state: BlockerState };
 
@@ -112,9 +113,14 @@ export function isMutation(value: unknown): value is Mutation {
     case 'blockChannel':
       return isChannelEntry(value.entry);
     case 'unblockChannel':
-      return isChannelLookup(value.lookup);
+      return (
+        isChannelLookup(value.lookup) &&
+        (value.videoId === undefined || typeof value.videoId === 'string')
+      );
     case 'unblockReason':
-      return isReason(value.reason);
+      return (
+        isReason(value.reason) && (value.videoId === undefined || typeof value.videoId === 'string')
+      );
     case 'applyMetadata':
       return Array.isArray(value.fixes) && value.fixes.every(isMetadataFix);
     case 'replaceState':
@@ -134,6 +140,15 @@ function setLookupFailed(entry: LookupMarked, failed: boolean): boolean {
   if (failed === Boolean(entry.lookupFailed)) return false;
   if (failed) entry.lookupFailed = true;
   else delete entry.lookupFailed;
+  return true;
+}
+
+// An unblock action also allows the video in front of the user, so a filter
+// that still matches cannot leave the cover up after the row is gone.
+function allowVideo(rules: FilterRules, videoId: string | undefined): boolean {
+  const id = videoId?.trim() ?? '';
+  if (!VIDEO_ID.test(id) || rules.allowedVideos.includes(id)) return false;
+  rules.allowedVideos.push(id);
   return true;
 }
 
@@ -194,15 +209,20 @@ function applyInPlace(state: BlockerState, mutation: InPlaceMutation): boolean {
       return true;
     case 'blockVideo':
       return addVideo(state.rules, mutation.entry);
-    case 'unblockVideo':
-      return removeVideo(state.rules, mutation.videoId);
+    case 'unblockVideo': {
+      const allowed = allowVideo(state.rules, mutation.videoId);
+      return removeVideo(state.rules, mutation.videoId) || allowed;
+    }
     case 'blockChannel':
       return addChannel(state.rules, mutation.entry);
-    case 'unblockChannel':
-      return removeChannel(state.rules, mutation.lookup);
+    case 'unblockChannel': {
+      const allowed = allowVideo(state.rules, mutation.videoId);
+      return removeChannel(state.rules, mutation.lookup) || allowed;
+    }
     case 'unblockReason': {
       const ref = ruleRefForReason(mutation.reason);
-      return ref ? removeRule(state.rules, ref) : false;
+      const allowed = allowVideo(state.rules, mutation.videoId);
+      return (ref ? removeRule(state.rules, ref) : false) || allowed;
     }
     case 'applyMetadata':
       return applyMetadataFixes(state.rules, mutation.fixes);

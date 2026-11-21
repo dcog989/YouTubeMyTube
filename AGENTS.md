@@ -10,7 +10,7 @@
 
 Two layers, no page injection:
 
-1. `declarativeNetRequest` rules (generated from state) redirect direct navigation to blocked videos, channels, handles and area pages. The background service worker reconciles them on every state change.
+1. `declarativeNetRequest` rules (generated from state) redirect direct navigation to blocked channels, handles, embeds and area pages. Watch, live and Shorts videos are blocked in-page so they get the player cover. The background service worker reconciles the rules on every state change.
 2. A content script (isolated world) applies CSS classes and a `MutationObserver` to hide matching cards, channels and comments, and handles SPA navigation that DNR cannot see.
 
 URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area routing (`match.ts`) and rule lookups/compilation (`rules.ts`) live in `src/shared/`; all are pure and unit-tested. The rule model (entity rows plus pattern lists), area definitions, reason wire format, lookup/URL resolution and DNR generation are also in `src/shared/`. Content-script concerns are split under `src/content/` (wiring, filtering, areas, evaluation, menu).
@@ -102,8 +102,8 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 
 ### Known Limitations
 
-- DOM filtering can briefly render content before it is hidden; the network layer covers direct navigation instead.
-- Cold direct navigation to blocked content redirects to the block page (`declarativeNetRequest`); the in-page full-screen channel overlay and player blanking apply to in-page/SPA navigation.
+- DOM filtering can briefly render content before it is hidden; player pages hide the player from `document_start`, and the network layer covers channel and area pages.
+- Cold direct navigation to blocked channels, embeds and area pages redirects to the block page (`declarativeNetRequest`); blocked watch/live/Shorts videos load the player page and are blanked in-page by the content script.
 - The `declarativeNetRequest` layer is capped by the browser's regex-rule and total-rule limits (`MAX_DNR_REGEX_RULES` / `MAX_DNR_RULES`); overflow is surfaced in the options UI and enforced in-page by the content script.
 - Comment filtering requires comments to be rendered.
 - In-menu blocking relies on YouTube's menu DOM (desktop popup, mobile bottom sheet) and may be affected by YouTube layout changes. The mobile sheet does not handle Escape, so it stays open after a block until dismissed manually.

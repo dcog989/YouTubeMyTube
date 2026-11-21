@@ -4,6 +4,9 @@
 
 /* Only videos inside the player are blanked; feed previews and the hover player
    use their own <video> elements and must keep working. */
+/* Keep the player frame visible but unreadable while the decision is pending
+   or the cover is shown, so the cover's backdrop blur has a frame to work with
+   instead of a black box. */
 html.ytb-blank-player
   :is(
     #movie_player,
@@ -15,13 +18,15 @@ html.ytb-blank-player
     ytd-player,
     ytd-shorts ytd-player,
     ytd-reel-video-renderer[is-active] #player
-  )
-  video {
-  visibility: hidden !important;
+  ) {
+  filter: blur(24px) !important;
+  /* Clip the blurred output to the player box; otherwise it bleeds onto the
+     title and recommendations below. */
+  clip-path: inset(0) !important;
 }
 
 .ytb-blank-cover {
-  position: fixed;
+  position: absolute;
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -30,11 +35,27 @@ html.ytb-blank-player
   gap: 8px;
   box-sizing: border-box;
   padding: 16px;
-  background-color: rgba(0, 0, 0, 0.72);
+  overflow: hidden;
+  isolation: isolate;
+  background-color: #0f0f0f;
   backdrop-filter: blur(28px);
   color: #fff;
   font-family: "Roboto", "Arial", sans-serif;
   text-align: center;
+}
+
+/* The page's own thumbnail, blurred behind the message, so a blocked video
+   still reads as that video instead of a black box. */
+.ytb-blank-cover::before {
+  content: "";
+  position: absolute;
+  inset: -24px;
+  z-index: -1;
+  background-image: var(--ytb-thumbnail, none);
+  background-position: center;
+  background-size: cover;
+  filter: blur(24px) brightness(0.45);
+  opacity: 0.9;
 }
 
 .ytb-blank-logo {
@@ -147,8 +168,8 @@ html[dark] .ytb-block-overlay {
 
 .ytb-block-btn-primary {
   border-color: transparent;
-  background-color: var(--yt-spec-call-to-action, #3ea6ff);
-  color: var(--yt-spec-text-primary-inverse, #0f0f0f);
+  background-color: #2e7d32;
+  color: #fff;
 }
 
 /* The injected item inherits the menu's own font and colour; measuring every

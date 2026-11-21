@@ -142,11 +142,13 @@ describe('buildDnrRules', () => {
     ).toBe(false);
   });
 
-  it('builds a combined video regex including shorts and watch paths', () => {
+  it('leaves watch, live and Shorts pages to the in-page player cover', () => {
     const { rules } = buildDnrRules(stateWith({ videos: [video(VIDEO_D)] }));
     const filter = rules[0]?.condition.regexFilter ?? '';
-    expect(filter).toContain('watch');
-    expect(filter).toContain('shorts');
+    expect(filter).not.toContain('watch');
+    expect(filter).not.toContain('live');
+    expect(filter).not.toContain('shorts');
+    expect(filter).toContain('embed');
     expect(filter).toContain(VIDEO_D);
   });
 

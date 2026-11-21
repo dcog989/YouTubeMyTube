@@ -3,15 +3,16 @@ import { normalizeState } from '../shared/normalize';
 import { onRuntimeMessage } from '../shared/runtime';
 import { loadState, onLocalStorageChanged, readState } from '../shared/state';
 import type { BlockerState } from '../shared/types';
+import { parseYouTubeUrl } from '../shared/url';
 import { applyAreas } from './apply-areas';
 import { forEachShadowRoot, hasAncestorIn } from './dom';
 import { currentContext } from './entity';
-import { createEvaluator } from './evaluate';
+import { createEvaluator, PENDING_KINDS } from './evaluate';
 import { createFilterEngine } from './filter';
 import { createMenuInjector } from './menu';
 import { createChannelCache } from './menu/channel-cache';
 import { type ElementChange, onElementChanges } from './observer';
-import { createOverlayFeedback } from './overlay';
+import { createOverlayFeedback, VIDEO_BLANK_CLASS } from './overlay';
 import { createPlaybackGuard } from './playback';
 import { applyDecision, store } from './store';
 
@@ -20,6 +21,14 @@ import { applyDecision, store } from './store';
 const SETTLE_REFRESH_MS = [3000, 10000];
 
 async function init(): Promise<void> {
+  // Hide the player before storage responds; the evaluator releases it once a
+  // final decision is possible, so a blocked video never reaches the screen.
+  // Music has no player microdata to decide from, so it would stay hidden.
+  const onMusic = window.location.hostname === 'music.youtube.com';
+  if (!onMusic && PENDING_KINDS.has(parseYouTubeUrl(window.location.href).kind)) {
+    document.documentElement.classList.add(VIDEO_BLANK_CLASS);
+  }
+
   const guard = createPlaybackGuard();
   const overlay = createOverlayFeedback(guard, (state) => applyState(state));
   const channelCache = createChannelCache();

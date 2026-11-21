@@ -52,9 +52,11 @@ function redirectRule(id: number, entry: DnrPlanEntry): DnrRule {
   };
 }
 
+// Watch, live and Shorts pages render the in-page player cover. Only embeds
+// keep the redirect: the content script does not run inside the iframe.
 function videoIdPattern(videoId: string): string {
   const id = escapeRegExp(videoId);
-  return `${YOUTUBE_HOST_PATTERN}/(?:watch\\?(?:[^#]*&)?v=${id}(?:[&#]|$)|(?:shorts|embed|live)/${id}(?:[/?#]|$))`;
+  return `${YOUTUBE_HOST_PATTERN}/embed/${id}(?:[/?#]|$)`;
 }
 
 // `urlFilter` gives `*`, `|` and `^` their own meaning; entity fields must only

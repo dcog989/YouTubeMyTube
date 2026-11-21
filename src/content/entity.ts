@@ -93,6 +93,28 @@ function applyParsed(entity: Entity, parsed: ParsedUrl): void {
   if (parsed.handle && !entity.handle) entity.handle = parsed.handle;
 }
 
+// The watch page carries the video and channel as schema.org microdata, which
+// the parser reaches before the player DOM exists. The identifier keeps SPA
+// navigation's stale data from being trusted.
+function applyPageMetadata(entity: Entity): void {
+  const identifier = document.querySelector('meta[itemprop="identifier"]')?.getAttribute('content');
+  if (!entity.videoId || identifier?.trim() !== entity.videoId) return;
+
+  const author = document.querySelector('span[itemprop="author"]');
+  const href = author?.querySelector('link[itemprop="url"]')?.getAttribute('href');
+  if (href) applyParsed(entity, parseYouTubeUrl(href));
+  const name = author
+    ?.querySelector('link[itemprop="name"], meta[itemprop="name"]')
+    ?.getAttribute('content')
+    ?.trim();
+  if (name && !entity.channelName) entity.channelName = name;
+
+  // The first schema.org name is the video title; unlike document.title it does
+  // not briefly turn into the site name during YouTube's re-render.
+  const title = document.querySelector('meta[itemprop="name"]')?.getAttribute('content')?.trim();
+  if (title && !entity.title) entity.title = title;
+}
+
 function applyAnchor(entity: Entity, anchor: HTMLAnchorElement): void {
   const href = anchor.getAttribute('href') ?? '';
   if (href.includes('/shorts/')) entity.isShorts = true;
@@ -236,6 +258,7 @@ export function currentContext(): Entity {
   applyParsed(entity, page);
 
   if (entity.videoId) {
+    applyPageMetadata(entity);
     const scope = videoScope(entity.videoId, page.kind);
     if (!scope) return entity;
     const owner = ownerElementIn(scope) ?? scope;
