@@ -4,6 +4,9 @@ type MessageEntry = { message: string };
 
 const EN: Record<string, MessageEntry> = enMessages;
 
+// The shipped right-to-left locales.
+const RTL_LANGUAGES = new Set(['ar', 'fa', 'he', 'ur']);
+
 export type MessageKey = keyof typeof enMessages;
 
 function applySubstitutions(message: string, substitutions?: string[]): string {
@@ -29,6 +32,11 @@ export function t(key: MessageKey, substitutions?: string | string[]): string {
 }
 
 export function localizeDocument(root: ParentNode = document): void {
+  if (root === document) {
+    const language =
+      (typeof browser === 'undefined' ? 'en' : browser.i18n.getUILanguage()).split('-')[0] ?? '';
+    document.documentElement.dir = RTL_LANGUAGES.has(language) ? 'rtl' : 'ltr';
+  }
   for (const element of root.querySelectorAll<HTMLElement>('[data-i18n]')) {
     const key = element.dataset.i18n;
     if (key) element.textContent = t(key as MessageKey);
