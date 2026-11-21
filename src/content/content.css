@@ -140,6 +140,11 @@ html[dark] .ytb-block-overlay {
   cursor: pointer;
 }
 
+/* The author display above beats the browser's [hidden] rule. */
+.ytb-block-btn[hidden] {
+  display: none;
+}
+
 .ytb-block-btn-primary {
   border-color: transparent;
   background-color: var(--yt-spec-call-to-action, #3ea6ff);

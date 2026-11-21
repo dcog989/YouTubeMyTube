@@ -28,23 +28,23 @@ const PLAYER_BOX_SELECTORS = [
   'ytd-player',
 ];
 
-export interface ChannelOverlayInfo {
+interface ChannelOverlayInfo {
   reason: Reason;
   name?: string;
   id?: string;
 }
 
-export interface BlankCover {
+interface BlankCover {
   set(blanked: boolean, reason?: Reason): void;
   clear(): void;
 }
 
-export interface ChannelOverlay {
+interface ChannelOverlay {
   show(info: ChannelOverlayInfo): void;
   clear(): void;
 }
 
-export interface Feedback {
+interface Feedback {
   clear(): void;
 }
 
@@ -93,7 +93,8 @@ function buildActions(reason: Reason, feedback: Feedback): HTMLElement {
   remove.addEventListener('click', () => {
     void (async () => {
       if (!ref) return;
-      await unblockReason(reason);
+      // A failed or no-op removal must not reveal content that is still blocked.
+      if (!(await unblockReason(reason))) return;
       feedback.clear();
     })();
   });
@@ -142,10 +143,8 @@ export function createOverlayFeedback(guard: PlaybackGuard): OverlayFeedback {
 export function createBlankCover(options: {
   guard: PlaybackGuard;
   feedback: Feedback;
-  resolveBox?: () => HTMLElement | null;
 }): BlankCover {
   const { guard, feedback } = options;
-  const resolveBox = options.resolveBox ?? findPlayerBox;
 
   let cover: HTMLElement | null = null;
   let observer: ResizeObserver | null = null;
@@ -157,7 +156,7 @@ export function createBlankCover(options: {
 
   function resolvePlayerBox(): HTMLElement | null {
     if (playerBox?.isConnected) return playerBox;
-    const found = resolveBox();
+    const found = findPlayerBox();
     playerBox = found && found.getBoundingClientRect().width > 0 ? found : null;
     return found;
   }
@@ -253,7 +252,12 @@ export function createBlankCover(options: {
     const key = reason ? reasonKey(reason) : null;
     const passive = parseYouTubeUrl(window.location.href).kind === 'shorts';
     if (cover) cover.classList.toggle(PASSIVE_COVER_CLASS, passive);
-    if (cover?.isConnected && key !== null && currentKey === key) return;
+    if (cover?.isConnected && key !== null && currentKey === key) {
+      // The player can appear after the first placement attempt; keep following it.
+      watchBox();
+      place();
+      return;
+    }
 
     lease ??= guard.acquire();
 
@@ -262,7 +266,7 @@ export function createBlankCover(options: {
       return;
     }
 
-    if (!cover) {
+    if (!cover?.isConnected) {
       cover = h('div', { className: 'ytb-blank-cover' });
       cover.classList.toggle(PASSIVE_COVER_CLASS, passive);
       document.body.appendChild(cover);
@@ -280,7 +284,7 @@ export function createBlankCover(options: {
   return { set, clear };
 }
 
-export function createChannelOverlay(options: {
+function createChannelOverlay(options: {
   guard: PlaybackGuard;
   feedback: Feedback;
 }): ChannelOverlay {
@@ -306,6 +310,9 @@ export function createChannelOverlay(options: {
 
   function build(info: ChannelOverlayInfo): HTMLElement {
     const root = h('div', { className: OVERLAY_CLASS });
+    root.setAttribute('role', 'dialog');
+    root.setAttribute('aria-modal', 'true');
+    root.setAttribute('aria-label', t('overlayTitle'));
     const channel = channelLabel(info);
 
     root.append(buildLogo('ytb-block-logo'));
@@ -332,6 +339,10 @@ export function createChannelOverlay(options: {
     host.appendChild(root);
     overlay = root;
     currentKey = key;
+    const action =
+      root.querySelector<HTMLButtonElement>('.ytb-block-remove:not([hidden])') ??
+      root.querySelector<HTMLButtonElement>('.ytb-block-home');
+    action?.focus();
   }
 
   return { show, clear };
