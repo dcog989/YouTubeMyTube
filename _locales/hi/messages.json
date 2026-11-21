@@ -65,10 +65,6 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "वीडियो ID" },
   "thTitle": { "message": "शीर्षक" },
-  "allowedVideosLabel": { "message": "अनुमत वीडियो" },
-  "allowedVideosHelp": {
-    "message": "प्लेयर से अनब्लॉक किए गए वीडियो. फ़िल्टर मेल खाने पर भी ये दिखाई देते रहते हैं."
-  },
   "titleFiltersLabel": { "message": "फ़ज़ी वीडियो फ़िल्टर" },
   "titleFiltersHelp": {
     "message": "कीवर्ड या /regex/flags, प्रति पंक्ति एक। कार्ड शीर्षकों से मिलान किया जाता है।"
@@ -154,6 +150,9 @@
   "blockedFallback": { "message": "यह सामग्री ब्लॉक है।" },
 
   "overlayTitle": { "message": "YouTubeMyTube द्वारा ब्लॉक" },
+  "filterBlockedHint": {
+    "message": "किसी फ़िल्टर ने ब्लॉक किया है। फ़िल्टर को सेटिंग्स में बदलें या हटाएँ।"
+  },
   "removeFromBlocklist": { "message": "ब्लॉकलिस्ट से हटाएँ" },
   "youtubeHome": { "message": "YouTube होम" },
   "manageBlocklist": { "message": "ब्लॉकलिस्ट प्रबंधित करें" },

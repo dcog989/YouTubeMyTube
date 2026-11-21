@@ -65,10 +65,6 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "معرّف الفيديو" },
   "thTitle": { "message": "العنوان" },
-  "allowedVideosLabel": { "message": "الفيديوهات المسموح بها" },
-  "allowedVideosHelp": {
-    "message": "الفيديوهات التي ألغيت حظرها من المشغّل. تظل مرئية حتى إذا طابقها عامل تصفية."
-  },
   "titleFiltersLabel": { "message": "تصفية الفيديوهات الضبابية" },
   "titleFiltersHelp": {
     "message": "كلمات مفتاحية أو /regex/flags، واحد في كل سطر. تُطابَق مع عناوين البطاقات."
@@ -154,6 +150,9 @@
   "blockedFallback": { "message": "هذا المحتوى محظور." },
 
   "overlayTitle": { "message": "محظور بواسطة YouTubeMyTube" },
+  "filterBlockedHint": {
+    "message": "محظور بواسطة عامل تصفية. عدّل عامل التصفية أو احذفه في الإعدادات."
+  },
   "removeFromBlocklist": { "message": "إزالة من قائمة الحظر" },
   "youtubeHome": { "message": "الصفحة الرئيسية لـ YouTube" },
   "manageBlocklist": { "message": "إدارة قائمة الحظر" },

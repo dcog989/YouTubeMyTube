@@ -65,10 +65,6 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "Video kimliği" },
   "thTitle": { "message": "Başlık" },
-  "allowedVideosLabel": { "message": "İzin verilen videolar" },
-  "allowedVideosHelp": {
-    "message": "Oynatıcıdan engelini kaldırdığın videolar. Bir filtre hâlâ eşleşse bile görünür kalırlar."
-  },
   "titleFiltersLabel": { "message": "Videoları bulanık filtrele" },
   "titleFiltersHelp": {
     "message": "Anahtar sözcükler veya /regex/flags, satır başına bir tane. Kart başlıklarıyla eşleştirilir."
@@ -154,6 +150,9 @@
   "blockedFallback": { "message": "Bu içerik engellendi." },
 
   "overlayTitle": { "message": "YouTubeMyTube tarafından engellendi" },
+  "filterBlockedHint": {
+    "message": "Bir filtre tarafından engellendi. Filtreyi Ayarlar'dan düzenleyin veya kaldırın."
+  },
   "removeFromBlocklist": { "message": "Engel listesinden kaldır" },
   "youtubeHome": { "message": "YouTube ana sayfası" },
   "manageBlocklist": { "message": "Engel listesini yönet" },

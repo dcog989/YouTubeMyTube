@@ -69,10 +69,6 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "ID del vídeo" },
   "thTitle": { "message": "Título" },
-  "allowedVideosLabel": { "message": "Vídeos permitidos" },
-  "allowedVideosHelp": {
-    "message": "Vídeos que desbloqueaste desde el reproductor. Siguen visibles aunque un filtro siga coincidiendo."
-  },
   "titleFiltersLabel": { "message": "Filtrado difuso de vídeos" },
   "titleFiltersHelp": {
     "message": "Palabras clave o /regex/flags, una por línea. Se comparan con los títulos de las tarjetas."
@@ -162,6 +158,9 @@
   "blockedFallback": { "message": "Este contenido está bloqueado." },
 
   "overlayTitle": { "message": "Bloqueado por YouTubeMyTube" },
+  "filterBlockedHint": {
+    "message": "Bloqueado por un filtro. Edita o elimina el filtro en Ajustes."
+  },
   "removeFromBlocklist": { "message": "Quitar de la lista de bloqueo" },
   "youtubeHome": { "message": "Inicio de YouTube" },
   "manageBlocklist": { "message": "Gestionar la lista de bloqueo" },

@@ -49,8 +49,7 @@ async function render(): Promise<void> {
         void (async () => {
           // A failed or no-op removal must not send the tab back to a URL that
           // is still blocked, so it would bounce straight here again.
-          const videoId = reason?.kind === 'video' ? reason.value : undefined;
-          if (!(await unblockReason(reason, videoId))) {
+          if (!(await unblockReason(reason))) {
             if (detail) detail.textContent = t('actionFailed');
             return;
           }

@@ -4,7 +4,6 @@ import { countActiveEntries, sortEntries } from './patterns';
 import { mergeChannelEntries } from './rules';
 import { isTheme } from './theme';
 import type { BlockerState, ChannelEntry, FilterRules, Settings, VideoEntry } from './types';
-import { VIDEO_ID } from './url';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -69,15 +68,6 @@ function pickVideos(value: unknown): VideoEntry[] {
   return result;
 }
 
-function pickAllowedVideos(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  const ids = value
-    .filter((item): item is string => typeof item === 'string')
-    .map((item) => item.trim())
-    .filter((id) => VIDEO_ID.test(id));
-  return [...new Set(ids)];
-}
-
 function mergeRules(value: unknown): FilterRules {
   if (!isRecord(value)) return defaultRules();
   return {
@@ -86,7 +76,6 @@ function mergeRules(value: unknown): FilterRules {
     videos: pickVideos(value.videos),
     titleFilters: sortEntries(pickStringArray(value.titleFilters)),
     commentFilters: sortEntries(pickStringArray(value.commentFilters)),
-    allowedVideos: pickAllowedVideos(value.allowedVideos),
   };
 }
 

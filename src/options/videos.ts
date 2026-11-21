@@ -2,7 +2,7 @@ import { t } from '../shared/i18n';
 import { parseBlockInput, resolveVideoTitle } from '../shared/resolve';
 import { addVideo as addVideoRule } from '../shared/rules';
 import type { VideoEntry } from '../shared/types';
-import { byId, h } from '../shared/ui';
+import { byId } from '../shared/ui';
 import { updateCounts } from './counts';
 import { setStatus } from './dom';
 import { focusRemove, removeLabelFor, renderEntityTable } from './entity-table';
@@ -67,36 +67,7 @@ export function renderVideos(force = false): void {
       focusRemove('video-rows', index, 'video-add');
     },
   });
-  renderAllowedVideos();
   updateCounts();
-}
-
-// Videos allowed from the player cover are not blocks, so they sit in their own
-// list while staying visible and removable instead of becoming hidden state.
-function renderAllowedVideos(): void {
-  const draft = getDraft();
-  const rows = document.createDocumentFragment();
-  for (const id of draft.rules.allowedVideos) {
-    const remove = h('button', { type: 'button', className: 'btn btn-danger', text: t('remove') });
-    remove.setAttribute('aria-label', removeLabelFor(id));
-    remove.addEventListener('click', () => {
-      const index = draft.rules.allowedVideos.indexOf(id);
-      if (index === -1) return;
-      draft.rules.allowedVideos.splice(index, 1);
-      renderAllowedVideos();
-      setDirty(true);
-    });
-    rows.append(
-      h(
-        'tr',
-        {},
-        h('td', { className: 'entity-readonly', text: id }),
-        h('td', { className: 'col-action' }, remove),
-      ),
-    );
-  }
-  byId('allowed-video-rows').replaceChildren(rows);
-  byId('allowed-videos-group').hidden = draft.rules.allowedVideos.length === 0;
 }
 
 export async function addVideo(): Promise<void> {

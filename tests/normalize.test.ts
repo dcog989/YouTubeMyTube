@@ -19,13 +19,6 @@ describe('normalizeState', () => {
     expect(normalizeState(42)).toEqual(defaultState());
   });
 
-  it('keeps valid, unique allowed video ids', () => {
-    const state = normalizeState({
-      rules: { allowedVideos: ['dQw4w9WgXcQ', 'bad', 'dQw4w9WgXcQ', 5] },
-    });
-    expect(state.rules.allowedVideos).toEqual(['dQw4w9WgXcQ']);
-  });
-
   it('keeps only well-formed channel and video entries', () => {
     const state = normalizeState({
       rules: {

@@ -41,9 +41,6 @@ export function matchEntity(entity: Entity, rules: CompiledRules): MatchResult {
       return { blocked: true, reason: { kind: 'channelNameRule', value: entity.commentAuthor } };
     }
   }
-  // A per-video exception bypasses pattern filters, but never an explicit
-  // video or channel block: blocking the channel again must hide the video.
-  if (videoId && rules.allowedVideoIds.has(videoId)) return { blocked: false };
   if (entity.title && matchesAny(rules.titleFilters, entity.title)) {
     return { blocked: true, reason: { kind: 'title', value: entity.title } };
   }

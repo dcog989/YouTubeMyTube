@@ -3,7 +3,7 @@ import { t } from '../shared/i18n';
 import type { Reason } from '../shared/reason';
 import { reasonDetail } from '../shared/reason-copy';
 import { unblockReason } from '../shared/rules-service';
-import { getRuntimeUrl } from '../shared/runtime';
+import { getRuntimeUrl, openOptionsPage } from '../shared/runtime';
 import type { BlockerState } from '../shared/types';
 import { h } from '../shared/ui';
 import { ruleRefForReason } from '../shared/unblock';
@@ -87,24 +87,35 @@ function buildActions(reason: Reason, feedback: Feedback): HTMLElement {
 
   const ref = ruleRefForReason(reason);
 
-  const remove = h('button', {
-    type: 'button',
-    className: 'ytb-block-btn ytb-block-btn-primary ytb-block-remove',
-    text: t('removeFromBlocklist'),
-    hidden: ref === null,
-  });
-  remove.addEventListener('click', () => {
-    void (async () => {
-      if (!ref) return;
-      // A failed or no-op removal must not reveal content that is still blocked.
-      const saved = await unblockReason(reason, parseYouTubeUrl(window.location.href).videoId);
-      if (!saved) return;
-      // The worker returned the stored state; apply it here so the cover clears
-      // even when the storage echo is late or never arrives. The rescan shows
-      // the remaining block when another rule still matches.
-      feedback.apply(saved);
-    })();
-  });
+  if (ref) {
+    const remove = h('button', {
+      type: 'button',
+      className: 'ytb-block-btn ytb-block-btn-primary ytb-block-remove',
+      text: t('removeFromBlocklist'),
+    });
+    remove.addEventListener('click', () => {
+      void (async () => {
+        // A failed or no-op removal must not reveal content that is still blocked.
+        const saved = await unblockReason(reason);
+        if (!saved) return;
+        // The worker returned the stored state; apply it here so the cover clears
+        // even when the storage echo is late or never arrives. The rescan shows
+        // the remaining block when another rule still matches.
+        feedback.apply(saved);
+      })();
+    });
+    actions.append(remove);
+  } else {
+    // A filter match carries no removable rule: the matched value is not the
+    // filter line. Point the user at the settings that own the filter.
+    const settings = h('button', {
+      type: 'button',
+      className: 'ytb-block-btn ytb-block-settings',
+      text: t('popupSettings'),
+    });
+    settings.addEventListener('click', openOptionsPage);
+    actions.append(h('p', { className: 'ytb-block-hint', text: t('filterBlockedHint') }), settings);
+  }
 
   const home = h('button', {
     type: 'button',
@@ -115,7 +126,7 @@ function buildActions(reason: Reason, feedback: Feedback): HTMLElement {
     window.location.href = YOUTUBE_HOME;
   });
 
-  actions.append(remove, home);
+  actions.append(home);
   return actions;
 }
 

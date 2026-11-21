@@ -65,10 +65,6 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "Video ID" },
   "thTitle": { "message": "Title" },
-  "allowedVideosLabel": { "message": "Allowed videos" },
-  "allowedVideosHelp": {
-    "message": "Videos you unblocked from the player. They stay visible even when a filter still matches."
-  },
   "titleFiltersLabel": { "message": "Fuzzy filter videos" },
   "titleFiltersHelp": {
     "message": "Keywords or /regex/flags, one per line. Matched against card titles."
@@ -156,6 +152,9 @@
   "blockedFallback": { "message": "This content is blocked." },
 
   "overlayTitle": { "message": "Blocked by YouTubeMyTube" },
+  "filterBlockedHint": {
+    "message": "Blocked by a filter. Edit or remove the filter in Settings."
+  },
   "removeFromBlocklist": { "message": "Remove from blocklist" },
   "youtubeHome": { "message": "YouTube home" },
   "manageBlocklist": { "message": "Manage blocklist" },

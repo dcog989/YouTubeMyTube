@@ -65,10 +65,6 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "视频 ID" },
   "thTitle": { "message": "标题" },
-  "allowedVideosLabel": { "message": "已允许的视频" },
-  "allowedVideosHelp": {
-    "message": "你从播放器中解除屏蔽的视频。即使筛选器仍然匹配，它们也会保持可见。"
-  },
   "titleFiltersLabel": { "message": "模糊筛选视频" },
   "titleFiltersHelp": {
     "message": "关键词或 /regex/flags，每行一个。与卡片标题匹配。"
@@ -154,6 +150,9 @@
   "blockedFallback": { "message": "此内容已被屏蔽。" },
 
   "overlayTitle": { "message": "已被 YouTubeMyTube 屏蔽" },
+  "filterBlockedHint": {
+    "message": "已被筛选条件屏蔽。请在设置中编辑或删除该筛选条件。"
+  },
   "removeFromBlocklist": { "message": "从屏蔽列表中移除" },
   "youtubeHome": { "message": "YouTube 首页" },
   "manageBlocklist": { "message": "管理屏蔽列表" },

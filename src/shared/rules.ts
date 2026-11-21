@@ -9,12 +9,6 @@ export function compileRules(rules: FilterRules): CompiledRules {
     if (isActiveEntry(value)) videoIds.add(value);
   }
 
-  const allowedVideoIds = new Set<string>();
-  for (const id of rules.allowedVideos) {
-    const value = id.trim();
-    if (isActiveEntry(value)) allowedVideoIds.add(value);
-  }
-
   const channelIds = new Set<string>();
   const handles = new Set<string>();
   const channelNames = new Set<string>();
@@ -34,7 +28,6 @@ export function compileRules(rules: FilterRules): CompiledRules {
 
   return {
     videoIds,
-    allowedVideoIds,
     channelIds,
     handles,
     channelNames,
@@ -112,9 +105,6 @@ export function hasVideoId(rules: FilterRules, videoId: string): boolean {
 export function addVideo(rules: FilterRules, entry: VideoEntry): boolean {
   if (!isActiveEntry(entry.id) || hasVideoId(rules, entry.id)) return false;
   rules.videos.push(entry);
-  // An explicit block replaces any earlier "show this video" exception.
-  const allowed = rules.allowedVideos.indexOf(entry.id.trim());
-  if (allowed !== -1) rules.allowedVideos.splice(allowed, 1);
   return true;
 }
 

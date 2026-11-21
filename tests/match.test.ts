@@ -16,30 +16,6 @@ describe('matchEntity', () => {
     expect(matchEntity({ videoId: 'other' }, rules).blocked).toBe(false);
   });
 
-  it('lets an allowed video through a title filter but not a channel block', () => {
-    const filtered = rulesWith({
-      titleFilters: ['Never Gonna'],
-      allowedVideos: ['dQw4w9WgXcQ'],
-    });
-    expect(
-      matchEntity({ videoId: 'dQw4w9WgXcQ', title: 'Never Gonna Give You Up' }, filtered).blocked,
-    ).toBe(false);
-
-    const blocked = rulesWith({
-      channels: [{ id: 'UC1', name: 'Rick Astley', handle: 'rickastley' }],
-      allowedVideos: ['dQw4w9WgXcQ'],
-    });
-    expect(matchEntity({ videoId: 'dQw4w9WgXcQ', channelId: 'UC1' }, blocked).blocked).toBe(true);
-  });
-
-  it('keeps an explicit video block ahead of the allowed list', () => {
-    const rules = rulesWith({
-      videos: [{ id: 'dQw4w9WgXcQ', title: '' }],
-      allowedVideos: ['dQw4w9WgXcQ'],
-    });
-    expect(matchEntity({ videoId: 'dQw4w9WgXcQ' }, rules).blocked).toBe(true);
-  });
-
   it('matches handles case-insensitively and ignores the @', () => {
     const rules = rulesWith({ channels: [{ id: '', name: '', handle: 'somechannel' }] });
     expect(matchEntity({ handle: '@SomeChannel' }, rules).blocked).toBe(true);

@@ -136,7 +136,7 @@ function registerHandlers(): void {
     const lookup = { id: channelId, handle, name: channelName };
     void applyMutation(
       findChannel(state.rules, lookup)
-        ? unblockChannel(lookup, activeContext.videoId ?? undefined)
+        ? unblockChannel(lookup)
         : blockChannel({ id: channelId ?? '', name: channelName ?? '', handle: handle ?? '' }),
     );
   });

@@ -69,10 +69,6 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "Video-ID" },
   "thTitle": { "message": "Titel" },
-  "allowedVideosLabel": { "message": "Toegestane video's" },
-  "allowedVideosHelp": {
-    "message": "Video's die je in de speler hebt gedeblokkeerd. Ze blijven zichtbaar, ook als een filter nog overeenkomt."
-  },
   "titleFiltersLabel": { "message": "Video's fuzzy filteren" },
   "titleFiltersHelp": {
     "message": "Trefwoorden of /regex/flags, één per regel. Vergeleken met kaarttitels."
@@ -158,6 +154,9 @@
   "blockedFallback": { "message": "Deze inhoud is geblokkeerd." },
 
   "overlayTitle": { "message": "Geblokkeerd door YouTubeMyTube" },
+  "filterBlockedHint": {
+    "message": "Geblokkeerd door een filter. Bewerk of verwijder het filter in Instellingen."
+  },
   "removeFromBlocklist": { "message": "Uit blokkeerlijst verwijderen" },
   "youtubeHome": { "message": "YouTube-startpagina" },
   "manageBlocklist": { "message": "Blokkeerlijst beheren" },

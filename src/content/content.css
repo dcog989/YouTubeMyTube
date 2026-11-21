@@ -145,6 +145,14 @@ html[dark] .ytb-block-overlay {
   pointer-events: auto;
 }
 
+.ytb-block-hint {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  opacity: 0.85;
+}
+
 .ytb-block-btn {
   display: inline-flex;
   align-items: center;

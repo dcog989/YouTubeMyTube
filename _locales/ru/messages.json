@@ -69,10 +69,6 @@
   "testUrlPlaceholder": { "message": "https://www.youtube.com/watch?v=..." },
   "thVideoId": { "message": "ID видео" },
   "thTitle": { "message": "Название" },
-  "allowedVideosLabel": { "message": "Разрешённые видео" },
-  "allowedVideosHelp": {
-    "message": "Видео, разблокированные в проигрывателе. Они остаются видимыми, даже если фильтр всё ещё совпадает."
-  },
   "titleFiltersLabel": { "message": "Нечёткий фильтр видео" },
   "titleFiltersHelp": {
     "message": "Ключевые слова или /regex/flags, по одному в строке. Сравниваются с названиями карточек."
@@ -158,6 +154,9 @@
   "blockedFallback": { "message": "Этот контент заблокирован." },
 
   "overlayTitle": { "message": "Заблокировано YouTubeMyTube" },
+  "filterBlockedHint": {
+    "message": "Заблокировано фильтром. Измените или удалите фильтр в Настройках."
+  },
   "removeFromBlocklist": { "message": "Удалить из списка блокировки" },
   "youtubeHome": { "message": "Главная YouTube" },
   "manageBlocklist": { "message": "Управлять списком блокировки" },
