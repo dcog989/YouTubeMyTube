@@ -44,6 +44,9 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/content/content.ts` — content-script wiring; owns the factory instances (playback guard, overlay feedback, evaluator, filter engine, menu injector) and threads their dependencies.
 - `src/content/store.ts` — the content script's single state source (`getSnapshot`/`setState` + `store`); `content.ts` is the only storage listener.
 - `src/content/batch.ts` — `createBatcher`/`createCoalescer` for coalescing DOM work (microtask or timed).
+- `src/content/apply-areas.ts` — `applyAreas`: toggles the `AREA_DEFINITIONS` hide classes on `<html>` from the store snapshot.
+- `src/content/observer.ts` — the shared `MutationObserver` hub: per-root listeners, added/changed element sets, `href`/`title`/`aria-label` attributes.
+- `src/content/dom.ts` — shadow-DOM helpers (`eventTarget`, `closestAcrossShadow`, `hasAncestorIn`, `walkShadowRoots`).
 - `src/content/playback.ts` — `createPlaybackGuard`, the ref-counted play listener/pause-all shared by the blank cover and channel overlay.
 - `src/content/entity-selectors.ts` — YouTube DOM selector data (`CARD_SELECTOR`, `COMMENT_SELECTOR`, `HIDDEN_CLASS`).
 - `src/content/entity.ts` — entity extraction from cards, comments and the current page.
@@ -51,6 +54,9 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/content/evaluate.ts` — `createEvaluator`: block routing and overlay/blank decisions.
 - `src/content/overlay.ts` — `createBlankCover` / `createChannelOverlay` / `createOverlayFeedback`.
 - `src/content/menu/index.ts` + `src/content/menu/` — `createMenuInjector`: in-page menu injection.
+- `src/content/menu/channel-cache.ts` — capped oEmbed channel cache (100 entries, 4 concurrent lookups, 60 s retry on empty) that fills a card's missing channel identity.
+- `src/popup/popup.ts` + `src/popup/` — toolbar popup: active-tab context, block/unblock of the current video or channel, blocking toggle.
+- `src/blocked/blocked.ts` + `src/blocked/` — DNR redirect target: renders the block reason and offers unblock, back, home and options.
 - `src/background/service-worker.ts` — the single writer: applies `MUTATE_REQUEST` mutations to storage and keeps DNR rules in sync.
 - `src/options/options.ts` + `src/options/` — settings UI, split into entry point, state store, panel modules (channels/videos/areas/patterns), shared table (`entity-table.ts`), sorter (`sort.ts`), counters (`counts.ts`), status/panel plumbing (`dom.ts`), lookup guards (`lookup.ts`), external-change classification (`conflict.ts`), tester, import/export and metadata backfill.
 - `esbuild.config.mjs` — build/packaging for Firefox and Chrome (bundles entries, copies HTML/CSS/manifests and `_locales/`).
