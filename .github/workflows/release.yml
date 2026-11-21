@@ -5,34 +5,56 @@ on:
     tags: ["v*", "[0-9]*"]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  publish:
-    name: Publish release
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
       - run: bun install --frozen-lockfile
       - uses: taiki-e/install-action@v2
         with:
           tool: just
       - run: just check
       - run: just lint-webext
-      - run: just test
       - run: SOURCE_DATE_EPOCH=$(git log -1 --format=%ct) just build
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-archives
+          path: dist/*.zip
+          if-no-files-found: error
+
+  # No dependency install runs with the write token granted to this job.
+  publish:
+    name: Publish release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v7
+        with:
+          name: release-archives
+          path: release-archives
 
       - name: Generate release notes
         id: cog
-        uses: cocogitto/cocogitto-action@v4.2.0
+        uses: cocogitto/cocogitto-action@52d0023b4396897f1815648e553db2ab8d782f3a # v4.2.0
         with:
           command: changelog
           args: --at ${{ github.ref_name }}
 
-      - uses: softprops/action-gh-release@v3
+      - uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3
         with:
-          files: dist/*.zip
+          files: release-archives/*.zip
           body: ${{ steps.cog.outputs.stdout }}
