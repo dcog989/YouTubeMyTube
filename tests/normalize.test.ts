@@ -139,12 +139,13 @@ describe('normalizeState', () => {
 });
 
 describe('ruleCount', () => {
-  it('sums entities and active pattern entries', () => {
+  it('sums entities, active pattern entries and enabled areas', () => {
     const state = defaultState();
     state.rules.videos = [{ id: 'a', title: '' }];
     state.rules.channels = [{ id: 'UC1', name: '', handle: '' }];
     state.rules.titleFilters = ['x', '// comment', '  // indented comment', '   ', ''];
     state.rules.commentFilters = ['y'];
-    expect(ruleCount(state)).toBe(4);
+    state.areas.homePage = true;
+    expect(ruleCount(state)).toBe(5);
   });
 });

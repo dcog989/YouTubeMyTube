@@ -144,6 +144,7 @@ export function ruleCount(state: BlockerState): number {
     summary.channels +
     summary.channelFilters +
     summary.titleFilters +
-    summary.commentFilters
+    summary.commentFilters +
+    summary.areas
   );
 }

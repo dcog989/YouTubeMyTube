@@ -29,7 +29,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `_locales/<lang>/messages.json` — per-locale message catalogs; `en` is `default_locale` and the source of truth for keys/placeholders.
 - `src/shared/dnr.ts` — generates declarativeNetRequest rules from state and wraps the dynamic-rule API.
 - `src/shared/defaults.ts` — default rules, areas, settings and state.
-- `src/shared/normalize.ts` — state normalization and `ruleCount` (entity rows + pattern lists, deduplicated).
+- `src/shared/normalize.ts` — state normalization and `ruleCount` (entity rows, pattern lists and enabled areas, deduplicated).
 - `src/shared/storage-ext.ts` — thin `browser.storage.local` get/set wrappers.
 - `src/shared/mutations.ts` — serializable `Mutation` union and the pure `applyMutation` reducer (single-writer protocol).
 - `src/shared/state.ts` — load/save/ensure the blocker state and `onLocalStorageChanged`; only the service worker writes.
