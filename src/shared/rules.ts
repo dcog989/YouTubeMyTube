@@ -53,25 +53,40 @@ const MATCH_HANDLE = 1;
 const MATCH_NAME = 2;
 
 // Lower ranks are stronger matches; NO_MATCH means the entry is unrelated.
-function channelMatchRank(entry: ChannelEntry, lookup: ChannelLookup): number {
+interface PreparedLookup {
+  id: string;
+  handle: string;
+  name: string;
+  strong: boolean;
+}
+
+function prepareLookup(lookup: ChannelLookup): PreparedLookup {
   const id = lookup.id?.trim() ?? '';
-  if (id !== '' && entry.id.trim() === id) return MATCH_ID;
   const handle = lookup.handle ? normalizeHandle(lookup.handle) : '';
-  if (handle !== '' && entry.handle === handle) return MATCH_HANDLE;
-  const strongLookup = id !== '' || handle !== '';
+  return {
+    id,
+    handle,
+    name: lookup.name ? normalizeChannelName(lookup.name) : '',
+    strong: id !== '' || handle !== '',
+  };
+}
+
+function channelMatchRank(entry: ChannelEntry, lookup: PreparedLookup): number {
+  if (lookup.id !== '' && entry.id.trim() === lookup.id) return MATCH_ID;
+  if (lookup.handle !== '' && entry.handle === lookup.handle) return MATCH_HANDLE;
   const strongEntry = entry.id.trim() !== '' || entry.handle.trim() !== '';
-  if (strongLookup && strongEntry) return NO_MATCH;
-  const name = lookup.name ? normalizeChannelName(lookup.name) : '';
-  if (name !== '' && normalizeChannelName(entry.name) === name) return MATCH_NAME;
+  if (lookup.strong && strongEntry) return NO_MATCH;
+  if (lookup.name !== '' && normalizeChannelName(entry.name) === lookup.name) return MATCH_NAME;
   return NO_MATCH;
 }
 
 export function channelMatches(entry: ChannelEntry, lookup: ChannelLookup): boolean {
-  return channelMatchRank(entry, lookup) !== NO_MATCH;
+  return channelMatchRank(entry, prepareLookup(lookup)) !== NO_MATCH;
 }
 
 export function findChannel(rules: FilterRules, lookup: ChannelLookup): ChannelEntry | undefined {
-  return rules.channels.find((channel) => channelMatches(channel, lookup));
+  const prepared = prepareLookup(lookup);
+  return rules.channels.find((channel) => channelMatchRank(channel, prepared) !== NO_MATCH);
 }
 
 export function findVideo(rules: FilterRules, videoId: string): VideoEntry | undefined {
@@ -136,9 +151,9 @@ export function applyResolvedMeta(
   stored: ChannelEntry,
   meta: ChannelLookup,
 ): ResolvedMetaOutcome {
+  const lookup = prepareLookup({ id: meta.id, handle: meta.handle });
   const conflict = rules.channels.find(
-    (channel) =>
-      channel !== stored && channelMatches(channel, { id: meta.id, handle: meta.handle }),
+    (channel) => channel !== stored && channelMatchRank(channel, lookup) !== NO_MATCH,
   );
   if (!conflict) {
     if (meta.id) stored.id = meta.id;
@@ -157,8 +172,9 @@ export function applyResolvedMeta(
 export function removeChannel(rules: FilterRules, lookup: ChannelLookup): boolean {
   let bestIndex = -1;
   let bestRank = Number.POSITIVE_INFINITY;
+  const prepared = prepareLookup(lookup);
   rules.channels.forEach((channel, index) => {
-    const rank = channelMatchRank(channel, lookup);
+    const rank = channelMatchRank(channel, prepared);
     if (rank !== NO_MATCH && rank < bestRank) {
       bestRank = rank;
       bestIndex = index;
