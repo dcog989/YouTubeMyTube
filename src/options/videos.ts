@@ -2,11 +2,12 @@ import { t } from '../shared/i18n';
 import { parseBlockInput, resolveVideoTitle } from '../shared/resolve';
 import { addVideo as addVideoRule } from '../shared/rules';
 import type { VideoEntry } from '../shared/types';
-import { byId, h } from '../shared/ui';
+import { byId } from '../shared/ui';
 import { updateCounts } from './counts';
 import { setStatus } from './dom';
+import { removeLabelFor, renderEntityTable } from './entity-table';
 import { createTableSorter, type SortColumns } from './sort';
-import { getDraft, setDirty } from './state';
+import { getDraft, isDirty, setDirty } from './state';
 
 function videoValue(video: VideoEntry, key: string): string {
   return key === 'title' ? video.title : video.id;
@@ -23,47 +24,31 @@ export function wireVideoSort(onSort: () => void): void {
   sorter.wire('video-rows', onSort);
 }
 
-export function renderVideos(): void {
+export function renderVideos(force = false): void {
   const body = byId('video-rows');
+  if (!force && isDirty() && body.contains(document.activeElement)) {
+    updateCounts();
+    return;
+  }
   const draft = getDraft();
-  body.replaceChildren();
-  sorter.sort(draft.rules.videos).forEach((video) => {
-    const idInput = h('input', {
-      className: 'input entity-input',
-      value: video.id,
-      placeholder: '11-character ID',
-      autocomplete: 'off',
-    });
-    idInput.addEventListener('input', () => {
-      video.id = idInput.value.trim();
+  renderEntityTable({
+    bodyId: 'video-rows',
+    items: sorter.sort(draft.rules.videos),
+    idOf: (video) => video.id,
+    setId: (video, value) => {
+      video.id = value;
       delete video.lookupFailed;
       setDirty(true);
-    });
-
-    const remove = h('button', {
-      type: 'button',
-      className: 'btn btn-danger',
-      text: t('remove'),
-    });
-    remove.addEventListener('click', () => {
+    },
+    placeholder: '11-character ID',
+    columns: [(video) => video.title || (video.lookupFailed ? t('notFound') : '—')],
+    removeLabel: (video) => removeLabelFor(video.id || video.title),
+    onRemove: (video) => {
       const index = draft.rules.videos.indexOf(video);
       if (index !== -1) draft.rules.videos.splice(index, 1);
-      renderVideos();
+      renderVideos(true);
       setDirty(true);
-    });
-
-    body.appendChild(
-      h(
-        'tr',
-        {},
-        h('td', {}, idInput),
-        h('td', {
-          className: 'entity-readonly',
-          text: video.title || (video.lookupFailed ? t('notFound') : '—'),
-        }),
-        h('td', { className: 'col-action' }, remove),
-      ),
-    );
+    },
   });
   updateCounts();
 }
@@ -84,13 +69,16 @@ export async function addVideo(): Promise<void> {
   }
 
   input.value = '';
-  renderVideos();
+  renderVideos(true);
   setDirty(true);
   setStatus('video-status', t('videosLooking'), true);
 
   try {
     const title = await resolveVideoTitle(entry.id);
-    if (!getDraft().rules.videos.includes(entry)) return;
+    if (!getDraft().rules.videos.includes(entry)) {
+      setStatus('video-status', '', true);
+      return;
+    }
     if (title) entry.title = title;
     renderVideos();
     setDirty(true);

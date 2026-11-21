@@ -2,11 +2,12 @@ import { t } from '../shared/i18n';
 import { type ChannelMeta, parseBlockInput, resolveChannelMeta } from '../shared/resolve';
 import { addChannel as addChannelRule, applyResolvedMeta, findChannel } from '../shared/rules';
 import type { ChannelEntry } from '../shared/types';
-import { byId, h } from '../shared/ui';
+import { byId } from '../shared/ui';
 import { updateCounts } from './counts';
 import { setStatus } from './dom';
+import { removeLabelFor, renderEntityTable } from './entity-table';
 import { createTableSorter, type SortColumns } from './sort';
-import { getDraft, setDirty } from './state';
+import { getDraft, isDirty, setDirty } from './state';
 
 function channelValue(channel: ChannelEntry, key: string): string {
   if (key === 'name') return channel.name;
@@ -26,51 +27,34 @@ export function wireChannelSort(onSort: () => void): void {
   sorter.wire('channel-rows', onSort);
 }
 
-export function renderChannels(): void {
+export function renderChannels(force = false): void {
   const body = byId('channel-rows');
+  if (!force && isDirty() && body.contains(document.activeElement)) {
+    updateCounts();
+    return;
+  }
   const draft = getDraft();
-  body.replaceChildren();
-  sorter.sort(draft.rules.channels).forEach((channel) => {
-    const idInput = h('input', {
-      className: 'input entity-input',
-      value: channel.id,
-      placeholder: 'UC…',
-      autocomplete: 'off',
-    });
-    idInput.addEventListener('input', () => {
-      channel.id = idInput.value.trim();
+  renderEntityTable({
+    bodyId: 'channel-rows',
+    items: sorter.sort(draft.rules.channels),
+    idOf: (channel) => channel.id,
+    setId: (channel, value) => {
+      channel.id = value;
       delete channel.lookupFailed;
       setDirty(true);
-    });
-
-    const remove = h('button', {
-      type: 'button',
-      className: 'btn btn-danger',
-      text: t('remove'),
-    });
-    remove.addEventListener('click', () => {
+    },
+    placeholder: 'UC…',
+    columns: [
+      (channel) => channel.name || (channel.lookupFailed ? t('notFound') : '—'),
+      (channel) => (channel.handle ? `@${channel.handle}` : '—'),
+    ],
+    removeLabel: (channel) => removeLabelFor(channel.id || channel.name || channel.handle),
+    onRemove: (channel) => {
       const index = draft.rules.channels.indexOf(channel);
       if (index !== -1) draft.rules.channels.splice(index, 1);
-      renderChannels();
+      renderChannels(true);
       setDirty(true);
-    });
-
-    body.appendChild(
-      h(
-        'tr',
-        {},
-        h('td', {}, idInput),
-        h('td', {
-          className: 'entity-readonly',
-          text: channel.name || (channel.lookupFailed ? t('notFound') : '—'),
-        }),
-        h('td', {
-          className: 'entity-readonly',
-          text: channel.handle ? `@${channel.handle}` : '—',
-        }),
-        h('td', { className: 'col-action' }, remove),
-      ),
-    );
+    },
   });
   updateCounts();
 }
@@ -80,11 +64,12 @@ export function renderChannels(): void {
 async function addLegacyChannel(path: string, raw: string): Promise<void> {
   setStatus('channel-status', t('channelsLooking'), true);
 
-  let meta: ChannelMeta | null = null;
+  let meta: ChannelMeta | null;
   try {
     meta = await resolveChannelMeta({ path });
   } catch {
-    meta = null;
+    setStatus('channel-status', t('channelsFetchFailed'), false);
+    return;
   }
   if (!meta || (!meta.id && !meta.name)) {
     setStatus('channel-status', t('channelsNotFound', raw), false);
@@ -102,7 +87,7 @@ async function addLegacyChannel(path: string, raw: string): Promise<void> {
   }
 
   byId<HTMLInputElement>('channel-add').value = '';
-  renderChannels();
+  renderChannels(true);
   setDirty(true);
   setStatus('channel-status', meta.name ? t('addedNamed', meta.name) : t('channelsAdded'), true);
 }
@@ -132,7 +117,7 @@ export async function addChannel(): Promise<void> {
   }
 
   input.value = '';
-  renderChannels();
+  renderChannels(true);
   setDirty(true);
 
   const stored = findChannel(draft.rules, entry);
@@ -153,7 +138,10 @@ export async function addChannel(): Promise<void> {
       Boolean(handle) && !raw.startsWith('@') && !raw.includes('/') && !raw.includes(':');
     const meta = await resolveChannelMeta({ id, handle, name });
     const channels = liveChannels();
-    if (!channels) return;
+    if (!channels) {
+      setStatus('channel-status', '', true);
+      return;
+    }
     if (handle && !meta.name && !meta.id) {
       const index = channels.indexOf(stored);
       if (index !== -1) channels.splice(index, 1);

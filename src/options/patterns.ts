@@ -4,7 +4,7 @@ import { invalidPatterns, sortEntries } from '../shared/patterns';
 import { byId } from '../shared/ui';
 import { updateCounts } from './counts';
 import { arrayToLines, autoGrowTextarea, createDebounced, linesToArray } from './dom';
-import { getDraft, setDirty } from './state';
+import { getDraft, isDirty, setDirty } from './state';
 
 const PATTERN_UPDATE_DELAY_MS = 200;
 
@@ -59,10 +59,9 @@ export function syncPatternEditors(): void {
   const draft = getDraft();
   for (const key of PATTERN_FILTER_KEYS) {
     const editor = patternEditors.get(key);
-    if (editor) {
-      editor.value = arrayToLines(sortEntries(draft.rules[key]));
-      if (editor.offsetParent) autoGrowTextarea(editor);
-    }
+    if (!editor || (isDirty() && editor === document.activeElement)) continue;
+    editor.value = arrayToLines(sortEntries(draft.rules[key]));
+    if (editor.offsetParent) autoGrowTextarea(editor);
   }
   updatePatternWarnings();
 }
