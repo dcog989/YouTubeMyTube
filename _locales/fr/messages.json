@@ -160,6 +160,7 @@
   "popupBlockVideo": { "message": "Bloquer cette vidéo" },
   "popupBlockChannel": { "message": "Bloquer cette chaîne" },
   "popupSettings": { "message": "Paramètres" },
+  "actionFailed": { "message": "Impossible d'enregistrer la modification." },
   "popupNoFilters": { "message": "Aucun filtre pour l'instant" },
   "popupTotal": { "message": "$1 au total" },
   "contextVideo": { "message": "Vidéo $1" },

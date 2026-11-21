@@ -156,6 +156,7 @@
   "popupBlockVideo": { "message": "Заблокировать это видео" },
   "popupBlockChannel": { "message": "Заблокировать этот канал" },
   "popupSettings": { "message": "Настройки" },
+  "actionFailed": { "message": "Не удалось сохранить изменение." },
   "popupNoFilters": { "message": "Фильтров пока нет" },
   "popupTotal": { "message": "Всего: $1" },
   "contextVideo": { "message": "Видео $1" },

@@ -152,6 +152,7 @@
   "popupBlockVideo": { "message": "यह वीडियो ब्लॉक करें" },
   "popupBlockChannel": { "message": "यह चैनल ब्लॉक करें" },
   "popupSettings": { "message": "सेटिंग्स" },
+  "actionFailed": { "message": "परिवर्तन सहेजा नहीं जा सका।" },
   "popupNoFilters": { "message": "अभी कोई फ़िल्टर नहीं" },
   "popupTotal": { "message": "कुल $1" },
   "contextVideo": { "message": "वीडियो $1" },

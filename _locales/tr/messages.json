@@ -152,6 +152,7 @@
   "popupBlockVideo": { "message": "Bu videoyu engelle" },
   "popupBlockChannel": { "message": "Bu kanalı engelle" },
   "popupSettings": { "message": "Ayarlar" },
+  "actionFailed": { "message": "Değişiklik kaydedilemedi." },
   "popupNoFilters": { "message": "Henüz filtre yok" },
   "popupTotal": { "message": "toplam $1" },
   "contextVideo": { "message": "Video $1" },

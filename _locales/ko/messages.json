@@ -154,6 +154,7 @@
   "popupBlockVideo": { "message": "이 동영상 차단" },
   "popupBlockChannel": { "message": "이 채널 차단" },
   "popupSettings": { "message": "설정" },
+  "actionFailed": { "message": "변경 사항을 저장하지 못했습니다." },
   "popupNoFilters": { "message": "아직 필터 없음" },
   "popupTotal": { "message": "총 $1개" },
   "contextVideo": { "message": "동영상 $1" },

@@ -154,6 +154,7 @@
   "popupBlockVideo": { "message": "この動画をブロック" },
   "popupBlockChannel": { "message": "このチャンネルをブロック" },
   "popupSettings": { "message": "設定" },
+  "actionFailed": { "message": "変更を保存できませんでした。" },
   "popupNoFilters": { "message": "フィルターはまだありません" },
   "popupTotal": { "message": "合計 $1" },
   "contextVideo": { "message": "動画 $1" },

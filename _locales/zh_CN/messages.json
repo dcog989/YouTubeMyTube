@@ -152,6 +152,7 @@
   "popupBlockVideo": { "message": "屏蔽此视频" },
   "popupBlockChannel": { "message": "屏蔽此频道" },
   "popupSettings": { "message": "设置" },
+  "actionFailed": { "message": "无法保存更改。" },
   "popupNoFilters": { "message": "暂无过滤器" },
   "popupTotal": { "message": "共 $1 个" },
   "contextVideo": { "message": "视频 $1" },

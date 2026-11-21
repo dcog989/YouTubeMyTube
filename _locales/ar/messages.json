@@ -152,6 +152,7 @@
   "popupBlockVideo": { "message": "حظر هذا الفيديو" },
   "popupBlockChannel": { "message": "حظر هذه القناة" },
   "popupSettings": { "message": "الإعدادات" },
+  "actionFailed": { "message": "تعذّر حفظ التغيير." },
   "popupNoFilters": { "message": "لا توجد فلاتر بعد" },
   "popupTotal": { "message": "$1 إجمالاً" },
   "contextVideo": { "message": "فيديو $1" },

@@ -2,7 +2,13 @@ import { CONTEXT_REQUEST } from '../shared/constants';
 import { localizeDocument, t } from '../shared/i18n';
 import { ruleCount } from '../shared/normalize';
 import { findChannel, hasVideoId } from '../shared/rules';
-import { blockChannel, blockVideo, setEnabled } from '../shared/rules-service';
+import {
+  blockChannel,
+  blockVideo,
+  setEnabled,
+  unblockChannel,
+  unblockVideo,
+} from '../shared/rules-service';
 import { openOptionsPage } from '../shared/runtime';
 import { loadState } from '../shared/state';
 import { queryActiveTab, sendTabMessage } from '../shared/tabs';
@@ -16,6 +22,7 @@ interface ActiveContext {
   channelId: string | null;
   handle: string | null;
   channelName: string | null;
+  title: string | null;
 }
 
 let state: BlockerState;
@@ -24,6 +31,7 @@ let activeContext: ActiveContext = {
   channelId: null,
   handle: null,
   channelName: null,
+  title: null,
 };
 
 function renderCounts(): void {
@@ -39,13 +47,23 @@ function renderContext(): void {
   const { videoId, channelId, handle, channelName } = activeContext;
   const hasChannel = channelId !== null || handle !== null || channelName !== null;
   context.hidden = !videoId && !hasChannel;
-  videoButton.disabled = videoId === null || hasVideoId(state.rules, videoId);
+  videoButton.disabled = videoId === null;
+  videoButton.textContent = t(
+    videoId !== null && hasVideoId(state.rules, videoId) ? 'menuUnblockVideo' : 'popupBlockVideo',
+  );
   const channel = findChannel(state.rules, { id: channelId, handle, name: channelName });
-  channelButton.disabled = !hasChannel || channel !== undefined;
+  channelButton.disabled = !hasChannel;
+  channelButton.textContent = t(channel ? 'menuUnblockChannel' : 'popupBlockChannel');
 }
 
 async function detectActiveTab(): Promise<void> {
-  activeContext = { videoId: null, channelId: null, handle: null, channelName: null };
+  activeContext = {
+    videoId: null,
+    channelId: null,
+    handle: null,
+    channelName: null,
+    title: null,
+  };
 
   const tab = await queryActiveTab();
   const parsed = tab?.url ? parseYouTubeUrl(tab.url) : { kind: 'other' as const };
@@ -62,6 +80,7 @@ async function detectActiveTab(): Promise<void> {
       activeContext.handle = context.handle.toLowerCase();
     }
     if (context?.channelName) activeContext.channelName = context.channelName;
+    if (context?.title) activeContext.title = context.title;
   }
 
   const { videoId, channelId, handle, channelName } = activeContext;
@@ -80,8 +99,16 @@ async function detectActiveTab(): Promise<void> {
 }
 
 async function applyMutation(mutation: Promise<BlockerState | null>): Promise<void> {
+  const status = byId('status');
   const next = await mutation;
-  if (!next) return;
+  if (!next) {
+    byId<HTMLInputElement>('enabled').checked = state.settings.enabled;
+    status.textContent = t('actionFailed');
+    status.hidden = false;
+    return;
+  }
+  status.textContent = '';
+  status.hidden = true;
   state = next;
   renderCounts();
   renderContext();
@@ -94,15 +121,23 @@ function registerHandlers(): void {
   });
 
   byId('block-video').addEventListener('click', () => {
-    if (!activeContext.videoId) return;
-    void applyMutation(blockVideo({ id: activeContext.videoId, title: '' }));
+    const { videoId, title } = activeContext;
+    if (!videoId) return;
+    void applyMutation(
+      hasVideoId(state.rules, videoId)
+        ? unblockVideo(videoId)
+        : blockVideo({ id: videoId, title: title ?? '' }),
+    );
   });
 
   byId('block-channel').addEventListener('click', () => {
     const { channelId, handle, channelName } = activeContext;
     if (!channelId && !handle && !channelName) return;
+    const lookup = { id: channelId, handle, name: channelName };
     void applyMutation(
-      blockChannel({ id: channelId ?? '', name: channelName ?? '', handle: handle ?? '' }),
+      findChannel(state.rules, lookup)
+        ? unblockChannel(lookup)
+        : blockChannel({ id: channelId ?? '', name: channelName ?? '', handle: handle ?? '' }),
     );
   });
 
@@ -113,6 +148,7 @@ function registerHandlers(): void {
 }
 
 async function init(): Promise<void> {
+  document.documentElement.lang = browser.i18n.getUILanguage();
   localizeDocument();
   state = await loadState();
   applyTheme(state.settings.theme);

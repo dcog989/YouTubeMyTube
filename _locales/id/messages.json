@@ -154,6 +154,7 @@
   "popupBlockVideo": { "message": "Blokir video ini" },
   "popupBlockChannel": { "message": "Blokir saluran ini" },
   "popupSettings": { "message": "Pengaturan" },
+  "actionFailed": { "message": "Perubahan tidak dapat disimpan." },
   "popupNoFilters": { "message": "Belum ada filter" },
   "popupTotal": { "message": "$1 total" },
   "contextVideo": { "message": "Video $1" },

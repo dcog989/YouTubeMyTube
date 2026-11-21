@@ -162,6 +162,7 @@
   "popupBlockVideo": { "message": "Blocca questo video" },
   "popupBlockChannel": { "message": "Blocca questo canale" },
   "popupSettings": { "message": "Impostazioni" },
+  "actionFailed": { "message": "Impossibile salvare la modifica." },
   "popupNoFilters": { "message": "Nessun filtro" },
   "popupTotal": { "message": "$1 in totale" },
   "contextVideo": { "message": "Video $1" },

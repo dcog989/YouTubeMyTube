@@ -154,6 +154,7 @@
   "popupBlockVideo": { "message": "Zablokuj ten film" },
   "popupBlockChannel": { "message": "Zablokuj ten kanał" },
   "popupSettings": { "message": "Ustawienia" },
+  "actionFailed": { "message": "Nie udało się zapisać zmiany." },
   "popupNoFilters": { "message": "Brak filtrów" },
   "popupTotal": { "message": "Razem: $1" },
   "contextVideo": { "message": "Film $1" },

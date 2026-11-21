@@ -154,6 +154,7 @@
   "popupBlockVideo": { "message": "Block this video" },
   "popupBlockChannel": { "message": "Block this channel" },
   "popupSettings": { "message": "Settings" },
+  "actionFailed": { "message": "Could not save the change." },
   "popupNoFilters": { "message": "No filters yet" },
   "popupTotal": { "message": "$1 total" },
   "contextVideo": { "message": "Video $1" },

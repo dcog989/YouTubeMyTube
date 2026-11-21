@@ -156,6 +156,7 @@
   "popupBlockVideo": { "message": "Deze video blokkeren" },
   "popupBlockChannel": { "message": "Dit kanaal blokkeren" },
   "popupSettings": { "message": "Instellingen" },
+  "actionFailed": { "message": "De wijziging kon niet worden opgeslagen." },
   "popupNoFilters": { "message": "Nog geen filters" },
   "popupTotal": { "message": "$1 totaal" },
   "contextVideo": { "message": "Video $1" },
