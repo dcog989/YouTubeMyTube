@@ -69,7 +69,8 @@ async function init(): Promise<void> {
 
   onElementChanges(document.documentElement, handleChange);
 
-  onRuntimeMessage((message, _sender, sendResponse) => {
+  onRuntimeMessage((message, sender, sendResponse) => {
+    if (sender.id !== browser.runtime.id) return;
     if (!message || typeof message !== 'object') return;
     if ((message as { type?: unknown }).type !== CONTEXT_REQUEST) return;
     sendResponse(currentContext());
