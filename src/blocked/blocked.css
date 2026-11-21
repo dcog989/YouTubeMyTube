@@ -6,7 +6,7 @@
   --muted: light-dark(#575b66, #d0d3d9);
   --border: light-dark(#e0e2e7, #333844);
   --accent: #d10028;
-  --accent-text: light-dark(#b70024, #ffbec9);
+  --accent-text: light-dark(#b70024, #ff7b8a);
   --panel: light-dark(#ffffff, #1f2229);
 }
 
@@ -66,6 +66,7 @@ h1 {
 }
 
 .btn {
+  --btn-hover-border: var(--accent-text);
   appearance: none;
   display: inline-flex;
   align-items: center;
@@ -80,11 +81,13 @@ h1 {
   cursor: pointer;
 }
 
-.btn:hover {
-  border-color: var(--accent-text);
+/* Variants override the hover border, never the base rule. */
+.btn:hover:not(:disabled) {
+  border-color: var(--btn-hover-border);
 }
 
 .btn-primary {
+  --btn-hover-border: var(--accent-hover);
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
