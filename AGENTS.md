@@ -40,6 +40,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/shared/resolve.ts` — parses pasted URLs/IDs/handles and looks up channel metadata, video titles and a video's channel (oEmbed); `resolveChannelMeta` is the unified channel-completion strategy (`id` → `handle` → name).
 - `src/shared/unblock.ts` — maps exact block reasons back to removals.
 - `src/shared/navigation.ts` — builds YouTube entity URLs from block reasons.
+- `src/shared/ui.ts` — `byId` (lookup that throws when missing) and `h` (element builder) shared by the options, content and overlay code.
 - `src/content/content.ts` — content-script wiring; owns the factory instances (playback guard, overlay feedback, evaluator, filter engine, menu injector) and threads their dependencies.
 - `src/content/store.ts` — the content script's single state source (`getSnapshot`/`setState` + `store`); `content.ts` is the only storage listener.
 - `src/content/batch.ts` — `createBatcher`/`createCoalescer` for coalescing DOM work (microtask or timed).
@@ -51,7 +52,7 @@ URL parsing (`url.ts`), pattern utilities (`patterns.ts`), rule matching/area ro
 - `src/content/overlay.ts` — `createBlankCover` / `createChannelOverlay` / `createOverlayFeedback`.
 - `src/content/menu/index.ts` + `src/content/menu/` — `createMenuInjector`: in-page menu injection.
 - `src/background/service-worker.ts` — the single writer: applies `MUTATE_REQUEST` mutations to storage and keeps DNR rules in sync.
-- `src/options/options.ts` + `src/options/` — settings UI, split into entry point, state store, panel modules (channels/videos/areas/patterns), tester, import/export and metadata backfill.
+- `src/options/options.ts` + `src/options/` — settings UI, split into entry point, state store, panel modules (channels/videos/areas/patterns), shared table (`entity-table.ts`), sorter (`sort.ts`), counters (`counts.ts`), status/panel plumbing (`dom.ts`), lookup guards (`lookup.ts`), external-change classification (`conflict.ts`), tester, import/export and metadata backfill.
 - `esbuild.config.mjs` — build/packaging for Firefox and Chrome (bundles entries, copies HTML/CSS/manifests and `_locales/`).
 - `scripts/zip.mjs` — dependency-free ZIP writer for the store archives (`createZip`).
 - `scripts/source-zip.mjs` — packages git-tracked files into the AMO review source archive (`createSourceZip`).
