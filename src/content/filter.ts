@@ -2,7 +2,7 @@ import { matchEntity } from '../shared/match';
 import { scansComments } from '../shared/rules';
 import type { BlockerState, CompiledRules, Entity } from '../shared/types';
 import { createBatcher } from './batch';
-import { closestAcrossShadow, deepQuery } from './dom';
+import { closestAcrossShadow, deepQuery, hasAncestorIn } from './dom';
 import { cardEntity, commentEntity, entityKey } from './entity';
 import {
   CARD_SELECTOR,
@@ -136,13 +136,6 @@ export function createFilterEngine(deps: {
         processNode(node, state, compiled);
       });
     }
-  }
-
-  function hasAncestorIn(node: Element, roots: Set<Element>): boolean {
-    for (let parent = node.parentElement; parent; parent = parent.parentElement) {
-      if (roots.has(parent)) return true;
-    }
-    return false;
   }
 
   const batcher = createBatcher<Element>((nodes) => {

@@ -4,7 +4,7 @@ import { onRuntimeMessage } from '../shared/runtime';
 import { loadState, onLocalStorageChanged, readState } from '../shared/state';
 import type { BlockerState } from '../shared/types';
 import { applyAreas } from './apply-areas';
-import { forEachShadowRoot } from './dom';
+import { forEachShadowRoot, hasAncestorIn } from './dom';
 import { currentContext } from './entity';
 import { createEvaluator } from './evaluate';
 import { createFilterEngine } from './filter';
@@ -13,7 +13,7 @@ import { createChannelCache } from './menu/channel-cache';
 import { type ElementChange, onElementChanges } from './observer';
 import { createOverlayFeedback } from './overlay';
 import { createPlaybackGuard } from './playback';
-import { store } from './store';
+import { applyDecision, store } from './store';
 
 // Delay re-reads after startup so a slow storage backend that returned an empty
 // read at init self-corrects without needing a navigation or a storage write.
@@ -29,16 +29,13 @@ async function init(): Promise<void> {
 
   let changeCount = 0;
 
-  function applyState(next: BlockerState, force: boolean): void {
-    const previous = store.getSnapshot()?.state;
-    const rescans =
-      force ||
-      !previous ||
-      previous.settings.enabled !== next.settings.enabled ||
-      JSON.stringify(previous.rules) !== JSON.stringify(next.rules);
-    store.setState(next);
+  function applyState(next: BlockerState): void {
+    const previous = store.getSnapshot();
+    const decision = applyDecision(previous?.state ?? null, next);
+    if (previous && !decision.rescans) return;
+    store.setState(next, previous && decision.rulesEqual ? previous.compiled : undefined);
     applyAreas(store);
-    if (rescans) filter.rescan();
+    filter.rescan();
   }
 
   // Re-read state from storage so a transiently empty startup read cannot leave
@@ -53,13 +50,15 @@ async function init(): Promise<void> {
       return;
     }
     if (!next || changeCount !== start) return;
-    applyState(next, true);
+    applyState(next);
   }
 
   function handleChange({ added, changed }: ElementChange): void {
     const nodes = [...added, ...changed];
     for (const node of nodes) filter.schedule(node);
+    const roots = new Set(added);
     for (const node of added) {
+      if (hasAncestorIn(node, roots)) continue;
       forEachShadowRoot(node, (shadow) => {
         onElementChanges(shadow, handleChange);
       });
@@ -77,13 +76,12 @@ async function init(): Promise<void> {
 
   onLocalStorageChanged((value) => {
     changeCount += 1;
-    // Metadata-only writes cannot change what is hidden, so they skip the rescan.
-    applyState(normalizeState(value), false);
+    applyState(normalizeState(value));
   });
 
   const start = changeCount;
   const initial = await loadState();
-  if (changeCount === start) applyState(initial, true);
+  if (changeCount === start) applyState(initial);
 
   menu.init();
   for (const delay of SETTLE_REFRESH_MS) window.setTimeout(() => void refresh(), delay);

@@ -210,6 +210,9 @@ export function createInjector(deps: {
     applyVisibility(action, owner);
     const persisted = await persistAction(action);
     if (persisted) deps.store.setState(persisted);
+    // The storage echo compares equal to this state, so rescan here or the rest
+    // of the page keeps showing cards that this action just blocked/unblocked.
+    deps.filter.rescan();
     close();
   }
 

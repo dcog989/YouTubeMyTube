@@ -13,6 +13,13 @@ export function closestAcrossShadow(element: Element, selector: string): Element
   return null;
 }
 
+export function hasAncestorIn(node: Element, roots: ReadonlySet<Element>): boolean {
+  for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+    if (roots.has(parent)) return true;
+  }
+  return false;
+}
+
 export function walkShadowRoots(
   root: ParentNode,
   visit: (element: Element, shadow: ShadowRoot | null) => boolean | undefined,
