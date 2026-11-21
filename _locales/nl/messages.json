@@ -92,8 +92,10 @@
   "testTextBtn": { "message": "Tekst testen" },
   "notBlocked": { "message": "Niet geblokkeerd" },
 
-  "importBtn": { "message": "Instellingen importeren" },
-  "exportBtn": { "message": "Instellingen exporteren" },
+  "importBtn": { "message": "Importeren" },
+  "exportBtn": { "message": "Exporteren" },
+  "importTooltip": { "message": "Filters en instellingen importeren." },
+  "exportTooltip": { "message": "Filters en instellingen exporteren." },
   "restoreBackupBtn": { "message": "Back-up herstellen" },
   "backupInfo": { "message": "Back-up: $1 · $2 filters" },
   "backupNone": { "message": "Nog geen automatische back-up." },

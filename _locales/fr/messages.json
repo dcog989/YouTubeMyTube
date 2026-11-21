@@ -94,8 +94,10 @@
   "testTextBtn": { "message": "Tester le texte" },
   "notBlocked": { "message": "Non bloqué" },
 
-  "importBtn": { "message": "Importer les paramètres" },
-  "exportBtn": { "message": "Exporter les paramètres" },
+  "importBtn": { "message": "Importer" },
+  "exportBtn": { "message": "Exporter" },
+  "importTooltip": { "message": "Importer les filtres et les paramètres." },
+  "exportTooltip": { "message": "Exporter les filtres et les paramètres." },
   "restoreBackupBtn": { "message": "Restaurer la sauvegarde" },
   "backupInfo": { "message": "Sauvegarde : $1 · $2 filtres" },
   "backupNone": { "message": "Aucune sauvegarde automatique pour l'instant." },

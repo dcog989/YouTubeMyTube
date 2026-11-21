@@ -88,8 +88,10 @@
   "testTextBtn": { "message": "测试文本" },
   "notBlocked": { "message": "未屏蔽" },
 
-  "importBtn": { "message": "导入设置" },
-  "exportBtn": { "message": "导出设置" },
+  "importBtn": { "message": "导入" },
+  "exportBtn": { "message": "导出" },
+  "importTooltip": { "message": "导入过滤条件和设置。" },
+  "exportTooltip": { "message": "导出过滤条件和设置。" },
   "restoreBackupBtn": { "message": "恢复备份" },
   "backupInfo": { "message": "备份：$1 · $2 个过滤条件" },
   "backupNone": { "message": "尚无自动备份。" },

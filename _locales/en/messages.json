@@ -90,8 +90,10 @@
   "testTextBtn": { "message": "Test text" },
   "notBlocked": { "message": "Not blocked" },
 
-  "importBtn": { "message": "Import settings" },
-  "exportBtn": { "message": "Export settings" },
+  "importBtn": { "message": "Import" },
+  "exportBtn": { "message": "Export" },
+  "importTooltip": { "message": "Import filters and settings." },
+  "exportTooltip": { "message": "Export filters and settings." },
   "restoreBackupBtn": { "message": "Restore backup" },
   "backupInfo": { "message": "Backup: $1 · $2 filters" },
   "backupNone": { "message": "No automatic backup yet." },

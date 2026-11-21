@@ -88,8 +88,10 @@
   "testTextBtn": { "message": "اختبار النص" },
   "notBlocked": { "message": "غير محظور" },
 
-  "importBtn": { "message": "استيراد الإعدادات" },
-  "exportBtn": { "message": "تصدير الإعدادات" },
+  "importBtn": { "message": "استيراد" },
+  "exportBtn": { "message": "تصدير" },
+  "importTooltip": { "message": "استيراد عوامل التصفية والإعدادات." },
+  "exportTooltip": { "message": "تصدير عوامل التصفية والإعدادات." },
   "restoreBackupBtn": { "message": "استعادة النسخة الاحتياطية" },
   "backupInfo": { "message": "النسخة الاحتياطية: $1 · $2 من عوامل التصفية" },
   "backupNone": { "message": "لا توجد نسخة احتياطية تلقائية بعد." },

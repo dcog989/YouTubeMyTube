@@ -90,8 +90,10 @@
   "testTextBtn": { "message": "テキストをテスト" },
   "notBlocked": { "message": "ブロックされていません" },
 
-  "importBtn": { "message": "設定をインポート" },
-  "exportBtn": { "message": "設定をエクスポート" },
+  "importBtn": { "message": "インポート" },
+  "exportBtn": { "message": "エクスポート" },
+  "importTooltip": { "message": "フィルターと設定をインポート。" },
+  "exportTooltip": { "message": "フィルターと設定をエクスポート。" },
   "restoreBackupBtn": { "message": "バックアップを復元" },
   "backupInfo": { "message": "バックアップ: $1 · フィルター$2件" },
   "backupNone": { "message": "自動バックアップはまだありません。" },

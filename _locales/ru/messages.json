@@ -92,8 +92,10 @@
   "testTextBtn": { "message": "Проверить текст" },
   "notBlocked": { "message": "Не заблокировано" },
 
-  "importBtn": { "message": "Импортировать настройки" },
-  "exportBtn": { "message": "Экспортировать настройки" },
+  "importBtn": { "message": "Импорт" },
+  "exportBtn": { "message": "Экспорт" },
+  "importTooltip": { "message": "Импорт фильтров и настроек." },
+  "exportTooltip": { "message": "Экспорт фильтров и настроек." },
   "restoreBackupBtn": { "message": "Восстановить резервную копию" },
   "backupInfo": { "message": "Резервная копия: $1 · фильтров: $2" },
   "backupNone": { "message": "Автоматической резервной копии пока нет." },

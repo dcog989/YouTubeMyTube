@@ -90,8 +90,10 @@
   "testTextBtn": { "message": "Uji teks" },
   "notBlocked": { "message": "Tidak diblokir" },
 
-  "importBtn": { "message": "Impor pengaturan" },
-  "exportBtn": { "message": "Ekspor pengaturan" },
+  "importBtn": { "message": "Impor" },
+  "exportBtn": { "message": "Ekspor" },
+  "importTooltip": { "message": "Impor filter dan pengaturan." },
+  "exportTooltip": { "message": "Ekspor filter dan pengaturan." },
   "restoreBackupBtn": { "message": "Pulihkan cadangan" },
   "backupInfo": { "message": "Cadangan: $1 · $2 filter" },
   "backupNone": { "message": "Belum ada cadangan otomatis." },

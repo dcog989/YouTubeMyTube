@@ -88,8 +88,10 @@
   "testTextBtn": { "message": "Metni test et" },
   "notBlocked": { "message": "Engellenmedi" },
 
-  "importBtn": { "message": "Ayarları içe aktar" },
-  "exportBtn": { "message": "Ayarları dışa aktar" },
+  "importBtn": { "message": "İçe aktar" },
+  "exportBtn": { "message": "Dışa aktar" },
+  "importTooltip": { "message": "Filtreleri ve ayarları içe aktar." },
+  "exportTooltip": { "message": "Filtreleri ve ayarları dışa aktar." },
   "restoreBackupBtn": { "message": "Yedeği geri yükle" },
   "backupInfo": { "message": "Yedek: $1 · $2 filtre" },
   "backupNone": { "message": "Henüz otomatik yedek yok." },

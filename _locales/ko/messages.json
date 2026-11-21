@@ -90,8 +90,10 @@
   "testTextBtn": { "message": "텍스트 테스트" },
   "notBlocked": { "message": "차단되지 않음" },
 
-  "importBtn": { "message": "설정 가져오기" },
-  "exportBtn": { "message": "설정 내보내기" },
+  "importBtn": { "message": "가져오기" },
+  "exportBtn": { "message": "내보내기" },
+  "importTooltip": { "message": "필터와 설정을 가져옵니다." },
+  "exportTooltip": { "message": "필터와 설정을 내보냅니다." },
   "restoreBackupBtn": { "message": "백업 복원" },
   "backupInfo": { "message": "백업: $1 · 필터 $2개" },
   "backupNone": { "message": "아직 자동 백업이 없습니다." },

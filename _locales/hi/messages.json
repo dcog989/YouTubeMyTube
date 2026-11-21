@@ -88,8 +88,10 @@
   "testTextBtn": { "message": "टेक्स्ट जाँचें" },
   "notBlocked": { "message": "ब्लॉक नहीं है" },
 
-  "importBtn": { "message": "सेटिंग्स आयात करें" },
-  "exportBtn": { "message": "सेटिंग्स निर्यात करें" },
+  "importBtn": { "message": "आयात" },
+  "exportBtn": { "message": "निर्यात" },
+  "importTooltip": { "message": "फ़िल्टर और सेटिंग्स आयात करें।" },
+  "exportTooltip": { "message": "फ़िल्टर और सेटिंग्स निर्यात करें।" },
   "restoreBackupBtn": { "message": "बैकअप पुनर्स्थापित करें" },
   "backupInfo": { "message": "बैकअप: $1 · $2 फ़िल्टर" },
   "backupNone": { "message": "अभी तक कोई स्वचालित बैकअप नहीं।" },
