@@ -1,20 +1,6 @@
 # YouTubeMyTube
 
-Firefox and Chrome extension that blocks YouTube videos, channels, users, Shorts, comments.
-
-[Install from Mozilla Addons](https://addons.mozilla.org/en-GB/firefox/addon/youtubemytube/)
-
-## Installing in Chrome
-
-Chrome / Chromium requires manual install as it is not published to the Chrome Web Store yet:
-
-1. Download `youtubemytube-chrome.zip` from the [latest release](https://github.com/dcog989/YouTubeMyTube/releases).
-2. Extract the zip archive to a permanent location.
-3. Open `chrome://extensions` then turn on *Developer mode* (toggle in the top-right corner).
-4. Click *Load unpacked* (top left) and select the unzipped folder.
-5. Reload any open YouTube tabs.
-
-You will need to check and apply updates manually by replacing the unzipped folder.
+Firefox / Chrome extension that blocks YouTube videos, channels, users, Shorts, comments. It's like *BlockTube* but better.
 
 ![screenshot](assets/screen-1.webp)
 
@@ -30,6 +16,24 @@ You will need to check and apply updates manually by replacing the unzipped fold
 
 > [!NOTE]
 > On collaboration videos, only the uploading channel is checked. A channel that appears as a collaborator does not block the video; block the video itself if needed.
+
+## Install
+
+### Firefox
+
+[Install from Mozilla Addons](https://addons.mozilla.org/en-GB/firefox/addon/youtubemytube/)
+
+### Chrome
+
+Chrome / Chromium require manual install as it is not published to the Chrome Web Store:
+
+1. Download `youtubemytube-chrome.zip` from the [latest release](https://github.com/dcog989/YouTubeMyTube/releases).
+2. Extract the zip archive to a permanent location.
+3. Open `chrome://extensions` then turn on *Developer mode* (toggle in the top-right corner).
+4. Click *Load unpacked* (top left) and select the unzipped folder.
+5. Reload any open YouTube tabs.
+
+You will need to check and apply updates manually by replacing the unzipped folder.
 
 ## Privacy
 
@@ -52,10 +56,11 @@ Manifest V3, DOM/CSS-first, with `declarativeNetRequest` for direct navigation. 
 ### Development
 
 ```sh
+just                # verify the repo: lint, format check and tests CI runs.
 just dev            # rebuild JS and copy static assets on change
-just test           # Vitest unit tests
-just check          # Biome + typecheck + tests + build:firefox + web-ext lint
 just format         # Biome lint + format, writing fixes
+just release        # bump version and push
+just update         # latest allowed versions; just outdated to preview
 ```
 
 [Conventional Commit](https://www.conventionalcommits.org) with `cog bump --auto`; bumps version and creates the tag.
@@ -72,10 +77,6 @@ just build      # store + source archives; build:firefox / build:chrome build on
 This writes the unpacked extension to `dist/firefox/` and `dist/chrome/`, the store archives to `dist/youtubemytube-firefox.zip` and `dist/youtubemytube-chrome.zip`, and the AMO source archive to `dist/youtubemytube-source.zip`.
 
 Temporary load it in Firefox: `about:debugging#/runtime/this-firefox` → Load Temporary Add-on -> `dist/firefox/manifest.json`
-
-### Release and publish
-
-Pushing a version tag triggers the release workflow, which rebuilds the archives and attaches them to a GitHub Release. Upload the built archive to AMO manually. Chrome / Chromium users install `youtubemytube-chrome.zip` manually as above.
 
 ---
 
