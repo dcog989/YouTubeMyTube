@@ -1,7 +1,6 @@
 import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
-import { deflateRawSync } from 'node:zlib';
-import { crc32 } from './crc32.mjs';
+import { crc32, deflateRawSync } from 'node:zlib';
 
 /**
  * @typedef {{ time: number, day: number }} DosStamp
