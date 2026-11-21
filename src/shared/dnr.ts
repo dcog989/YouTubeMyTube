@@ -24,9 +24,10 @@ interface DnrRedirect {
 interface DnrPlanEntry {
   regexFilter?: string;
   urlFilter?: string;
-  target: DnrRedirect;
+  target?: DnrRedirect;
   caseSensitive: boolean;
   priority: number;
+  resourceTypes?: browser.declarativeNetRequest.ResourceType[];
 }
 
 export interface DnrBuild {
@@ -34,20 +35,20 @@ export interface DnrBuild {
   dropped: number;
 }
 
-function redirectRule(id: number, entry: DnrPlanEntry): DnrRule {
+function dnrRule(id: number, entry: DnrPlanEntry): DnrRule {
   const condition: browser.declarativeNetRequest._RuleCondition = {
     isUrlFilterCaseSensitive: entry.caseSensitive,
-    resourceTypes: ['main_frame'],
+    resourceTypes: entry.resourceTypes ?? ['main_frame'],
   };
   if (entry.regexFilter !== undefined) condition.regexFilter = entry.regexFilter;
   if (entry.urlFilter !== undefined) condition.urlFilter = entry.urlFilter;
+  const action: browser.declarativeNetRequest._RuleAction = entry.target
+    ? { type: 'redirect', redirect: entry.target }
+    : { type: 'block' };
   return {
     id,
     priority: entry.priority,
-    action: {
-      type: 'redirect',
-      redirect: entry.target,
-    },
+    action,
     condition,
   };
 }
@@ -57,6 +58,12 @@ function redirectRule(id: number, entry: DnrPlanEntry): DnrRule {
 function videoIdPattern(videoId: string): string {
   const id = escapeRegExp(videoId);
   return `${YOUTUBE_HOST_PATTERN}/embed/${id}(?:[/?#]|$)`;
+}
+
+// Embeds inside another site's page are sub-frame requests, which the
+// main-frame redirect never sees; block them at the network layer.
+function embedFilter(videoId: string): string {
+  return `||youtube.com/embed/${urlFilterLiteral(videoId)}^`;
 }
 
 // `urlFilter` gives `*`, `|` and `^` their own meaning; entity fields must only
@@ -110,11 +117,18 @@ function planDnrRules(state: BlockerState): DnrPlanEntry[] {
   for (const { id } of state.rules.videos) {
     const value = id.trim();
     if (!isDnrVideoId(value)) continue;
+    const reason = formatReason({ kind: 'video', value });
     plan.push({
       regexFilter: videoIdPattern(value),
-      target: blockedPage(formatReason({ kind: 'video', value })),
+      target: blockedPage(reason),
       caseSensitive: true,
       priority: ENTITY_RULE_PRIORITY,
+    });
+    plan.push({
+      urlFilter: embedFilter(value),
+      caseSensitive: true,
+      priority: ENTITY_RULE_PRIORITY,
+      resourceTypes: ['sub_frame'],
     });
   }
 
@@ -160,7 +174,7 @@ export function buildDnrRules(state: BlockerState): DnrBuild {
       }
       regexCount += 1;
     }
-    rules.push(redirectRule(rules.length + 1, entry));
+    rules.push(dnrRule(rules.length + 1, entry));
   }
   return { rules, dropped };
 }

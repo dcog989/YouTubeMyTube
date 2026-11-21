@@ -55,15 +55,16 @@ describe('buildDnrRules', () => {
     expect(rules).toHaveLength(0);
   });
 
-  it('creates one redirect rule per video id and channel field', () => {
+  it('creates a redirect and a sub-frame block per video, and one rule per channel field', () => {
     const { rules } = buildDnrRules(
       stateWith({
         videos: [video(VIDEO_A)],
         channels: [channel(CHANNEL_A, HANDLE_A)],
       }),
     );
-    expect(rules).toHaveLength(3);
-    expect(rules.every((rule) => rule.action.type === 'redirect')).toBe(true);
+    expect(rules).toHaveLength(4);
+    expect(rules.filter((rule) => rule.action.type === 'redirect')).toHaveLength(3);
+    expect(rules.filter((rule) => rule.action.type === 'block')).toHaveLength(1);
   });
 
   it('redirects entity rules to the extension blocked page with a reason', () => {
@@ -80,14 +81,24 @@ describe('buildDnrRules', () => {
         channels: [channel(CHANNEL_A, HANDLE_A)],
       }),
     );
-    const reasons = rules.map((rule) =>
-      decodeURIComponent(rule.action.redirect?.extensionPath ?? ''),
-    );
+    const reasons = rules
+      .filter((rule) => rule.action.type === 'redirect')
+      .map((rule) => decodeURIComponent(rule.action.redirect?.extensionPath ?? ''));
     expect(reasons).toEqual([
       `/blocked.html?reason=video id ${VIDEO_A}`,
       `/blocked.html?reason=channel id ${CHANNEL_A}`,
       `/blocked.html?reason=channel handle @${HANDLE_A}`,
     ]);
+  });
+
+  it('blocks blocked videos embedded in another site as sub-frames', () => {
+    const { rules } = buildDnrRules(stateWith({ videos: [video(VIDEO_A)] }));
+    const embed = rules.find((rule) => rule.condition.resourceTypes?.includes('sub_frame'));
+    expect(embed?.condition.urlFilter).toBe(`||youtube.com/embed/${VIDEO_A}^`);
+    expect(embed?.condition.resourceTypes).toEqual(['sub_frame']);
+    expect(embed?.condition.isUrlFilterCaseSensitive).toBe(true);
+    expect(embed?.action).toEqual({ type: 'block' });
+    expect(embed?.priority).toBe(2);
   });
 
   it('uses a domain-anchored urlFilter for channel ids', () => {
@@ -184,7 +195,9 @@ describe('buildDnrRules', () => {
       video(videoIdAt(index)),
     );
     const { rules, dropped } = buildDnrRules(stateWith({ videos }));
-    expect(rules).toHaveLength(MAX_DNR_REGEX_RULES);
+    expect(rules.filter((rule) => rule.condition.regexFilter !== undefined)).toHaveLength(
+      MAX_DNR_REGEX_RULES,
+    );
     expect(dropped).toBe(1);
   });
 
@@ -197,11 +210,13 @@ describe('buildDnrRules', () => {
     );
     const { rules, dropped } = buildDnrRules(stateWith({ videos, channels }));
     expect(dropped).toBe(0);
-    expect(rules).toHaveLength(MAX_DNR_REGEX_RULES + 10);
+    expect(rules).toHaveLength(MAX_DNR_REGEX_RULES * 2 + 10);
     expect(rules.filter((rule) => rule.condition.regexFilter !== undefined)).toHaveLength(
       MAX_DNR_REGEX_RULES,
     );
-    expect(rules.filter((rule) => rule.condition.urlFilter !== undefined)).toHaveLength(10);
+    expect(rules.filter((rule) => rule.condition.urlFilter !== undefined)).toHaveLength(
+      MAX_DNR_REGEX_RULES + 10,
+    );
   });
 
   it('caps the total rule count and reports the overflow', () => {
@@ -229,7 +244,7 @@ describe('applyDnrRules', () => {
     const { rules } = buildDnrRules(
       stateWith({ videos: [video(VIDEO_A), video(VIDEO_BAD), video(VIDEO_B)] }),
     );
-    const badId = rules[1]?.id;
+    const badId = rules[2]?.id;
     const applied: number[] = [];
     const update = vi.fn(async (options: { addRules?: Array<{ id: number }> }) => {
       if (options.addRules?.some((rule) => rule.id === badId)) throw new Error('rejected');
@@ -238,7 +253,7 @@ describe('applyDnrRules', () => {
     vi.stubGlobal('browser', { declarativeNetRequest: { updateDynamicRules: update } });
     const failed = await applyDnrRules([9], rules);
     expect(failed).toEqual([badId]);
-    expect(applied).toEqual([rules[0]?.id, rules[2]?.id]);
+    expect(applied).toEqual(rules.map((rule) => rule.id).filter((id) => id !== badId));
     vi.unstubAllGlobals();
   });
 });
@@ -257,7 +272,7 @@ describe('countDnrRules', () => {
       channels: [channel(CHANNEL_A, HANDLE_A)],
       trendingPage: true,
     });
-    expect(countDnrRules(state)).toEqual({ total: 4, regex: 2 });
+    expect(countDnrRules(state)).toEqual({ total: 5, regex: 2 });
   });
 
   it('ignores malformed entries', () => {
@@ -298,9 +313,6 @@ describe('dnrOverflow', () => {
     const state = stateWith({
       videos: Array.from({ length: MAX_DNR_REGEX_RULES * 2 }, (_, index) =>
         video(videoIdAt(index)),
-      ),
-      channels: Array.from({ length: MAX_DNR_RULES - MAX_DNR_REGEX_RULES }, (_, index) =>
-        channel(channelIdAt(index)),
       ),
     });
     expect(dnrOverflow(state)).toEqual({
