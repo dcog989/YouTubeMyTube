@@ -26,10 +26,20 @@ export function exportSettings(): void {
 
 window.addEventListener('pagehide', releaseExportUrl);
 
+const RULE_ARRAYS = [
+  'channels',
+  'videos',
+  'channelFilters',
+  'titleFilters',
+  'commentFilters',
+] as const;
+
 function isBlockerState(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false;
-  const record = value as Record<string, unknown>;
-  return 'rules' in record || 'areas' in record || 'settings' in record;
+  const rules = (value as { rules?: unknown }).rules;
+  if (!rules || typeof rules !== 'object') return false;
+  const record = rules as Record<string, unknown>;
+  return RULE_ARRAYS.every((key) => Array.isArray(record[key]));
 }
 
 function scheduleBackfill(): void {
