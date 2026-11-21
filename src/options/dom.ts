@@ -57,7 +57,10 @@ export function getActivePanel(): string {
 export function selectPanel(name: string): void {
   activePanel = name;
   document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
-    button.classList.toggle('is-active', button.dataset.panel === name);
+    const active = button.dataset.panel === name;
+    button.classList.toggle('is-active', active);
+    if (active) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
   });
   document.querySelectorAll<HTMLElement>('.panel').forEach((panel) => {
     panel.classList.toggle('is-active', panel.id === `panel-${name}`);

@@ -176,7 +176,9 @@
             <span id="panel-count" class="count"></span>
           </div>
           <div class="panel-actions">
-            <span id="dirty" class="dirty" hidden data-i18n="unsavedChanges">Unsaved changes</span>
+            <span id="dirty" class="dirty" hidden role="status" data-i18n="unsavedChanges">
+              Unsaved changes
+            </span>
             <button type="button" id="discard" class="btn" disabled data-i18n="discard">
               Discard changes
             </button>
@@ -186,11 +188,11 @@
           </div>
         </div>
 
-        <div id="dnr-warning" class="notice" hidden></div>
+        <div id="dnr-warning" class="notice" hidden role="status"></div>
 
-        <div id="save-status" class="notice" hidden></div>
+        <div id="save-status" class="notice" hidden role="status"></div>
 
-        <div id="conflict-warning" class="notice" hidden>
+        <div id="conflict-warning" class="notice" hidden role="alert">
           <span data-i18n="conflictWarning">
             Settings changed in another tab or from the YouTube menu. Reload to keep them, or Save
             to overwrite.
@@ -214,7 +216,7 @@
                 Add
               </button>
             </div>
-            <div id="channel-status" class="row-sub" hidden></div>
+            <div id="channel-status" class="row-sub" hidden role="status"></div>
             <div class="table-scroll">
               <table class="entity-table">
                 <thead>
@@ -260,7 +262,7 @@
                 Add
               </button>
             </div>
-            <div id="video-status" class="row-sub" hidden></div>
+            <div id="video-status" class="row-sub" hidden role="status"></div>
             <div class="table-scroll">
               <table class="entity-table">
                 <thead>
@@ -358,7 +360,7 @@
               </button>
             </div>
           </div>
-          <div id="test-result" class="test-result" hidden></div>
+          <div id="test-result" class="test-result" hidden role="status"></div>
         </section>
 
         <section class="panel" id="panel-data">
@@ -381,7 +383,7 @@
               merged into your existing filters.
             </div>
           </div>
-          <div id="import-status" class="test-result" hidden></div>
+          <div id="import-status" class="test-result" hidden role="status"></div>
         </section>
       </main>
     </div>
