@@ -2,7 +2,21 @@
   display: none !important;
 }
 
-html.ytb-blank-player video {
+/* Only videos inside the player are blanked; feed previews and the hover player
+   use their own <video> elements and must keep working. */
+html.ytb-blank-player
+  :is(
+    #movie_player,
+    .html5-video-player,
+    #player-container-inner,
+    #shorts-player,
+    #shorts-container,
+    #player,
+    ytd-player,
+    ytd-shorts ytd-player,
+    ytd-reel-video-renderer[is-active] #player
+  )
+  video {
   visibility: hidden !important;
 }
 

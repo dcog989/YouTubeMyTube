@@ -150,6 +150,7 @@ export function createBlankCover(options: {
   let cover: HTMLElement | null = null;
   let observer: ResizeObserver | null = null;
   let placeFrame = 0;
+  let bodyFrame = 0;
   let playerBox: HTMLElement | null = null;
   let currentKey: string | null = null;
   let lease: PlaybackLease | null = null;
@@ -205,6 +206,10 @@ export function createBlankCover(options: {
     lease = null;
     window.removeEventListener('resize', schedulePlace, true);
     window.removeEventListener('scroll', schedulePlace, true);
+    if (bodyFrame !== 0) {
+      cancelAnimationFrame(bodyFrame);
+      bodyFrame = 0;
+    }
     if (placeFrame !== 0) {
       cancelAnimationFrame(placeFrame);
       placeFrame = 0;
@@ -226,6 +231,17 @@ export function createBlankCover(options: {
     );
   }
 
+  // document_start can run before <body> exists; the class already hides the
+  // video, so retry until the cover has a host instead of waiting for `load`.
+  function retryWhenBody(reason?: Reason): void {
+    if (bodyFrame !== 0) return;
+    bodyFrame = requestAnimationFrame(() => {
+      bodyFrame = 0;
+      if (document.body) set(true, reason);
+      else retryWhenBody(reason);
+    });
+  }
+
   function set(blanked: boolean, reason?: Reason): void {
     document.documentElement.classList.toggle(VIDEO_BLANK_CLASS, blanked);
 
@@ -241,7 +257,10 @@ export function createBlankCover(options: {
 
     lease ??= guard.acquire();
 
-    if (!document.body) return;
+    if (!document.body) {
+      retryWhenBody(reason);
+      return;
+    }
 
     if (!cover) {
       cover = h('div', { className: 'ytb-blank-cover' });
