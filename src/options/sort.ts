@@ -1,8 +1,8 @@
 import { byId, h } from '../shared/ui';
 
-export type SortDirection = 'asc' | 'desc';
+type SortDirection = 'asc' | 'desc';
 
-export interface SortState {
+interface SortState {
   key: string;
   direction: SortDirection;
 }
@@ -26,30 +26,46 @@ function caret(path: string, className: string): SVGSVGElement {
   return svg;
 }
 
-export function createSorter(defaultKey: string): {
-  state(): SortState;
-  update(): void;
-  header(key: string, text: string, onSort: () => void): HTMLTableCellElement;
-} {
+function compareValues(a: string, b: string): number {
+  return a.localeCompare(b, undefined, { sensitivity: 'base', numeric: true });
+}
+
+export type SortColumns = ReadonlyArray<readonly [key: string, index: number]>;
+
+interface TableSorter<T> {
+  wire(bodyId: string, onSort: () => void): void;
+  sort(items: T[]): T[];
+}
+
+export function createTableSorter<T>(
+  defaultKey: string,
+  columns: SortColumns,
+  valueAt: (item: T, key: string) => string,
+): TableSorter<T> {
   let current: SortState = { key: defaultKey, direction: 'asc' };
   const cells = new Map<string, { cell: HTMLTableCellElement; up: SVGElement; down: SVGElement }>();
+
+  function ariaSort(): string {
+    return current.direction === 'asc' ? 'ascending' : 'descending';
+  }
 
   function apply(cell: HTMLTableCellElement, up: SVGElement, down: SVGElement): void {
     const active = current.key === cell.dataset.sortKey;
     cell.setAttribute('aria-sort', active ? ariaSort() : 'none');
     cell.classList.toggle('is-sorted', active);
-    const ascending = active && current.direction === 'asc';
-    const descending = active && current.direction === 'desc';
-    up.classList.toggle('is-active', ascending);
-    down.classList.toggle('is-active', descending);
-
-    function ariaSort(): string {
-      return current.direction === 'asc' ? 'ascending' : 'descending';
-    }
+    up.classList.toggle('is-active', active && current.direction === 'asc');
+    down.classList.toggle('is-active', active && current.direction === 'desc');
   }
 
   function update(): void {
     for (const entry of cells.values()) apply(entry.cell, entry.up, entry.down);
+  }
+
+  function toggle(key: string): void {
+    current =
+      current.key === key
+        ? { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
+        : { key, direction: 'asc' };
   }
 
   function header(key: string, text: string, onSort: () => void): HTMLTableCellElement {
@@ -73,49 +89,17 @@ export function createSorter(defaultKey: string): {
     return cell;
   }
 
-  function state(): SortState {
-    return current;
-  }
-
-  function toggle(key: string): void {
-    current =
-      current.key === key
-        ? { key, direction: current.direction === 'asc' ? 'desc' : 'asc' }
-        : { key, direction: 'asc' };
-  }
-
-  return { state, update, header };
-}
-
-export function compareValues(a: string, b: string): number {
-  return a.localeCompare(b, undefined, { sensitivity: 'base', numeric: true });
-}
-
-export type SortColumns = ReadonlyArray<readonly [key: string, index: number]>;
-
-export interface TableSorter<T> {
-  wire(bodyId: string, onSort: () => void): void;
-  sort(items: T[]): T[];
-}
-
-export function createTableSorter<T>(
-  defaultKey: string,
-  columns: SortColumns,
-  valueAt: (item: T, key: string) => string,
-): TableSorter<T> {
-  const sorter = createSorter(defaultKey);
-
   return {
     wire(bodyId, onSort) {
       const headers = byId(bodyId).closest('table')?.querySelectorAll('thead th');
       for (const [key, index] of columns) {
         const cell = headers?.[index];
         if (!cell) continue;
-        cell.replaceWith(sorter.header(key, cell.textContent ?? '', onSort));
+        cell.replaceWith(header(key, cell.textContent ?? '', onSort));
       }
     },
     sort(items) {
-      const { key, direction } = sorter.state();
+      const { key, direction } = current;
       const factor = direction === 'asc' ? 1 : -1;
       return [...items].sort((a, b) => factor * compareValues(valueAt(a, key), valueAt(b, key)));
     },
