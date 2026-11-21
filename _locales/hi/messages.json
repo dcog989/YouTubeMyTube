@@ -189,5 +189,7 @@
   "importBlockTube": { "message": "BlockTube बैकअप से $1 आयात किए गए।" },
   "importSkipped": { "message": "छोड़े गए: $1।" },
   "importNative": { "message": "YouTubeMyTube सेटिंग्स आयात की गईं।" },
-  "importUnknown": { "message": "यह फ़ाइल YouTubeMyTube या BlockTube बैकअप नहीं है।" }
+  "importUnknown": { "message": "यह फ़ाइल YouTubeMyTube या BlockTube बैकअप नहीं है।" },
+  "importTooLarge": { "message": "यह फ़ाइल आयात करने के लिए बहुत बड़ी है।" },
+  "confirmImport": { "message": "यह फ़ाइल आयात करें? सहेजे न गए बदलाव खो जाएँगे।" }
 }

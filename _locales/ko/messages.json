@@ -193,5 +193,7 @@
   "importNative": { "message": "YouTubeMyTube 설정을 가져왔습니다." },
   "importUnknown": {
     "message": "해당 파일은 YouTubeMyTube 또는 BlockTube 백업이 아닙니다."
-  }
+  },
+  "importTooLarge": { "message": "파일이 너무 커서 가져올 수 없습니다." },
+  "confirmImport": { "message": "이 파일을 가져올까요? 저장하지 않은 변경 사항은 사라집니다." }
 }

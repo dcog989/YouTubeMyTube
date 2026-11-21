@@ -195,5 +195,9 @@
   "importNative": { "message": "YouTubeMyTube ayarları içe aktarıldı." },
   "importUnknown": {
     "message": "Bu dosya bir YouTubeMyTube veya BlockTube yedeği değil."
+  },
+  "importTooLarge": { "message": "Dosya içe aktarılamayacak kadar büyük." },
+  "confirmImport": {
+    "message": "Bu dosya içe aktarılsın mı? Kaydedilmemiş değişiklikler kaybolacak."
   }
 }

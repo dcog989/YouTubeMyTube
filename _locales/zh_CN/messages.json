@@ -191,5 +191,7 @@
   "importNative": { "message": "已导入 YouTubeMyTube 设置。" },
   "importUnknown": {
     "message": "该文件不是 YouTubeMyTube 或 BlockTube 备份。"
-  }
+  },
+  "importTooLarge": { "message": "文件太大，无法导入。" },
+  "confirmImport": { "message": "导入此文件？未保存的更改将丢失。" }
 }

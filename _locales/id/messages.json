@@ -193,5 +193,7 @@
   "importNative": { "message": "Pengaturan YouTubeMyTube diimpor." },
   "importUnknown": {
     "message": "File itu bukan cadangan YouTubeMyTube atau BlockTube."
-  }
+  },
+  "importTooLarge": { "message": "Berkas ini terlalu besar untuk diimpor." },
+  "confirmImport": { "message": "Impor berkas ini? Perubahan yang belum disimpan akan hilang." }
 }

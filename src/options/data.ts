@@ -4,7 +4,11 @@ import { normalizeState } from '../shared/normalize';
 import { h } from '../shared/ui';
 import { backfillMissing } from './backfill';
 import { setStatus } from './dom';
-import { getDraft, notify, setDirty, setDraft } from './state';
+import { getDraft, isDirty, notify, setDirty, setDraft } from './state';
+
+// A settings export is a few KB; anything this large is the wrong file and
+// would freeze the page while it is parsed.
+const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 
 let exportUrl: string | null = null;
 
@@ -26,20 +30,12 @@ export function exportSettings(): void {
 
 window.addEventListener('pagehide', releaseExportUrl);
 
-const RULE_ARRAYS = [
-  'channels',
-  'videos',
-  'channelFilters',
-  'titleFilters',
-  'commentFilters',
-] as const;
-
+// `normalizeState` fills every missing section, so a native export only needs a
+// rules object; older backups predate some of the lists.
 function isBlockerState(value: unknown): boolean {
   if (!value || typeof value !== 'object') return false;
   const rules = (value as { rules?: unknown }).rules;
-  if (!rules || typeof rules !== 'object') return false;
-  const record = rules as Record<string, unknown>;
-  return RULE_ARRAYS.every((key) => Array.isArray(record[key]));
+  return Boolean(rules) && typeof rules === 'object';
 }
 
 function scheduleBackfill(): void {
@@ -49,6 +45,11 @@ function scheduleBackfill(): void {
 }
 
 export async function importSettings(file: File): Promise<void> {
+  if (file.size > MAX_IMPORT_BYTES) {
+    setStatus('import-status', t('importTooLarge'), false);
+    return;
+  }
+
   let parsed: unknown;
   try {
     parsed = JSON.parse(await file.text());
@@ -74,6 +75,8 @@ export async function importSettings(file: File): Promise<void> {
   }
 
   if (isBlockerState(parsed)) {
+    // A native import replaces the draft; a BlockTube backup merges into it.
+    if (isDirty() && !confirm(t('confirmImport'))) return;
     const imported = normalizeState(parsed);
     imported.settings.onboardingComplete = true;
     setDraft(imported);

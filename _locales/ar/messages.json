@@ -191,5 +191,7 @@
   "importNative": { "message": "تم استيراد إعدادات YouTubeMyTube." },
   "importUnknown": {
     "message": "هذا الملف ليس نسخة احتياطية لـ YouTubeMyTube أو BlockTube."
-  }
+  },
+  "importTooLarge": { "message": "الملف كبير جدًا للاستيراد." },
+  "confirmImport": { "message": "هل تريد استيراد هذا الملف؟ ستفقد التغييرات غير المحفوظة." }
 }

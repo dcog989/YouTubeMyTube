@@ -203,5 +203,7 @@
   "importNative": { "message": "Impostazioni YouTubeMyTube importate." },
   "importUnknown": {
     "message": "Il file non è un backup YouTubeMyTube o BlockTube."
-  }
+  },
+  "importTooLarge": { "message": "Il file è troppo grande per l’importazione." },
+  "confirmImport": { "message": "Importare questo file? Le modifiche non salvate andranno perse." }
 }
