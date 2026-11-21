@@ -1,12 +1,13 @@
 import { applyMutation, type MetadataFix, type Mutation } from '../shared/mutations';
-import { type ChannelMeta, resolveChannelMeta, resolveVideoTitle } from '../shared/resolve';
+import { resolveChannelMeta, resolveVideoTitle } from '../shared/resolve';
 import { isChannelComplete } from '../shared/rules';
 import { requestMutation } from '../shared/runtime';
 import type { ChannelEntry, VideoEntry } from '../shared/types';
 import { commit, getDraft, getRevision, isDirty, notify } from './state';
 
-const MAX_BACKFILL_LOOKUPS = 25;
-const BACKFILL_BATCH_DELAY = 250;
+const MAX_BACKFILL_LOOKUPS = 100;
+const BACKFILL_LOOKUP_DELAY = 100;
+const MAX_CONSECUTIVE_FAILURES = 3;
 
 let inFlight: Promise<void> | null = null;
 
@@ -31,9 +32,10 @@ function needsVideoBackfill(video: VideoEntry): boolean {
 }
 
 // isChannelComplete excludes entries whose lookup already failed; those are
-// only retried after the entry is edited, which clears the flag.
+// only retried after the entry is edited, which clears the flag. A name-only
+// row is a deliberate broad rule, not a missing lookup, so it is never retried.
 function needsChannelBackfill(channel: ChannelEntry): boolean {
-  return !isChannelComplete(channel);
+  return !isChannelComplete(channel) && Boolean(channel.id || channel.handle);
 }
 
 function delay(ms: number): Promise<void> {
@@ -93,13 +95,8 @@ function collectTargets(): BackfillTarget[] {
 async function resolveChannelTarget(target: ChannelTarget): Promise<MetadataFix | null> {
   if (!channelTargetUnchanged(target)) return null;
 
-  let meta: ChannelMeta | null = null;
-  try {
-    meta = await resolveChannelMeta(target.entry);
-  } catch {
-    meta = null;
-  }
-  if (!channelTargetUnchanged(target) || !meta) return null;
+  const meta = await resolveChannelMeta(target.entry);
+  if (!channelTargetUnchanged(target)) return null;
 
   return {
     kind: 'channel',
@@ -114,33 +111,37 @@ async function resolveChannelTarget(target: ChannelTarget): Promise<MetadataFix 
 async function resolveVideoTarget(target: VideoTarget): Promise<MetadataFix | null> {
   if (!videoTargetUnchanged(target)) return null;
 
-  let title: string | null = null;
-  try {
-    title = await resolveVideoTitle(target.id);
-  } catch {
-    title = null;
-  }
-  if (!videoTargetUnchanged(target) || title === null) return null;
+  const title = await resolveVideoTitle(target.id);
+  if (!videoTargetUnchanged(target)) return null;
 
   return { kind: 'video', videoId: target.id, title, failed: !title };
 }
 
-async function resolveTargets(targets: BackfillTarget[]): Promise<MetadataFix[]> {
+interface ResolveOutcome {
+  fixes: MetadataFix[];
+  stopped: boolean;
+}
+
+async function resolveTargets(targets: BackfillTarget[]): Promise<ResolveOutcome> {
   const fixes: MetadataFix[] = [];
-  let lookups = 0;
-  for (const target of targets) {
-    if (lookups >= MAX_BACKFILL_LOOKUPS) {
-      await delay(BACKFILL_BATCH_DELAY);
-      lookups = 0;
+  let failures = 0;
+  for (const [index, target] of targets.entries()) {
+    if (index > 0) await delay(BACKFILL_LOOKUP_DELAY);
+    try {
+      const fix =
+        target.kind === 'channel'
+          ? await resolveChannelTarget(target)
+          : await resolveVideoTarget(target);
+      if (fix) fixes.push(fix);
+      failures = 0;
+    } catch {
+      // Transient failures stay retryable; repeated ones mean YouTube is
+      // refusing us, so stop instead of hammering it.
+      failures += 1;
+      if (failures >= MAX_CONSECUTIVE_FAILURES) return { fixes, stopped: true };
     }
-    lookups += 1;
-    const fix =
-      target.kind === 'channel'
-        ? await resolveChannelTarget(target)
-        : await resolveVideoTarget(target);
-    if (fix) fixes.push(fix);
   }
-  return fixes;
+  return { fixes, stopped: false };
 }
 
 export function backfillMissing(): Promise<void> {
@@ -152,13 +153,22 @@ export function backfillMissing(): Promise<void> {
 }
 
 // One persist per round of lookups, so open YouTube tabs rescan once instead of
-// once per 25 entries.
+// once per entry.
 async function runBackfill(): Promise<void> {
+  let used = 0;
   for (;;) {
     const targets = collectTargets();
     if (targets.length === 0) return;
-    const fixes = await resolveTargets(targets);
+    const budget = MAX_BACKFILL_LOOKUPS - used;
+    if (budget <= 0) return;
+    const batch = targets.slice(0, budget);
+    const { fixes, stopped } = await resolveTargets(batch);
+    used += batch.length;
+    if (fixes.length > 0 && !(await persistFixes(fixes))) return;
+    if (stopped) {
+      console.warn('YouTubeMyTube: metadata backfill paused after repeated lookup failures');
+      return;
+    }
     if (fixes.length === 0) return;
-    if (!(await persistFixes(fixes))) return;
   }
 }
