@@ -27,14 +27,32 @@ describe('parseYouTubeUrl', () => {
     expect(parsed.videoId).toBe('dQw4w9WgXcQ');
   });
 
-  it('parses relative watch URLs', () => {
+  it('parses relative and trailing-slash watch URLs', () => {
     expect(parseYouTubeUrl('/watch?v=abcdefghijk').videoId).toBe('abcdefghijk');
+    expect(parseYouTubeUrl('https://www.youtube.com/watch/?v=abcdefghijk').videoId).toBe(
+      'abcdefghijk',
+    );
   });
 
   it('parses YouTube Music watch URLs', () => {
     expect(parseYouTubeUrl('https://music.youtube.com/watch?v=abcdefghijk')).toMatchObject({
       kind: 'video',
       videoId: 'abcdefghijk',
+    });
+  });
+
+  it('parses scheme-less YouTube links', () => {
+    expect(parseYouTubeUrl('youtube.com/watch?v=dQw4w9WgXcQ')).toMatchObject({
+      kind: 'video',
+      videoId: 'dQw4w9WgXcQ',
+    });
+    expect(parseYouTubeUrl('m.youtube.com/@SomeHandle')).toMatchObject({
+      kind: 'handle',
+      handle: 'SomeHandle',
+    });
+    expect(parseYouTubeUrl('youtu.be/dQw4w9WgXcQ')).toMatchObject({
+      kind: 'video',
+      videoId: 'dQw4w9WgXcQ',
     });
   });
 
@@ -51,12 +69,20 @@ describe('parseYouTubeUrl', () => {
   });
 
   it('parses shorts, live and embed URLs', () => {
-    expect(parseYouTubeUrl('https://m.youtube.com/shorts/abc')).toMatchObject({
+    expect(parseYouTubeUrl('https://m.youtube.com/shorts/abcdefghijk')).toMatchObject({
       kind: 'shorts',
-      videoId: 'abc',
+      videoId: 'abcdefghijk',
     });
-    expect(parseYouTubeUrl('https://www.youtube.com/live/xyz').videoId).toBe('xyz');
-    expect(parseYouTubeUrl('https://www.youtube.com/embed/123').videoId).toBe('123');
+    expect(parseYouTubeUrl('https://www.youtube.com/live/abcdefghijk').videoId).toBe('abcdefghijk');
+    expect(parseYouTubeUrl('https://www.youtube.com/embed/abcdefghijk').videoId).toBe(
+      'abcdefghijk',
+    );
+  });
+
+  it('rejects short links and routes without a full video id', () => {
+    expect(parseYouTubeUrl('https://youtu.be/nope').kind).toBe('other');
+    expect(parseYouTubeUrl('https://www.youtube.com/shorts/abc').kind).toBe('other');
+    expect(parseYouTubeUrl('https://www.youtube.com/watch?v=abc').kind).toBe('other');
   });
 
   it('parses channel and handle URLs', () => {
@@ -65,6 +91,10 @@ describe('parseYouTubeUrl', () => {
       kind: 'handle',
       handle: 'SomeHandle',
     });
+  });
+
+  it('rejects handles that are too short to exist', () => {
+    expect(parseYouTubeUrl('https://www.youtube.com/@a').kind).toBe('other');
   });
 
   it('ignores non-YouTube hosts', () => {
