@@ -106,7 +106,7 @@ One entry per line. Keywords match case-insensitively as substrings; `/pattern/f
 ### File System Access
 
 - Allowed: project root and all contained directories + files; `/tmp/*`.
-- Read-Only: `.env*`, `.git/`.
+- Read-Only: `.env*`, `.git/`, `.docs`.
 - Disallowed: everything not listed in 'Allowed' unless user grants permission.
 - Require confirmation: adding/removing dependencies, any operation outside project root.
 - Do not delete files or make destructive changes without permission / confirmation.
