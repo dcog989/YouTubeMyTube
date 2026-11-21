@@ -4,7 +4,7 @@ import { entityUrlForReason } from '../shared/navigation';
 import { parseReason, type Reason } from '../shared/reason';
 import { reasonDetail, reasonLabel } from '../shared/reason-copy';
 import { unblockReason } from '../shared/rules-service';
-import { openOptionsPage, requestSync } from '../shared/runtime';
+import { openOptionsPage } from '../shared/runtime';
 import { loadState } from '../shared/state';
 import { applyTheme } from '../shared/theme';
 import { ruleRefForReason } from '../shared/unblock';
@@ -18,6 +18,7 @@ function reasonFromQuery(): Reason | null {
 }
 
 async function render(): Promise<void> {
+  document.documentElement.lang = browser.i18n.getUILanguage();
   localizeDocument();
   const reason = reasonFromQuery();
   const state = await loadState();
@@ -46,7 +47,12 @@ async function render(): Promise<void> {
     if (ref) {
       removeButton.addEventListener('click', () => {
         void (async () => {
-          if (await unblockReason(reason)) await requestSync();
+          // A failed or no-op removal must not send the tab back to a URL that
+          // is still blocked, so it would bounce straight here again.
+          if (!(await unblockReason(reason))) {
+            if (detail) detail.textContent = t('actionFailed');
+            return;
+          }
           window.location.replace(entityUrlForReason(reason) ?? YOUTUBE_HOME);
         })();
       });
@@ -58,8 +64,6 @@ async function render(): Promise<void> {
   document.getElementById('blocked-options')?.addEventListener('click', () => {
     openOptionsPage();
   });
-
-  document.body.dataset.ready = 'true';
 }
 
 void render();
