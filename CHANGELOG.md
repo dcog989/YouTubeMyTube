@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.19.1 - 2026-11-22
+#### Bug Fixes
+- (**content**) hide the Shorts shelf in search results - (085c535) - dcog989
+- (**menu**) refresh the shared popup for each menu trigger - (2a9ba6a) - dcog989
+
+- - -
+
 ## 0.19.0 - 2026-11-21
 #### Features
 - (**areas**) add paid videos toggle and hide YouTube Featured shelves - (05b5e3c) - dcog989
