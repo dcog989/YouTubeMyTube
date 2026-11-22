@@ -7,7 +7,12 @@ import type { ChannelCache } from './channel-cache';
 import { type MenuContainer, parentContainer } from './container';
 import { createInjector } from './inject';
 import { createOwnerTracker } from './owner';
-import { INJECTED_ATTR, MENU_ITEM_SELECTOR } from './selectors';
+import {
+  INJECTED_ATTR,
+  MENU_ITEM_SELECTOR,
+  MENU_POPUP_SELECTOR,
+  MENU_TRIGGER_SELECTOR,
+} from './selectors';
 import { observeRoot, scanExisting } from './shadow';
 
 export interface MenuInjector {
@@ -39,6 +44,19 @@ export function createMenuInjector(deps: {
     }
   });
 
+  // YouTube reuses one popup for every three-dot menu, so the items injected for
+  // the previous card are still there and no child is added to trigger a scan.
+  // Refresh the popup's items for the card whose trigger was pressed or activated.
+  function refreshTriggeredMenu(event: MouseEvent): void {
+    const target = eventTarget(event);
+    if (!target || !closestAcrossShadow(target, MENU_TRIGGER_SELECTOR)) return;
+    // Only popups that already hold our items were injected before; leaving the
+    // unrelated menus (account, guide) untouched.
+    for (const popup of document.querySelectorAll(MENU_POPUP_SELECTOR)) {
+      if (popup.querySelector(`[${INJECTED_ATTR}]`)) batcher.add(popup);
+    }
+  }
+
   function handleInjectedClick(event: MouseEvent): void {
     const target = eventTarget(event);
     if (!target) return;
@@ -59,6 +77,10 @@ export function createMenuInjector(deps: {
       (event) => owners.track(event, (element) => batcher.add(element)),
       true,
     );
+    // After the owner tracker, so the refreshed items target this trigger's card.
+    window.addEventListener('pointerdown', refreshTriggeredMenu, true);
+    // Keyboard activation fires a click without a pointerdown; rebuild for it too.
+    window.addEventListener('click', refreshTriggeredMenu, true);
     observeRoot(document.documentElement, (element) => batcher.add(element));
     scanExisting(document, MENU_ITEM_SELECTOR, (element) => batcher.add(element));
   }

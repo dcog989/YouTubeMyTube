@@ -1,7 +1,12 @@
 import { closestAcrossShadow, eventTarget } from '../dom';
 import { CARD_SELECTOR } from '../entity-selectors';
 import { containerStart, type MenuContainer } from './container';
-import { MENU_HOST_SELECTOR, MENU_ITEM_SELECTOR, MENU_TRIGGER_SELECTOR } from './selectors';
+import {
+  INJECTED_ATTR,
+  MENU_HOST_SELECTOR,
+  MENU_ITEM_SELECTOR,
+  MENU_TRIGGER_SELECTOR,
+} from './selectors';
 import { attachShadows } from './shadow';
 
 export interface OwnerTracker {
@@ -57,6 +62,11 @@ export function createOwnerTracker(): OwnerTracker {
   function track(event: MouseEvent, onItem: (element: Element) => void): void {
     const target = eventTarget(event);
     if (!target) return;
+
+    // The injected item lives in the menu portal, outside the card or host that
+    // owns the menu. Clearing here would leave its click without an owner, so it
+    // would act on the previous menu's entity again.
+    if (closestAcrossShadow(target, `[${INJECTED_ATTR}]`)) return;
 
     const trigger = closestAcrossShadow(target, MENU_TRIGGER_SELECTOR);
     const owner =
