@@ -218,6 +218,8 @@ html.ytb-hide-home ytm-browse:has([tab-identifier="FEwhat_to_watch"]) chip-bar-v
 
 html.ytb-hide-shorts-shelf ytd-reel-shelf-renderer,
 html.ytb-hide-shorts-shelf ytm-reel-shelf-renderer,
+html.ytb-hide-shorts-shelf
+  grid-shelf-view-model:has(ytm-shorts-lockup-view-model, ytm-shorts-lockup-view-model-v2),
 html.ytb-hide-shorts-shelf ytd-rich-shelf-renderer[is-shorts],
 html.ytb-hide-shorts-shelf ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
 html.ytb-hide-shorts-shelf ytd-guide-entry-renderer a[title="Shorts"] {
