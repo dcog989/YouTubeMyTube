@@ -1,8 +1,75 @@
+# ---------------------------------------------------------------------
+# Project Specific
+# ---------------------------------------------------------------------
+
+assets/icons/
+
+# scaffold:begin
+# ---------------------------------------------------------------------
+# Generic
+# ---------------------------------------------------------------------
+
+*.bak
 *.log
+*.swp
+*~
 .docs/
 .DS_Store
-assets/icons/
-coverage/
-dist/
+Thumbs.db
+
+# Dependencies
+/vendor/
 node_modules/
-web-ext-artifacts/
+
+# Build artifacts
+*.dll
+*.exe
+.pkg/
+/bin/
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+CMakeUserPresets.json
+compile_commands.json
+dist/
+obj/
+out/
+src-tauri/gen/schemas/
+target/
+
+# Coverage
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+.coverage
+.coverage.*
+cobertura.xml
+coverage.xml
+coverage/
+htmlcov/
+lcov.info
+tarpaulin-report.html
+
+# Environment
+!.env.example
+.env
+.env.*
+
+# Python
+*.egg-info/
+*.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+venv/
+
+# Node
+*.tsbuildinfo
+.svelte-kit/
+.vite/
+vite.config.*.timestamp-*
+# scaffold:end

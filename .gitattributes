@@ -1,0 +1,38 @@
+# scaffold:begin
+* text=auto eol=lf
+
+# Windows scripts keep CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary
+*.7z binary
+*.AppImage binary
+*.bz2 binary
+*.deb binary
+*.gif binary
+*.gz binary
+*.ico binary
+*.jar binary
+*.jpeg binary
+*.jpg binary
+*.otf binary
+*.pdf binary
+*.png binary
+*.rar binary
+*.rpm binary
+*.ttf binary
+*.webp binary
+*.whl binary
+*.woff binary
+*.woff2 binary
+*.xz binary
+*.zip binary
+*.zst binary
+bun.lockb binary
+
+# Generated
+bun.lock linguist-generated=true
+Cargo.lock linguist-generated=true
+package-lock.json linguist-generated=true
+# scaffold:end
