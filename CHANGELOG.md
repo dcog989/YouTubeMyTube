@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.20.0 - 2026-11-27
+#### Features
+- (**options**) add source link and version to the sidebar - (bc66a49) - dcog989
+#### Bug Fixes
+- (**content**) block shorts in YouTube's carousel layout - (4e16410) - dcog989
+#### Miscellaneous Chores
+- (**lint**) disable descending-specificity rule for intentional CSS order - (46fd2fa) - dcog989
+- updates - (46f5a9b) - dcog989
+- sync with scaffold - (e1b1ec2) - dcog989
+
+- - -
+
 ## 0.19.1 - 2026-11-22
 #### Bug Fixes
 - (**content**) hide the Shorts shelf in search results - (085c535) - dcog989
