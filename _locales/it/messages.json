@@ -21,6 +21,7 @@
   "navAreas": { "message": "Blocca pagine e sezioni" },
   "navTester": { "message": "Prova i filtri" },
   "navData": { "message": "Importa / Esporta / Reimposta" },
+  "source": { "message": "Codice sorgente" },
 
   "unsavedChanges": { "message": "Modifiche non salvate" },
   "save": { "message": "Salva" },

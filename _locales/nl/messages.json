@@ -21,6 +21,7 @@
   "navAreas": { "message": "Pagina's en secties blokkeren" },
   "navTester": { "message": "Filters testen" },
   "navData": { "message": "Importeren / Exporteren / Resetten" },
+  "source": { "message": "Broncode" },
 
   "unsavedChanges": { "message": "Niet-opgeslagen wijzigingen" },
   "save": { "message": "Opslaan" },

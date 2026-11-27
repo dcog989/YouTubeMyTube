@@ -21,6 +21,7 @@
   "navAreas": { "message": "페이지 및 섹션 차단" },
   "navTester": { "message": "필터 테스트" },
   "navData": { "message": "가져오기 / 내보내기 / 초기화" },
+  "source": { "message": "소스" },
 
   "unsavedChanges": { "message": "저장되지 않은 변경 사항" },
   "save": { "message": "저장" },

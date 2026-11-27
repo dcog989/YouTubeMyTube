@@ -21,6 +21,7 @@
   "navAreas": { "message": "Blokir halaman & bagian" },
   "navTester": { "message": "Uji filter" },
   "navData": { "message": "Impor / Ekspor / Reset" },
+  "source": { "message": "Sumber" },
 
   "unsavedChanges": { "message": "Perubahan belum disimpan" },
   "save": { "message": "Simpan" },

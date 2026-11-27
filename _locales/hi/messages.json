@@ -21,6 +21,7 @@
   "navAreas": { "message": "पेज और अनुभाग ब्लॉक करें" },
   "navTester": { "message": "फ़िल्टर जाँचें" },
   "navData": { "message": "आयात / निर्यात / रीसेट" },
+  "source": { "message": "स्रोत" },
 
   "unsavedChanges": { "message": "सहेजे नहीं गए बदलाव" },
   "save": { "message": "सहेजें" },

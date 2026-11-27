@@ -156,6 +156,25 @@ body {
   color: #fff;
 }
 
+.sidebar-footer {
+  margin-top: auto;
+  padding: 12px;
+  font-size: 12px;
+}
+
+.source-link {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.source-link:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
 .content {
   display: flex;
   flex-direction: column;

@@ -192,6 +192,7 @@ function wireStatic(): void {
 async function init(): Promise<void> {
   document.documentElement.lang = browser.i18n.getUILanguage();
   localizeDocument();
+  byId('app-version').textContent = `v${browser.runtime.getManifest().version}`;
   let initial: BlockerState;
   try {
     initial = (await readState()) ?? defaultState();

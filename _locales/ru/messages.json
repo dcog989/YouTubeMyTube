@@ -21,6 +21,7 @@
   "navAreas": { "message": "Блокировать страницы и разделы" },
   "navTester": { "message": "Проверить фильтры" },
   "navData": { "message": "Импорт / Экспорт / Сброс" },
+  "source": { "message": "Исходный код" },
 
   "unsavedChanges": { "message": "Несохранённые изменения" },
   "save": { "message": "Сохранить" },

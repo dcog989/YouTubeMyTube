@@ -21,6 +21,7 @@
   "navAreas": { "message": "حظر الصفحات والأقسام" },
   "navTester": { "message": "اختبار الفلاتر" },
   "navData": { "message": "استيراد / تصدير / إعادة تعيين" },
+  "source": { "message": "المصدر" },
 
   "unsavedChanges": { "message": "تغييرات غير محفوظة" },
   "save": { "message": "حفظ" },

@@ -21,6 +21,7 @@
   "navAreas": { "message": "ページとセクションをブロック" },
   "navTester": { "message": "フィルターをテスト" },
   "navData": { "message": "インポート / エクスポート / リセット" },
+  "source": { "message": "ソース" },
 
   "unsavedChanges": { "message": "未保存の変更" },
   "save": { "message": "保存" },

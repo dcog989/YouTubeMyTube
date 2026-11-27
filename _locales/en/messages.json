@@ -21,6 +21,7 @@
   "navAreas": { "message": "Block Pages & Sections" },
   "navTester": { "message": "Test Filters" },
   "navData": { "message": "Import / Export / Reset" },
+  "source": { "message": "Source" },
 
   "unsavedChanges": { "message": "Unsaved changes" },
   "save": { "message": "Save" },

@@ -21,6 +21,7 @@
   "navAreas": { "message": "Sayfaları ve bölümleri engelle" },
   "navTester": { "message": "Filtreleri test et" },
   "navData": { "message": "İçe / Dışa Aktar / Sıfırla" },
+  "source": { "message": "Kaynak" },
 
   "unsavedChanges": { "message": "Kaydedilmemiş değişiklikler" },
   "save": { "message": "Kaydet" },

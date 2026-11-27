@@ -21,6 +21,7 @@
   "navAreas": { "message": "屏蔽页面与区块" },
   "navTester": { "message": "测试过滤器" },
   "navData": { "message": "导入 / 导出 / 重置" },
+  "source": { "message": "源代码" },
 
   "unsavedChanges": { "message": "未保存的更改" },
   "save": { "message": "保存" },
