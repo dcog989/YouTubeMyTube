@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { cardEntity, commentEntity, currentContext, entityKey } from '../src/content/entity';
-import { METADATA_SELECTOR } from '../src/content/entity-selectors';
+import { ACTIVE_REEL_SELECTOR, METADATA_SELECTOR } from '../src/content/entity-selectors';
 
 // The extractors only need the few Element members they read; a plain stub
 // keeps these tests free of a DOM implementation.
@@ -154,6 +154,31 @@ describe('currentContext', () => {
   it('ignores head data left behind by a previous navigation', () => {
     page('aaaaaaaaaaa');
     expect(currentContext()).toEqual({ videoId: 'dQw4w9WgXcQ' });
+  });
+
+  it('reads the channel from the active Shorts reel when head data is stale', () => {
+    const reel = stub({
+      selectors: {
+        'a[href^="/@"]': [anchor('/@moreperfectunion/shorts')],
+      },
+    });
+    vi.stubGlobal(
+      'document',
+      stub({
+        selectors: {
+          'meta[itemprop="identifier"]': stub({ attributes: { content: 'aaaaaaaaaaa' } }),
+          [ACTIVE_REEL_SELECTOR]: reel,
+        },
+      }),
+    );
+    vi.stubGlobal('window', {
+      location: { href: 'https://www.youtube.com/shorts/3iSKQWwbOtA' },
+    });
+
+    expect(currentContext()).toEqual({
+      videoId: '3iSKQWwbOtA',
+      handle: 'moreperfectunion',
+    });
   });
 
   it('reads the other identity form from the channel page header', () => {

@@ -78,6 +78,7 @@ export const OWNER_SCOPES = [
   'ytd-watch-metadata',
   'ytd-video-primary-info-renderer',
   'ytd-reel-video-renderer:has(#shorts-player)',
+  'ytd-reel-video-renderer-cow:has(#shorts-player)',
 ];
 
 export const OWNER_SCOPE_SELECTOR = OWNER_SCOPES.join(',');
@@ -119,11 +120,17 @@ const METADATA_TEXT_SELECTORS = [
 
 export const METADATA_SELECTOR = METADATA_TEXT_SELECTORS.join(',');
 
-export const REEL_SELECTOR = 'ytd-reel-video-renderer';
+// YouTube serves both the original renderer and the newer carousel element.
+export const REEL_SELECTOR = 'ytd-reel-video-renderer, ytd-reel-video-renderer-cow';
 
 // The current Shorts layout drops the [is-active] attribute; the player element
 // lives inside the active reel.
-export const ACTIVE_REEL_SELECTOR = `${REEL_SELECTOR}[is-active], ${REEL_SELECTOR}:has(#shorts-player)`;
+export const ACTIVE_REEL_SELECTOR = [
+  'ytd-reel-video-renderer[is-active]',
+  'ytd-reel-video-renderer:has(#shorts-player)',
+  'ytd-reel-video-renderer-cow[is-active]',
+  'ytd-reel-video-renderer-cow:has(#shorts-player)',
+].join(', ');
 
 export const CARD_SELECTOR = ITEM_SELECTORS.join(',');
 export const COMMENT_SELECTOR = COMMENT_SELECTORS.join(',');
