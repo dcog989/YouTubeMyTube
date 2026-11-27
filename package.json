@@ -24,13 +24,13 @@
     "watch": "node esbuild.config.mjs all --watch"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.8",
+    "@biomejs/biome": "2.6.9",
     "@types/firefox-webext-browser": "^143.0.1",
-    "@types/node": "^26.6.6",
-    "@vitest/coverage-v8": "^5.1.1",
+    "@types/node": "^26.6.11",
+    "@vitest/coverage-v8": "^5.1.2",
     "esbuild": "^0.28.2",
-    "lefthook": "2.2.2",
+    "lefthook": "2.2.4",
     "typescript": "^7.0.2",
-    "vitest": "^5.1.1"
+    "vitest": "^5.1.2"
   }
 }
